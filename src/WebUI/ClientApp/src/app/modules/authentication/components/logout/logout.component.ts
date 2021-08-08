@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 import { take } from 'rxjs/operators';
-import { AuthenticationResultStatus, AuthorizeService } from 'src/app/core/authentication/authentication.service';
+import { AuthenticationResultStatus, AuthenticationService } from 'src/app/core/authentication/authentication.service';
 import { LogoutActions, ApplicationPaths, ReturnUrlType } from 'src/app/shared/models/api-authorization.constants';
 
 @Component({
@@ -14,7 +14,7 @@ export class LogoutComponent implements OnInit {
   public message = new BehaviorSubject<string | null>(null);
 
   constructor(
-    private authorizeService: AuthorizeService,
+    private authorizeService: AuthenticationService,
     private activatedRoute: ActivatedRoute,
     private router: Router) { }
 

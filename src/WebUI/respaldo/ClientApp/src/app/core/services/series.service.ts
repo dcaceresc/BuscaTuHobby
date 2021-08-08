@@ -15,7 +15,7 @@ export class SeriesService {
     private http:HttpClient
   ) { }
 
-  Get():Observable<Array<SerieVm>>{
+  GetAll():Observable<Array<SerieVm>>{
     return this.http.get<Array<SerieVm>>(this.SeriesGetPath)
   }
 }

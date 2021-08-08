@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { User, UserManager, WebStorageStateStore } from 'oidc-client';
 import { BehaviorSubject, concat, from, Observable } from 'rxjs';
 import { filter, map, mergeMap, take, tap } from 'rxjs/operators';
-import { ApplicationPaths, ApplicationName } from '../../shared/models/api-authorization.constants';
+import { ApplicationName, ApplicationPaths } from 'src/app/shared/models/api-authorization.constants';
 
 export type IAuthenticationResult =
   SuccessAuthenticationResult |
@@ -36,14 +36,11 @@ export interface IUser {
 @Injectable({
   providedIn: 'root'
 })
-export class AuthorizeService {
-  // By default pop ups are disabled because they don't work properly on Edge.
-  // If you want to enable pop up authentication simply set this flag to false.
+export class AuthenticationService {
 
   private popUpDisabled = true;
   private userManager!: UserManager;
   private userSubject: BehaviorSubject<IUser | null> = new BehaviorSubject<IUser | null>(null);
-
 
   public isAuthenticated(): Observable<boolean> {
     return this.getUser().pipe(map(u => !!u));
@@ -197,4 +194,6 @@ export class AuthorizeService {
         mergeMap(() => this.userManager.getUser()),
         map(u => u && u.profile));
   }
+
+
 }

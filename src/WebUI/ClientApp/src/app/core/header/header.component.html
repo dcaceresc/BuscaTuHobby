@@ -1,4 +1,4 @@
-<header>
+<!-- <header>
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
       <a class="navbar-brand" [routerLink]="['/']">BuscaTuGunpla</a>
@@ -52,4 +52,61 @@
     </div>
   </nav>
 </header>
+ -->
 
+ <header>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand" [routerLink]="['/']">BuscaTuGunpla</a>
+      <button class="navbar-toggler" type="button" aria-controls="navbarContent" [attr.aria-expanded]="!isMenuCollapsed" aria-label="Toggle navigation" (click)="isMenuCollapsed = !isMenuCollapsed">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="navbar-collapse" [class.collapse]="isMenuCollapsed" id="navbarContent">
+        <ul class="navbar-nav mb-2 mb-lg-0">
+          <li class="nav-item" ngbDropdown>
+            <a class="nav-link text-white" tabindex="0" ngbDropdownToggle id="navbarGrade" role="button">
+              Grade
+            </a>
+            <div ngbDropdownMenu aria-labelledby="navbarGrade" class="dropdown-menu">
+              <a ngbDropdownItem href="#" (click)="$event.preventDefault()">Perfect Grade</a>
+              <a ngbDropdownItem href="#" (click)="$event.preventDefault()">Master Grade</a>
+              <a ngbDropdownItem href="#" (click)="$event.preventDefault()">Real Grade</a>
+              <a ngbDropdownItem href="#" (click)="$event.preventDefault()">High Grade</a>
+              <a ngbDropdownItem href="#" (click)="$event.preventDefault()">Super Deformed</a>
+              <a ngbDropdownItem href="#" (click)="$event.preventDefault()">No Grade</a>
+            </div>
+          </li>
+
+          <li class="nav-item" ngbDropdown>
+            <a class="nav-link text-white" tabindex="0" ngbDropdownToggle id="navbarScale" role="button">
+              Scale
+            </a>
+            <div ngbDropdownMenu aria-labelledby="navbarScale" class="dropdown-menu dropdown-menu">
+              <a ngbDropdownItem href="#" (click)="$event.preventDefault()">1/48</a>
+              <a ngbDropdownItem href="#" (click)="$event.preventDefault()">1/60</a>
+              <a ngbDropdownItem href="#" (click)="$event.preventDefault()">1/100</a>
+              <a ngbDropdownItem href="#" (click)="$event.preventDefault()">1/144</a>
+            </div>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item" ngbDropdown>
+            <a class="nav-link text-white" tabindex="0" ngbDropdownToggle id="navbarAdministrator" role="button">
+              Administrator
+            </a>
+            <div ngbDropdownMenu aria-labelledby="navbarAdministrator" class="dropdown-menu">
+              <a ngbDropdownItem [routerLink]="['/administrator/grades']">Grades</a>
+              <a ngbDropdownItem [routerLink]="['/administrator/gunplas']">Gunplas</a>
+              <a ngbDropdownItem [routerLink]="['/administrator/manufacturers']">Manufacturers</a>
+              <a ngbDropdownItem [routerLink]="['/administrator/scales']">Scales</a>
+              <a ngbDropdownItem [routerLink]="['/administrator/series']">Series</a>
+              <a ngbDropdownItem [routerLink]="['/administrator/universes']">Universes</a>
+            </div>
+          </li>
+        </ul>
+        <app-login-menu></app-login-menu>
+      </div>
+    </div>
+  </nav>
+ </header>

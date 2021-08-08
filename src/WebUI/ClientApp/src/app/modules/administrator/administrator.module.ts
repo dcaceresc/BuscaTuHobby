@@ -2,35 +2,26 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { AdministratorRoutingModule } from './administrator-routing.module';
-import { UniverseComponent } from './pages/universe/universe.component';
-import { SerieComponent } from './pages/serie/serie.component';
-import { ScaleComponent } from './pages/scale/scale.component';
-import { ManufacturerComponent } from './pages/manufacturer/manufacturer.component';
-import { GunplaComponent } from './pages/gunpla/gunpla.component';
-import { GradeComponent } from './pages/grade/grade.component';
-import { ListDataComponent } from './components/list-data/list-data.component';
-import { NgxPaginationModule } from 'ngx-pagination';
-import { OrderModule } from 'ngx-order-pipe';
+import { UniversesComponent } from './pages/universes/universes.component';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { TableComponent } from './components/table/table.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-
+import { ModalUniverseComponent } from './components/modal-universe/modal-universe.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
   declarations: [
-    UniverseComponent,
-    SerieComponent,
-    ScaleComponent,
-    ManufacturerComponent,
-    GunplaComponent,
-    GradeComponent,
-    ListDataComponent,
+    UniversesComponent,
+    TableComponent,
+    ModalUniverseComponent,
   ],
   imports: [
     CommonModule,
     AdministratorRoutingModule,
-    NgxPaginationModule,
-    OrderModule,
+    NgbModule,
     FontAwesomeModule,
+    ReactiveFormsModule
   ]
 })
 export class AdministratorModule { }

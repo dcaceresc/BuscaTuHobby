@@ -112,23 +112,11 @@ D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\NSwag.Generation.dll
 D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\NSwag.Generation.AspNetCore.dll
 D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\YamlDotNet.dll
 D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp\angular.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp\e2e\tsconfig.e2e.json
 D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp\package-lock.json
 D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp\package.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp\src\tsconfig.app.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp\src\tsconfig.server.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp\src\tsconfig.spec.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp\src\tslint.json
 D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp\tsconfig.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp\tslint.json
 D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\package-lock.json
 D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\package.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp 2\angular.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp 2\e2e\tsconfig.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp 2\package-lock.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp 2\package.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp 2\tsconfig.app.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp 2\tsconfig.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp 2\tsconfig.spec.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp 2\tslint.json
 D:\source\repos\BuscaTuGunpla\src\WebUI\obj\Debug\net5.0\WebUI.csproj.AssemblyReference.cache
+D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp\tsconfig.app.json
+D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net5.0\respaldo\ClientApp\tsconfig.spec.json
