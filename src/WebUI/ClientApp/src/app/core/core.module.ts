@@ -4,8 +4,6 @@ import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { RouterModule } from '@angular/router';
 import { AuthenticationModule } from '../modules/authentication/authentication.module';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { HttpClientModule } from '@angular/common/http';
 
 
 
@@ -17,13 +15,10 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [
     CommonModule,
     RouterModule,
-    AuthenticationModule,
-    NgbModule,
-    HttpClientModule
+    AuthenticationModule
   ],
   exports:[
-    HeaderComponent,
-    FooterComponent
+    HeaderComponent
   ]
 })
 export class CoreModule { }

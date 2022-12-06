@@ -1,39 +1,39 @@
 {
   "format": 1,
   "restore": {
-    "D:\\source\\repos\\BuscaTuGunpla\\src\\WebUI\\WebUI.csproj": {}
+    "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\WebUI\\WebUI.csproj": {}
   },
   "projects": {
-    "D:\\source\\repos\\BuscaTuGunpla\\src\\Application\\Application.csproj": {
+    "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Application\\Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\source\\repos\\BuscaTuGunpla\\src\\Application\\Application.csproj",
+        "projectUniqueName": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Application\\Application.csproj",
         "projectName": "Application",
-        "projectPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Application\\Application.csproj",
-        "packagesPath": "C:\\Users\\mavro\\.nuget\\packages\\",
-        "outputPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Application\\obj\\",
+        "projectPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Application\\Application.csproj",
+        "packagesPath": "C:\\Users\\FEN\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\mavro\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\FEN\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net5.0"
+          "net6.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "\\\\fendevweb001.fen.uchile.cl\\Packages NET CORE\\FENCore": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net5.0": {
-            "targetAlias": "net5.0",
+          "net6.0": {
+            "targetAlias": "net6.0",
             "projectReferences": {
-              "D:\\source\\repos\\BuscaTuGunpla\\src\\Domain\\Domain.csproj": {
-                "projectPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Domain\\Domain.csproj"
+              "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Domain\\Domain.csproj": {
+                "projectPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Domain\\Domain.csproj"
               }
             }
           }
@@ -45,8 +45,8 @@
         }
       },
       "frameworks": {
-        "net5.0": {
-          "targetAlias": "net5.0",
+        "net6.0": {
+          "targetAlias": "net6.0",
           "dependencies": {
             "AutoMapper.Extensions.Microsoft.DependencyInjection": {
               "target": "Package",
@@ -66,7 +66,7 @@
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[6.0.11, )"
             }
           },
           "imports": [
@@ -75,7 +75,8 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -84,37 +85,37 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.302\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\source\\repos\\BuscaTuGunpla\\src\\Domain\\Domain.csproj": {
+    "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Domain\\Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\source\\repos\\BuscaTuGunpla\\src\\Domain\\Domain.csproj",
+        "projectUniqueName": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Domain\\Domain.csproj",
         "projectName": "Domain",
-        "projectPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Domain\\Domain.csproj",
-        "packagesPath": "C:\\Users\\mavro\\.nuget\\packages\\",
-        "outputPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Domain\\obj\\",
+        "projectPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Domain\\Domain.csproj",
+        "packagesPath": "C:\\Users\\FEN\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\mavro\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\FEN\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net5.0"
+          "net6.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "\\\\fendevweb001.fen.uchile.cl\\Packages NET CORE\\FENCore": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net5.0": {
-            "targetAlias": "net5.0",
+          "net6.0": {
+            "targetAlias": "net6.0",
             "projectReferences": {}
           }
         },
@@ -125,15 +126,16 @@
         }
       },
       "frameworks": {
-        "net5.0": {
-          "targetAlias": "net5.0",
+        "net6.0": {
+          "targetAlias": "net6.0",
           "imports": [
             "net461",
             "net462",
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -142,40 +144,40 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.302\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\source\\repos\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj": {
+    "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\source\\repos\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj",
         "projectName": "Infrastructure",
-        "projectPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\mavro\\.nuget\\packages\\",
-        "outputPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Infrastructure\\obj\\",
+        "projectPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\FEN\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\mavro\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\FEN\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net5.0"
+          "net6.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "\\\\fendevweb001.fen.uchile.cl\\Packages NET CORE\\FENCore": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net5.0": {
-            "targetAlias": "net5.0",
+          "net6.0": {
+            "targetAlias": "net6.0",
             "projectReferences": {
-              "D:\\source\\repos\\BuscaTuGunpla\\src\\Application\\Application.csproj": {
-                "projectPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Application\\Application.csproj"
+              "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Application\\Application.csproj": {
+                "projectPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Application\\Application.csproj"
               }
             }
           }
@@ -187,30 +189,30 @@
         }
       },
       "frameworks": {
-        "net5.0": {
-          "targetAlias": "net5.0",
+        "net6.0": {
+          "targetAlias": "net6.0",
           "dependencies": {
             "Microsoft.AspNetCore.ApiAuthorization.IdentityServer": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[6.0.11, )"
             },
             "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[6.0.11, )"
             },
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[6.0.11, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[6.0.11, )"
             },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[6.0.11, )"
             }
           },
           "imports": [
@@ -219,7 +221,8 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -228,40 +231,40 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.302\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "D:\\source\\repos\\BuscaTuGunpla\\src\\WebUI\\WebUI.csproj": {
+    "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\WebUI\\WebUI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\source\\repos\\BuscaTuGunpla\\src\\WebUI\\WebUI.csproj",
+        "projectUniqueName": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\WebUI\\WebUI.csproj",
         "projectName": "WebUI",
-        "projectPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\WebUI\\WebUI.csproj",
-        "packagesPath": "C:\\Users\\mavro\\.nuget\\packages\\",
-        "outputPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\WebUI\\obj\\",
+        "projectPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\WebUI\\WebUI.csproj",
+        "packagesPath": "C:\\Users\\FEN\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\WebUI\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files (x86)\\Microsoft\\Xamarin\\NuGet\\"
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\mavro\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
+          "C:\\Users\\FEN\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "net5.0"
+          "net6.0"
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "\\\\fendevweb001.fen.uchile.cl\\Packages NET CORE\\FENCore": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net5.0": {
-            "targetAlias": "net5.0",
+          "net6.0": {
+            "targetAlias": "net6.0",
             "projectReferences": {
-              "D:\\source\\repos\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj": {
-                "projectPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj"
+              "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj": {
+                "projectPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj"
               }
             }
           }
@@ -273,44 +276,52 @@
         }
       },
       "frameworks": {
-        "net5.0": {
-          "targetAlias": "net5.0",
+        "net6.0": {
+          "targetAlias": "net6.0",
           "dependencies": {
             "Microsoft.AspNetCore.ApiAuthorization.IdentityServer": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[6.0.11, )"
             },
             "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[6.0.11, )"
             },
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[6.0.11, )"
             },
             "Microsoft.AspNetCore.Identity.UI": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[6.0.11, )"
             },
             "Microsoft.AspNetCore.SpaServices.Extensions": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[6.0.11, )"
             },
             "Microsoft.EntityFrameworkCore.Relational": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[6.0.11, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[6.0.11, )"
             },
             "Microsoft.EntityFrameworkCore.Tools": {
               "target": "Package",
-              "version": "[5.0.5, )"
+              "version": "[6.0.11, )"
+            },
+            "Microsoft.Extensions.DependencyInjection.Abstractions": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "Microsoft.Extensions.FileProviders.Embedded": {
+              "target": "Package",
+              "version": "[6.0.11, )"
             },
             "NSwag.AspNetCore": {
               "target": "Package",
-              "version": "[13.11.1, )"
+              "version": "[13.18.0, )"
             }
           },
           "imports": [
@@ -319,7 +330,8 @@
             "net47",
             "net471",
             "net472",
-            "net48"
+            "net48",
+            "net481"
           ],
           "assetTargetFallback": true,
           "warn": true,
@@ -331,7 +343,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.302\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }

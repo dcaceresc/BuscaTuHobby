@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { faSignInAlt, faSignOutAlt, faUser } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
-import { map,tap } from 'rxjs/operators';
-import { AuthorizeService } from 'src/app/core/authentication/authentication.service';
-import { faUser,faSignInAlt,faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
-
+import { map} from 'rxjs/operators';
+import { AuthenticationService } from 'src/app/core/authentication/authentication.service';
 
 @Component({
   selector: 'app-login-menu',
@@ -18,12 +17,11 @@ export class LoginMenuComponent implements OnInit {
   faSignInAlt = faSignInAlt;
   faSignOutAlt = faSignOutAlt;
 
+  constructor(private authenticationService: AuthenticationService) { }
 
-  constructor(private authorizeService: AuthorizeService) { }
-
-  ngOnInit() {
-    this.isAuthenticated = this.authorizeService.isAuthenticated();
-    this.userName = this.authorizeService.getUser().pipe(map(u => u && u.name));
+  ngOnInit(): void {
+    this.isAuthenticated = this.authenticationService.isAuthenticated();
+    this.userName = this.authenticationService.getUser().pipe(map(u => u && u.name));
   }
 
 }

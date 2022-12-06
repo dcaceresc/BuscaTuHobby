@@ -11,9 +11,7 @@ describe('LoginMenuComponent', () => {
       declarations: [ LoginMenuComponent ]
     })
     .compileComponents();
-  });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(LoginMenuComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

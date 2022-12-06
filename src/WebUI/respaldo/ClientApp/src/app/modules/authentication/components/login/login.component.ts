@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
-import { AuthorizeService, AuthenticationResultStatus } from 'src/app/core/authentication/authentication.service';
+import { AuthenticationService, AuthenticationResultStatus } from 'src/app/core/authentication/authentication.service';
 import { ApplicationPaths, LoginActions, QueryParameterNames, ReturnUrlType } from 'src/app/shared/models/api-authorization.constants';
+
 
 @Component({
   selector: 'app-login',
@@ -14,7 +15,7 @@ export class LoginComponent implements OnInit {
   public message = new BehaviorSubject<string | null | undefined>(null);
 
   constructor(
-    private authorizeService: AuthorizeService,
+    private authorizeService: AuthenticationService,
     private activatedRoute: ActivatedRoute,
     private router: Router) { }
 
@@ -122,3 +123,4 @@ export class LoginComponent implements OnInit {
 interface INavigationState {
   [ReturnUrlType]: string;
 }
+
