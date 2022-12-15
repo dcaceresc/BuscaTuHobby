@@ -1,43 +1,37 @@
 ﻿using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Photos.Commands.CreatePhoto
+namespace Application.Photos.Commands.CreatePhoto;
+
+public class CreatePhotoCommand : IRequest<int>
 {
-    public class CreatePhotoCommand : IRequest<int>
+    public int order { get; set; }
+    public byte[] imageData { get; set; }
+    public int gunplaId { get; set; }
+
+    public class CreatePhotoCommandHandler : IRequestHandler<CreatePhotoCommand, int>
     {
-        public int Order { get; set; }
-        public byte[] ImageData { get; set; }
-        public int GunplaId { get; set; }
+        private readonly IApplicationDbContext _context;
 
-        public class CreatePhotoCommandHandler : IRequestHandler<CreatePhotoCommand, int>
+        public CreatePhotoCommandHandler(IApplicationDbContext context)
         {
-            private readonly IApplicationDbContext _context;
+            _context = context;
+        }
 
-            public CreatePhotoCommandHandler(IApplicationDbContext context)
+        public async Task<int> Handle(CreatePhotoCommand request, CancellationToken cancellationToken)
+        {
+            var entity = new Photo
             {
-                _context = context;
-            }
+                order = request.order,
+                imageData = request.imageData,
+                gunplaId = request.gunplaId
+            };
 
-            public async Task<int> Handle(CreatePhotoCommand request, CancellationToken cancellationToken)
-            {
-                var entity = new Photo
-                {
-                    Order = request.Order,
-                    ImageData = request.ImageData,
-                    GunplaId = request.GunplaId
-                };
-
-                _context.Photos.Add(entity);
-                await _context.SaveChangesAsync(cancellationToken);
-                return entity.Id;
-            }
+            _context.Photos.Add(entity);
+            await _context.SaveChangesAsync(cancellationToken);
+            return entity.id;
         }
     }
 }
+

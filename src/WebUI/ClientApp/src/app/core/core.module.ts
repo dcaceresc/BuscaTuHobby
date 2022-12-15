@@ -4,6 +4,7 @@ import { HeaderComponent } from './header/header.component';
 import { FooterComponent } from './footer/footer.component';
 import { RouterModule } from '@angular/router';
 import { AuthenticationModule } from '../modules/authentication/authentication.module';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 
@@ -15,10 +16,12 @@ import { AuthenticationModule } from '../modules/authentication/authentication.m
   imports: [
     CommonModule,
     RouterModule,
-    AuthenticationModule
+    AuthenticationModule,
+    NgbModule
   ],
   exports:[
-    HeaderComponent
+    HeaderComponent,
+    FooterComponent
   ]
 })
 export class CoreModule { }

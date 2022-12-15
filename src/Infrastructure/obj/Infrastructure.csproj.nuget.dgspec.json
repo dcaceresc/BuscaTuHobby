@@ -1,23 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj": {}
+    "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Infrastructure\\Infrastructure.csproj": {}
   },
   "projects": {
-    "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Application\\Application.csproj": {
+    "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Application\\Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Application\\Application.csproj",
+        "projectUniqueName": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Application\\Application.csproj",
         "projectName": "Application",
-        "projectPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Application\\Application.csproj",
-        "packagesPath": "C:\\Users\\FEN\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Application\\obj\\",
+        "projectPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Application\\Application.csproj",
+        "packagesPath": "C:\\Users\\mavro\\.nuget\\packages\\",
+        "outputPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Application\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\FEN\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\mavro\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -25,15 +22,14 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "\\\\fendevweb001.fen.uchile.cl\\Packages NET CORE\\FENCore": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Domain\\Domain.csproj"
+              "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Domain\\Domain.csproj": {
+                "projectPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Domain\\Domain.csproj"
               }
             }
           }
@@ -52,21 +48,17 @@
               "target": "Package",
               "version": "[8.1.1, )"
             },
-            "FluentValidation": {
-              "target": "Package",
-              "version": "[10.1.0, )"
-            },
             "FluentValidation.DependencyInjectionExtensions": {
               "target": "Package",
-              "version": "[10.1.0, )"
+              "version": "[10.3.6, )"
             },
             "MediatR.Extensions.Microsoft.DependencyInjection": {
               "target": "Package",
-              "version": "[9.0.0, )"
+              "version": "[10.0.1, )"
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[6.0.11, )"
+              "version": "[6.0.1, )"
             }
           },
           "imports": [
@@ -85,24 +77,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Domain\\Domain.csproj": {
+    "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Domain\\Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Domain\\Domain.csproj",
+        "projectUniqueName": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Domain\\Domain.csproj",
         "projectName": "Domain",
-        "projectPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Domain\\Domain.csproj",
-        "packagesPath": "C:\\Users\\FEN\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Domain\\obj\\",
+        "projectPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Domain\\Domain.csproj",
+        "packagesPath": "C:\\Users\\mavro\\.nuget\\packages\\",
+        "outputPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Domain\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\FEN\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\mavro\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -110,7 +99,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "\\\\fendevweb001.fen.uchile.cl\\Packages NET CORE\\FENCore": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -144,24 +132,21 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj": {
+    "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Infrastructure\\Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Infrastructure\\Infrastructure.csproj",
         "projectName": "Infrastructure",
-        "projectPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\FEN\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Infrastructure\\obj\\",
+        "projectPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Infrastructure\\Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\mavro\\.nuget\\packages\\",
+        "outputPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\FEN\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\mavro\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -169,15 +154,14 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "\\\\fendevweb001.fen.uchile.cl\\Packages NET CORE\\FENCore": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Application\\Application.csproj": {
-                "projectPath": "C:\\Users\\FEN\\source\\personal\\BuscaTuGunpla\\src\\Application\\Application.csproj"
+              "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Application\\Application.csproj": {
+                "projectPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Application\\Application.csproj"
               }
             }
           }
@@ -194,25 +178,25 @@
           "dependencies": {
             "Microsoft.AspNetCore.ApiAuthorization.IdentityServer": {
               "target": "Package",
-              "version": "[6.0.11, )"
+              "version": "[6.0.1, )"
             },
             "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[6.0.11, )"
+              "version": "[6.0.1, )"
             },
             "Microsoft.AspNetCore.Identity.EntityFrameworkCore": {
               "target": "Package",
-              "version": "[6.0.11, )"
+              "version": "[6.0.1, )"
             },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
-              "version": "[6.0.11, )"
+              "version": "[6.0.1, )"
             },
             "Microsoft.EntityFrameworkCore.Tools": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",
               "target": "Package",
-              "version": "[6.0.11, )"
+              "version": "[6.0.1, )"
             }
           },
           "imports": [
@@ -231,7 +215,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.101\\RuntimeIdentifierGraph.json"
         }
       }
     }

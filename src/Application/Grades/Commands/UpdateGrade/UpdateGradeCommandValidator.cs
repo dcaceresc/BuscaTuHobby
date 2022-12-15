@@ -1,19 +1,14 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Application.Grades.Commands.UpdateGrade
+namespace Application.Grades.Commands.UpdateGrade;
+
+public class UpdateGradeCommandValidator : AbstractValidator<UpdateGradeCommand>
 {
-    public class UpdateGradeCommandValidator : AbstractValidator<UpdateGradeCommand>
+    public UpdateGradeCommandValidator()
     {
-        public UpdateGradeCommandValidator()
-        {
-            RuleFor(v => v.Id).NotNull().NotEmpty();
-            RuleFor(v => v.Name).NotNull().NotEmpty();
-            RuleFor(v => v.Acronym).NotNull().NotEmpty();
-        }
+        RuleFor(v => v.id).NotNull().NotEmpty();
+        RuleFor(v => v.name).NotNull().NotEmpty();
+        RuleFor(v => v.acronym).NotNull().NotEmpty();
     }
 }
+

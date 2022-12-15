@@ -1,42 +1,34 @@
 ﻿using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Grades.Commands.CreateGrade
+namespace Application.Grades.Commands.CreateGrade;
+public class CreateGradeCommand : IRequest<int>
 {
-    public class CreateGradeCommand : IRequest<int>
+    public string name { get; set; }
+    public string acronym { get; set; }
+
+
+    public class CreateGradeCommandHandler : IRequestHandler<CreateGradeCommand, int>
     {
-        public string Name { get; set; }
-        public string Acronym { get; set; }
+        private readonly IApplicationDbContext _context;
 
-
-        public class CreateGradeCommandHandler : IRequestHandler<CreateGradeCommand, int>
+        public CreateGradeCommandHandler(IApplicationDbContext context)
         {
-            private readonly IApplicationDbContext _context;
+            _context = context;
+        }
 
-            public CreateGradeCommandHandler(IApplicationDbContext context)
+        public async Task<int> Handle(CreateGradeCommand request, CancellationToken cancellationToken)
+        {
+            var entity = new Grade
             {
-                _context = context;
-            }
+                name = request.name,
+                acronym = request.acronym
+            };
 
-            public async Task<int> Handle(CreateGradeCommand request, CancellationToken cancellationToken)
-            {
-                var entity = new Grade
-                {
-                    Name = request.Name,
-                    Acronym = request.Acronym
-                };
-
-                _context.Grades.Add(entity);
-                await _context.SaveChangesAsync(cancellationToken);
-                return entity.Id;
-            }
+            _context.Grades.Add(entity);
+            await _context.SaveChangesAsync(cancellationToken);
+            return entity.id;
         }
     }
 }

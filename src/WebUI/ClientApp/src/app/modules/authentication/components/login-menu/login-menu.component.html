@@ -1,1 +1,20 @@
-<p>login-menu works!</p>
+
+<li ngbDropdown class="nav-item" placement="bottom-right" *ngIf="isAuthenticated | async">
+  <a href (click)="false" class="nav-link text-white" ngbDropdownToggle>
+    <fa-icon [icon]="faUser"></fa-icon>
+  </a>
+  <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end">
+    <a ngbDropdownItem [routerLink]='["/authentication/profile"]'>Hello {{ userName | async }}</a>
+    <a ngbDropdownItem [routerLink]='["/authentication/logout"]'[state]='{ local: true }' >Logout</a>
+  </div>
+</li>
+
+<li ngbDropdown class="nav-item" placement="bottom-right" *ngIf="!(isAuthenticated | async)">
+  <a href (click)="false" class="nav-link text-white" ngbDropdownToggle>
+    <fa-icon [icon]="faUser"></fa-icon>
+  </a>
+  <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end">
+    <a ngbDropdownItem [routerLink]='["/authentication/register"]'>Registrarse</a>
+    <a ngbDropdownItem [routerLink]='["/authentication/login"]' ><fa-icon [icon]="faSignInAlt"></fa-icon>Iniciar Sesión</a>
+  </div>
+</li>

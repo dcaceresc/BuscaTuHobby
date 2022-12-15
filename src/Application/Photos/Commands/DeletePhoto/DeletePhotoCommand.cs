@@ -2,43 +2,35 @@
 using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Photos.Commands.DeletePhoto
+namespace Application.Photos.Commands.DeletePhoto;
+public class DeletePhotoCommand : IRequest
 {
-    public class DeletePhotoCommand : IRequest
+    public int id { get; set; }
+
+    public class DeletePhotoCommandHandler : IRequestHandler<DeletePhotoCommand>
     {
-        public int Id { get; set; }
+        private readonly IApplicationDbContext _context;
 
-        public class DeletePhotoCommandHandler : IRequestHandler<DeletePhotoCommand>
+        public DeletePhotoCommandHandler(IApplicationDbContext context)
         {
-            private readonly IApplicationDbContext _context;
+            _context = context;
+        }
 
-            public DeletePhotoCommandHandler(IApplicationDbContext context)
+        public async Task<Unit> Handle(DeletePhotoCommand request, CancellationToken cancellationToken)
+        {
+            var entity = await _context.Photos.FindAsync(request.id);
+
+            if (entity == null)
             {
-                _context = context;
+                throw new NotFoundException(nameof(Photo), request.id);
             }
 
-            public async Task<Unit> Handle(DeletePhotoCommand request, CancellationToken cancellationToken)
-            {
-                var entity = await _context.Photos.FindAsync(request.Id);
+            _context.Photos.Remove(entity);
 
-                if (entity == null)
-                {
-                    throw new NotFoundException(nameof(Photo), request.Id);
-                }
+            await _context.SaveChangesAsync(cancellationToken);
 
-                _context.Photos.Remove(entity);
-
-                await _context.SaveChangesAsync(cancellationToken);
-
-                return Unit.Value;
-            }
+            return Unit.Value;
         }
     }
 }

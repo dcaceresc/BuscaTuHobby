@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { NgbCollapseModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-header',
@@ -7,5 +9,4 @@ import { Component } from '@angular/core';
 })
 export class HeaderComponent {
   public isMenuCollapsed = true;
-
 }

@@ -1,42 +1,36 @@
 ﻿using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Universes.Commands.CreateUniverse
+namespace Application.Universes.Commands.CreateUniverse;
+
+public class CreateUniverseCommand : IRequest<int>
 {
-    public class CreateUniverseCommand : IRequest<int>
+    public string name { get; set; }
+
+    public class CreateUniverseCommandHandler : IRequestHandler<CreateUniverseCommand, int>
     {
-        public string Name { get; set; }
+        private readonly IApplicationDbContext _context;
 
-        public class CreateUniverseCommandHandler : IRequestHandler<CreateUniverseCommand, int>
+        public CreateUniverseCommandHandler(IApplicationDbContext context)
         {
-            private readonly IApplicationDbContext _context;
+            _context = context;
+        }
 
-            public CreateUniverseCommandHandler(IApplicationDbContext context)
+        public async Task<int> Handle(CreateUniverseCommand request, CancellationToken cancellationToken)
+        {
+            var entity = new Universe
             {
-                _context = context;
-            }
+                name = request.name
+            };
 
-            public async Task<int> Handle(CreateUniverseCommand request, CancellationToken cancellationToken)
-            {
-                var entity = new Universe
-                {
-                    Name = request.Name
-                };
+            _context.Universes.Add(entity);
+            await _context.SaveChangesAsync(cancellationToken);
 
-                _context.Universes.Add(entity);
-                await _context.SaveChangesAsync(cancellationToken);
-
-                return entity.Id;
-            }
+            return entity.id;
         }
     }
+}
 
     
-}
+

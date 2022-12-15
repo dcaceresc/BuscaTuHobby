@@ -1,17 +1,12 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Application.Manufacturers.Commands.CreateManufacturer
+namespace Application.Manufacturers.Commands.CreateManufacturer;
+
+public class CreateManufacturerCommandValidator : AbstractValidator<CreateManufacturerCommand>
 {
-    public class CreateManufacturerCommandValidator : AbstractValidator<CreateManufacturerCommand>
+    public CreateManufacturerCommandValidator()
     {
-        public CreateManufacturerCommandValidator()
-        {
-            RuleFor(v => v.Name).NotNull().NotEmpty();
-        }
+        RuleFor(v => v.name).NotNull().NotEmpty();
     }
 }
+

@@ -2,47 +2,41 @@
 using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Grades.Commands.UpdateGrade
+namespace Application.Grades.Commands.UpdateGrade;
+
+public class UpdateGradeCommand : IRequest
 {
-    public class UpdateGradeCommand : IRequest
+    public int id { get; set; }
+    public string name { get; set; }
+    public string acronym { get; set; }
+
+    public class UpdateGradeCommandHandler : IRequestHandler<UpdateGradeCommand>
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Acronym { get; set; }
-
-        public class UpdateGradeCommandHandler : IRequestHandler<UpdateGradeCommand>
+        private readonly IApplicationDbContext _context;
+        public UpdateGradeCommandHandler(IApplicationDbContext context)
         {
-            private readonly IApplicationDbContext _context;
-            public UpdateGradeCommandHandler(IApplicationDbContext context)
-            {
-                _context = context;
-            }
-            public async Task<Unit> Handle(UpdateGradeCommand request, CancellationToken cancellationToken)
-            {
-                var entity = await _context.Grades.FindAsync(request.Id);
-
-                if (entity == null)
-                {
-                    throw new NotFoundException(nameof(Grade), request.Id);
-                }
-
-                entity.Name = request.Name;
-                entity.Acronym = request.Acronym;
-
-                await _context.SaveChangesAsync(cancellationToken);
-
-                return Unit.Value;
-            }
+            _context = context;
         }
+        public async Task<Unit> Handle(UpdateGradeCommand request, CancellationToken cancellationToken)
+        {
+            var entity = await _context.Grades.FindAsync(request.id);
 
+            if (entity == null)
+            {
+                throw new NotFoundException(nameof(Grade), request.id);
+            }
+
+            entity.name = request.name;
+            entity.acronym = request.acronym;
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return Unit.Value;
+        }
     }
 
-    
 }
+
+    
+

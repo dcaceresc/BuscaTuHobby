@@ -1,57 +1,49 @@
 ﻿using Application.Common.Interfaces;
-using AutoMapper;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Gunplas.Commands.CreateGunpla
+namespace Application.Gunplas.Commands.CreateGunpla;
+
+public class CreateGunplaCommand : IRequest<int>
 {
-    public class CreateGunplaCommand : IRequest<int>
+    public string name { get; set; }
+    public int gradeId { get; set; }
+    public int scaleId { get; set; }
+    public int manufacturerId { get; set; }
+    public int serieId { get; set; }
+    public bool hasBase { get; set; }
+    public string description { get; set; }
+    public DateTime releaseDate { get; set; }
+
+    public class CreateGunplaCommandHandler : IRequestHandler<CreateGunplaCommand, int>
     {
-        public string Name { get; set; }
-        public int GradeId { get; set; }
-        public int ScaleId { get; set; }
-        public int ManufacturerId { get; set; }
-        public int SerieId { get; set; }
-        public bool Base { get; set; }
-        public string Description { get; set; }
-        public DateTime ReleaseDate { get; set; }
+        private readonly IApplicationDbContext _context;
 
-        public class CreateGunplaCommandHandler : IRequestHandler<CreateGunplaCommand, int>
+        public CreateGunplaCommandHandler(IApplicationDbContext context)
         {
-            private readonly IApplicationDbContext _context;
+            _context = context;
+        }
 
-            public CreateGunplaCommandHandler(IApplicationDbContext context)
+        public async Task<int> Handle(CreateGunplaCommand request, CancellationToken cancellationToken)
+        {
+            var entity = new Gunpla
             {
-                _context = context;
-            }
+                name = request.name,
+                gradeId = request.gradeId,
+                scaleId = request.scaleId,
+                manufacturerId = request.manufacturerId,
+                serieId = request.serieId,
+                hasBase = request.hasBase,
+                description = request.description,
+                releaseDate = request.releaseDate
+            };
 
-            public async Task<int> Handle(CreateGunplaCommand request, CancellationToken cancellationToken)
-            {
-                var entity = new Gunpla
-                {
-                    Name = request.Name,
-                    GradeId = request.GradeId,
-                    ScaleId = request.ScaleId,
-                    ManufacturerId = request.ManufacturerId,
-                    SerieId = request.SerieId,
-                    Base = request.Base,
-                    Description = request.Description,
-                    ReleaseDate = request.ReleaseDate
-                };
-
-                _context.Gunplas.Add(entity);
-
-
-                await _context.SaveChangesAsync(cancellationToken);
-
-                return entity.Id;
-            }
+            _context.Gunplas.Add(entity);
+            await _context.SaveChangesAsync(cancellationToken);
+            return entity.id;
         }
     }
+
+
 }
+

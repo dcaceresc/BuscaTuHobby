@@ -1,39 +1,33 @@
 ﻿using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Manufacturers.Commands.CreateManufacturer
+namespace Application.Manufacturers.Commands.CreateManufacturer;
+
+public class CreateManufacturerCommand : IRequest<int>
 {
-    public class CreateManufacturerCommand : IRequest<int>
+    public string name { get; set; }
+
+    public class CreateManufacturerCommandHandler : IRequestHandler<CreateManufacturerCommand, int>
     {
-        public string Name { get; set; }
+        private readonly IApplicationDbContext _context;
 
-        public class CreateManufacturerCommandHandler : IRequestHandler<CreateManufacturerCommand, int>
+        public CreateManufacturerCommandHandler(IApplicationDbContext context)
         {
-            private readonly IApplicationDbContext _context;
+            _context = context;
+        }
 
-            public CreateManufacturerCommandHandler(IApplicationDbContext context)
+        public async Task<int> Handle(CreateManufacturerCommand request, CancellationToken cancellationToken)
+        {
+            var entity = new Manufacturer
             {
-                _context = context;
-            }
+                name = request.name
+            };
 
-            public async Task<int> Handle(CreateManufacturerCommand request, CancellationToken cancellationToken)
-            {
-                var entity = new Manufacturer
-                {
-                    Name = request.Name
-                };
-
-                _context.Manufacturers.Add(entity);
-                await _context.SaveChangesAsync(cancellationToken);
-                return entity.Id;
-            }
+            _context.Manufacturers.Add(entity);
+            await _context.SaveChangesAsync(cancellationToken);
+            return entity.id;
         }
     }
 }
+

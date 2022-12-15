@@ -10,44 +10,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebUI.Controllers
+namespace WebUI.Controllers;
+
+[Authorize]
+public class ScalesController : ApiController
 {
-    [Authorize]
-    [Route("api/[controller]")]
-    [ApiController]
-    public class ScalesController : ApiController
+    [HttpGet]
+    public async Task<IList<ScaleVm>> Get()
     {
-        [HttpGet]
-        public async Task<IList<ScaleVm>> Get()
+        return await Mediator.Send(new GetScalesQuery());
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<int>> Create(CreateScaleCommand command)
+    {
+        return await Mediator.Send(command);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult> Update(int id, UpdateScaleCommand command)
+    {
+        if (id != command.id)
         {
-            return await Mediator.Send(new GetScalesQuery());
+            return BadRequest();
         }
 
-        [HttpPost]
-        public async Task<ActionResult<int>> Create(CreateScaleCommand command)
-        {
-            return await Mediator.Send(command);
-        }
+        await Mediator.Send(command);
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, UpdateScaleCommand command)
-        {
-            if (id != command.Id)
-            {
-                return BadRequest();
-            }
+        return NoContent();
+    }
 
-            await Mediator.Send(command);
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        await Mediator.Send(new DeleteScaleCommand { id = id });
 
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
-        {
-            await Mediator.Send(new DeleteScaleCommand { Id = id });
-
-            return NoContent();
-        }
+        return NoContent();
     }
 }
+

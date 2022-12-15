@@ -2,31 +2,24 @@
 using AutoMapper;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Manufacturers.Queries.GetManufacturers
+namespace Application.Manufacturers.Queries.GetManufacturers;
+
+public class GetManufacturersQuery : IRequest<IList<ManufacturerVm>>
 {
-    public class GetManufacturersQuery : IRequest<IList<ManufacturerVm>>
+    public class GetManufacturersQueryHandler : IRequestHandler<GetManufacturersQuery, IList<ManufacturerVm>>
     {
-        public class GetManufacturersQueryHandler : IRequestHandler<GetManufacturersQuery, IList<ManufacturerVm>>
-        {
-            private readonly IApplicationDbContext _context;
-            private readonly IMapper _mapper;
+        private readonly IApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-            public GetManufacturersQueryHandler(IApplicationDbContext context, IMapper mapper )
-            {
-                _context = context;
-                _mapper = mapper;
-            }
-            public async Task<IList<ManufacturerVm>> Handle(GetManufacturersQuery request, CancellationToken cancellationToken)
-            {
-                return _mapper.Map<IList<ManufacturerVm>>(await _context.Manufacturers.ToListAsync());
-            }
+        public GetManufacturersQueryHandler(IApplicationDbContext context, IMapper mapper)
+        {
+            _context = context;
+            _mapper = mapper;
+        }
+        public async Task<IList<ManufacturerVm>> Handle(GetManufacturersQuery request, CancellationToken cancellationToken)
+        {
+            return _mapper.Map<IList<ManufacturerVm>>(await _context.Manufacturers.ToListAsync());
         }
     }
 }

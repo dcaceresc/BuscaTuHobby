@@ -2,52 +2,46 @@
 using Application.Photos.Commands.DeletePhoto;
 using Application.Photos.Commands.UpdatePhoto;
 using Application.Photos.Queries.GetPhotos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+namespace WebUI.Controllers;
 
-namespace WebUI.Controllers
+[Authorize]
+public class PhotosController : ApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class PhotosController : ApiController
+    [HttpGet]
+    public async Task<IList<PhotoVm>> Get()
     {
-        [HttpGet]
-        public async Task<IList<PhotoVm>> Get()
+        return await Mediator.Send(new GetPhotosQuery());
+    }
+
+
+
+    [HttpPost]
+    public async Task<ActionResult<int>> Create(CreatePhotoCommand command)
+    {
+        return await Mediator.Send(command);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult> Update(int id, UpdatePhotoCommand command)
+    {
+        if (id != command.id)
         {
-            return await Mediator.Send(new GetPhotosQuery());
+            return BadRequest();
         }
 
-        // POST api/<PhotosController>
-        [HttpPost]
-        public async Task<ActionResult<int>> Create(CreatePhotoCommand command)
-        {
-            return await Mediator.Send(command);
-        }
+        await Mediator.Send(command);
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, UpdatePhotoCommand command)
-        {
-            if (id != command.Id)
-            {
-                return BadRequest();
-            }
+        return NoContent();
+    }
 
-            await Mediator.Send(command);
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Delete(int id)
+    {
+        await Mediator.Send(new DeletePhotoCommand { id = id });
 
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
-        {
-            await Mediator.Send(new DeletePhotoCommand { Id = id });
-
-            return NoContent();
-        }
+        return NoContent();
     }
 }

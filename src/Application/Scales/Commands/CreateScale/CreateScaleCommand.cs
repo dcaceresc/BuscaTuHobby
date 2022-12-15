@@ -1,41 +1,34 @@
 ﻿using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Scales.Commands.CreateScale
+namespace Application.Scales.Commands.CreateScale;
+
+public class CreateScaleCommand : IRequest<int>
 {
-    public class CreateScaleCommand : IRequest<int>
+    public string name { get; set; }
+
+    public class CreateScaleCommandHandler : IRequestHandler<CreateScaleCommand, int>
     {
-        public string Name { get; set; }
+        private readonly IApplicationDbContext _context;
 
-        public class CreateScaleCommandHandler : IRequestHandler<CreateScaleCommand, int>
+        public CreateScaleCommandHandler(IApplicationDbContext context)
         {
-            private readonly IApplicationDbContext _context;
+            _context = context;
+        }
 
-            public CreateScaleCommandHandler(IApplicationDbContext context)
+
+        public async Task<int> Handle(CreateScaleCommand request, CancellationToken cancellationToken)
+        {
+            var entity = new Scale
             {
-                _context = context;
-            }
+                name = request.name
+            };
 
+            _context.Scales.Add(entity);
+            await _context.SaveChangesAsync(cancellationToken);
 
-            public async Task<int> Handle(CreateScaleCommand request, CancellationToken cancellationToken)
-            {
-                var entity = new Scale
-                {
-                    Name = request.Name
-                };
-
-                _context.Scales.Add(entity);
-                await _context.SaveChangesAsync(cancellationToken);
-
-                return entity.Id;
-            }
+            return entity.id;
         }
     }
 }

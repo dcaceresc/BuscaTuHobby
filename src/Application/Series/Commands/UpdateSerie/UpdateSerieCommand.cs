@@ -2,46 +2,40 @@
 using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Series.Commands.UpdateSerie
+namespace Application.Series.Commands.UpdateSerie;
+
+public class UpdateSerieCommand : IRequest
 {
-    public class UpdateSerieCommand : IRequest
+    public int id { get; set; }
+    public string name { get; set; }
+    public int universeId { get; set; }
+
+    public class UpdateSerieCommandHandler : IRequestHandler<UpdateSerieCommand>
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int UniverseId { get; set; }
+        private readonly IApplicationDbContext _context;
 
-        public class UpdateSerieCommandHandler : IRequestHandler<UpdateSerieCommand>
+        public UpdateSerieCommandHandler(IApplicationDbContext context )
         {
-            private readonly IApplicationDbContext _context;
+            _context = context;
+        }
 
-            public UpdateSerieCommandHandler(IApplicationDbContext context )
+        public async Task<Unit> Handle(UpdateSerieCommand request, CancellationToken cancellationToken)
+        {
+            var entity = await _context.Series.FindAsync(request.id);
+
+            if (entity == null)
             {
-                _context = context;
+                throw new NotFoundException(nameof(Serie), request.id);
             }
 
-            public async Task<Unit> Handle(UpdateSerieCommand request, CancellationToken cancellationToken)
-            {
-                var entity = await _context.Series.FindAsync(request.Id);
+            entity.name = request.name;
+            entity.universeId = request.universeId;
 
-                if (entity == null)
-                {
-                    throw new NotFoundException(nameof(Serie), request.Id);
-                }
+            await _context.SaveChangesAsync(cancellationToken);
 
-                entity.Name = request.Name;
-                entity.UniverseId = request.UniverseId;
-
-                await _context.SaveChangesAsync(cancellationToken);
-
-                return Unit.Value;
-            }
+            return Unit.Value;
         }
     }
 }
+

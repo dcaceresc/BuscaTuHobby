@@ -1,12 +1,24 @@
-C:\Users\FEN\source\personal\BuscaTuGunpla\src\Domain\bin\Debug\net6.0\Domain.deps.json
-C:\Users\FEN\source\personal\BuscaTuGunpla\src\Domain\bin\Debug\net6.0\Domain.dll
-C:\Users\FEN\source\personal\BuscaTuGunpla\src\Domain\bin\Debug\net6.0\Domain.pdb
-C:\Users\FEN\source\personal\BuscaTuGunpla\src\Domain\obj\Debug\net6.0\Domain.csproj.AssemblyReference.cache
-C:\Users\FEN\source\personal\BuscaTuGunpla\src\Domain\obj\Debug\net6.0\Domain.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\FEN\source\personal\BuscaTuGunpla\src\Domain\obj\Debug\net6.0\Domain.AssemblyInfoInputs.cache
-C:\Users\FEN\source\personal\BuscaTuGunpla\src\Domain\obj\Debug\net6.0\Domain.AssemblyInfo.cs
-C:\Users\FEN\source\personal\BuscaTuGunpla\src\Domain\obj\Debug\net6.0\Domain.csproj.CoreCompileInputs.cache
-C:\Users\FEN\source\personal\BuscaTuGunpla\src\Domain\obj\Debug\net6.0\Domain.dll
-C:\Users\FEN\source\personal\BuscaTuGunpla\src\Domain\obj\Debug\net6.0\refint\Domain.dll
-C:\Users\FEN\source\personal\BuscaTuGunpla\src\Domain\obj\Debug\net6.0\Domain.pdb
-C:\Users\FEN\source\personal\BuscaTuGunpla\src\Domain\obj\Debug\net6.0\ref\Domain.dll
+D:\source\repos\BuscaTuGunpla\src\Domain\bin\Debug\net6.0\Domain.deps.json
+D:\source\repos\BuscaTuGunpla\src\Domain\bin\Debug\net6.0\Domain.dll
+D:\source\repos\BuscaTuGunpla\src\Domain\bin\Debug\net6.0\Domain.pdb
+D:\source\repos\BuscaTuGunpla\src\Domain\obj\Debug\net6.0\Domain.csproj.AssemblyReference.cache
+D:\source\repos\BuscaTuGunpla\src\Domain\obj\Debug\net6.0\Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\source\repos\BuscaTuGunpla\src\Domain\obj\Debug\net6.0\Domain.AssemblyInfoInputs.cache
+D:\source\repos\BuscaTuGunpla\src\Domain\obj\Debug\net6.0\Domain.AssemblyInfo.cs
+D:\source\repos\BuscaTuGunpla\src\Domain\obj\Debug\net6.0\Domain.csproj.CoreCompileInputs.cache
+D:\source\repos\BuscaTuGunpla\src\Domain\obj\Debug\net6.0\Domain.dll
+D:\source\repos\BuscaTuGunpla\src\Domain\obj\Debug\net6.0\refint\Domain.dll
+D:\source\repos\BuscaTuGunpla\src\Domain\obj\Debug\net6.0\Domain.pdb
+D:\source\repos\BuscaTuGunpla\src\Domain\obj\Debug\net6.0\ref\Domain.dll
+D:\source\repos\Pruebas Gunpla\BuscaTuGunpla 1\src\Domain\bin\Debug\net6.0\Domain.deps.json
+D:\source\repos\Pruebas Gunpla\BuscaTuGunpla 1\src\Domain\bin\Debug\net6.0\Domain.dll
+D:\source\repos\Pruebas Gunpla\BuscaTuGunpla 1\src\Domain\bin\Debug\net6.0\Domain.pdb
+D:\source\repos\Pruebas Gunpla\BuscaTuGunpla 1\src\Domain\obj\Debug\net6.0\Domain.csproj.AssemblyReference.cache
+D:\source\repos\Pruebas Gunpla\BuscaTuGunpla 1\src\Domain\obj\Debug\net6.0\Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\source\repos\Pruebas Gunpla\BuscaTuGunpla 1\src\Domain\obj\Debug\net6.0\Domain.AssemblyInfoInputs.cache
+D:\source\repos\Pruebas Gunpla\BuscaTuGunpla 1\src\Domain\obj\Debug\net6.0\Domain.AssemblyInfo.cs
+D:\source\repos\Pruebas Gunpla\BuscaTuGunpla 1\src\Domain\obj\Debug\net6.0\Domain.csproj.CoreCompileInputs.cache
+D:\source\repos\Pruebas Gunpla\BuscaTuGunpla 1\src\Domain\obj\Debug\net6.0\Domain.dll
+D:\source\repos\Pruebas Gunpla\BuscaTuGunpla 1\src\Domain\obj\Debug\net6.0\refint\Domain.dll
+D:\source\repos\Pruebas Gunpla\BuscaTuGunpla 1\src\Domain\obj\Debug\net6.0\Domain.pdb
+D:\source\repos\Pruebas Gunpla\BuscaTuGunpla 1\src\Domain\obj\Debug\net6.0\ref\Domain.dll

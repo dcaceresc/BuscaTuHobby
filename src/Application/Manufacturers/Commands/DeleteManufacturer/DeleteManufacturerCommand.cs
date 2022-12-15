@@ -2,43 +2,37 @@
 using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Manufacturers.Commands.DeleteManufacturer
+namespace Application.Manufacturers.Commands.DeleteManufacturer;
+
+public class DeleteManufacturerCommand : IRequest
 {
-    public class DeleteManufacturerCommand : IRequest
+    public int id { get; set; }
+
+    public class DeleteManufacturerCommandHandler : IRequestHandler<DeleteManufacturerCommand>
     {
-        public int Id { get; set; }
+        private readonly IApplicationDbContext _context;
 
-        public class DeleteManufacturerCommandHandler : IRequestHandler<DeleteManufacturerCommand>
+        public DeleteManufacturerCommandHandler(IApplicationDbContext context)
         {
-            private readonly IApplicationDbContext _context;
+            _context = context;
+        }
 
-            public DeleteManufacturerCommandHandler(IApplicationDbContext context)
+        public async Task<Unit> Handle(DeleteManufacturerCommand request, CancellationToken cancellationToken)
+        {
+            var entity = await _context.Manufacturers.FindAsync(request.id);
+
+            if (entity == null)
             {
-                _context = context;
+                throw new NotFoundException(nameof(Manufacturer), request.id);
             }
 
-            public async Task<Unit> Handle(DeleteManufacturerCommand request, CancellationToken cancellationToken)
-            {
-                var entity = await _context.Manufacturers.FindAsync(request.Id);
+            _context.Manufacturers.Remove(entity);
 
-                if (entity == null)
-                {
-                    throw new NotFoundException(nameof(Manufacturer), request.Id);
-                }
+            await _context.SaveChangesAsync(cancellationToken);
 
-                _context.Manufacturers.Remove(entity);
-
-                await _context.SaveChangesAsync(cancellationToken);
-
-                return Unit.Value;
-            }
+            return Unit.Value;
         }
     }
 }
+

@@ -1,21 +1,13 @@
-﻿using Domain.Common;
-using System;
-using System.Collections.Generic;
-
-#nullable disable
+﻿
+using Domain.Common;
 
 namespace Domain.Entities
 {
-    public partial class Scale : AuditableEntity
+    public class Scale : AuditableEntity
     {
-        public Scale()
-        {
-            Gunplas = new HashSet<Gunpla>();
-        }
+        public int id { get; set; }
+        public string name { get; set; } = default!;
 
-        public int Id { get; set; }
-        public string Name { get; set; }
-
-        public virtual ICollection<Gunpla> Gunplas { get; set; }
+        public virtual ICollection<Gunpla> gunplas { get; set; } = default!;
     }
 }

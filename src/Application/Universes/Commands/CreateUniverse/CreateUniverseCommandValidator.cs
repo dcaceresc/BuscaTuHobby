@@ -1,17 +1,12 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Application.Universes.Commands.CreateUniverse
+namespace Application.Universes.Commands.CreateUniverse;
+
+public class CreateUniverseCommandValidator : AbstractValidator<CreateUniverseCommand>
 {
-    public class CreateUniverseCommandValidator : AbstractValidator<CreateUniverseCommand>
+    public CreateUniverseCommandValidator()
     {
-        public CreateUniverseCommandValidator()
-        {
-            RuleFor(v => v.Name).NotNull().NotEmpty();
-        }
+        RuleFor(v => v.name).NotNull().NotEmpty();
     }
 }
+

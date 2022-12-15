@@ -2,44 +2,38 @@
 using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Universes.Commands.UpdateUniverse
+namespace Application.Universes.Commands.UpdateUniverse;
+
+public class UpdateUniverseCommand : IRequest
 {
-    public class UpdateUniverseCommand : IRequest
+    public int id { get; set; }
+    public string name { get; set; }
+
+    public class UpdateUniverseCommandHandler : IRequestHandler<UpdateUniverseCommand>
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        private readonly IApplicationDbContext _context;
 
-        public class UpdateUniverseCommandHandler : IRequestHandler<UpdateUniverseCommand>
+        public UpdateUniverseCommandHandler(IApplicationDbContext context)
         {
-            private readonly IApplicationDbContext _context;
+            _context = context;
+        }
 
-            public UpdateUniverseCommandHandler(IApplicationDbContext context)
+        public async Task<Unit> Handle(UpdateUniverseCommand request, CancellationToken cancellationToken)
+        {
+            var entity = await _context.Universes.FindAsync(request.id);
+
+            if (entity == null)
             {
-                _context = context;
+                throw new NotFoundException(nameof(Universe), request.id);
             }
 
-            public async Task<Unit> Handle(UpdateUniverseCommand request, CancellationToken cancellationToken)
-            {
-                var entity = await _context.Universes.FindAsync(request.Id);
+            entity.name = request.name;
 
-                if (entity == null)
-                {
-                    throw new NotFoundException(nameof(Universe), request.Id);
-                }
+            await _context.SaveChangesAsync(cancellationToken);
 
-                entity.Name = request.Name;
-
-                await _context.SaveChangesAsync(cancellationToken);
-
-                return Unit.Value;
-            }
+            return Unit.Value;
         }
     }
 }
+

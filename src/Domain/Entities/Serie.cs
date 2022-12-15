@@ -1,23 +1,13 @@
 ﻿using Domain.Common;
-using System;
-using System.Collections.Generic;
-
-#nullable disable
 
 namespace Domain.Entities
 {
-    public partial class Serie : AuditableEntity
+    public class Serie : AuditableEntity
     {
-        public Serie()
-        {
-            Gunplas = new HashSet<Gunpla>();
-        }
-
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int UniverseId { get; set; }
-
-        public virtual Universe Universe { get; set; }
-        public virtual ICollection<Gunpla> Gunplas { get; set; }
+        public int id { get; set; }
+        public string name { get; set; } = default!;
+        public int universeId { get; set; }
+        public Universe universe { get; set; } = default!;
+        public ICollection<Gunpla> gunplas { get; set; } = default!;
     }
 }

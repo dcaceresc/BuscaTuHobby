@@ -1,41 +1,35 @@
 ﻿using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Series.Commands.CreateSerie
+namespace Application.Series.Commands.CreateSerie;
+
+public class CreateSerieCommand : IRequest<int>
 {
-    public class CreateSerieCommand : IRequest<int>
+    public string name { get; set; }
+    public int universeId { get; set; }
+
+    public class CreateSerieCommandHandler : IRequestHandler<CreateSerieCommand, int>
     {
-        public string Name { get; set; }
-        public int UniverseId { get; set; }
+        private readonly IApplicationDbContext _context;
 
-        public class CreateSerieCommandHandler : IRequestHandler<CreateSerieCommand, int>
+        public CreateSerieCommandHandler(IApplicationDbContext context)
         {
-            private readonly IApplicationDbContext _context;
-
-            public CreateSerieCommandHandler(IApplicationDbContext context)
+            _context = context;
+        }
+        public async Task<int> Handle(CreateSerieCommand request, CancellationToken cancellationToken)
+        {
+            var entity = new Serie
             {
-                _context = context;
-            }
-            public async Task<int> Handle(CreateSerieCommand request, CancellationToken cancellationToken)
-            {
-                var entity = new Serie
-                {
-                    Name = request.Name,
-                    UniverseId = request.UniverseId
-                };
+                name = request.name,
+                universeId = request.universeId
+            };
 
-                _context.Series.Add(entity);
-                await _context.SaveChangesAsync(cancellationToken);
+            _context.Series.Add(entity);
+            await _context.SaveChangesAsync(cancellationToken);
 
-                return entity.Id;
-            }
+            return entity.id;
         }
     }
 }
+

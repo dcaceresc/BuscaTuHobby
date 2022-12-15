@@ -1,15 +1,15 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace WebUI.Controllers
-{
+namespace WebUI.Controllers;
+
     [Route("api/[controller]")]
     [ApiController]
-    public abstract class ApiController : ControllerBase
+    public class ApiController : ControllerBase
     {
-        private IMediator _mediator;
+        private ISender _mediator = null!;
 
-        protected IMediator Mediator => _mediator ??= HttpContext.RequestServices.GetService<IMediator>();
+        protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<ISender>();
     }
-}
+

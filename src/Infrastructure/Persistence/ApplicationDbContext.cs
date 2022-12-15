@@ -6,9 +6,7 @@ using Infrastructure.Identity;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Infrastructure.Persistence
 {
@@ -25,11 +23,16 @@ namespace Infrastructure.Persistence
 
         public DbSet<Grade> Grades { get; set; }
         public DbSet<Gunpla> Gunplas { get; set; }
+        public DbSet<GunplaPrice> GunplaPrices { get; set; }
         public DbSet<Manufacturer> Manufacturers { get; set; }
+        public DbSet<Photo> Photos { get; set; }
+        public DbSet<Sale> Sales { get; set; }
         public DbSet<Scale> Scales { get; set; }
         public DbSet<Serie> Series { get; set; }
+        public DbSet<Store> Stores  { get; set; }
         public DbSet<Universe> Universes { get; set; }
-        public DbSet<Photo> Photos { get; set; }
+        
+        
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
         {
@@ -50,5 +53,17 @@ namespace Infrastructure.Persistence
 
             return base.SaveChangesAsync(cancellationToken);
         }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+
+            builder.Entity<GunplaPrice>()
+                .HasKey(e => new {e.gunplaId,e.storeId});
+
+            base.OnModelCreating(builder);
+        }
+
+
     }
 }

@@ -2,42 +2,35 @@
 using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Scales.Commands.DeleteScale
+namespace Application.Scales.Commands.DeleteScale;
+
+public class DeleteScaleCommand : IRequest
 {
-    public class DeleteScaleCommand : IRequest 
+    public int id { get; set; }
+
+    public class DeleteScaleCommandHandler : IRequestHandler<DeleteScaleCommand>
     {
-        public int Id { get; set; }
+        private readonly IApplicationDbContext _context;
 
-        public class DeleteScaleCommandHandler : IRequestHandler<DeleteScaleCommand>
+        public DeleteScaleCommandHandler(IApplicationDbContext context)
         {
-            private readonly IApplicationDbContext _context;
+            _context = context;
+        }
+        public async Task<Unit> Handle(DeleteScaleCommand request, CancellationToken cancellationToken)
+        {
+            var entity = await _context.Scales.FindAsync(request.id);
 
-            public DeleteScaleCommandHandler(IApplicationDbContext context)
+            if (entity == null)
             {
-                _context = context;
+                throw new NotFoundException(nameof(Scale), request.id);
             }
-            public async Task<Unit> Handle(DeleteScaleCommand request, CancellationToken cancellationToken)
-            {
-                var entity = await _context.Scales.FindAsync(request.Id);
 
-                if (entity == null)
-                {
-                    throw new NotFoundException(nameof(Scale), request.Id);
-                }
+            _context.Scales.Remove(entity);
 
-                _context.Scales.Remove(entity);
+            await _context.SaveChangesAsync(cancellationToken);
 
-                await _context.SaveChangesAsync(cancellationToken);
-
-                return Unit.Value;
-            }
+            return Unit.Value;
         }
     }
 }

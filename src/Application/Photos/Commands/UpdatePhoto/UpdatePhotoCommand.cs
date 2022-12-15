@@ -2,48 +2,40 @@
 using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Photos.Commands.UpdatePhoto
+namespace Application.Photos.Commands.UpdatePhoto;
+public class UpdatePhotoCommand : IRequest
 {
-    public class UpdatePhotoCommand : IRequest
+    public int id { get; set; }
+    public int order { get; set; }
+    public byte[] imageData { get; set; }
+    public int gunplaId { get; set; }
+
+    public class UpdatePhotoCommandHandler : IRequestHandler<UpdatePhotoCommand>
     {
-        public int Id { get; set; }
-        public int Order { get; set; }
-        public byte[] ImageData { get; set; }
-        public int GunplaId { get; set; }
+        private readonly IApplicationDbContext _context;
 
-        public class UpdatePhotoCommandHandler : IRequestHandler<UpdatePhotoCommand>
+        public UpdatePhotoCommandHandler(IApplicationDbContext context)
         {
-            private readonly IApplicationDbContext _context;
+            _context = context;
+        }
 
-            public UpdatePhotoCommandHandler(IApplicationDbContext context)
+        public async Task<Unit> Handle(UpdatePhotoCommand request, CancellationToken cancellationToken)
+        {
+            var entity = await _context.Photos.FindAsync(request.id);
+
+            if (entity == null)
             {
-                _context = context;
+                throw new NotFoundException(nameof(Photo), request.id);
             }
 
-            public async Task<Unit> Handle(UpdatePhotoCommand request, CancellationToken cancellationToken)
-            {
-                var entity = await _context.Photos.FindAsync(request.Id);
+            entity.order = request.order;
+            entity.imageData = request.imageData;
+            entity.gunplaId = request.gunplaId;
 
-                if (entity == null)
-                {
-                    throw new NotFoundException(nameof(Photo), request.Id);
-                }
+            await _context.SaveChangesAsync(cancellationToken);
 
-                entity.Order = request.Order;
-                entity.ImageData = request.ImageData;
-                entity.GunplaId = request.GunplaId;
-
-                await _context.SaveChangesAsync(cancellationToken);
-
-                return Unit.Value;
-            }
+            return Unit.Value;
         }
     }
 }

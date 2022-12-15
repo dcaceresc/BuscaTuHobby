@@ -2,43 +2,36 @@
 using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Gunplas.Commands.DeleteGunpla
+namespace Application.Gunplas.Commands.DeleteGunpla;
+
+public class DeleteGunplaCommand : IRequest
 {
-    public class DeleteGunplaCommand : IRequest
+    public int id { get; set; }
+
+    public class DeleteGunplaCommandHandler : IRequestHandler<DeleteGunplaCommand>
     {
-        public int Id { get; set; }
+        private readonly IApplicationDbContext _context;
 
-        public class DeleteGunplaCommandHandler : IRequestHandler<DeleteGunplaCommand>
+        public DeleteGunplaCommandHandler(IApplicationDbContext context)
         {
-            private readonly IApplicationDbContext _context;
+            _context = context;
+        }
 
-            public DeleteGunplaCommandHandler(IApplicationDbContext context)
+        public async Task<Unit> Handle(DeleteGunplaCommand request, CancellationToken cancellationToken)
+        {
+            var entity = await _context.Gunplas.FindAsync(request.id);
+
+            if (entity == null)
             {
-                _context = context;
+                throw new NotFoundException(nameof(Gunpla), request.id);
             }
 
-            public async Task<Unit> Handle(DeleteGunplaCommand request, CancellationToken cancellationToken)
-            {
-                var entity = await _context.Gunplas.FindAsync(request.Id);
+            _context.Gunplas.Remove(entity);
 
-                if (entity == null)
-                {
-                    throw new NotFoundException(nameof(Gunpla), request.Id);
-                }
+            await _context.SaveChangesAsync(cancellationToken);
 
-                _context.Gunplas.Remove(entity);
-
-                await _context.SaveChangesAsync(cancellationToken);
-
-                return Unit.Value;
-            }
+            return Unit.Value;
         }
     }
 }

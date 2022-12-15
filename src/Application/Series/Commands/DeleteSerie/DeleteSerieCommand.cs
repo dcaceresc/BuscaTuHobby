@@ -2,43 +2,37 @@
 using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Series.Commands.DeleteSerie
+namespace Application.Series.Commands.DeleteSerie;
+
+public class DeleteSerieCommand : IRequest
 {
-    public class DeleteSerieCommand : IRequest
+    public int id { get; set; }
+
+    public class DeleteSerieCommandHandler : IRequestHandler<DeleteSerieCommand>
     {
-        public int Id { get; set; }
+        private readonly IApplicationDbContext _context;
 
-        public class DeleteSerieCommandHandler : IRequestHandler<DeleteSerieCommand>
+        public DeleteSerieCommandHandler(IApplicationDbContext context)
         {
-            private readonly IApplicationDbContext _context;
+            _context = context;
+        }
 
-            public DeleteSerieCommandHandler(IApplicationDbContext context)
+        public async Task<Unit> Handle(DeleteSerieCommand request, CancellationToken cancellationToken)
+        {
+            var entity = await _context.Series.FindAsync(request.id);
+
+            if (entity == null)
             {
-                _context = context;
+                throw new NotFoundException(nameof(Serie), request.id);
             }
 
-            public async Task<Unit> Handle(DeleteSerieCommand request, CancellationToken cancellationToken)
-            {
-                var entity = await _context.Series.FindAsync(request.Id);
+            _context.Series.Remove(entity);
 
-                if (entity == null)
-                {
-                    throw new NotFoundException(nameof(Serie), request.Id);
-                }
+            await _context.SaveChangesAsync(cancellationToken);
 
-                _context.Series.Remove(entity);
-
-                await _context.SaveChangesAsync(cancellationToken);
-
-                return Unit.Value;
-            }
+            return Unit.Value;
         }
     }
 }
+

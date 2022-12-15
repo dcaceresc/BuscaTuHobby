@@ -2,42 +2,36 @@
 using Application.Common.Interfaces;
 using Domain.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace Application.Grades.Commands.DeleteGrade
+
+namespace Application.Grades.Commands.DeleteGrade;
+
+public class DeleteGradeCommand : IRequest
 {
-    public class DeleteGradeCommand : IRequest
+    public int id { get; set; }
+
+    public class DeleteGradeCommandHandler : IRequestHandler<DeleteGradeCommand>
     {
-        public int Id { get; set; }
-
-        public class DeleteGradeCommandHandler : IRequestHandler<DeleteGradeCommand>
+        private readonly IApplicationDbContext _context;
+        public DeleteGradeCommandHandler(IApplicationDbContext context)
         {
-            private readonly IApplicationDbContext _context;
-            public DeleteGradeCommandHandler(IApplicationDbContext context)
+            _context = context;
+        }
+
+        public async Task<Unit> Handle(DeleteGradeCommand request, CancellationToken cancellationToken)
+        {
+            var entity = await _context.Grades.FindAsync(request.id);
+
+            if (entity == null)
             {
-                _context = context;
+                throw new NotFoundException(nameof(Grade), request.id);
             }
 
-            public async Task<Unit> Handle(DeleteGradeCommand request, CancellationToken cancellationToken)
-            {
-                var entity = await _context.Grades.FindAsync(request.Id);
+            _context.Grades.Remove(entity);
 
-                if (entity == null)
-                {
-                    throw new NotFoundException(nameof(Grade), request.Id);
-                }
+            await _context.SaveChangesAsync(cancellationToken);
 
-                _context.Grades.Remove(entity);
-
-                await _context.SaveChangesAsync(cancellationToken);
-
-                return Unit.Value;
-            }
+            return Unit.Value;
         }
     }
 }

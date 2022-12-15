@@ -1,17 +1,11 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Application.Scales.Commands.CreateScale
+namespace Application.Scales.Commands.CreateScale;
+
+public class CreateScaleCommandValidator : AbstractValidator<CreateScaleCommand>
 {
-    public class CreateScaleCommandValidator : AbstractValidator<CreateScaleCommand>
+    public CreateScaleCommandValidator()
     {
-        public CreateScaleCommandValidator()
-        {
-            RuleFor(v => v.Name).NotNull().NotEmpty();
-        }
+        RuleFor(v => v.name).NotNull().NotEmpty();
     }
 }
