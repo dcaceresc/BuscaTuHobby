@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "R8brm2NuHKx4fJ0C90rQSdIOHD4P9zBFZmejgcrw1RGd7t4G7MCOBRLJLv7mlfo7zaZvcuia5PS2BombMmowBw==",
+  "dgSpecHash": "EQ9nV9xcy9H9I5333XUYUOyK3b9A8uAbu+EErg/NAZP7siDjlWsV024vRaAP50F0peIPDAhC0/UASww+iI4/Iw==",
   "success": true,
-  "projectFilePath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\WebUI\\WebUI.csproj",
+  "projectFilePath": "D:\\source\\repos\\BuscaTuGunpla\\src\\WebUI\\WebUI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\mavro\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\mavro\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\8.1.1\\automapper.extensions.microsoft.dependencyinjection.8.1.1.nupkg.sha512",

@@ -11406,11 +11406,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\WebUI\\WebUI.csproj",
+      "projectUniqueName": "D:\\source\\repos\\BuscaTuGunpla\\src\\WebUI\\WebUI.csproj",
       "projectName": "WebUI",
-      "projectPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\WebUI\\WebUI.csproj",
+      "projectPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\WebUI\\WebUI.csproj",
       "packagesPath": "C:\\Users\\mavro\\.nuget\\packages\\",
-      "outputPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\WebUI\\obj\\",
+      "outputPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\WebUI\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\mavro\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -11427,11 +11427,11 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Application\\Application.csproj": {
-              "projectPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Application\\Application.csproj"
+            "D:\\source\\repos\\BuscaTuGunpla\\src\\Application\\Application.csproj": {
+              "projectPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Application\\Application.csproj"
             },
-            "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Infrastructure\\Infrastructure.csproj": {
-              "projectPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Infrastructure\\Infrastructure.csproj"
+            "D:\\source\\repos\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj": {
+              "projectPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj"
             }
           }
         }

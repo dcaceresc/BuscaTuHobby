@@ -8,4 +8,4 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Infrastructure
-build_property.ProjectDir = D:\source\repos\Pruebas Gunpla\BuscaTuGunpla 1\src\Infrastructure\
+build_property.ProjectDir = D:\source\repos\BuscaTuGunpla\src\Infrastructure\

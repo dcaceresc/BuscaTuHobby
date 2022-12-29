@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Infrastructure\\Infrastructure.csproj": {}
+    "D:\\source\\repos\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj": {}
   },
   "projects": {
-    "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Application\\Application.csproj": {
+    "D:\\source\\repos\\BuscaTuGunpla\\src\\Application\\Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Application\\Application.csproj",
+        "projectUniqueName": "D:\\source\\repos\\BuscaTuGunpla\\src\\Application\\Application.csproj",
         "projectName": "Application",
-        "projectPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Application\\Application.csproj",
+        "projectPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Application\\Application.csproj",
         "packagesPath": "C:\\Users\\mavro\\.nuget\\packages\\",
-        "outputPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Application\\obj\\",
+        "outputPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Application\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\mavro\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -28,8 +28,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Domain\\Domain.csproj": {
-                "projectPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Domain\\Domain.csproj"
+              "D:\\source\\repos\\BuscaTuGunpla\\src\\Domain\\Domain.csproj": {
+                "projectPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Domain\\Domain.csproj"
               }
             }
           }
@@ -81,14 +81,14 @@
         }
       }
     },
-    "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Domain\\Domain.csproj": {
+    "D:\\source\\repos\\BuscaTuGunpla\\src\\Domain\\Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Domain\\Domain.csproj",
+        "projectUniqueName": "D:\\source\\repos\\BuscaTuGunpla\\src\\Domain\\Domain.csproj",
         "projectName": "Domain",
-        "projectPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Domain\\Domain.csproj",
+        "projectPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Domain\\Domain.csproj",
         "packagesPath": "C:\\Users\\mavro\\.nuget\\packages\\",
-        "outputPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Domain\\obj\\",
+        "outputPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\mavro\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -136,14 +136,14 @@
         }
       }
     },
-    "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Infrastructure\\Infrastructure.csproj": {
+    "D:\\source\\repos\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Infrastructure\\Infrastructure.csproj",
+        "projectUniqueName": "D:\\source\\repos\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj",
         "projectName": "Infrastructure",
-        "projectPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Infrastructure\\Infrastructure.csproj",
+        "projectPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj",
         "packagesPath": "C:\\Users\\mavro\\.nuget\\packages\\",
-        "outputPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Infrastructure\\obj\\",
+        "outputPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\mavro\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -160,8 +160,8 @@
           "net6.0": {
             "targetAlias": "net6.0",
             "projectReferences": {
-              "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Application\\Application.csproj": {
-                "projectPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Application\\Application.csproj"
+              "D:\\source\\repos\\BuscaTuGunpla\\src\\Application\\Application.csproj": {
+                "projectPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Application\\Application.csproj"
               }
             }
           }

@@ -10,6 +10,8 @@ import { AuthenticationModule } from './modules/authentication/authentication.mo
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AdministratorModule } from './modules/administrator/administrator.module';
+import { UniverseModule } from './modules/administrator/modules/universe/universe.module';
+import { SerieModule } from './modules/administrator/modules/serie/serie.module';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,9 @@ import { AdministratorModule } from './modules/administrator/administrator.modul
     AuthenticationModule,
     FontAwesomeModule,
     NgbModule,
-    AdministratorModule
+    AdministratorModule,
+    UniverseModule,
+    SerieModule
   ],
   providers: [],
   bootstrap: [AppComponent]

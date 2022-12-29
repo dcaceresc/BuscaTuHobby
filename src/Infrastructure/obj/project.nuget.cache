@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "qCZOkRURgsLKeZN/8D6Qv3uMx0LksIQs+yJZAGuFh4XSvXp62ElWNKXvPOduCN8wJs2YGzxUMXEoKjf0UylKWw==",
+  "dgSpecHash": "I4kIsYco5vYLdIcYPTlbJgveKqjy0VcACWpzCeDuRLxZQUnJ42ZTjLsvWYlFtjOL3NF+FFhFkYs4KY4NPuBiuQ==",
   "success": true,
-  "projectFilePath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Infrastructure\\Infrastructure.csproj",
+  "projectFilePath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Infrastructure\\Infrastructure.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\mavro\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\mavro\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\8.1.1\\automapper.extensions.microsoft.dependencyinjection.8.1.1.nupkg.sha512",

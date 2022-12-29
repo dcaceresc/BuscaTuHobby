@@ -3,12 +3,6 @@ D:\source\repos\BuscaTuGunpla\src\WebUI\obj\Debug\net6.0\spa.proxy.json
 D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net6.0\spa.proxy.json
 D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net6.0\appsettings.Development.json
 D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net6.0\appsettings.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net6.0\Respaldo\ClientApp\angular.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net6.0\Respaldo\ClientApp\package-lock.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net6.0\Respaldo\ClientApp\package.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net6.0\Respaldo\ClientApp\tsconfig.app.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net6.0\Respaldo\ClientApp\tsconfig.json
-D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net6.0\Respaldo\ClientApp\tsconfig.spec.json
 D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net6.0\WebUI.staticwebassets.runtime.json
 D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net6.0\WebUI.exe
 D:\source\repos\BuscaTuGunpla\src\WebUI\bin\Debug\net6.0\WebUI.deps.json

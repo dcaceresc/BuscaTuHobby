@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "hWtoRS7+16tiYblZvZJbnhQuZhf21R770oUt1G4D1NR2kjgyAyxZDni4ntxFW6ubhoZvzcN90bt46+cZCRmX6w==",
+  "dgSpecHash": "kgBUzD/jUYoRWcFEapE8CQFfmclZE6htGIbmCfp+U7TCqacbQbhP/H1xMPv+JaHBzsn+XxkrgYL4/R5NIsekkg==",
   "success": true,
-  "projectFilePath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Domain\\Domain.csproj",
+  "projectFilePath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Domain\\Domain.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

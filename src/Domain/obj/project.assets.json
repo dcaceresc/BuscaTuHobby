@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Domain\\Domain.csproj",
+      "projectUniqueName": "D:\\source\\repos\\BuscaTuGunpla\\src\\Domain\\Domain.csproj",
       "projectName": "Domain",
-      "projectPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Domain\\Domain.csproj",
+      "projectPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Domain\\Domain.csproj",
       "packagesPath": "C:\\Users\\mavro\\.nuget\\packages\\",
-      "outputPath": "D:\\source\\repos\\Pruebas Gunpla\\BuscaTuGunpla 1\\src\\Domain\\obj\\",
+      "outputPath": "D:\\source\\repos\\BuscaTuGunpla\\src\\Domain\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\mavro\\AppData\\Roaming\\NuGet\\NuGet.Config",
