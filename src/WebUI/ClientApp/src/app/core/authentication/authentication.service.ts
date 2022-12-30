@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { User, UserManager, WebStorageStateStore } from 'oidc-client';
+import { User, UserManager } from 'oidc-client';
 import { BehaviorSubject, concat, from, Observable } from 'rxjs';
 import { filter, map, mergeMap, take, tap } from 'rxjs/operators';
 import { ApplicationName, ApplicationPaths } from 'src/app/shared/models/api-authorization.constants';
@@ -39,7 +39,7 @@ export interface IUser {
 export class AuthenticationService {
 
   private popUpDisabled = true;
-  private userManager!: UserManager;
+  private userManager?: UserManager;
   private userSubject: BehaviorSubject<IUser | null> = new BehaviorSubject<IUser | null>(null);
 
   public isAuthenticated(): Observable<boolean> {
@@ -55,7 +55,7 @@ export class AuthenticationService {
 
   public getAccessToken(): Observable<string | null> {
     return from(this.ensureUserManagerInitialized())
-      .pipe(mergeMap(() => from(this.userManager.getUser())),
+      .pipe(mergeMap(() => from(this.userManager!.getUser())),
         map(user => user && user.access_token));
   }
 
@@ -71,7 +71,7 @@ export class AuthenticationService {
     await this.ensureUserManagerInitialized();
     let user: User | null = null;
     try {
-      user = await this.userManager.signinSilent(this.createArguments());
+      user = await this.userManager!.signinSilent(this.createArguments());
       this.userSubject.next(user.profile);
       return this.success(state);
     } catch (silentError) {
@@ -82,10 +82,10 @@ export class AuthenticationService {
         if (this.popUpDisabled) {
           throw new Error('Popup disabled. Change \'authorize.service.ts:AuthorizeService.popupDisabled\' to false to enable it.');
         }
-        user = await this.userManager.signinPopup(this.createArguments());
+        user = await this.userManager!.signinPopup(this.createArguments());
         this.userSubject.next(user.profile);
         return this.success(state);
-      } catch (popupError:any) {
+      } catch (popupError: any) {
         if (popupError.message === 'Popup window closed') {
           // The user explicitly cancelled the login action by closing an opened popup.
           return this.error('The user closed the window.');
@@ -95,9 +95,9 @@ export class AuthenticationService {
 
         // PopUps might be blocked by the user, fallback to redirect
         try {
-          await this.userManager.signinRedirect(this.createArguments(state));
+          await this.userManager!.signinRedirect(this.createArguments(state));
           return this.redirect();
-        } catch (redirectError:any) {
+        } catch (redirectError: any) {
           console.log('Redirect authentication error: ', redirectError);
           return this.error(redirectError);
         }
@@ -105,10 +105,11 @@ export class AuthenticationService {
     }
   }
 
+
   public async completeSignIn(url: string): Promise<IAuthenticationResult> {
     try {
       await this.ensureUserManagerInitialized();
-      const user = await this.userManager.signinCallback(url);
+      const user = await this.userManager!.signinCallback(url);
       this.userSubject.next(user && user.profile);
       return this.success(user && user.state);
     } catch (error) {
@@ -124,15 +125,15 @@ export class AuthenticationService {
       }
 
       await this.ensureUserManagerInitialized();
-      await this.userManager.signoutPopup(this.createArguments());
+      await this.userManager!.signoutPopup(this.createArguments());
       this.userSubject.next(null);
       return this.success(state);
-    } catch (popupSignOutError) {
+    } catch (popupSignOutError: any) {
       console.log('Popup signout error: ', popupSignOutError);
       try {
-        await this.userManager.signoutRedirect(this.createArguments(state));
+        await this.userManager!.signoutRedirect(this.createArguments(state));
         return this.redirect();
-      } catch (redirectSignOutError:any) {
+      } catch (redirectSignOutError: any) {
         console.log('Redirect signout error: ', redirectSignOutError);
         return this.error(redirectSignOutError);
       }
@@ -142,10 +143,10 @@ export class AuthenticationService {
   public async completeSignOut(url: string): Promise<IAuthenticationResult> {
     await this.ensureUserManagerInitialized();
     try {
-      const response = await this.userManager.signoutCallback(url);
+      const response = await this.userManager!.signoutCallback(url);
       this.userSubject.next(null);
       return this.success(response && response.state);
-    } catch (error:any) {
+    } catch (error: any) {
       console.log(`There was an error trying to log out '${error}'.`);
       return this.error(error);
     }
@@ -183,15 +184,15 @@ export class AuthenticationService {
     this.userManager = new UserManager(settings);
 
     this.userManager.events.addUserSignedOut(async () => {
-      await this.userManager.removeUser();
+      await this.userManager!.removeUser();
       this.userSubject.next(null);
     });
   }
 
-  private getUserFromStorage(): Observable<IUser| null> {
+  private getUserFromStorage(): Observable<IUser | null> {
     return from(this.ensureUserManagerInitialized())
       .pipe(
-        mergeMap(() => this.userManager.getUser()),
+        mergeMap(() => this.userManager!.getUser()),
         map(u => u && u.profile));
   }
 

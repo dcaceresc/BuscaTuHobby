@@ -92,8 +92,8 @@
 
 			</ul>
 
-      <ul class="navbar-nav ms-auto">
-        <li ngbDropdown class="nav-item">
+      <ul class="navbar-nav ms-auto" >
+        <li ngbDropdown class="nav-item" *ngIf="isAuthenticated | async">
           <a href (click)="false" class="nav-link text-white" ngbDropdownToggle>Administrator</a>
           <div ngbDropdownMenu class="dropdown-menu dropdown-menu-end">
             <a ngbDropdownItem [routerLink]="['/administrator/grades']">Grades</a>

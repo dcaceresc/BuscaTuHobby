@@ -3,23 +3,19 @@ import { CommonModule } from '@angular/common';
 
 import { UniverseRoutingModule } from './universe-routing.module';
 import { IndexComponent } from './pages/index/index.component';
-import { AdministratorModule } from '../../administrator.module';
-import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { CreateComponent } from './components/create/create.component';
-import { UpdateComponent } from './components/update/update.component';
+import { AdministratorModule } from '../../administrator.module';
 
 
 @NgModule({
   declarations: [
     IndexComponent,
-    CreateComponent,
-    UpdateComponent
+    CreateComponent
   ],
   imports: [
     CommonModule,
     UniverseRoutingModule,
-    AdministratorModule,
-    NgbModalModule
+    AdministratorModule
   ]
 })
 export class UniverseModule { }

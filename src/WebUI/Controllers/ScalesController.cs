@@ -13,6 +13,8 @@ using System.Threading.Tasks;
 namespace WebUI.Controllers;
 
 [Authorize]
+[Route("api/[controller]")]
+[ApiController]
 public class ScalesController : ApiController
 {
     [HttpGet]

@@ -9,6 +9,9 @@ import { HomeModule } from './modules/home/home.module';
 import { AuthenticationModule } from './modules/authentication/authentication.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthorizeInterceptor } from './core/interceptors/authorize.interceptor';
 import { AdministratorModule } from './modules/administrator/administrator.module';
 import { UniverseModule } from './modules/administrator/modules/universe/universe.module';
 import { SerieModule } from './modules/administrator/modules/serie/serie.module';
@@ -28,9 +31,11 @@ import { SerieModule } from './modules/administrator/modules/serie/serie.module'
     NgbModule,
     AdministratorModule,
     UniverseModule,
-    SerieModule
+    SerieModule,
   ],
-  providers: [],
+  providers: [{
+    provide:HTTP_INTERCEPTORS, useClass : AuthorizeInterceptor, multi:true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

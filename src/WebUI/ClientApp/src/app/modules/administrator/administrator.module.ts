@@ -1,23 +1,22 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
+import { AdministratorRoutingModule } from './administrator-routing.module';
 import { TableComponent } from './components/table/table.component';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
-import { ModalComponent } from './components/modal/modal.component';
-
 
 
 @NgModule({
   declarations: [
-    TableComponent,
-    ModalComponent
+    TableComponent
   ],
   imports: [
     CommonModule,
+    AdministratorRoutingModule,
     NgbPaginationModule
   ],
   exports:[
-    TableComponent,
-    ModalComponent
+    TableComponent
   ]
 })
 export class AdministratorModule { }

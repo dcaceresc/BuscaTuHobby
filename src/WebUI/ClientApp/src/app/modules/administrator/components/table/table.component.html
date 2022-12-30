@@ -2,11 +2,16 @@
   <thead>
     <tr>
       <th *ngFor="let column of columns">{{column}}</th>
+      <th>option</th>
     </tr>
   </thead>
   <tbody>
     <tr *ngFor="let row of data | slice: (page - 1) * pageSize: page * pageSize">
       <td *ngFor="let column of columns">{{row[column]}}</td>
+      <td>
+        <button class="btn btn-primary">Editar</button>
+        <button class="btn btn-danger">Eliminar</button>
+      </td>
     </tr>
   </tbody>
 </table>

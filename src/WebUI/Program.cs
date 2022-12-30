@@ -4,8 +4,6 @@ using Infrastructure;
 using Microsoft.OpenApi.Models;
 using WebUI.Services;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using Infrastructure.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("ApplicationDbContextConnection") ?? throw new InvalidOperationException("Connection string 'ApplicationDbContextConnection' not found.");
@@ -51,8 +49,6 @@ builder.Services.AddSwaggerGen(c => {
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -75,6 +71,14 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+app.UseCors(builder =>
+{
+    builder
+          .WithOrigins("http://localhost:4200", "https://localhost:44408")
+          .AllowAnyHeader();
+
+}
+);
 
 
 app.UseAuthentication();
