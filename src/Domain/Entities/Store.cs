@@ -9,7 +9,7 @@ namespace Domain.Entities
         public string address { get; set; } = default!;
         public string webSite { get; set; } = default!;
         public int ranking { get; set; }
-
+        public bool active { get; set; }
         public virtual ICollection<Sale> sale { get; set; } = default!;
         public virtual ICollection<GunplaPrice> gunplaPrice { get; set; } = default!;
 

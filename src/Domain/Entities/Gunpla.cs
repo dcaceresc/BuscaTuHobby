@@ -13,6 +13,7 @@ namespace Domain.Entities
         public bool hasBase { get; set; }
         public string description { get; set; } = default!;
         public DateTime releaseDate { get; set; }
+        public bool actve {  get; set; }
 
         public virtual Grade grade { get; set; } = default!;
         public virtual Manufacturer manufacturer { get; set; } = default!;

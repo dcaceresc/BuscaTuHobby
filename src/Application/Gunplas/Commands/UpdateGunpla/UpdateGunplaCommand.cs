@@ -27,7 +27,7 @@ public class UpdateGunplaCommand : IRequest
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateGunplaCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateGunplaCommand request, CancellationToken cancellationToken)
         {
             var entity = await _context.Gunplas.FindAsync(request.id);
 
@@ -48,7 +48,6 @@ public class UpdateGunplaCommand : IRequest
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
         }
     }
 }

@@ -1,14 +1,11 @@
-﻿
-using Application.Common.Interfaces;
-using Domain.Entities;
-using MediatR;
+﻿using Domain.Entities;
 
 namespace Application.Stores.Commands.CreateStore;
 
 public class CreateStoreCommand : IRequest<int>
 {
-    public string name { get; set; }
-    public string address { get; set; }
+    public string name { get; set; } = default!;
+    public string address { get; set; } = default!;
     public int ranking { get; set; }
 
 
@@ -27,7 +24,8 @@ public class CreateStoreCommand : IRequest<int>
             {
                 name = request.name,
                 address = request.address,
-                ranking = request.ranking
+                ranking = request.ranking,
+                active = true
             };
 
             _context.Stores.Add(entity);

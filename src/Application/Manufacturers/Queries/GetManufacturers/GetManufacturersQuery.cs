@@ -1,13 +1,8 @@
-﻿using Application.Common.Interfaces;
-using AutoMapper;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿namespace Application.Manufacturers.Queries.GetManufacturers;
 
-namespace Application.Manufacturers.Queries.GetManufacturers;
-
-public class GetManufacturersQuery : IRequest<IList<ManufacturerVm>>
+public class GetManufacturersQuery : IRequest<IList<ManufacturerDto>>
 {
-    public class GetManufacturersQueryHandler : IRequestHandler<GetManufacturersQuery, IList<ManufacturerVm>>
+    public class GetManufacturersQueryHandler : IRequestHandler<GetManufacturersQuery, IList<ManufacturerDto>>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -17,9 +12,9 @@ public class GetManufacturersQuery : IRequest<IList<ManufacturerVm>>
             _context = context;
             _mapper = mapper;
         }
-        public async Task<IList<ManufacturerVm>> Handle(GetManufacturersQuery request, CancellationToken cancellationToken)
+        public async Task<IList<ManufacturerDto>> Handle(GetManufacturersQuery request, CancellationToken cancellationToken)
         {
-            return _mapper.Map<IList<ManufacturerVm>>(await _context.Manufacturers.ToListAsync());
+            return await _context.Manufacturers.AsNoTracking().ProjectTo<ManufacturerDto>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
         }
     }
 }

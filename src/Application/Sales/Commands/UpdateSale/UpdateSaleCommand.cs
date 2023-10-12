@@ -21,7 +21,7 @@ public class UpdateSaleCommand : IRequest
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateSaleCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateSaleCommand request, CancellationToken cancellationToken)
         {
             var entity = await _context.Sales.FindAsync(request.id);
 
@@ -35,8 +35,6 @@ public class UpdateSaleCommand : IRequest
             entity.price = request.price;
 
             await _context.SaveChangesAsync(cancellationToken);
-
-            return Unit.Value;
         }
     }
 }

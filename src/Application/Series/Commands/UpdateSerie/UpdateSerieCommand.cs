@@ -20,7 +20,7 @@ public class UpdateSerieCommand : IRequest
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateSerieCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateSerieCommand request, CancellationToken cancellationToken)
         {
             var entity = await _context.Series.FindAsync(request.id);
 
@@ -34,7 +34,6 @@ public class UpdateSerieCommand : IRequest
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
         }
     }
 }

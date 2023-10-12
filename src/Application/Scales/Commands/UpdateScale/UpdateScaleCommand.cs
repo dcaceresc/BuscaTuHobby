@@ -19,7 +19,7 @@ public class UpdateScaleCommand : IRequest
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateScaleCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateScaleCommand request, CancellationToken cancellationToken)
         {
             var entity = await _context.Scales.FindAsync(request.id);
 
@@ -31,8 +31,6 @@ public class UpdateScaleCommand : IRequest
             entity.name = request.name;
 
             await _context.SaveChangesAsync(cancellationToken);
-
-            return Unit.Value;
         }
     }
 

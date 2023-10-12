@@ -6,7 +6,8 @@ namespace Application.Universes.Commands.CreateUniverse;
 
 public class CreateUniverseCommand : IRequest<int>
 {
-    public string name { get; set; }
+    public string name { get; set; } = default!;
+    public string acronym { get; set; } = default!;
 
     public class CreateUniverseCommandHandler : IRequestHandler<CreateUniverseCommand, int>
     {
@@ -21,7 +22,9 @@ public class CreateUniverseCommand : IRequest<int>
         {
             var entity = new Universe
             {
-                name = request.name
+                name = request.name,
+                acronym = request.acronym,
+                active = true
             };
 
             _context.Universes.Add(entity);

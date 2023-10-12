@@ -1,14 +1,8 @@
-﻿
-using Application.Common.Interfaces;
-using AutoMapper;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿namespace Application.Stores.Queries.GetStores;
 
-namespace Application.Stores.Queries.GetStores;
-
-public class GetStoresQuery : IRequest<IList<StoreVm>>
+public class GetStoresQuery : IRequest<IList<StoreDto>>
 {
-    public class GetStoresQueryHandler : IRequestHandler<GetStoresQuery, IList<StoreVm>>
+    public class GetStoresQueryHandler : IRequestHandler<GetStoresQuery, IList<StoreDto>>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -20,9 +14,9 @@ public class GetStoresQuery : IRequest<IList<StoreVm>>
             _mapper = mapper;
         }
 
-        public async Task<IList<StoreVm>> Handle(GetStoresQuery request, CancellationToken cancellationToken)
+        public async Task<IList<StoreDto>> Handle(GetStoresQuery request, CancellationToken cancellationToken)
         {
-            return _mapper.Map<IList<StoreVm>>(await _context.Stores.ToListAsync());
+            return await _context.Stores.AsNoTracking().ProjectTo<StoreDto>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
         }
     }
 }

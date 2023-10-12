@@ -1,0 +1,56 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Provide sufficient contrast against white background */
+
+
+// Modifica las variables de colores de Bootstrap
+// $primary: #0033aa; // Color principal de Gundam Original
+// $secondary: #ff0000; // Color secundario de Gundam Original
+// $success: #00ff00; // Color de éxito
+// $info: #00ccff; // Color de información
+// $warning: #ffcc00; // Color de advertencia
+// $danger: #ff0000; // Color de peligro
+
+
+
+
+@import './variables.scss';
+
+
+button:disabled{
+  color:$white !important;
+}
+
+
+.bg-primary{
+  background-color: $darkBlue !important;
+  color:$white;
+}
+
+.bg-danger{
+  background-color: $red !important;
+  color: $white;
+}
+
+.bg-success{
+  background-color: $green !important;
+  color: $white;
+}
+
+.bg-secundary{
+  background-color: $secundary !important;
+  color:$white;
+}
+
+.page-item{
+  .page-link{
+    color:$darkBlue;
+  }
+  &.active{
+    .page-link{
+      background-color: $darkBlue;
+      color:$white;
+    }
+  }
+}
+

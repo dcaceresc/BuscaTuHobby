@@ -22,7 +22,8 @@ public class CreateSerieCommand : IRequest<int>
             var entity = new Serie
             {
                 name = request.name,
-                universeId = request.universeId
+                universeId = request.universeId,
+                active = true
             };
 
             _context.Series.Add(entity);

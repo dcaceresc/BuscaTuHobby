@@ -1,13 +1,8 @@
-﻿using Application.Common.Interfaces;
-using AutoMapper;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿namespace Application.Grades.Queries.GetGrades;
 
-namespace Application.Grades.Queries.GetGrades;
-
-public class GetGradesQuery : IRequest<IList<GradeVm>>
+public class GetGradesQuery : IRequest<IList<GradeDto>>
 {
-    public class GetGradesQueryHandler : IRequestHandler<GetGradesQuery, IList<GradeVm>>
+    public class GetGradesQueryHandler : IRequestHandler<GetGradesQuery, IList<GradeDto>>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -18,9 +13,9 @@ public class GetGradesQuery : IRequest<IList<GradeVm>>
             _mapper = mapper;
         }
 
-        public async Task<IList<GradeVm>> Handle(GetGradesQuery request, CancellationToken cancellationToken)
+        public async Task<IList<GradeDto>> Handle(GetGradesQuery request, CancellationToken cancellationToken)
         {
-            return _mapper.Map<IList<GradeVm>>(await _context.Grades.ToListAsync());
+            return await _context.Grades.AsNoTracking().ProjectTo<GradeDto>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
         }
     }
 }

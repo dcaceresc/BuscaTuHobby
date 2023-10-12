@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Sales.Queries.GetSales;
 
-public class GetSalesQuery : IRequest<IList<SaleVm>>
+public class GetSalesQuery : IRequest<IList<SaleDto>>
 {
-    public class GetSalesQueryHandler : IRequestHandler<GetSalesQuery, IList<SaleVm>>
+    public class GetSalesQueryHandler : IRequestHandler<GetSalesQuery, IList<SaleDto>>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -19,9 +19,9 @@ public class GetSalesQuery : IRequest<IList<SaleVm>>
             _mapper = mapper;
         }
 
-        public async Task<IList<SaleVm>> Handle(GetSalesQuery request, CancellationToken cancellationToken)
+        public async Task<IList<SaleDto>> Handle(GetSalesQuery request, CancellationToken cancellationToken)
         {
-            return _mapper.Map<IList<SaleVm>>(await _context.Photos.ToListAsync());
+            return _mapper.Map<IList<SaleDto>>(await _context.Photos.ToListAsync());
         }
     }
 }

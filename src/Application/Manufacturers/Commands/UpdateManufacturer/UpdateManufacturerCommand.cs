@@ -19,7 +19,7 @@ public class UpdateManufacturerCommand : IRequest
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateManufacturerCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateManufacturerCommand request, CancellationToken cancellationToken)
         {
             var entity = await _context.Manufacturers.FindAsync(request.id);
 
@@ -32,7 +32,6 @@ public class UpdateManufacturerCommand : IRequest
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
         }
     }
 }

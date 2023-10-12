@@ -17,7 +17,7 @@ public class DeletePhotoCommand : IRequest
             _context = context;
         }
 
-        public async Task<Unit> Handle(DeletePhotoCommand request, CancellationToken cancellationToken)
+        public async Task Handle(DeletePhotoCommand request, CancellationToken cancellationToken)
         {
             var entity = await _context.Photos.FindAsync(request.id);
 
@@ -29,8 +29,6 @@ public class DeletePhotoCommand : IRequest
             _context.Photos.Remove(entity);
 
             await _context.SaveChangesAsync(cancellationToken);
-
-            return Unit.Value;
         }
     }
 }

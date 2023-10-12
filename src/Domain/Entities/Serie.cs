@@ -7,7 +7,8 @@ namespace Domain.Entities
         public int id { get; set; }
         public string name { get; set; } = default!;
         public int universeId { get; set; }
-        public Universe universe { get; set; } = default!;
-        public ICollection<Gunpla> gunplas { get; set; } = default!;
+        public bool active { get; set; }
+        public Universe Universe { get; set; } = default!;
+        public ICollection<Gunpla> Gunplas { get; set; } = default!;
     }
 }

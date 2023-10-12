@@ -5,9 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Scales.Queries.GetScales;
 
-public class GetScalesQuery : IRequest<IList<ScaleVm>>
+public class GetScalesQuery : IRequest<IList<ScaleDto>>
 {
-    public class GetScalesQueryHandler : IRequestHandler<GetScalesQuery, IList<ScaleVm>>
+    public class GetScalesQueryHandler : IRequestHandler<GetScalesQuery, IList<ScaleDto>>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -17,9 +17,9 @@ public class GetScalesQuery : IRequest<IList<ScaleVm>>
             _context = context;
             _mapper = mapper;
         }
-        public async Task<IList<ScaleVm>> Handle(GetScalesQuery request, CancellationToken cancellationToken)
+        public async Task<IList<ScaleDto>> Handle(GetScalesQuery request, CancellationToken cancellationToken)
         {
-            return _mapper.Map<IList<ScaleVm>>(await _context.Scales.ToListAsync());
+            return _mapper.Map<IList<ScaleDto>>(await _context.Scales.ToListAsync());
         }
     }
 }

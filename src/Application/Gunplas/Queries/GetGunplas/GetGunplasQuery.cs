@@ -1,14 +1,8 @@
-﻿
-using Application.Common.Interfaces;
-using AutoMapper;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
+﻿namespace Application.Gunplas.Queries.GetGunplas;
 
-namespace Application.Gunplas.Queries.GetGunplas;
-
-public class GetGunplasQuery : IRequest<IList<GunplaVm>>
+public class GetGunplasQuery : IRequest<IList<GunplaDto>>
 {
-    public class GetGunplasQueryHandler : IRequestHandler<GetGunplasQuery, IList<GunplaVm>>
+    public class GetGunplasQueryHandler : IRequestHandler<GetGunplasQuery, IList<GunplaDto>>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -19,10 +13,9 @@ public class GetGunplasQuery : IRequest<IList<GunplaVm>>
             _mapper = mapper;
         }
 
-        public async Task<IList<GunplaVm>> Handle(GetGunplasQuery request, CancellationToken cancellationToken)
+        public async Task<IList<GunplaDto>> Handle(GetGunplasQuery request, CancellationToken cancellationToken)
         {
-
-            return _mapper.Map<IList<GunplaVm>>(await _context.Gunplas.ToListAsync());
+            return await _context.Gunplas.AsNoTracking().ProjectTo<GunplaDto>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
 
         }
     }

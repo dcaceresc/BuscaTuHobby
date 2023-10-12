@@ -9,6 +9,7 @@ namespace Domain.Entities
         public int gunplaId { get; set; }
         public int storeId { get; set; }
         public int price { get; set; }
+        public bool active { get; set; }
 
         public virtual Gunpla gunpla { get; set; } = default!;
         public virtual Store store { get; set; } = default!;

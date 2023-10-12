@@ -8,8 +8,8 @@ namespace Application.Stores.Commands.UpdateStore;
 public class UpdateStoreCommand : IRequest
 {
     public int id { get; set; }
-    public string name { get; set; }
-    public string address { get; set; }
+    public string name { get; set; } = default!;
+    public string address { get; set; } = default!;
     public int ranking { get; set; }
 
     public class UpdateStoreCommandHandler : IRequestHandler<UpdateStoreCommand>
@@ -21,7 +21,7 @@ public class UpdateStoreCommand : IRequest
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateStoreCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateStoreCommand request, CancellationToken cancellationToken)
         {
             var entity = await _context.Stores.FindAsync(request.id);
 
@@ -35,8 +35,6 @@ public class UpdateStoreCommand : IRequest
             entity.ranking = request.ranking;
 
             await _context.SaveChangesAsync(cancellationToken);
-
-            return Unit.Value;
         }
     }
 }

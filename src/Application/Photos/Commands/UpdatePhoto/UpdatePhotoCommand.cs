@@ -20,7 +20,7 @@ public class UpdatePhotoCommand : IRequest
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdatePhotoCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdatePhotoCommand request, CancellationToken cancellationToken)
         {
             var entity = await _context.Photos.FindAsync(request.id);
 
@@ -34,8 +34,6 @@ public class UpdatePhotoCommand : IRequest
             entity.gunplaId = request.gunplaId;
 
             await _context.SaveChangesAsync(cancellationToken);
-
-            return Unit.Value;
         }
     }
 }

@@ -1,13 +1,14 @@
 ﻿using Application.Common.Interfaces;
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Universes.Queries.GetUniverses;
 
-public class GetUniversesQuery : IRequest<IList<UniverseVm>>
+public class GetUniversesQuery : IRequest<IList<UniverseDto>>
 {
-    public class GetUniversesQueryHandler : IRequestHandler<GetUniversesQuery, IList<UniverseVm>>
+    public class GetUniversesQueryHandler : IRequestHandler<GetUniversesQuery, IList<UniverseDto>>
     {
         private readonly IApplicationDbContext _context;
         private readonly IMapper _mapper;
@@ -18,9 +19,9 @@ public class GetUniversesQuery : IRequest<IList<UniverseVm>>
             _mapper = mapper;
         }
 
-        public async Task<IList<UniverseVm>> Handle(GetUniversesQuery request, CancellationToken cancellationToken)
+        public async Task<IList<UniverseDto>> Handle(GetUniversesQuery request, CancellationToken cancellationToken)
         {
-            return _mapper.Map<IList<UniverseVm>>(await _context.Universes.ToListAsync());
+            return await _context.Universes.AsNoTracking().ProjectTo<UniverseDto>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
         }
     }
 }

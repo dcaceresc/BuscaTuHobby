@@ -1,0 +1,69 @@
+<div class="card mt-3">
+    <div class="card-header bg-primary">
+      Crear Tienda
+    </div>
+    <div class="card-body">
+      <form [formGroup]="storeForm" (ngSubmit)="onSubmit()">
+    
+        <div class="mb-3">
+          <label for="name" class="form-label">Nombre:</label>
+          <input type="text" class="form-control" id="name" formControlName="name" required>
+        </div>
+  
+        <div class="mb-3">
+          <label for="name" class="form-label">Dirección:</label>
+          <input type="text" class="form-control" id="address" formControlName="address" required>
+        </div>
+
+        <div class="mb-3">
+            <label for="ranking" class="form-label">Ranking</label>
+            <br>
+
+            <div class="rating-wrapper ">
+
+    
+                <!-- star 5 -->
+                <input type="radio" id="5-star-rating" name="star-rating" value="5">
+                <label for="5-star-rating" class="star-rating">
+                  <fa-icon [icon]="faStar" class="d-inline-block"></fa-icon>
+                </label>
+                
+                 <!-- star 4 -->
+                <input type="radio" id="4-star-rating" name="star-rating" value="4">
+                <label for="4-star-rating" class="star-rating star">
+                  <fa-icon [icon]="faStar" class="d-inline-block"></fa-icon>
+                </label>
+                
+                 <!-- star 3 -->
+                <input type="radio" id="3-star-rating" name="star-rating" value="3">
+                <label for="3-star-rating" class="star-rating star">
+                  <fa-icon [icon]="faStar" class="d-inline-block"></fa-icon>
+                </label>
+                
+                <!-- star 2 -->
+                <input type="radio" id="2-star-rating" name="star-rating" value="2">
+                <label for="2-star-rating" class="star-rating star">
+                  <fa-icon [icon]="faStar" class="d-inline-block"></fa-icon>
+                </label>
+                
+                <!-- star 1 -->
+                <input type="radio" id="1-star-rating" name="star-rating" value="1">
+                <label for="1-star-rating" class="star-rating star">
+                  <fa-icon [icon]="faStar" class="d-inline-block"></fa-icon>
+                </label>
+                
+               </div>
+        </div>
+
+        
+  
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn bg-primary me-2" [disabled]="storeForm.invalid">Guardar</button>
+          <button type="button" class="btn bg-secundary" (click)="onCancel()">Cancelar</button>
+        </div>
+      </form>
+  
+  
+    </div>
+  </div>
+  

@@ -1,0 +1,40 @@
+@import './../../../../../../variables.scss';
+
+.rating-wrapper {
+    align-self: center;
+    display: inline-flex;
+    direction: rtl !important;
+    
+  
+    label {    
+      color: #E1E6F6;
+      cursor: pointer;
+      display: inline-flex;
+      font-size: 2rem;
+      padding: 1rem .6rem;
+      transition: color 0.5s;
+    }
+    
+
+  
+    input {
+      height: 100%;
+      width: 100%;
+    }
+    
+    input {
+      display: none;
+    }
+  
+    label:hover,
+    label:hover ~ label,
+    input:checked ~ label  {
+      color: $yellow;
+    }
+  
+    label:hover,
+    label:hover ~ label,
+    input:checked ~ label  {
+      color: $yellow;
+    }
+  }

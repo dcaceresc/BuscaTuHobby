@@ -19,7 +19,7 @@ public class UpdateUniverseCommand : IRequest
             _context = context;
         }
 
-        public async Task<Unit> Handle(UpdateUniverseCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateUniverseCommand request, CancellationToken cancellationToken)
         {
             var entity = await _context.Universes.FindAsync(request.id);
 
@@ -32,7 +32,6 @@ public class UpdateUniverseCommand : IRequest
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return Unit.Value;
         }
     }
 }
