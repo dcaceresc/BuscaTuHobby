@@ -1,13 +1,11 @@
-﻿using Application.Common.Interfaces;
-using Domain.Entities;
-using MediatR;
+﻿using Domain.Entities;
 
 namespace Application.Photos.Commands.CreatePhoto;
 
 public class CreatePhotoCommand : IRequest<int>
 {
     public int order { get; set; }
-    public byte[] imageData { get; set; }
+    public byte[] imageData { get; set; } = default!;
     public int gunplaId { get; set; }
 
     public class CreatePhotoCommandHandler : IRequestHandler<CreatePhotoCommand, int>

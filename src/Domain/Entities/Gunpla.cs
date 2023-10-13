@@ -1,6 +1,4 @@
-﻿using Domain.Common;
-
-namespace Domain.Entities
+﻿namespace Domain.Entities
 {
     public class Gunpla : AuditableEntity
     {
@@ -13,18 +11,15 @@ namespace Domain.Entities
         public bool hasBase { get; set; }
         public string description { get; set; } = default!;
         public DateTime releaseDate { get; set; }
-        public bool actve {  get; set; }
+        public bool actve { get; set; }
 
-        public virtual Grade grade { get; set; } = default!;
-        public virtual Manufacturer manufacturer { get; set; } = default!;
-        public virtual Scale scale { get; set; } = default!;
-        public virtual Serie serie { get; set; } = default!;
+        public virtual Grade Grade { get; set; } = default!;
+        public virtual Manufacturer Manufacturer { get; set; } = default!;
+        public virtual Scale Scale { get; set; } = default!;
+        public virtual Serie Serie { get; set; } = default!;
 
-        public virtual ICollection<Photo> photos { get; set; } = default!;
-        public virtual ICollection<GunplaPrice> gunplaPrice { get; set; } = default!;
-
-
-
+        public virtual ICollection<Photo> Photos { get; set; } = default!;
+        public virtual ICollection<FavoriteGunpla> FavoriteGunplas { get; set; } = default!;
 
     }
 }

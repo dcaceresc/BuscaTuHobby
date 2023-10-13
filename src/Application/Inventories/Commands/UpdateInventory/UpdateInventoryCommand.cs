@@ -1,34 +1,30 @@
 ﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
 using Domain.Entities;
-using MediatR;
 
-namespace Application.Sales.Commands.UpdateSale;
+namespace Application.Inventories.Commands.UpdateInventory;
 
-public class UpdateSaleCommand : IRequest
+public class UpdateInventoryCommand : IRequest
 {
     public int id { get; set; }
     public int gunplaId { get; set; }
     public int storeId { get; set; }
     public int price { get; set; }
 
-    public class UpdateSaleCommandHandler : IRequestHandler<UpdateSaleCommand>
+    public class UpdateInventoryCommandHandler : IRequestHandler<UpdateInventoryCommand>
     {
         private readonly IApplicationDbContext _context;
 
-        public UpdateSaleCommandHandler(IApplicationDbContext context)
+        public UpdateInventoryCommandHandler(IApplicationDbContext context)
         {
             _context = context;
         }
 
-        public async Task Handle(UpdateSaleCommand request, CancellationToken cancellationToken)
+        public async Task Handle(UpdateInventoryCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _context.Sales.FindAsync(request.id);
+            var entity = await _context.Inventories.FindAsync(request.id);
 
             if (entity == null)
-            {
-                throw new NotFoundException(nameof(Sale), request.id);
-            }
+                throw new NotFoundException(nameof(Inventory), request.id);
 
             entity.gunplaId = request.gunplaId;
             entity.storeId = request.storeId;

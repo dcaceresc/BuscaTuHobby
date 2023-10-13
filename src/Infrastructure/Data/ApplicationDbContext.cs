@@ -4,7 +4,6 @@ using Domain.Entities;
 using Duende.IdentityServer.EntityFramework.Options;
 using Infrastructure.Identity;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System.Reflection;
 
@@ -21,15 +20,17 @@ namespace Infrastructure.Data
             _currentUserService = currentUserService;
         }
 
+        public DbSet<Favorite> Favorites { get; set; }
+        public DbSet<FavoriteGunpla> FavoriteGunplas { get; set; }
         public DbSet<Grade> Grades { get; set; } = default!;
         public DbSet<Gunpla> Gunplas { get; set; } = default!;
-        public DbSet<GunplaPrice> GunplaPrices { get; set; } = default!;
+        public DbSet<Inventory> Inventories { get; set; } = default!;
         public DbSet<Manufacturer> Manufacturers { get; set; } = default!;
         public DbSet<Photo> Photos { get; set; } = default!;
-        public DbSet<Sale> Sales { get; set; } = default!;
+        public DbSet<Review> Reviews { get; set; } = default!;
         public DbSet<Scale> Scales { get; set; } = default!;
         public DbSet<Serie> Series { get; set; } = default!;
-        public DbSet<Store> Stores  { get; set; } = default!;
+        public DbSet<Store> Stores { get; set; } = default!;
         public DbSet<Universe> Universes { get; set; } = default!;
 
 
@@ -58,8 +59,18 @@ namespace Infrastructure.Data
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-            builder.Entity<GunplaPrice>()
-                .HasKey(e => new {e.gunplaId,e.storeId});
+            builder.Entity<FavoriteGunpla>()
+            .HasKey(pf => new { pf.favoriteId, pf.gunplaId });
+
+            builder.Entity<FavoriteGunpla>()
+                .HasOne(pf => pf.Favorite)
+                .WithMany(f => f.FavoriteGunplas)
+                .HasForeignKey(pf => pf.favoriteId);
+
+            builder.Entity<FavoriteGunpla>()
+                .HasOne(pf => pf.Gunpla)
+                .WithMany(p => p.FavoriteGunplas)
+                .HasForeignKey(pf => pf.gunplaId);
 
             base.OnModelCreating(builder);
         }

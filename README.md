@@ -2,14 +2,14 @@
 
 **BuscaTuGunpla** es una aplicación que te permite buscar y comparar precios de Gunplas y maquetas de distintas tiendas en línea. Esta aplicación utiliza **.NET** para el backend y **Angular** para el frontend, y sigue la estructura propuesta por **Jason Taylor** en su Clean Architecture (https://github.com/jasontaylordev/CleanArchitecture).
 
-## Funcionalidades Principales
+## Funcionalidades Principales (En Proceso)
 
-- **Búsqueda de Productos:** Encuentra tus Gunplas y maquetas favoritas utilizando palabras clave y filtros.
-- **Comparación de Precios:** Compara los precios de un producto en diferentes tiendas en línea.
-- **Detalles del Producto:** Obtén información detallada sobre cada producto, incluyendo descripción, reseñas y especificaciones.
-- **Gestión de Favoritos:** Guarda tus productos favoritos para acceder a ellos fácilmente más tarde.
-- **Autenticación y Perfiles:** Crea una cuenta, inicia sesión y personaliza tu perfil.
-- **Comentarios y Valoraciones:** Comparte tus opiniones sobre los productos y lee las de otros usuarios.
+- **Búsqueda de Productos:** Encuentra tus Gunplas y maquetas favoritas utilizando palabras clave y filtros. :construction_worker:
+- **Comparación de Precios:** Compara los precios de un producto en diferentes tiendas en línea. :soon:
+- **Detalles del Producto:** Obtén información detallada sobre cada producto, incluyendo descripción, reseñas y especificaciones. :construction_worker:
+- **Gestión de Favoritos:** Guarda tus productos favoritos para acceder a ellos fácilmente más tarde. :soon:
+- **Autenticación y Perfiles:** Crea una cuenta, inicia sesión y personaliza tu perfil. :construction_worker:
+- **Comentarios y Valoraciones:** Comparte tus opiniones sobre los productos y lee las de otros usuarios. :soon:
 
 ## Configuración del Proyecto
 
@@ -19,9 +19,9 @@ Asegúrate de tener instaladas las siguientes herramientas antes de comenzar:
 - Node.js y npm: https://nodejs.org/
 - Angular CLI: https://angular.io/cli
 
-### Configuración del Proyecto
+### Configuración del Proyecto 
 
-1. Clona este repositorio: `git clone https://github.com/dcaceresc/BuscaTuGunpla.git`
+1. Clona este repositorio: `git clone https://github.com/dcaceresc/BuscaTuGunpla.git` 
 2. Navega al directorio del proyecto y abre una terminal.
 3. Ejecuta `dotnet restore` para restaurar las dependencias del proyecto.
 4. Diriguete al directorio `/src/Web/ClientApp`

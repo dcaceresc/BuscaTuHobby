@@ -1,9 +1,4 @@
-﻿using Application.Common.Interfaces;
-using AutoMapper;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-
-namespace Application.Photos.Queries.GetPhotos;
+﻿namespace Application.Photos.Queries.GetPhotos;
 
 public class GetPhotosQuery : IRequest<IList<PhotoVm>>
 {

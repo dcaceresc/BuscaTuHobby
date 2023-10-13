@@ -22,7 +22,7 @@ public class UniversesController : ApiController
     [HttpGet("{id}")]
     public async Task<UniverseVM> GetById(int id)
     {
-        return await Mediator.Send(new GetUniverseByIdQuery() { id = id});
+        return await Mediator.Send(new GetUniverseByIdQuery() { id = id });
     }
 
     [HttpPost]

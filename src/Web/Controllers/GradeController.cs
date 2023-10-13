@@ -38,7 +38,7 @@ public class GradesController : ApiController
     }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult> Delete(int id)
+    public async Task<ActionResult> Toggle(int id)
     {
         await Mediator.Send(new ToggleGradeCommand { id = id });
 

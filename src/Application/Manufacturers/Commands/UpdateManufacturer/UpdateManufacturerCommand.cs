@@ -1,14 +1,12 @@
 ﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
 using Domain.Entities;
-using MediatR;
 
 namespace Application.Manufacturers.Commands.UpdateManufacturer;
 
 public class UpdateManufacturerCommand : IRequest
 {
     public int id { get; set; }
-    public string name { get; set; }
+    public string name { get; set; } = default!;
 
     public class UpdateManufacturerCommandHandler : IRequestHandler<UpdateManufacturerCommand>
     {

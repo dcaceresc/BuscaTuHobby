@@ -1,6 +1,4 @@
-﻿using Domain.Common;
-
-namespace Domain.Entities
+﻿namespace Domain.Entities
 {
     public class Universe : AuditableEntity
     {
@@ -8,6 +6,6 @@ namespace Domain.Entities
         public string name { get; set; } = default!;
         public string acronym { get; set; } = default!;
         public bool active { get; set; }
-        public virtual ICollection<Serie> serie { get; set; } = default!;
+        public virtual ICollection<Serie> Series { get; set; } = default!;
     }
 }

@@ -1,6 +1,4 @@
-﻿using Application.Common.Mappings;
-using AutoMapper;
-using Domain.Entities;
+﻿using Domain.Entities;
 
 namespace Application.Series.Queries.GetSeries;
 

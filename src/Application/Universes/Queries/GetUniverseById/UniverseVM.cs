@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Domain.Entities;
+﻿using Domain.Entities;
 
 namespace Application.Universes.Queries.GetUniverseById;
 
@@ -14,7 +13,7 @@ public class UniverseVM
     {
         public Mapping()
         {
-            CreateMap<Universe,UniverseVM>();
+            CreateMap<Universe, UniverseVM>();
         }
     }
 }

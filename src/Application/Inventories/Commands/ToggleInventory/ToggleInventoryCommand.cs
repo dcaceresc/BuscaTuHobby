@@ -1,13 +1,13 @@
 ﻿using Application.Common.Exceptions;
 using Domain.Entities;
 
-namespace Application.Sales.Commands.ToggleSale;
+namespace Application.Inventories.Commands.ToggleInventory;
 
-public class ToggleSaleCommand : IRequest
+public class ToggleInventoryCommand : IRequest
 {
     public int id { get; set; }
 
-    public class ToggleSaleCommandHandler : IRequestHandler<ToggleSaleCommand>
+    public class ToggleSaleCommandHandler : IRequestHandler<ToggleInventoryCommand>
     {
         private readonly IApplicationDbContext _context;
 
@@ -16,12 +16,12 @@ public class ToggleSaleCommand : IRequest
             _context = context;
         }
 
-        public async Task Handle(ToggleSaleCommand request, CancellationToken cancellationToken)
+        public async Task Handle(ToggleInventoryCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _context.Sales.FindAsync(request.id);
+            var entity = await _context.Inventories.FindAsync(request.id);
 
             if (entity == null)
-                throw new NotFoundException(nameof(Sale), request.id);
+                throw new NotFoundException(nameof(Inventory), request.id);
 
             entity.active = !entity.active;
 

@@ -24,7 +24,7 @@ public class ToggleStoreCommand : IRequest
                 throw new NotFoundException(nameof(Store), request.id);
 
             entity.active = !entity.active;
-           
+
 
             await _context.SaveChangesAsync(cancellationToken);
 

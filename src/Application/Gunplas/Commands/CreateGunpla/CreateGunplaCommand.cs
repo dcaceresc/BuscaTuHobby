@@ -1,18 +1,16 @@
-﻿using Application.Common.Interfaces;
-using Domain.Entities;
-using MediatR;
+﻿using Domain.Entities;
 
 namespace Application.Gunplas.Commands.CreateGunpla;
 
 public class CreateGunplaCommand : IRequest<int>
 {
-    public string name { get; set; }
+    public string name { get; set; } = default!;
     public int gradeId { get; set; }
     public int scaleId { get; set; }
     public int manufacturerId { get; set; }
     public int serieId { get; set; }
     public bool hasBase { get; set; }
-    public string description { get; set; }
+    public string description { get; set; } = default!;
     public DateTime releaseDate { get; set; }
 
     public class CreateGunplaCommandHandler : IRequestHandler<CreateGunplaCommand, int>

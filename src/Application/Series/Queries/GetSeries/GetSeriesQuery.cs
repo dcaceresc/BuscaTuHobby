@@ -1,10 +1,4 @@
-﻿using Application.Common.Interfaces;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-
-namespace Application.Series.Queries.GetSeries;
+﻿namespace Application.Series.Queries.GetSeries;
 
 public class GetSeriesQuery : IRequest<IList<SerieDto>>
 {

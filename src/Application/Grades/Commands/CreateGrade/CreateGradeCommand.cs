@@ -1,12 +1,10 @@
-﻿using Application.Common.Interfaces;
-using Domain.Entities;
-using MediatR;
+﻿using Domain.Entities;
 
 namespace Application.Grades.Commands.CreateGrade;
 public class CreateGradeCommand : IRequest<int>
 {
-    public string name { get; set; }
-    public string acronym { get; set; }
+    public string name { get; set; } = default!;
+    public string acronym { get; set; } = default!;
 
 
     public class CreateGradeCommandHandler : IRequestHandler<CreateGradeCommand, int>

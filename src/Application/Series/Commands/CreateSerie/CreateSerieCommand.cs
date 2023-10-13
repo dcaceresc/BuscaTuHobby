@@ -1,12 +1,10 @@
-﻿using Application.Common.Interfaces;
-using Domain.Entities;
-using MediatR;
+﻿using Domain.Entities;
 
 namespace Application.Series.Commands.CreateSerie;
 
 public class CreateSerieCommand : IRequest<int>
 {
-    public string name { get; set; }
+    public string name { get; set; } = default!;
     public int universeId { get; set; }
 
     public class CreateSerieCommandHandler : IRequestHandler<CreateSerieCommand, int>

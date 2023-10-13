@@ -2,7 +2,7 @@
 
 public class GetScaleByIdQuery : IRequest<ScaleVM>
 {
-
+    public int id { get; set; }
 }
 
 public class GetScaleByIdQueryHandler : IRequestHandler<GetScaleByIdQuery, ScaleVM>
@@ -16,8 +16,8 @@ public class GetScaleByIdQueryHandler : IRequestHandler<GetScaleByIdQuery, Scale
         _mapper = mapper;
     }
 
-    public Task<ScaleVM> Handle(GetScaleByIdQuery request, CancellationToken cancellationToken)
+    public async Task<ScaleVM> Handle(GetScaleByIdQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await _context.Scales.Where(x => x.id == request.id).AsNoTracking().ProjectTo<ScaleVM>(_mapper.ConfigurationProvider).FirstAsync();
     }
 }

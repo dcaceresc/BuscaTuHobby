@@ -1,21 +1,19 @@
 ﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
 using Domain.Entities;
-using MediatR;
 
 namespace Application.Series.Commands.UpdateSerie;
 
 public class UpdateSerieCommand : IRequest
 {
     public int id { get; set; }
-    public string name { get; set; }
+    public string name { get; set; } = default!;
     public int universeId { get; set; }
 
     public class UpdateSerieCommandHandler : IRequestHandler<UpdateSerieCommand>
     {
         private readonly IApplicationDbContext _context;
 
-        public UpdateSerieCommandHandler(IApplicationDbContext context )
+        public UpdateSerieCommandHandler(IApplicationDbContext context)
         {
             _context = context;
         }

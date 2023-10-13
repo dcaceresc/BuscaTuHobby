@@ -1,14 +1,12 @@
 ﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
 using Domain.Entities;
-using MediatR;
 
 namespace Application.Universes.Commands.UpdateUniverse;
 
 public class UpdateUniverseCommand : IRequest
 {
     public int id { get; set; }
-    public string name { get; set; }
+    public string name { get; set; } = default!;
 
     public class UpdateUniverseCommandHandler : IRequestHandler<UpdateUniverseCommand>
     {

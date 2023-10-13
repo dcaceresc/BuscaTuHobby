@@ -1,9 +1,4 @@
-﻿using Application.Common.Interfaces;
-using AutoMapper;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-
-namespace Application.Scales.Queries.GetScales;
+﻿namespace Application.Scales.Queries.GetScales;
 
 public class GetScalesQuery : IRequest<IList<ScaleDto>>
 {

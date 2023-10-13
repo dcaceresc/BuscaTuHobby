@@ -1,15 +1,13 @@
 ﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
 using Domain.Entities;
-using MediatR;
 
 namespace Application.Grades.Commands.UpdateGrade;
 
 public class UpdateGradeCommand : IRequest
 {
     public int id { get; set; }
-    public string name { get; set; }
-    public string acronym { get; set; }
+    public string name { get; set; } = default!;
+    public string acronym { get; set; } = default!;
 }
 
 public class UpdateGradeCommandHandler : IRequestHandler<UpdateGradeCommand>

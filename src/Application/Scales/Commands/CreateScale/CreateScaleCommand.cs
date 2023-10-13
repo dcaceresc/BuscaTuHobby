@@ -1,12 +1,11 @@
-﻿using Application.Common.Interfaces;
-using Domain.Entities;
-using MediatR;
+﻿using Domain.Entities;
 
 namespace Application.Scales.Commands.CreateScale;
 
 public class CreateScaleCommand : IRequest<int>
 {
-    public string name { get; set; }
+    public string name { get; set; } = default!;
+    public string acronym { get; set; } = default!;
 
     public class CreateScaleCommandHandler : IRequestHandler<CreateScaleCommand, int>
     {
@@ -22,7 +21,8 @@ public class CreateScaleCommand : IRequest<int>
         {
             var entity = new Scale
             {
-                name = request.name
+                name = request.name,
+                acronym = request.acronym
             };
 
             _context.Scales.Add(entity);

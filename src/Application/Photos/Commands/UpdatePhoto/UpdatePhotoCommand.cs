@@ -1,14 +1,12 @@
 ﻿using Application.Common.Exceptions;
-using Application.Common.Interfaces;
 using Domain.Entities;
-using MediatR;
 
 namespace Application.Photos.Commands.UpdatePhoto;
 public class UpdatePhotoCommand : IRequest
 {
     public int id { get; set; }
     public int order { get; set; }
-    public byte[] imageData { get; set; }
+    public byte[] imageData { get; set; } = default!;
     public int gunplaId { get; set; }
 
     public class UpdatePhotoCommandHandler : IRequestHandler<UpdatePhotoCommand>

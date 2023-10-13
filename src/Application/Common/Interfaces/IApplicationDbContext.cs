@@ -1,5 +1,4 @@
 ﻿using Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Common.Interfaces
 {
@@ -7,10 +6,9 @@ namespace Application.Common.Interfaces
     {
         DbSet<Grade> Grades { get; }
         DbSet<Gunpla> Gunplas { get; }
-        DbSet<GunplaPrice> GunplaPrices { get; }
+        DbSet<Inventory> Inventories { get; }
         DbSet<Manufacturer> Manufacturers { get; }
         DbSet<Photo> Photos { get; }
-        DbSet<Sale> Sales { get; }
         DbSet<Scale> Scales { get; }
         DbSet<Serie> Series { get; }
         DbSet<Store> Stores { get; }

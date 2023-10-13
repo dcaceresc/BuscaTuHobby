@@ -1,12 +1,12 @@
 ﻿
 using FluentValidation;
 
-namespace Application.Sales.Commands.UpdateSale;
+namespace Application.Inventories.Commands.UpdateInventory;
 
 
-public class UpdateSaleCommandValidator : AbstractValidator<UpdateSaleCommand>
+public class UpdateInventoryCommandValidator : AbstractValidator<UpdateInventoryCommand>
 {
-    public UpdateSaleCommandValidator()
+    public UpdateInventoryCommandValidator()
     {
         RuleFor(v => v.id).NotNull();
         RuleFor(v => v.gunplaId).NotNull();

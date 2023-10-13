@@ -1,12 +1,10 @@
-﻿using Application.Common.Interfaces;
-using Domain.Entities;
-using MediatR;
+﻿using Domain.Entities;
 
 namespace Application.Manufacturers.Commands.CreateManufacturer;
 
 public class CreateManufacturerCommand : IRequest<int>
 {
-    public string name { get; set; }
+    public string name { get; set; } = default!;
 
     public class CreateManufacturerCommandHandler : IRequestHandler<CreateManufacturerCommand, int>
     {

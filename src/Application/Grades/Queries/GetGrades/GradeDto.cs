@@ -2,7 +2,7 @@
 
 namespace Application.Grades.Queries.GetGrades;
 
-public class GradeDto 
+public class GradeDto
 {
     public int id { get; set; }
     public string name { get; set; } = default!;

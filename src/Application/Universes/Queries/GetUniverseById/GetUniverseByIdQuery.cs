@@ -1,10 +1,4 @@
-﻿using Application.Common.Interfaces;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-
-namespace Application.Universes.Queries.GetUniverseById;
+﻿namespace Application.Universes.Queries.GetUniverseById;
 
 public class GetUniverseByIdQuery : IRequest<UniverseVM>
 {

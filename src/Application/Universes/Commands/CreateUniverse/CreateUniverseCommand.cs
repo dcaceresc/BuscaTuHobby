@@ -1,6 +1,4 @@
-﻿using Application.Common.Interfaces;
-using Domain.Entities;
-using MediatR;
+﻿using Domain.Entities;
 
 namespace Application.Universes.Commands.CreateUniverse;
 
@@ -35,5 +33,5 @@ public class CreateUniverseCommand : IRequest<int>
     }
 }
 
-    
+
 
