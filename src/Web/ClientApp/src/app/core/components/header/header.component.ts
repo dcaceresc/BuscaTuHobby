@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LoginMenuComponent } from 'src/app/features/authentication/components/login-menu/login-menu.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import {  faMagnifyingGlass,faSignInAlt, faUserPlus, faBars } from '@fortawesome/free-solid-svg-icons';
+import {  faMagnifyingGlass,faSignInAlt, faUserPlus, faBars, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { AuthorizeService } from '../../services/authorize.service';
 import { Observable } from 'rxjs';
 
@@ -20,6 +20,7 @@ export class HeaderComponent implements OnInit{
   faSignInAlt = faSignInAlt;
   faUserPlus = faUserPlus;
   faBars = faBars;
+  faHeart = faHeart;
 
   constructor(private authorizeService: AuthorizeService){}
 

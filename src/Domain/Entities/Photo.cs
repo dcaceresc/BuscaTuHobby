@@ -5,8 +5,8 @@
         public int id { get; set; }
         public int order { get; set; }
         public byte[] imageData { get; set; } = default!;
-        public int gunplaId { get; set; }
-        public Gunpla Gunpla { get; set; } = default!;
+        public int productId { get; set; }
+        public Product Product { get; set; } = default!;
 
 
     }

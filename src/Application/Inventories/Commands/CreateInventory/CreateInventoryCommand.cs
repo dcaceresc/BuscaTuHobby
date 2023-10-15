@@ -4,7 +4,7 @@ namespace Application.Inventories.Commands.CreateInventory;
 
 public class CreateInventoryCommand : IRequest<int>
 {
-    public int gunplaId { get; set; }
+    public int productId { get; set; }
     public int storeId { get; set; }
     public int price { get; set; }
 
@@ -21,7 +21,7 @@ public class CreateInventoryCommand : IRequest<int>
         {
             var entity = new Inventory
             {
-                gunplaId = request.gunplaId,
+                productId = request.productId,
                 storeId = request.storeId,
                 price = request.price
             };

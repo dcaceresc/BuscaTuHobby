@@ -55,40 +55,40 @@
 
 
 
-.dropdown-item:hover {
-  background-color: $yellow; /* Azul similar al Nu Gundam */
-  color: black;
-}
-
-.dropdown-menu{
-  background-color: $darkBlue;
-}
-
-.dropdown-item{
-  color: white;
-}
-
-
-// .btn-custom {
-//   background-color: $yellow;
-//   color: $red;
-
-//   padding: 10px 20px;
-//   border-radius: 50px;
-//   font-size: 18px;
-//   transition: background-color 0.3s ease, color 0.3s ease;
-//   margin-right: 10px;
+// .dropdown-item:hover {
+//   background-color: $yellow; /* Azul similar al Nu Gundam */
+//   color: black;
 // }
 
-// .btn-custom i {
-//   margin-right: 10px; /* Adjust the spacing between the icon and text */
-// }
-
-// .btn-custom:hover {
+// .dropdown-menu{
 //   background-color: $darkBlue;
-//   color: $green;
-//   border: 1px solid $green;
 // }
+
+// .dropdown-item{
+//   color: white;
+// }
+
+
+// // .btn-custom {
+// //   background-color: $yellow;
+// //   color: $red;
+
+// //   padding: 10px 20px;
+// //   border-radius: 50px;
+// //   font-size: 18px;
+// //   transition: background-color 0.3s ease, color 0.3s ease;
+// //   margin-right: 10px;
+// // }
+
+// // .btn-custom i {
+// //   margin-right: 10px; /* Adjust the spacing between the icon and text */
+// // }
+
+// // .btn-custom:hover {
+// //   background-color: $darkBlue;
+// //   color: $green;
+// //   border: 1px solid $green;
+// // }
 
 .btn-custom{
     background-color: $darkBlue;
@@ -112,3 +112,4 @@
     border-bottom: 1px solid white
   }
 }
+

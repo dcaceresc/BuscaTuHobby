@@ -7,7 +7,7 @@ public class UpdatePhotoCommand : IRequest
     public int id { get; set; }
     public int order { get; set; }
     public byte[] imageData { get; set; } = default!;
-    public int gunplaId { get; set; }
+    public int productId { get; set; }
 
     public class UpdatePhotoCommandHandler : IRequestHandler<UpdatePhotoCommand>
     {
@@ -29,7 +29,7 @@ public class UpdatePhotoCommand : IRequest
 
             entity.order = request.order;
             entity.imageData = request.imageData;
-            entity.gunplaId = request.gunplaId;
+            entity.productId = request.productId;
 
             await _context.SaveChangesAsync(cancellationToken);
         }

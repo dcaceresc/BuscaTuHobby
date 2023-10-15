@@ -5,7 +5,7 @@ namespace Application.Common.Interfaces
     public interface IApplicationDbContext
     {
         DbSet<Grade> Grades { get; }
-        DbSet<Gunpla> Gunplas { get; }
+        DbSet<Product> Products { get; }
         DbSet<Inventory> Inventories { get; }
         DbSet<Manufacturer> Manufacturers { get; }
         DbSet<Photo> Photos { get; }

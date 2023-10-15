@@ -8,6 +8,6 @@ public class CreateStoreCommandValidator : AbstractValidator<CreateStoreCommand>
     {
         RuleFor(v => v.name).NotNull();
         RuleFor(v => v.address).NotNull();
-        RuleFor(v => v.ranking).NotNull();
+        RuleFor(v => v.webSite).NotNull();
     }
 }

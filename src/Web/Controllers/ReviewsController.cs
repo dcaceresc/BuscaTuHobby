@@ -8,6 +8,7 @@ namespace Web.Controllers;
 [ApiController]
 public class ReviewsController : ApiController
 {
+    [HttpGet]
     public IActionResult Index()
     {
         return NoContent();

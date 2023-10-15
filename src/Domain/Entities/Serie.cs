@@ -7,6 +7,6 @@
         public int universeId { get; set; }
         public bool active { get; set; }
         public Universe Universe { get; set; } = default!;
-        public ICollection<Gunpla> Gunplas { get; set; } = default!;
+        public ICollection<Product> Products { get; set; } = default!;
     }
 }

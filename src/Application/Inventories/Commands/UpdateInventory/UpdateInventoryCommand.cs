@@ -6,7 +6,7 @@ namespace Application.Inventories.Commands.UpdateInventory;
 public class UpdateInventoryCommand : IRequest
 {
     public int id { get; set; }
-    public int gunplaId { get; set; }
+    public int productId { get; set; }
     public int storeId { get; set; }
     public int price { get; set; }
 
@@ -26,7 +26,7 @@ public class UpdateInventoryCommand : IRequest
             if (entity == null)
                 throw new NotFoundException(nameof(Inventory), request.id);
 
-            entity.gunplaId = request.gunplaId;
+            entity.productId = request.productId;
             entity.storeId = request.storeId;
             entity.price = request.price;
 

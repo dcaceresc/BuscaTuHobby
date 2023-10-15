@@ -6,7 +6,7 @@ public class CreateStoreCommand : IRequest<int>
 {
     public string name { get; set; } = default!;
     public string address { get; set; } = default!;
-    public int ranking { get; set; }
+    public string webSite { get; set; } = default!;
 
 
     public class CreateStoreCommandHandler : IRequestHandler<CreateStoreCommand, int>
@@ -24,7 +24,7 @@ public class CreateStoreCommand : IRequest<int>
             {
                 name = request.name,
                 address = request.address,
-                ranking = request.ranking,
+                webSite = request.webSite,
                 active = true
             };
 

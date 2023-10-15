@@ -6,7 +6,7 @@ public class CreatePhotoCommand : IRequest<int>
 {
     public int order { get; set; }
     public byte[] imageData { get; set; } = default!;
-    public int gunplaId { get; set; }
+    public int productId { get; set; }
 
     public class CreatePhotoCommandHandler : IRequestHandler<CreatePhotoCommand, int>
     {
@@ -23,7 +23,7 @@ public class CreatePhotoCommand : IRequest<int>
             {
                 order = request.order,
                 imageData = request.imageData,
-                gunplaId = request.gunplaId
+                productId = request.productId
             };
 
             _context.Photos.Add(entity);

@@ -7,10 +7,17 @@
   </li>
 </ul>
 <ul class="navbar-nav" *ngIf="(isAuthenticated | async) !== true">
-<li class="nav-item">
-      <a class="btn-login-menu" [routerLink]='["/authentication/register"]'><fa-icon [icon] = "faSignInAlt"></fa-icon> Registrarse</a>
-  </li>
-  <li class="nav-item">
-      <a class="btn-login-menu" [routerLink]='["/authentication/login"]'><fa-icon [icon] = "faUserPlus"></fa-icon> Iniciar Sesión</a>
-  </li>
+    <li class="dropdown">
+        <a class="btn-login-menu dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+          <fa-icon [icon]="faUser"></fa-icon> 
+        </a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" [routerLink]="['/authentication/register']">
+            <fa-icon [icon]="faUserPlus"></fa-icon> Registrarse
+          </a>
+          <a class="dropdown-item" [routerLink]="['/authentication/login']">
+            <fa-icon [icon]="faSignInAlt"></fa-icon> Iniciar Sesión
+          </a>
+        </div>
+      </li>
 </ul>

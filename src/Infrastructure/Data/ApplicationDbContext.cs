@@ -21,9 +21,9 @@ namespace Infrastructure.Data
         }
 
         public DbSet<Favorite> Favorites { get; set; }
-        public DbSet<FavoriteGunpla> FavoriteGunplas { get; set; }
+        public DbSet<FavoriteProduct> FavoriteGunplas { get; set; }
         public DbSet<Grade> Grades { get; set; } = default!;
-        public DbSet<Gunpla> Gunplas { get; set; } = default!;
+        public DbSet<Product> Products { get; set; } = default!;
         public DbSet<Inventory> Inventories { get; set; } = default!;
         public DbSet<Manufacturer> Manufacturers { get; set; } = default!;
         public DbSet<Photo> Photos { get; set; } = default!;
@@ -59,18 +59,18 @@ namespace Infrastructure.Data
         {
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
-            builder.Entity<FavoriteGunpla>()
-            .HasKey(pf => new { pf.favoriteId, pf.gunplaId });
+            builder.Entity<FavoriteProduct>()
+            .HasKey(pf => new { pf.favoriteId, pf.productId });
 
-            builder.Entity<FavoriteGunpla>()
+            builder.Entity<FavoriteProduct>()
                 .HasOne(pf => pf.Favorite)
-                .WithMany(f => f.FavoriteGunplas)
+                .WithMany(f => f.FavoriteProducts)
                 .HasForeignKey(pf => pf.favoriteId);
 
-            builder.Entity<FavoriteGunpla>()
-                .HasOne(pf => pf.Gunpla)
-                .WithMany(p => p.FavoriteGunplas)
-                .HasForeignKey(pf => pf.gunplaId);
+            builder.Entity<FavoriteProduct>()
+                .HasOne(pf => pf.Product)
+                .WithMany(p => p.FavoriteProducts)
+                .HasForeignKey(pf => pf.productId);
 
             base.OnModelCreating(builder);
         }

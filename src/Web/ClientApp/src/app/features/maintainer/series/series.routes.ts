@@ -1,10 +1,10 @@
 import { Routes } from "@angular/router";
 import { ListSeriesComponent } from "./pages/list-series/list-series.component";
-import { AddSeriesComponent } from "./pages/add-series/add-series.component";
-import { UpdateSeriesComponent } from "./pages/update-series/update-series.component";
+import { AddSerieComponent } from "./pages/add-serie/add-serie.component";
+import { UpdateSerieComponent } from "./pages/update-serie/update-serie.component";
 
 export const routes : Routes =[
   {path: '', component:ListSeriesComponent},
-  {path: 'create',component:AddSeriesComponent},
-  {path: 'edit/:id', component:UpdateSeriesComponent}
+  {path: 'create',component:AddSerieComponent},
+  {path: 'edit/:id', component:UpdateSerieComponent}
 ];

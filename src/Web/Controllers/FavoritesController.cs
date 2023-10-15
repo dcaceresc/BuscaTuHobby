@@ -8,6 +8,7 @@ namespace Web.Controllers;
 [ApiController]
 public class FavoritesController : ApiController
 {
+    [HttpGet]
     public IActionResult Index()
     {
         return NoContent();

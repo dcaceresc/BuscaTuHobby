@@ -1,7 +1,9 @@
 ﻿using Application.Stores.Commands.CreateStore;
 using Application.Stores.Commands.ToggleStore;
 using Application.Stores.Commands.UpdateStore;
+using Application.Stores.Queries.GetStoreById;
 using Application.Stores.Queries.GetStores;
+using Application.Universes.Queries.GetUniverseById;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +18,11 @@ public class StoresController : ApiController
     public async Task<IList<StoreDto>> Get()
     {
         return await Mediator.Send(new GetStoresQuery());
+    }
+    [HttpGet("{id}")]
+    public async Task<StoreVM> GetById(int id)
+    {
+        return await Mediator.Send(new GetStoreByIdQuery() { id = id });
     }
 
     [HttpPost]

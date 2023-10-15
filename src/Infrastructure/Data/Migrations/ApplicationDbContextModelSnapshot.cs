@@ -51,12 +51,12 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Favorites");
                 });
 
-            modelBuilder.Entity("Domain.Entities.FavoriteGunpla", b =>
+            modelBuilder.Entity("Domain.Entities.FavoriteProduct", b =>
                 {
                     b.Property<int>("favoriteId")
                         .HasColumnType("int");
 
-                    b.Property<int>("gunplaId")
+                    b.Property<int>("productId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Created")
@@ -71,9 +71,9 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("favoriteId", "gunplaId");
+                    b.HasKey("favoriteId", "productId");
 
-                    b.HasIndex("gunplaId");
+                    b.HasIndex("productId");
 
                     b.ToTable("FavoriteGunplas");
                 });
@@ -114,68 +114,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Grades");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Gunpla", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("actve")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("gradeId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("hasBase")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("manufacturerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("releaseDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("scaleId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("serieId")
-                        .HasColumnType("int");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("gradeId");
-
-                    b.HasIndex("manufacturerId");
-
-                    b.HasIndex("scaleId");
-
-                    b.HasIndex("serieId");
-
-                    b.ToTable("Gunplas");
-                });
-
             modelBuilder.Entity("Domain.Entities.Inventory", b =>
                 {
                     b.Property<int>("id")
@@ -199,10 +137,10 @@ namespace Infrastructure.Data.Migrations
                     b.Property<bool>("active")
                         .HasColumnType("bit");
 
-                    b.Property<int>("gunplaId")
+                    b.Property<int>("price")
                         .HasColumnType("int");
 
-                    b.Property<int>("price")
+                    b.Property<int>("productId")
                         .HasColumnType("int");
 
                     b.Property<int>("storeId")
@@ -210,7 +148,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("id");
 
-                    b.HasIndex("gunplaId");
+                    b.HasIndex("productId");
 
                     b.HasIndex("storeId");
 
@@ -273,9 +211,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("gunplaId")
-                        .HasColumnType("int");
-
                     b.Property<byte[]>("imageData")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
@@ -283,11 +218,76 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int>("order")
                         .HasColumnType("int");
 
+                    b.Property<int>("productId")
+                        .HasColumnType("int");
+
                     b.HasKey("id");
 
-                    b.HasIndex("gunplaId");
+                    b.HasIndex("productId");
 
                     b.ToTable("Photos");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Product", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("actve")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("gradeId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("hasBase")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("manufacturerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("releaseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("scaleId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("serieId")
+                        .HasColumnType("int");
+
+                    b.HasKey("id");
+
+                    b.HasIndex("gradeId");
+
+                    b.HasIndex("manufacturerId");
+
+                    b.HasIndex("scaleId");
+
+                    b.HasIndex("serieId");
+
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Domain.Entities.Review", b =>
@@ -422,9 +422,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ranking")
-                        .HasColumnType("int");
 
                     b.Property<string>("webSite")
                         .IsRequired()
@@ -814,47 +811,77 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.FavoriteGunpla", b =>
+            modelBuilder.Entity("Domain.Entities.FavoriteProduct", b =>
                 {
                     b.HasOne("Domain.Entities.Favorite", "Favorite")
-                        .WithMany("FavoriteGunplas")
+                        .WithMany("FavoriteProducts")
                         .HasForeignKey("favoriteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Gunpla", "Gunpla")
-                        .WithMany("FavoriteGunplas")
-                        .HasForeignKey("gunplaId")
+                    b.HasOne("Domain.Entities.Product", "Product")
+                        .WithMany("FavoriteProducts")
+                        .HasForeignKey("productId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Favorite");
 
-                    b.Navigation("Gunpla");
+                    b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Gunpla", b =>
+            modelBuilder.Entity("Domain.Entities.Inventory", b =>
+                {
+                    b.HasOne("Domain.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("productId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Store", "Store")
+                        .WithMany("Inventories")
+                        .HasForeignKey("storeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Store");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Photo", b =>
+                {
+                    b.HasOne("Domain.Entities.Product", "Product")
+                        .WithMany("Photos")
+                        .HasForeignKey("productId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
                     b.HasOne("Domain.Entities.Grade", "Grade")
-                        .WithMany("Gunplas")
+                        .WithMany("Products")
                         .HasForeignKey("gradeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Manufacturer", "Manufacturer")
-                        .WithMany("Gunplas")
+                        .WithMany("Products")
                         .HasForeignKey("manufacturerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Scale", "Scale")
-                        .WithMany("Gunplas")
+                        .WithMany("Products")
                         .HasForeignKey("scaleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Serie", "Serie")
-                        .WithMany("Gunplas")
+                        .WithMany("Products")
                         .HasForeignKey("serieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -866,36 +893,6 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Scale");
 
                     b.Navigation("Serie");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Inventory", b =>
-                {
-                    b.HasOne("Domain.Entities.Gunpla", "Gunpla")
-                        .WithMany()
-                        .HasForeignKey("gunplaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Store", "Store")
-                        .WithMany("Inventories")
-                        .HasForeignKey("storeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Gunpla");
-
-                    b.Navigation("Store");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Photo", b =>
-                {
-                    b.HasOne("Domain.Entities.Gunpla", "Gunpla")
-                        .WithMany("Photos")
-                        .HasForeignKey("gunplaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Gunpla");
                 });
 
             modelBuilder.Entity("Domain.Entities.Review", b =>
@@ -973,34 +970,34 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.Entities.Favorite", b =>
                 {
-                    b.Navigation("FavoriteGunplas");
+                    b.Navigation("FavoriteProducts");
                 });
 
             modelBuilder.Entity("Domain.Entities.Grade", b =>
                 {
-                    b.Navigation("Gunplas");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Gunpla", b =>
-                {
-                    b.Navigation("FavoriteGunplas");
-
-                    b.Navigation("Photos");
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Domain.Entities.Manufacturer", b =>
                 {
-                    b.Navigation("Gunplas");
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Product", b =>
+                {
+                    b.Navigation("FavoriteProducts");
+
+                    b.Navigation("Photos");
                 });
 
             modelBuilder.Entity("Domain.Entities.Scale", b =>
                 {
-                    b.Navigation("Gunplas");
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Domain.Entities.Serie", b =>
                 {
-                    b.Navigation("Gunplas");
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Domain.Entities.Store", b =>

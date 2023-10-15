@@ -8,7 +8,7 @@ public class UpdateStoreCommand : IRequest
     public int id { get; set; }
     public string name { get; set; } = default!;
     public string address { get; set; } = default!;
-    public int ranking { get; set; }
+    public string webSite { get; set; } = default!;
 
     public class UpdateStoreCommandHandler : IRequestHandler<UpdateStoreCommand>
     {
@@ -30,7 +30,7 @@ public class UpdateStoreCommand : IRequest
 
             entity.name = request.name;
             entity.address = request.address;
-            entity.ranking = request.ranking;
+            entity.webSite = request.webSite;
 
             await _context.SaveChangesAsync(cancellationToken);
         }
