@@ -1,0 +1,44 @@
+<h3 class="mt-3">Categorias</h3>
+
+<a class="btn bg-primary mb-2" [routerLink]="['/maintainer/categories/create']">Crear Categoria</a>
+
+
+<table class="table table-stripped table-bordered">
+  <thead class="bg-primary">
+    <tr>
+      <th>#</th>
+      <th>Nombre</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let category of getPaginatedData(); let i = index">
+      <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+      <td>{{category.name}}</td>
+      <td>
+        <a [routerLink]="['/maintainer/categories/edit/', category.id]" class="btn bg-primary me-2">
+          <fa-icon [icon]="faEdit"></fa-icon> Editar
+        </a>
+        <a [routerLink]="['/maintainer/categories/',category.id, 'subcategories']" class="btn bg-info me-2">
+          <fa-icon [icon]="faList"></fa-icon> Sub Categorias
+        </a>
+        <a class="btn"
+           [ngClass]="category.active ? 'bg-danger' : 'bg-success'"
+           (click)="toggle(category.id!)">
+          <fa-icon [icon]="faPowerOff"></fa-icon>
+          {{ category.active ? 'Desactivar' : 'Activar' }}
+        </a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<nav aria-label="Page navigation example">
+  <ul class="pagination justify-content-end">
+    <li class="page-item" [ngClass]="{ 'disabled': currentPage === 1 }"><a class="page-link" (click)="setPage(currentPage - 1)">Anterior</a></li>
+    <li class="page-item" *ngFor="let page of range(1)" [ngClass]="{ 'active': currentPage === page }">
+      <a class="page-link" (click)="setPage(page)">{{ page }}</a>
+    </li>
+    <li class="page-item" [ngClass]="{ 'disabled': currentPage === nPage() }"><a class="page-link" (click)="setPage(currentPage + 1)">Siguiente</a></li>
+  </ul>
+</nav>

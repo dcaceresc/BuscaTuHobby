@@ -7,7 +7,6 @@ public class UpdateScaleCommand : IRequest
 {
     public int id { get; set; }
     public string name { get; set; } = default!;
-    public string acronym { get; set; } = default!;
 
     public class UpdateScaleCommandHandler : IRequestHandler<UpdateScaleCommand>
     {
@@ -28,7 +27,6 @@ public class UpdateScaleCommand : IRequest
             }
 
             entity.name = request.name;
-            entity.acronym = request.acronym;
 
             await _context.SaveChangesAsync(cancellationToken);
         }

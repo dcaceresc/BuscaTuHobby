@@ -6,7 +6,6 @@ public class SerieVM
 {
     public int id { get; set; }
     public string name { get; set; } = default!;
-    public int universeId { get; set; }
 
     public class Mapping : Profile
     {

@@ -23,7 +23,7 @@ public class ToggleProductCommand : IRequest
             if (entity == null)
                 throw new NotFoundException(nameof(Product), request.id);
 
-            entity.actve = !entity.actve;
+            entity.active = !entity.active;
 
             await _context.SaveChangesAsync(cancellationToken);
 

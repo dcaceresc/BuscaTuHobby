@@ -4,7 +4,7 @@ import { AuthorizeService } from 'src/app/core/services/authorize.service';
 import { Observable, map } from 'rxjs';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faSignInAlt, faUser, faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faSignInAlt,faSignOutAlt, faUser, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-login-menu',
@@ -19,6 +19,7 @@ export class LoginMenuComponent implements OnInit {
   public faSignInAlt = faSignInAlt;
   public faUserPlus = faUserPlus;
   public faUser = faUser;
+  public faSignOutAlt = faSignOutAlt;
 
   constructor(private authorizeService: AuthorizeService) { }
 

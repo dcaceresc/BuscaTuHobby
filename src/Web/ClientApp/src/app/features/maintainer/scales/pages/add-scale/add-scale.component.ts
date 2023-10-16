@@ -20,14 +20,13 @@ export class AddScaleComponent {
   createForm() {
     this.scaleForm = this.formbuilder.group({
       name: ['',Validators.required],
-      acronym : ['',Validators.required]
     });
   }
 
   onSubmit():void{
     if(this.scaleForm.valid){
       this.scalesService.Create(this.scaleForm.value).subscribe(() => {
-        this.router.navigate(['maintainer/universes']);
+        this.router.navigate(['maintainer/scales']);
       }, error => {
         // Manejar el error
       });
@@ -35,6 +34,6 @@ export class AddScaleComponent {
   }
 
   onCancel():void{
-    this.router.navigate(['/maintainer/universes']);
+    this.router.navigate(['/maintainer/scales']);
   }
 }

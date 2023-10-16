@@ -7,7 +7,6 @@ namespace Application.Series.Commands.CreateSerie
         public CreateSerieCommandValidator()
         {
             RuleFor(v => v.name).NotNull().NotEmpty();
-            RuleFor(v => v.universeId).NotNull().NotEmpty();
         }
     }
 }

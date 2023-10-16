@@ -7,7 +7,7 @@ public class ScaleDto : IMapFrom<Scale>
 {
     public int id { get; set; }
     public string name { get; set; } = default!;
-    public string acronym { get; set; } = default!;
+    public bool active { get; set; }
 
     public void Mapping(Profile profile)
     {

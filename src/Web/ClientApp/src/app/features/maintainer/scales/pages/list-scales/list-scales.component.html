@@ -7,7 +7,6 @@
     <tr>
       <th>#</th>
       <th>Nombre</th>
-      <th>Sigla</th>
       <th>Acciones</th>
     </tr>
   </thead>
@@ -15,7 +14,6 @@
     <tr *ngFor="let scale of getPaginatedData(); let i = index">
       <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
       <td>{{scale.name}}</td>
-      <td>{{scale.acronym}}</td>
       <td>
         <a [routerLink]="['/maintainer/scales/edit/', scale.id]" class="btn bg-primary me-2">
           <fa-icon [icon]="faEdit"></fa-icon> Editar

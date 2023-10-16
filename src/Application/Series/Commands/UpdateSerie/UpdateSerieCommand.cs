@@ -7,8 +7,6 @@ public class UpdateSerieCommand : IRequest
 {
     public int id { get; set; }
     public string name { get; set; } = default!;
-    public int universeId { get; set; }
-
     public class UpdateSerieCommandHandler : IRequestHandler<UpdateSerieCommand>
     {
         private readonly IApplicationDbContext _context;
@@ -28,7 +26,6 @@ public class UpdateSerieCommand : IRequest
             }
 
             entity.name = request.name;
-            entity.universeId = request.universeId;
 
             await _context.SaveChangesAsync(cancellationToken);
 

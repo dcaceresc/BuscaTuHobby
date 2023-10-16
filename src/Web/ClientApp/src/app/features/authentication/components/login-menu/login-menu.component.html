@@ -1,4 +1,4 @@
-<ul class="navbar-nav" *ngIf="isAuthenticated | async">
+<!-- <ul class="navbar-nav" *ngIf="isAuthenticated | async">
   <li class="nav-item">
       <a  class="btn-login-menu" [routerLink]='["/authentication/profile"]' title="Manage">Hola {{ userName | async }}</a>
   </li>
@@ -20,4 +20,22 @@
           </a>
         </div>
       </li>
-</ul>
+</ul> -->
+
+<div class="d-grid d-flex" *ngIf="(isAuthenticated | async) !== true">
+  <a class="btn btn-login-menu me-md-2" [routerLink]="['/authentication/register']">
+    <fa-icon [icon]="faUserPlus"></fa-icon> 
+  </a>
+  <a class="btn btn-login-menu" [routerLink]="['/authentication/login']">
+    <fa-icon [icon]="faSignInAlt"></fa-icon> 
+  </a>
+</div>
+
+<div class="d-grid d-flex" *ngIf="isAuthenticated | async">
+  <a class="btn btn-login-menu me-md-2" [routerLink]="['/authentication/profile']">
+    <fa-icon [icon]="faUser"></fa-icon>  Perfil
+  </a>
+  <a class="btn btn-login-menu" [routerLink]='["/authentication/logout"]' [state]='{ local: true }' title="Cerra Sesión">
+    <fa-icon [icon]="faSignOutAlt"></fa-icon> 
+  </a>
+</div>

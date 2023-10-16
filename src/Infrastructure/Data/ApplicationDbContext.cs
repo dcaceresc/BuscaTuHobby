@@ -20,18 +20,19 @@ namespace Infrastructure.Data
             _currentUserService = currentUserService;
         }
 
+        public DbSet<Category> Categories { get; set; } = default!;
         public DbSet<Favorite> Favorites { get; set; }
-        public DbSet<FavoriteProduct> FavoriteGunplas { get; set; }
-        public DbSet<Grade> Grades { get; set; } = default!;
-        public DbSet<Product> Products { get; set; } = default!;
+        public DbSet<FavoriteProduct> FavoriteProducts { get; set; }
         public DbSet<Inventory> Inventories { get; set; } = default!;
         public DbSet<Manufacturer> Manufacturers { get; set; } = default!;
+        public DbSet<Product> Products { get; set; } = default!;
         public DbSet<Photo> Photos { get; set; } = default!;
         public DbSet<Review> Reviews { get; set; } = default!;
         public DbSet<Scale> Scales { get; set; } = default!;
         public DbSet<Serie> Series { get; set; } = default!;
         public DbSet<Store> Stores { get; set; } = default!;
-        public DbSet<Universe> Universes { get; set; } = default!;
+        public DbSet<SubCategory> SubCategories { get; set; } = default!;
+        public DbSet<SubCategoryProduct> SubCategoryProducts { get; set; } = default!;
 
 
 
@@ -60,17 +61,31 @@ namespace Infrastructure.Data
             builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
             builder.Entity<FavoriteProduct>()
-            .HasKey(pf => new { pf.favoriteId, pf.productId });
+            .HasKey(fp => new { fp.favoriteId, fp.productId });
 
             builder.Entity<FavoriteProduct>()
-                .HasOne(pf => pf.Favorite)
+                .HasOne(fp => fp.Favorite)
                 .WithMany(f => f.FavoriteProducts)
-                .HasForeignKey(pf => pf.favoriteId);
+                .HasForeignKey(fp => fp.favoriteId);
 
             builder.Entity<FavoriteProduct>()
-                .HasOne(pf => pf.Product)
+                .HasOne(fp => fp.Product)
                 .WithMany(p => p.FavoriteProducts)
-                .HasForeignKey(pf => pf.productId);
+                .HasForeignKey(fp => fp.productId);
+
+
+            builder.Entity<SubCategoryProduct>()
+                .HasKey(scp => new { scp.subCategoryId, scp.productId });
+
+            builder.Entity<SubCategoryProduct>()
+                .HasOne(cp => cp.SubCategory)
+                .WithMany(c => c.SubCategoryProducts)
+                .HasForeignKey(cp => cp.subCategoryId);
+
+            builder.Entity<SubCategoryProduct>()
+                .HasOne(cp => cp.Product)
+                .WithMany(p => p.SubCategoryProducts)
+                .HasForeignKey(cp => cp.productId);
 
             base.OnModelCreating(builder);
         }

@@ -5,7 +5,6 @@ namespace Application.Products.Commands.CreateProduct;
 public class CreateProductCommand : IRequest<int>
 {
     public string name { get; set; } = default!;
-    public int gradeId { get; set; }
     public int scaleId { get; set; }
     public int manufacturerId { get; set; }
     public int serieId { get; set; }
@@ -27,7 +26,6 @@ public class CreateProductCommand : IRequest<int>
             var entity = new Product
             {
                 name = request.name,
-                gradeId = request.gradeId,
                 scaleId = request.scaleId,
                 manufacturerId = request.manufacturerId,
                 serieId = request.serieId,

@@ -3,7 +3,6 @@ using Application.Stores.Commands.ToggleStore;
 using Application.Stores.Commands.UpdateStore;
 using Application.Stores.Queries.GetStoreById;
 using Application.Stores.Queries.GetStores;
-using Application.Universes.Queries.GetUniverseById;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,6 +1,7 @@
 ﻿using Application.Scales.Commands.CreateScale;
 using Application.Scales.Commands.ToggleScale;
 using Application.Scales.Commands.UpdateScale;
+using Application.Scales.Queries.GetScaleById;
 using Application.Scales.Queries.GetScales;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,12 @@ public class ScalesController : ApiController
     public async Task<IList<ScaleDto>> Get()
     {
         return await Mediator.Send(new GetScalesQuery());
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ScaleVM> GetById(int id)
+    {
+        return await Mediator.Send(new GetScaleByIdQuery() { id = id });
     }
 
     [HttpPost]

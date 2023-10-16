@@ -8,6 +8,5 @@ public class UpdateScaleCommandValidator : AbstractValidator<UpdateScaleCommand>
     {
         RuleFor(v => v.id).NotNull().NotEmpty();
         RuleFor(v => v.name).NotNull().NotEmpty();
-        RuleFor(v => v.acronym).NotNull().NotEmpty();
     }
 }

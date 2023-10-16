@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SeriesService } from 'src/app/core/services/series.service';
-import { universeVM } from 'src/app/core/models/universe.model';
-import { UniversesService } from 'src/app/core/services/universes.service';
 import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
@@ -15,14 +13,11 @@ import { NgSelectModule } from '@ng-select/ng-select';
 })
 export class AddSerieComponent {
   serieForm! : FormGroup;
-  universes! : universeVM[];
 
   constructor(private formbuilder: FormBuilder,
               private seriesService: SeriesService,
-              private universesService:UniversesService,
               private router:Router) {
     this.createForm();
-    this.loadUniverses();
   }
 
   createForm() {
@@ -32,13 +27,6 @@ export class AddSerieComponent {
     });
   }
 
-  loadUniverses(){
-    this.universesService.GetAll().subscribe(
-      (universes) => {
-        this.universes = universes.filter(universe => universe.active);
-      }
-    );
-  }
 
   onSubmit():void{
     if(this.serieForm.valid){

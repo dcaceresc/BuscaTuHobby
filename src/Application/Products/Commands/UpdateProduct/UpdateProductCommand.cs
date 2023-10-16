@@ -8,7 +8,6 @@ public class UpdateProductCommand : IRequest
 {
     public int id { get; set; }
     public string name { get; set; } = default!;
-    public int gradeId { get; set; }
     public int scaleId { get; set; }
     public int manufacturerId { get; set; }
     public int serieId { get; set; }
@@ -35,7 +34,6 @@ public class UpdateProductCommand : IRequest
             }
 
             entity.name = request.name;
-            entity.gradeId = request.gradeId;
             entity.scaleId = request.scaleId;
             entity.manufacturerId = request.manufacturerId;
             entity.serieId = request.serieId;

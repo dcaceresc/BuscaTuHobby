@@ -5,7 +5,6 @@ namespace Application.Series.Commands.CreateSerie;
 public class CreateSerieCommand : IRequest<int>
 {
     public string name { get; set; } = default!;
-    public int universeId { get; set; }
 
     public class CreateSerieCommandHandler : IRequestHandler<CreateSerieCommand, int>
     {
@@ -20,7 +19,6 @@ public class CreateSerieCommand : IRequest<int>
             var entity = new Serie
             {
                 name = request.name,
-                universeId = request.universeId,
                 active = true
             };
 
