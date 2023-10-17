@@ -1,6 +1,7 @@
 ﻿using Application.Series.Commands.CreateSerie;
 using Application.Series.Commands.ToggleSerie;
 using Application.Series.Commands.UpdateSerie;
+using Application.Series.Queries.GetSerieById;
 using Application.Series.Queries.GetSeries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,12 @@ public class SeriesController : ApiController
     public async Task<IList<SerieDto>> Get()
     {
         return await Mediator.Send(new GetSeriesQuery());
+    }
+
+    [HttpGet("{id}")]
+    public async Task<SerieVM> GetById(int id)
+    {
+        return await Mediator.Send(new GetSerieByIdQuery() { id = id });
     }
 
     [HttpPost]

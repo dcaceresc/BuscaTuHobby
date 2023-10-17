@@ -1,7 +1,9 @@
 ﻿using Application.Categories.Commands.CreateCategory;
 using Application.Categories.Commands.CreateSubCategory;
 using Application.Categories.Commands.DeleteCategory;
+using Application.Categories.Commands.ToggleSubCategory;
 using Application.Categories.Commands.UpdateCategory;
+using Application.Categories.Commands.UpdateSubCategory;
 using Application.Categories.Queries.GetCategories;
 using Application.Categories.Queries.GetCategoryById;
 using Application.Categories.Queries.GetSubCategoriesByCategory;
@@ -60,22 +62,44 @@ public class CategoriesController : ApiController
     #region SubCategories
 
 
-    [HttpGet("{id}/SubCategories")]
-    public async Task<IList<SubCategoryDto>> GetSubCategories(int id)
+    [HttpGet("{categoryId}/SubCategories")]
+    public async Task<IList<SubCategoryDto>> GetSubCategories(int categoryId)
     {
-        return await Mediator.Send(new GetSubCategoriesByCategoryQuery(){ categoryId = id});
+        return await Mediator.Send(new GetSubCategoriesByCategoryQuery(){ categoryId = categoryId});
     }
 
-    [HttpGet("{id}/SubCategories/{categoryId}")]
-    public async Task<SubCategoryVM> GetById(GetSubCategoryByIdQuery query)
+    [HttpGet("{categoryId}/SubCategories/{id}")]
+    public async Task<SubCategoryVM> GetSubCategoriesById(int id)
     {
-        return await Mediator.Send(query);
+        return await Mediator.Send(new GetSubCategoryByIdQuery() { id = id});
     }
 
-    [HttpPost("{id}/SubCategories")]
-    public async Task<int> Create(CreateSubCategoryCommand command)
+    [HttpPost("{categoryId}/SubCategories")]
+    public async Task<int> CreateSubCategory(CreateSubCategoryCommand command)
     {
         return await Mediator.Send(command);
+    }
+
+
+    [HttpPut("{categoryId}/SubCategories/{id}")]
+    public async Task<ActionResult> Update(int id, UpdateSubCategoryCommand command)
+    {
+        if (id != command.id)
+        {
+            return BadRequest();
+        }
+
+        await Mediator.Send(command);
+
+        return NoContent();
+    }
+
+    [HttpDelete("{categoryId}/SubCategories/{id}")]
+    public async Task<ActionResult> ToggleSubCategory(int id)
+    {
+        await Mediator.Send(new ToggleSubCategoryCommand { id = id });
+
+        return NoContent();
     }
 
 

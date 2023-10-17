@@ -57,7 +57,7 @@ export class ListSubCategoriesComponent {
     const universe = this.subCategories.find(x => x.id === id);
 
     if(universe){
-      this.categoriesService.Toggle(id).subscribe(
+      this.categoriesService.ToggleSubCategory(id, this.categoryId).subscribe(
         () => {
           this.categoriesService.GetAllSubCategory(this.categoryId).subscribe(items => this.subCategories = items);
         }

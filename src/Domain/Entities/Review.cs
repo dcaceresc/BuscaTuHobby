@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entities;
 
-public class Review
+public class Review : AuditableEntity
 {
     public int id { get; set; }
     public int storeId { get; set; }

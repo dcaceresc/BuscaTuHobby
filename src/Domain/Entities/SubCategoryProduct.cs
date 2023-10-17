@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entities;
 
-public class SubCategoryProduct
+public class SubCategoryProduct : AuditableEntity
 {
     public int productId { get; set; }
     public Product Product { get; set; } = default!;

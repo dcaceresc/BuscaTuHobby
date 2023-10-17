@@ -1,6 +1,6 @@
 ﻿namespace Domain.Entities;
 
-public class SubCategory
+public class SubCategory : AuditableEntity
 {
     public int id { get; set; }
     public string name { get; set; } = default!;

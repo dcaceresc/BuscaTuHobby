@@ -1,6 +1,6 @@
 <h3 class="mt-3">Sub Categorias {{categoryName}}</h3>
 
-<a class="btn bg-primary mb-2 me-2" [routerLink]="['/maintainer/categories/create']"><fa-icon [icon]="faPlus"></fa-icon> Crear SubCategoria</a>
+<a class="btn bg-primary mb-2 me-2" [routerLink]="['/maintainer/categories', categoryId, 'subcategories', 'create']"><fa-icon [icon]="faPlus"></fa-icon> Crear SubCategoria</a>
 <a class="btn bg-info mb-2" [routerLink]="['/maintainer/categories/']"><fa-icon [icon]="faList"></fa-icon> Categorias</a>
 
 <table class="table table-stripped table-bordered">
@@ -12,18 +12,18 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let category of getPaginatedData(); let i = index">
+    <tr *ngFor="let subCategory of getPaginatedData(); let i = index">
       <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-      <td>{{category.name}}</td>
+      <td>{{subCategory.name}}</td>
       <td>
-        <a [routerLink]="['/maintainer/categories/edit/', category.id]" class="btn bg-primary me-2">
+        <a [routerLink]="['/maintainer/categories', categoryId, 'subcategories','edit', subCategory.id]" class="btn bg-primary me-2">
           <fa-icon [icon]="faEdit"></fa-icon> Editar
         </a>
         <a class="btn"
-           [ngClass]="category.active ? 'bg-danger' : 'bg-success'"
-           (click)="toggle(category.id!)">
+           [ngClass]="subCategory.active ? 'bg-danger' : 'bg-success'"
+           (click)="toggle(subCategory.id!)">
           <fa-icon [icon]="faPowerOff"></fa-icon>
-          {{ category.active ? 'Desactivar' : 'Activar' }}
+          {{ subCategory.active ? 'Desactivar' : 'Activar' }}
         </a>
       </td>
     </tr>

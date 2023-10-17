@@ -19,7 +19,8 @@ public class CreateManufacturerCommand : IRequest<int>
         {
             var entity = new Manufacturer
             {
-                name = request.name
+                name = request.name,
+                active = true
             };
 
             _context.Manufacturers.Add(entity);

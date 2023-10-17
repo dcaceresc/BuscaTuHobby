@@ -19,7 +19,6 @@ export interface categoryVM{
 export interface subCategoryVM{
     id:number;
     name:string;
-    categoryId:number;
 }
 
 export interface createCategoryCommand{

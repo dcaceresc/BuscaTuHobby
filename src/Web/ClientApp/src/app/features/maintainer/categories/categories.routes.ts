@@ -12,5 +12,5 @@ export const routes : Routes =[
   {path: 'edit/:id', component:UpdateCategoryComponent},
   {path : ':id/subcategories', component:ListSubCategoriesComponent},
   {path: ':id/subcategories/create', component:AddSubCategoryComponent},
-  {path: ':id/subcategories/edit/:subid', component:UpdateSubCategoryComponent}
+  {path: ':id/subcategories/edit/:subcategoryid', component:UpdateSubCategoryComponent}
 ];

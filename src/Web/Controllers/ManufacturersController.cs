@@ -1,6 +1,7 @@
 ﻿using Application.Manufacturers.Commands.CreateManufacturer;
 using Application.Manufacturers.Commands.ToggleManufacturer;
 using Application.Manufacturers.Commands.UpdateManufacturer;
+using Application.Manufacturers.Queries.GetManufacturerById;
 using Application.Manufacturers.Queries.GetManufacturers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,12 @@ public class ManufacturersController : ApiController
     public async Task<IList<ManufacturerDto>> Get()
     {
         return await Mediator.Send(new GetManufacturersQuery());
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ManufacturerVM> GetById(int id)
+    {
+        return await Mediator.Send(new GetManufacturerByIdQuery() { id = id });
     }
 
     [HttpPost]
