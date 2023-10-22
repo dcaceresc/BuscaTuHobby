@@ -60,13 +60,7 @@ export class UpdateStoreComponent {
     }
   }
 
-
-
-
-
-
-
   onCancel(): void {
-    this.router.navigate(['/maintainer/universes']);
+    this.router.navigate(['/maintainer/stores']);
   }
 }

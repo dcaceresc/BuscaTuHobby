@@ -1,8 +1,8 @@
-﻿using Application.Manufacturers.Commands.CreateManufacturer;
-using Application.Manufacturers.Commands.ToggleManufacturer;
-using Application.Manufacturers.Commands.UpdateManufacturer;
-using Application.Manufacturers.Queries.GetManufacturerById;
-using Application.Manufacturers.Queries.GetManufacturers;
+﻿using Application.Maintainer.Manufacturers.Commands.CreateManufacturer;
+using Application.Maintainer.Manufacturers.Commands.ToggleManufacturer;
+using Application.Maintainer.Manufacturers.Commands.UpdateManufacturer;
+using Application.Maintainer.Manufacturers.Queries.GetManufacturerById;
+using Application.Maintainer.Manufacturers.Queries.GetManufacturers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -45,13 +45,45 @@ namespace Infrastructure.Data.Migrations
                     b.Property<bool>("active")
                         .HasColumnType("bit");
 
+                    b.Property<int>("groupId")
+                        .HasColumnType("int");
+
                     b.Property<string>("name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
 
+                    b.HasIndex("groupId");
+
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CategoryProduct", b =>
+                {
+                    b.Property<int>("categoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("productId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("categoryId", "productId");
+
+                    b.HasIndex("productId");
+
+                    b.ToTable("CategoryProducts");
                 });
 
             modelBuilder.Entity("Domain.Entities.Favorite", b =>
@@ -108,6 +140,38 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("productId");
 
                     b.ToTable("FavoriteProducts");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Group", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Groups");
                 });
 
             modelBuilder.Entity("Domain.Entities.Inventory", b =>
@@ -420,70 +484,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasKey("id");
 
                     b.ToTable("Stores");
-                });
-
-            modelBuilder.Entity("Domain.Entities.SubCategory", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("active")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("categoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("categoryId");
-
-                    b.ToTable("SubCategories");
-                });
-
-            modelBuilder.Entity("Domain.Entities.SubCategoryProduct", b =>
-                {
-                    b.Property<int>("subCategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("productId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("subCategoryId", "productId");
-
-                    b.HasIndex("productId");
-
-                    b.ToTable("SubCategoryProducts");
                 });
 
             modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.DeviceFlowCodes", b =>
@@ -829,6 +829,36 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.Category", b =>
+                {
+                    b.HasOne("Domain.Entities.Group", "Group")
+                        .WithMany("Categories")
+                        .HasForeignKey("groupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+                });
+
+            modelBuilder.Entity("Domain.Entities.CategoryProduct", b =>
+                {
+                    b.HasOne("Domain.Entities.Category", "Category")
+                        .WithMany("CategoryProducts")
+                        .HasForeignKey("categoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Product", "Product")
+                        .WithMany("CategoryProducts")
+                        .HasForeignKey("productId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Domain.Entities.FavoriteProduct", b =>
                 {
                     b.HasOne("Domain.Entities.Favorite", "Favorite")
@@ -916,36 +946,6 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Store");
                 });
 
-            modelBuilder.Entity("Domain.Entities.SubCategory", b =>
-                {
-                    b.HasOne("Domain.Entities.Category", "Category")
-                        .WithMany("SubCategories")
-                        .HasForeignKey("categoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("Domain.Entities.SubCategoryProduct", b =>
-                {
-                    b.HasOne("Domain.Entities.Product", "Product")
-                        .WithMany("SubCategoryProducts")
-                        .HasForeignKey("productId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.SubCategory", "SubCategory")
-                        .WithMany("SubCategoryProducts")
-                        .HasForeignKey("subCategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("SubCategory");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -999,12 +999,17 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.Entities.Category", b =>
                 {
-                    b.Navigation("SubCategories");
+                    b.Navigation("CategoryProducts");
                 });
 
             modelBuilder.Entity("Domain.Entities.Favorite", b =>
                 {
                     b.Navigation("FavoriteProducts");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Group", b =>
+                {
+                    b.Navigation("Categories");
                 });
 
             modelBuilder.Entity("Domain.Entities.Manufacturer", b =>
@@ -1014,11 +1019,11 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
+                    b.Navigation("CategoryProducts");
+
                     b.Navigation("FavoriteProducts");
 
                     b.Navigation("Photos");
-
-                    b.Navigation("SubCategoryProducts");
                 });
 
             modelBuilder.Entity("Domain.Entities.Scale", b =>
@@ -1034,11 +1039,6 @@ namespace Infrastructure.Data.Migrations
             modelBuilder.Entity("Domain.Entities.Store", b =>
                 {
                     b.Navigation("Inventories");
-                });
-
-            modelBuilder.Entity("Domain.Entities.SubCategory", b =>
-                {
-                    b.Navigation("SubCategoryProducts");
                 });
 #pragma warning restore 612, 618
         }

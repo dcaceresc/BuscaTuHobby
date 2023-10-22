@@ -48,9 +48,9 @@ export class ListManufacturersComponent {
   }
 
   toggle(id:number){
-    const universe = this.manufacturers.find(x => x.id === id);
+    const manufacturer = this.manufacturers.find(x => x.id === id);
 
-    if(universe){
+    if(manufacturer){
       this.manufacturersService.Toggle(id).subscribe(
         () => {
           this.manufacturersService.GetAll().subscribe(items => this.manufacturers = items);

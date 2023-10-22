@@ -49,9 +49,9 @@ export class ListCategoriesComponent {
   }
 
   toggle(id:number){
-    const universe = this.categories.find(x => x.id === id);
+    const category = this.categories.find(x => x.id === id);
 
-    if(universe){
+    if(category){
       this.categoriesService.Toggle(id).subscribe(
         () => {
           this.categoriesService.GetAll().subscribe(items => this.categories = items);

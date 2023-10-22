@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { categoryDto, categoryVM, createCategoryCommand, createSubCategoryCommand, subCategoryDto, subCategoryVM } from '../models/category.model';
+import { categoryDto, categoryVM, createCategoryCommand } from '../models/category.model';
 
 @Injectable({
   providedIn: 'root'
@@ -33,26 +33,6 @@ export class CategoriesService {
 
   Toggle(id:number){
     return this.http.delete(`${this.CategoriesGetPath}/${id}`);
-  }
-
-  GetAllSubCategory(categoryId:string):Observable<Array<subCategoryDto>>{
-    return this.http.get<Array<subCategoryDto>>(`${this.CategoriesGetPath}/${categoryId}/Subcategories`);
-  }
-
-  GetSubCategorybyId(id:string | null, categoryId :string | null):Observable<subCategoryVM>{
-    return this.http.get<subCategoryVM>(`${this.CategoriesGetPath}/${categoryId}/Subcategories/${id}`);
-  }
-
-  CreateSubCategory(category : createSubCategoryCommand): Observable<any>{
-    return this.http.post<createSubCategoryCommand>(`${this.CategoriesGetPath}/${category.categoryId}/Subcategories`,category);
-  }
-
-  UpdateSubCategory(id:string | null,categoryId:string | null,category:subCategoryVM):Observable<any>{
-    return this.http.put(`${this.CategoriesGetPath}/${categoryId}/Subcategories/${id}`, category);
-  }
-
-  ToggleSubCategory(id:number, categoryId:string |null){
-    return this.http.delete(`${this.CategoriesGetPath}/${categoryId}/Subcategories/${id}`);
   }
 
 

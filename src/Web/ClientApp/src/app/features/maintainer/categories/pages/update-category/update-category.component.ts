@@ -4,10 +4,13 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { categoryVM } from 'src/app/core/models/category.model';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CategoriesService } from 'src/app/core/services/categories.service';
+import { GroupsService } from 'src/app/core/services/groups.service';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { groupDto } from 'src/app/core/models/group.model';
 
 @Component({
   standalone: true,
-  imports: [CommonModule,ReactiveFormsModule],
+  imports: [CommonModule,ReactiveFormsModule,NgSelectModule],
   templateUrl: './update-category.component.html',
   styleUrls: ['./update-category.component.scss']
 })
@@ -15,18 +18,22 @@ export class UpdateCategoryComponent {
   categoryId!:string | null;
   category!: categoryVM;
   categoryForm! : FormGroup;
+  groups : groupDto[] = [];
 
   constructor(private categoriesService: CategoriesService,
     private router: Router,
     private formBuilder: FormBuilder,
+    private groupsService : GroupsService,
     private route: ActivatedRoute,) {
       this.categoryId = this.route.snapshot.paramMap.get('id');
+      this.loadGroups();
   }
 
   ngOnInit(): void {
     this.categoryForm = this.formBuilder.group({
       id:[this.categoryId,Validators.required],
       name: ['', Validators.required],
+      groupId : ['', Validators.required],
     });
 
     this.categoriesService.GetbyId(this.categoryId).subscribe(
@@ -34,6 +41,7 @@ export class UpdateCategoryComponent {
         // Llena el formulario con los datos del ambiente
         this.categoryForm.patchValue({
           name: category.name,
+          groupId: category.groupId,
           // Completa aquí los demás campos del formulario con los datos correspondientes
         });
       },
@@ -41,6 +49,14 @@ export class UpdateCategoryComponent {
         console.error('Error al cargar los datos de la escala', error);
       }
     );
+  }
+
+  loadGroups(){
+    this.groupsService.GetAll().subscribe(
+      (groups) => {
+        this.groups = groups.filter(group => group.active);
+      }
+    )
   }
 
   onSubmit(): void {

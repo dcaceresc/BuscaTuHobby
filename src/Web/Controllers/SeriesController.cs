@@ -1,8 +1,8 @@
-﻿using Application.Series.Commands.CreateSerie;
-using Application.Series.Commands.ToggleSerie;
-using Application.Series.Commands.UpdateSerie;
-using Application.Series.Queries.GetSerieById;
-using Application.Series.Queries.GetSeries;
+﻿using Application.Maintainer.Series.Commands.CreateSerie;
+using Application.Maintainer.Series.Commands.ToggleSerie;
+using Application.Maintainer.Series.Commands.UpdateSerie;
+using Application.Maintainer.Series.Queries.GetSerieById;
+using Application.Maintainer.Series.Queries.GetSeries;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -22,12 +22,12 @@ export class ManufacturersService {
     return this.http.get<manufacturerVM>(`${this.manufacturersGetPath}/${id}`);
   }
 
-  Create(universe:manufacturerVM): Observable<any>{
-    return this.http.post<createManufacturerCommand>(this.manufacturersGetPath,universe);
+  Create(manufacturer:manufacturerVM): Observable<any>{
+    return this.http.post<createManufacturerCommand>(this.manufacturersGetPath,manufacturer);
   }
 
-  Update(id:string | null,universe:manufacturerVM):Observable<any>{
-    return this.http.put(`${this.manufacturersGetPath}/${id}`, universe);
+  Update(id:string | null,manufacturer:manufacturerVM):Observable<any>{
+    return this.http.put(`${this.manufacturersGetPath}/${id}`, manufacturer);
   }
 
   Toggle(id:number){

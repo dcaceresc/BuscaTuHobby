@@ -1,0 +1,49 @@
+﻿using Application.Maintainer.Groups.Commands.CreateGroup;
+using Application.Maintainer.Groups.Commands.ToggleGroup;
+using Application.Maintainer.Groups.Commands.UpdateGroup;
+using Application.Maintainer.Groups.Queries.GetGroupById;
+using Application.Maintainer.Groups.Queries.GetGroups;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Web.Controllers;
+public class GroupsController : ApiController
+{
+    [HttpGet]
+    public async Task<IList<GroupDto>> Get()
+    {
+        return await Mediator.Send(new GetGroupsQuery());
+    }
+
+    [HttpGet("{id}")]
+    public async Task<GroupVM> GetById(int id)
+    {
+        return await Mediator.Send(new GetGroupByIdQuery() { id = id });
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<int>> Create(CreateGroupCommand command)
+    {
+        return await Mediator.Send(command);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult> Update(int id, UpdateGroupCommand command)
+    {
+        if (id != command.id)
+        {
+            return BadRequest();
+        }
+
+        await Mediator.Send(command);
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<ActionResult> Toggle(int id)
+    {
+        await Mediator.Send(new ToggleGroupCommand { id = id });
+
+        return NoContent();
+    }
+}

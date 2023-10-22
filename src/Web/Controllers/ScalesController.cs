@@ -1,8 +1,8 @@
-﻿using Application.Scales.Commands.CreateScale;
-using Application.Scales.Commands.ToggleScale;
-using Application.Scales.Commands.UpdateScale;
-using Application.Scales.Queries.GetScaleById;
-using Application.Scales.Queries.GetScales;
+﻿using Application.Maintainer.Scales.Commands.CreateScale;
+using Application.Maintainer.Scales.Commands.ToggleScale;
+using Application.Maintainer.Scales.Commands.UpdateScale;
+using Application.Maintainer.Scales.Queries.GetScaleById;
+using Application.Maintainer.Scales.Queries.GetScales;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -1,7 +1,7 @@
-﻿using Application.Products.Commands.CreateProduct;
-using Application.Products.Commands.ToggleProduct;
-using Application.Products.Commands.UpdateProduct;
-using Application.Products.Queries.GetProducts;
+﻿using Application.Maintainer.Products.Commands.CreateProduct;
+using Application.Maintainer.Products.Commands.ToggleProduct;
+using Application.Maintainer.Products.Commands.UpdateProduct;
+using Application.Maintainer.Products.Queries.GetProducts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

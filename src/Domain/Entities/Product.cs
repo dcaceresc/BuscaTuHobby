@@ -18,7 +18,7 @@
 
         public virtual ICollection<Photo> Photos { get; set; } = default!;
         public virtual ICollection<FavoriteProduct> FavoriteProducts { get; set; } = default!;
-        public virtual ICollection<SubCategoryProduct> SubCategoryProducts { get; set; } = default!;
+        public virtual ICollection<CategoryProduct> CategoryProducts { get; set; } = default!;
 
     }
 }

@@ -23,12 +23,12 @@ export class StoresService {
     return this.http.get<storeDto>(`${this.StoresGetPath}/${id}`);
   }
 
-  Create(universe:createStoreCommand): Observable<any>{
-    return this.http.post<createStoreCommand>(this.StoresGetPath,universe);
+  Create(store:createStoreCommand): Observable<any>{
+    return this.http.post<createStoreCommand>(this.StoresGetPath,store);
   }
 
-  Update(id:string | null,universe:storeDto):Observable<any>{
-    return this.http.put(`${this.StoresGetPath}/${id}`, universe);
+  Update(id:string | null,store:storeDto):Observable<any>{
+    return this.http.put(`${this.StoresGetPath}/${id}`, store);
   }
 
   Toggle(id:number){

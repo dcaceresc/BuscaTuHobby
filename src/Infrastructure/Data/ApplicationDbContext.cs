@@ -20,7 +20,7 @@ namespace Infrastructure.Data
             _currentUserService = currentUserService;
         }
 
-        public DbSet<Category> Categories { get; set; } = default!;
+        public DbSet<Group> Groups { get; set; } = default!;
         public DbSet<Favorite> Favorites { get; set; }
         public DbSet<FavoriteProduct> FavoriteProducts { get; set; }
         public DbSet<Inventory> Inventories { get; set; } = default!;
@@ -31,8 +31,8 @@ namespace Infrastructure.Data
         public DbSet<Scale> Scales { get; set; } = default!;
         public DbSet<Serie> Series { get; set; } = default!;
         public DbSet<Store> Stores { get; set; } = default!;
-        public DbSet<SubCategory> SubCategories { get; set; } = default!;
-        public DbSet<SubCategoryProduct> SubCategoryProducts { get; set; } = default!;
+        public DbSet<Category> Categories { get; set; } = default!;
+        public DbSet<CategoryProduct> CategoryProducts { get; set; } = default!;
 
 
 
@@ -74,17 +74,17 @@ namespace Infrastructure.Data
                 .HasForeignKey(fp => fp.productId);
 
 
-            builder.Entity<SubCategoryProduct>()
-                .HasKey(scp => new { scp.subCategoryId, scp.productId });
+            builder.Entity<CategoryProduct>()
+                .HasKey(scp => new { scp.categoryId, scp.productId });
 
-            builder.Entity<SubCategoryProduct>()
-                .HasOne(cp => cp.SubCategory)
-                .WithMany(c => c.SubCategoryProducts)
-                .HasForeignKey(cp => cp.subCategoryId);
+            builder.Entity<CategoryProduct>()
+                .HasOne(cp => cp.Category)
+                .WithMany(c => c.CategoryProducts)
+                .HasForeignKey(cp => cp.categoryId);
 
-            builder.Entity<SubCategoryProduct>()
+            builder.Entity<CategoryProduct>()
                 .HasOne(cp => cp.Product)
-                .WithMany(p => p.SubCategoryProducts)
+                .WithMany(p => p.CategoryProducts)
                 .HasForeignKey(cp => cp.productId);
 
             base.OnModelCreating(builder);

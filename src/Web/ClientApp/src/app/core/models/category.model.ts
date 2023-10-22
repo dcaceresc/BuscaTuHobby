@@ -1,31 +1,19 @@
 export interface categoryDto{
     id:number;
     name:string;
-    active:boolean;
-}
-
-export interface subCategoryDto{
-    id:number;
-    name:string;
-    categoryId:number;
+    groupName:string;
     active:boolean;
 }
 
 export interface categoryVM{
     id:number;
     name:string;
+    groupId:number;
 }
 
-export interface subCategoryVM{
-    id:number;
-    name:string;
-}
+
 
 export interface createCategoryCommand{
     name:string;
-}
-
-export interface createSubCategoryCommand{
-    name:string;
-    categoryId:number;
+    groupId:number;
 }

@@ -48,9 +48,9 @@ export class ListScalesComponent {
   }
 
   toggle(id:number){
-    const universe = this.scales.find(x => x.id === id);
+    const scale = this.scales.find(x => x.id === id);
 
-    if(universe){
+    if(scale){
       this.scaleService.Toggle(id).subscribe(
         () => {
           this.scaleService.GetAll().subscribe(items => this.scales = items);

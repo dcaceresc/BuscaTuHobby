@@ -8,6 +8,7 @@
     <tr>
       <th>#</th>
       <th>Nombre</th>
+      <th>Grupo</th>
       <th>Acciones</th>
     </tr>
   </thead>
@@ -15,12 +16,10 @@
     <tr *ngFor="let category of getPaginatedData(); let i = index">
       <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
       <td>{{category.name}}</td>
+      <td>{{category.groupName}}</td>
       <td>
         <a [routerLink]="['/maintainer/categories/edit/', category.id]" class="btn bg-primary me-2">
           <fa-icon [icon]="faEdit"></fa-icon> Editar
-        </a>
-        <a [routerLink]="['/maintainer/categories/',category.id, 'subcategories']" class="btn bg-info me-2">
-          <fa-icon [icon]="faList"></fa-icon> Sub Categorias
         </a>
         <a class="btn"
            [ngClass]="category.active ? 'bg-danger' : 'bg-success'"

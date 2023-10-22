@@ -4,7 +4,7 @@ namespace Application.Common.Interfaces
 {
     public interface IApplicationDbContext
     {
-        DbSet<Category> Categories { get; }
+        DbSet<Group> Groups { get; }
         DbSet<Product> Products { get; }
         DbSet<Inventory> Inventories { get; }
         DbSet<Manufacturer> Manufacturers { get; }
@@ -12,7 +12,7 @@ namespace Application.Common.Interfaces
         DbSet<Scale> Scales { get; }
         DbSet<Serie> Series { get; }
         DbSet<Store> Stores { get; }
-        DbSet<SubCategory> SubCategories { get; }
+        DbSet<Category> Categories { get; }
 
 
 

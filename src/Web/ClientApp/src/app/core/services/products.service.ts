@@ -23,8 +23,8 @@ export class ProductsService {
     return this.http.get<productVM>(`${this.productsGetPath}/${id}`);
   }
 
-  Create(universe:productVM): Observable<any>{
-    return this.http.post<createProductCommand>(this.productsGetPath,universe);
+  Create(product:productVM): Observable<any>{
+    return this.http.post<createProductCommand>(this.productsGetPath,product);
   }
 
   Update(id:string | null,product:productVM):Observable<any>{

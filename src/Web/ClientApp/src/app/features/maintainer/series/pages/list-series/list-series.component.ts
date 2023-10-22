@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { SeriesService } from 'src/app/core/services/series.service';
 import { faEdit, faPowerOff } from '@fortawesome/free-solid-svg-icons';
-import { serieVM } from 'src/app/core/models/serie.model';
+import { serieDto } from 'src/app/core/models/serie.model';
 
 @Component({
   standalone: true,
@@ -13,7 +13,7 @@ import { serieVM } from 'src/app/core/models/serie.model';
   styleUrls: ['./list-series.component.scss']
 })
 export class ListSeriesComponent {
-  series!:serieVM[];
+  series!:serieDto[];
   faPowerOff = faPowerOff;
   faEdit = faEdit;
   currentPage = 1;
@@ -48,9 +48,9 @@ export class ListSeriesComponent {
   }
 
   toggle(id:number){
-    const universe = this.series.find(x => x.id === id);
+    const serie = this.series.find(x => x.id === id);
 
-    if(universe){
+    if(serie){
       this.seriesService.Toggle(id).subscribe(
         () => {
           this.seriesService.GetAll().subscribe(items => this.series = items);

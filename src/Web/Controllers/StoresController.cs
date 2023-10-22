@@ -1,8 +1,8 @@
-﻿using Application.Stores.Commands.CreateStore;
-using Application.Stores.Commands.ToggleStore;
-using Application.Stores.Commands.UpdateStore;
-using Application.Stores.Queries.GetStoreById;
-using Application.Stores.Queries.GetStores;
+﻿using Application.Maintainer.Stores.Commands.CreateStore;
+using Application.Maintainer.Stores.Commands.ToggleStore;
+using Application.Maintainer.Stores.Commands.UpdateStore;
+using Application.Maintainer.Stores.Queries.GetStoreById;
+using Application.Maintainer.Stores.Queries.GetStores;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

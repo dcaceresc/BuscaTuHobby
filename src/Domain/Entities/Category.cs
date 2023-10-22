@@ -1,11 +1,12 @@
-﻿namespace Domain.Entities
-{
-    public class Category : AuditableEntity
-    {
-        public int id { get; set; }
-        public string name { get; set; } = default!;
-        public bool active { get; set; }
+﻿namespace Domain.Entities;
 
-        public virtual ICollection<SubCategory> SubCategories { get; set; } = default!;
-    }
+public class Category : AuditableEntity
+{
+    public int id { get; set; }
+    public string name { get; set; } = default!;
+    public int groupId { get; set; }
+    public bool active { get; set; }
+    public virtual Group Group { get; set; } = default!;
+    public virtual ICollection<CategoryProduct> CategoryProducts { get; set; } = default!;
+
 }

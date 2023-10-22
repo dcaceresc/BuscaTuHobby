@@ -49,9 +49,9 @@ export class ListStoresComponent implements OnInit {
   }
 
   toggle(id:number){
-    const universe = this.stores.find(x => x.id === id);
+    const store = this.stores.find(x => x.id === id);
 
-    if(universe){
+    if(store){
       this.storesService.Toggle(id).subscribe(
         () => {
           this.storesService.GetAll().subscribe(items => this.stores = items);

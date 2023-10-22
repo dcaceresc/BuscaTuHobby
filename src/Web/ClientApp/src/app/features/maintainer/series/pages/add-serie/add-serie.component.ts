@@ -23,9 +23,9 @@ export class AddSerieComponent {
   createForm() {
     this.serieForm = this.formbuilder.group({
       name: ['',Validators.required],
-      universeId : ['',Validators.required]
     });
   }
+  
 
 
   onSubmit():void{
