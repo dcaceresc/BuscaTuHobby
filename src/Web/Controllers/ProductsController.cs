@@ -1,6 +1,7 @@
 ﻿using Application.Maintainer.Products.Commands.CreateProduct;
 using Application.Maintainer.Products.Commands.ToggleProduct;
 using Application.Maintainer.Products.Commands.UpdateProduct;
+using Application.Maintainer.Products.Queries.GetProductById;
 using Application.Maintainer.Products.Queries.GetProducts;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,6 +17,12 @@ public class ProductsController : ApiController
     public async Task<IList<ProductDto>> Get()
     {
         return await Mediator.Send(new GetProductsQuery());
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ProductVM> GetById(int id)
+    {
+        return await Mediator.Send(new GetProductByIdQuery() { id = id});
     }
 
     [HttpPost]

@@ -1,4 +1,4 @@
-﻿namespace Application.Inventories.Queries.GetInventories;
+﻿namespace Application.Maintainer.Inventories.Queries.GetInventories;
 
 public class GetInventoriesQuery : IRequest<IList<InventoryDto>>
 {

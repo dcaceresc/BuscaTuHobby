@@ -15,7 +15,15 @@ public class GetProductsQuery : IRequest<IList<ProductDto>>
 
         public async Task<IList<ProductDto>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
         {
-            return await _context.Products.AsNoTracking().ProjectTo<ProductDto>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
+            return await _context.Products.
+                Include(x => x.Scale).
+                Include(x => x.Manufacturer).
+                Include(x => x.CategoryProducts).
+                Include(x => x.Franchise).
+                ThenInclude(x => x.Serie).
+                AsNoTracking().
+                ProjectTo<ProductDto>(_mapper.ConfigurationProvider).
+                ToListAsync(cancellationToken);
 
         }
     }

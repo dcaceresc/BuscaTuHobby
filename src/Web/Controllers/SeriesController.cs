@@ -3,6 +3,7 @@ using Application.Maintainer.Series.Commands.ToggleSerie;
 using Application.Maintainer.Series.Commands.UpdateSerie;
 using Application.Maintainer.Series.Queries.GetSerieById;
 using Application.Maintainer.Series.Queries.GetSeries;
+using Application.Maintainer.Series.Queries.GetSeriesByFranchise;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,6 +24,12 @@ public class SeriesController : ApiController
     public async Task<SerieVM> GetById(int id)
     {
         return await Mediator.Send(new GetSerieByIdQuery() { id = id });
+    }
+
+    [HttpGet("ByFranchise/{franchiseId}")]
+    public async Task<IList<SerieByFranchiseDto>> GetByFranchise(int franchiseId)
+    {
+        return await Mediator.Send(new GetSeriesByFranchiseQuery() { franchiseId = franchiseId });
     }
 
     [HttpPost]

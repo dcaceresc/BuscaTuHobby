@@ -1,7 +1,7 @@
 ﻿using Application.Common.Exceptions;
 using Domain.Entities;
 
-namespace Application.Inventories.Commands.ToggleInventory;
+namespace Application.Maintainer.Inventories.Commands.ToggleInventory;
 
 public class ToggleInventoryCommand : IRequest
 {

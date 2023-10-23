@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
 
-namespace Application.Inventories.Commands.CreateInventory;
+namespace Application.Maintainer.Inventories.Commands.CreateInventory;
 
 public class CreateInventoryCommand : IRequest<int>
 {

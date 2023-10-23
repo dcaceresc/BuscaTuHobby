@@ -23,16 +23,18 @@ namespace Infrastructure.Data
         public DbSet<Group> Groups { get; set; } = default!;
         public DbSet<Favorite> Favorites { get; set; }
         public DbSet<FavoriteProduct> FavoriteProducts { get; set; }
+        public DbSet<Franchise> Franchises { get; set; }
         public DbSet<Inventory> Inventories { get; set; } = default!;
         public DbSet<Manufacturer> Manufacturers { get; set; } = default!;
         public DbSet<Product> Products { get; set; } = default!;
+        public DbSet<ProductCategory> ProductCategories { get; set; } = default!;
         public DbSet<Photo> Photos { get; set; } = default!;
         public DbSet<Review> Reviews { get; set; } = default!;
         public DbSet<Scale> Scales { get; set; } = default!;
         public DbSet<Serie> Series { get; set; } = default!;
         public DbSet<Store> Stores { get; set; } = default!;
         public DbSet<Category> Categories { get; set; } = default!;
-        public DbSet<CategoryProduct> CategoryProducts { get; set; } = default!;
+
 
 
 
@@ -74,15 +76,15 @@ namespace Infrastructure.Data
                 .HasForeignKey(fp => fp.productId);
 
 
-            builder.Entity<CategoryProduct>()
+            builder.Entity<ProductCategory>()
                 .HasKey(scp => new { scp.categoryId, scp.productId });
 
-            builder.Entity<CategoryProduct>()
+            builder.Entity<ProductCategory>()
                 .HasOne(cp => cp.Category)
                 .WithMany(c => c.CategoryProducts)
                 .HasForeignKey(cp => cp.categoryId);
 
-            builder.Entity<CategoryProduct>()
+            builder.Entity<ProductCategory>()
                 .HasOne(cp => cp.Product)
                 .WithMany(p => p.CategoryProducts)
                 .HasForeignKey(cp => cp.productId);

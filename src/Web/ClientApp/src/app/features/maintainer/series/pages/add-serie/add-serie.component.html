@@ -5,11 +5,15 @@
     <div class="card-body">
       <form [formGroup]="serieForm" (ngSubmit)="onSubmit()">
   
-        <!-- <input type="checkbox" id="active" formControlName="active" hidden /> -->
-  
         <div class="mb-3">
           <label for="name" class="form-label">Nombre:</label>
           <input type="text" class="form-control" id="name" formControlName="name" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="franchiseId" class="form-label">Franquicia</label>
+          <ng-select id="franchiseId" formControlName="franchiseId" bindLabel="name" bindValue="id" [items]="franchises" >
+          </ng-select>
         </div>
 
   

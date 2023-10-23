@@ -1,7 +1,7 @@
-﻿using Application.Inventories.Commands.CreateInventory;
-using Application.Inventories.Commands.ToggleInventory;
-using Application.Inventories.Commands.UpdateInventory;
-using Application.Inventories.Queries.GetInventories;
+﻿using Application.Maintainer.Inventories.Commands.CreateInventory;
+using Application.Maintainer.Inventories.Commands.ToggleInventory;
+using Application.Maintainer.Inventories.Commands.UpdateInventory;
+using Application.Maintainer.Inventories.Queries.GetInventories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

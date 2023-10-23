@@ -5,7 +5,7 @@ namespace Application.Maintainer.Series.Commands.CreateSerie;
 public class CreateSerieCommand : IRequest<int>
 {
     public string name { get; set; } = default!;
-
+    public int franchiseId { get; set; }
     public class CreateSerieCommandHandler : IRequestHandler<CreateSerieCommand, int>
     {
         private readonly IApplicationDbContext _context;
@@ -19,6 +19,7 @@ public class CreateSerieCommand : IRequest<int>
             var entity = new Serie
             {
                 name = request.name,
+                franchiseId = request.franchiseId,
                 active = true
             };
 

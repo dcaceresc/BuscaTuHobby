@@ -1,7 +1,7 @@
 ﻿using Application.Common.Exceptions;
 using Domain.Entities;
 
-namespace Application.Inventories.Commands.UpdateInventory;
+namespace Application.Maintainer.Inventories.Commands.UpdateInventory;
 
 public class UpdateInventoryCommand : IRequest
 {

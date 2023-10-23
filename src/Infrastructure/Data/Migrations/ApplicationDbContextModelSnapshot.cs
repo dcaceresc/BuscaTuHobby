@@ -59,33 +59,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("Domain.Entities.CategoryProduct", b =>
-                {
-                    b.Property<int>("categoryId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("productId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("categoryId", "productId");
-
-                    b.HasIndex("productId");
-
-                    b.ToTable("CategoryProducts");
-                });
-
             modelBuilder.Entity("Domain.Entities.Favorite", b =>
                 {
                     b.Property<int>("id")
@@ -140,6 +113,38 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("productId");
 
                     b.ToTable("FavoriteProducts");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Franchise", b =>
+                {
+                    b.Property<int>("id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("active")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("id");
+
+                    b.ToTable("Franchises");
                 });
 
             modelBuilder.Entity("Domain.Entities.Group", b =>
@@ -311,6 +316,9 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("franchiseId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("hasBase")
                         .HasColumnType("bit");
 
@@ -327,10 +335,20 @@ namespace Infrastructure.Data.Migrations
                     b.Property<int>("scaleId")
                         .HasColumnType("int");
 
-                    b.Property<int>("serieId")
+                    b.Property<int?>("serieId")
                         .HasColumnType("int");
 
+                    b.Property<string>("size")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("targetAge")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("id");
+
+                    b.HasIndex("franchiseId");
 
                     b.HasIndex("manufacturerId");
 
@@ -339,6 +357,33 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("serieId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ProductCategory", b =>
+                {
+                    b.Property<int>("categoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("productId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("categoryId", "productId");
+
+                    b.HasIndex("productId");
+
+                    b.ToTable("ProductCategories");
                 });
 
             modelBuilder.Entity("Domain.Entities.Review", b =>
@@ -437,11 +482,16 @@ namespace Infrastructure.Data.Migrations
                     b.Property<bool>("active")
                         .HasColumnType("bit");
 
+                    b.Property<int>("franchiseId")
+                        .HasColumnType("int");
+
                     b.Property<string>("name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
+
+                    b.HasIndex("franchiseId");
 
                     b.ToTable("Series");
                 });
@@ -840,25 +890,6 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Group");
                 });
 
-            modelBuilder.Entity("Domain.Entities.CategoryProduct", b =>
-                {
-                    b.HasOne("Domain.Entities.Category", "Category")
-                        .WithMany("CategoryProducts")
-                        .HasForeignKey("categoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Product", "Product")
-                        .WithMany("CategoryProducts")
-                        .HasForeignKey("productId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Category");
-
-                    b.Navigation("Product");
-                });
-
             modelBuilder.Entity("Domain.Entities.FavoriteProduct", b =>
                 {
                     b.HasOne("Domain.Entities.Favorite", "Favorite")
@@ -910,6 +941,12 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
+                    b.HasOne("Domain.Entities.Franchise", "Franchise")
+                        .WithMany("Products")
+                        .HasForeignKey("franchiseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.Manufacturer", "Manufacturer")
                         .WithMany("Products")
                         .HasForeignKey("manufacturerId")
@@ -923,16 +960,35 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Serie", "Serie")
-                        .WithMany("Products")
-                        .HasForeignKey("serieId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany()
+                        .HasForeignKey("serieId");
+
+                    b.Navigation("Franchise");
 
                     b.Navigation("Manufacturer");
 
                     b.Navigation("Scale");
 
                     b.Navigation("Serie");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ProductCategory", b =>
+                {
+                    b.HasOne("Domain.Entities.Category", "Category")
+                        .WithMany("CategoryProducts")
+                        .HasForeignKey("categoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Product", "Product")
+                        .WithMany("CategoryProducts")
+                        .HasForeignKey("productId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Domain.Entities.Review", b =>
@@ -944,6 +1000,17 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Store");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Serie", b =>
+                {
+                    b.HasOne("Domain.Entities.Franchise", "Franchise")
+                        .WithMany("Serie")
+                        .HasForeignKey("franchiseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Franchise");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -1007,6 +1074,13 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("FavoriteProducts");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Franchise", b =>
+                {
+                    b.Navigation("Products");
+
+                    b.Navigation("Serie");
+                });
+
             modelBuilder.Entity("Domain.Entities.Group", b =>
                 {
                     b.Navigation("Categories");
@@ -1027,11 +1101,6 @@ namespace Infrastructure.Data.Migrations
                 });
 
             modelBuilder.Entity("Domain.Entities.Scale", b =>
-                {
-                    b.Navigation("Products");
-                });
-
-            modelBuilder.Entity("Domain.Entities.Serie", b =>
                 {
                     b.Navigation("Products");
                 });

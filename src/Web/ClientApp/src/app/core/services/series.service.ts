@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
-import { createSerieCommnad, serieDto, serieVM } from '../models/serie.model';
+import { createSerieCommnad, serieByFranchiseDto, serieDto, serieVM } from '../models/serie.model';
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +21,10 @@ export class SeriesService {
 
   GetbyId(id:string | null):Observable<serieVM>{
     return this.http.get<serieVM>(`${this.SeriesGetPath}/${id}`);
+  }
+
+  GetbyFranchise(franchiseId:string | null):Observable<Array<serieByFranchiseDto>>{
+    return this.http.get<Array<serieByFranchiseDto>>(`${this.SeriesGetPath}/ByFranchise/${franchiseId}`);
   }
 
   Create(serie:createSerieCommnad): Observable<serieVM>{

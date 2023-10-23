@@ -1,7 +1,6 @@
-﻿
-using FluentValidation;
+﻿using FluentValidation;
 
-namespace Application.Inventories.Commands.UpdateInventory;
+namespace Application.Maintainer.Inventories.Commands.UpdateInventory;
 
 
 public class UpdateInventoryCommandValidator : AbstractValidator<UpdateInventoryCommand>

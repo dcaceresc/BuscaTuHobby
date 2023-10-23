@@ -7,6 +7,7 @@
     <tr>
       <th>#</th>
       <th>Nombre</th>
+      <th>Franquicia</th>
       <th>Acciones</th>
     </tr>
   </thead>
@@ -14,6 +15,7 @@
     <tr *ngFor="let serie of getPaginatedData(); let i = index">
       <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
       <td>{{serie.name}}</td>
+      <td>{{serie.franchiseName}}</td>
       <td>
         <a [routerLink]="['/maintainer/series/edit/', serie.id]" class="btn bg-primary me-2">
           <fa-icon [icon]="faEdit"></fa-icon> Editar

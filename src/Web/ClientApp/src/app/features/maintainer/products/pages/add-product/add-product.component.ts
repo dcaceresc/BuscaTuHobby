@@ -8,10 +8,14 @@ import { scaleDto } from 'src/app/core/models/scale.model';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ManufacturersService } from 'src/app/core/services/manufacturers.service';
 import { manufacturerDto } from 'src/app/core/models/manufacturer.model';
-import { serieDto } from 'src/app/core/models/serie.model';
+import { serieByFranchiseDto, serieDto } from 'src/app/core/models/serie.model';
 import { SeriesService } from 'src/app/core/services/series.service';
 import { CategoriesService } from 'src/app/core/services/categories.service';
 import { categoryDto } from 'src/app/core/models/category.model';
+import { FranchisesService } from 'src/app/core/services/franchises.service';
+import { franchiseDto } from 'src/app/core/models/franchise.model';
+import { GroupsService } from 'src/app/core/services/groups.service';
+import { groupDto } from 'src/app/core/models/group.model';
 
 @Component({
   standalone: true,
@@ -23,20 +27,24 @@ export class AddProductComponent {
   productForm! : FormGroup;
   scales:scaleDto[] = [];
   manufacturers:manufacturerDto[] = [];
-  series:serieDto[] = [];
+  franchises:franchiseDto[] =[];
+  series:serieByFranchiseDto[] = [];
   categories : categoryDto[] = [];
+  selectedCategoryGroup:string[] = [];
+
 
   constructor(private formbuilder: FormBuilder, 
     private productsService: ProductsService,
     private scalesService : ScalesService,
     private manufacturersService : ManufacturersService,
+    private franschisesService : FranchisesService,
     private seriesService : SeriesService, 
     private categoriesService : CategoriesService,
     private router:Router) {
     this.createForm();
     this.loadScales();
     this.loadManufactures();
-    this.loadSeries();
+    this.loadFranchises();
     this.loadCategories();
   }
 
@@ -45,9 +53,12 @@ export class AddProductComponent {
       name: ['',Validators.required],
       scaleId: ['',Validators.required],
       manufacturerId: ['',Validators.required],
-      serieId: ['',Validators.required],
-      categoryId : ['',Validators.required],
+      franchiseId: ['',Validators.required],
+      serieId: [''],
+      categories: ['', [Validators.required]],
       hasBase: [false, Validators.required],
+      targetAge: ['',Validators.required],
+      size :['',Validators.required],
       releaseDate : ['',Validators.required],
       description: ['',Validators.required],
     });
@@ -70,13 +81,14 @@ export class AddProductComponent {
     )
   }
 
-  loadSeries(){
-    this.seriesService.GetAll().subscribe(
-      (series) => {
-        this.series = series.filter(serie => serie.active); 
+  loadFranchises(){
+    this.franschisesService.GetAll().subscribe(
+      (franchises) => {
+        this.franchises = franchises.filter(franchise => franchise.active);
       }
-    )
+    ) 
   }
+
 
   loadCategories(){
     this.categoriesService.GetAll().subscribe(
@@ -86,6 +98,40 @@ export class AddProductComponent {
     )
   }
 
+  onFranchisesChange(){
+    const franchiseId = this.productForm.get('franchiseId')!.value;
+
+    if(franchiseId != null){
+      this.seriesService.GetbyFranchise(franchiseId).subscribe(
+        (series) => {
+          this.series = series;
+        }
+      )
+    }else{
+      this.series = [];
+    }
+    
+  }
+
+
+  // onCategoriesChange(){
+  //   const category = this.categories.filter(category => category.id this.productForm.get('categories')?.value);
+
+  //   console.log(category);
+
+  //   if(!category){
+  //     this.selectedCategoryGroup = [];
+  //     this.loadCategories();
+  //   }else{
+  //     // this.selectedCategoryGroup.push(category?.groupName!);
+  //   }
+
+  //   console.log(this.selectedCategoryGroup);
+  //   this.categories = this.categories.filter(category => !this.selectedCategoryGroup.includes(category.groupName));
+
+    
+  // }
+
   searchCategories(term :string, item :any):boolean {
     term = term.toLowerCase();
     return (
@@ -94,17 +140,21 @@ export class AddProductComponent {
     );
   }
 
-  onSubmit():void{
-    if(this.productForm.valid){
+
+  onSubmit() {
+    if (this.productForm.valid) {
       this.productsService.Create(this.productForm.value).subscribe(() => {
         this.router.navigate(['maintainer/products']);
       }, error => {
-        // Manejar el error
+        // Handle the error
       });
     }
   }
 
-  onCancel():void{
+  onCancel() {
     this.router.navigate(['/maintainer/products']);
   }
+
+  
 }
+

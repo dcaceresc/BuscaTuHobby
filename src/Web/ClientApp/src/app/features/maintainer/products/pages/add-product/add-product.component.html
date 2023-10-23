@@ -23,14 +23,21 @@
         </div>
 
         <div class="mb-3">
+          <label for="franchiseId" class="form-label">Franquicia</label>
+          <ng-select id="franchiseId" formControlName="franchiseId" bindLabel="name" bindValue="id" [items]="franchises" (change)="onFranchisesChange()">
+          </ng-select>
+        </div>
+
+        <div class="mb-3" *ngIf="productForm.get('franchiseId')!.value && series.length > 0" >
           <label for="serieId" class="form-label">Serie</label>
-          <ng-select id="serieId" formControlName="serieId" bindLabel="name" bindValue="id" [items]="series">
+          <ng-select id="serieId" formControlName="serieId" bindLabel="name" bindValue="id" [items]="series" >
           </ng-select>
         </div>
 
         <div class="mb-3">
-          <label for="categoryId" class="form-label">Categorias</label>
-          <ng-select id="categoryId" formControlName="categoryId" bindLabel="name" bindValue="id" [items]="categories" groupBy="groupName" [multiple]="true" [searchFn]="searchCategories">
+          <label for="categories" class="form-label">Categorias</label>
+          <ng-select id="categories" formControlName="categories" bindLabel="name" bindValue="id" 
+          [items]="categories" groupBy="groupName" [multiple]="true" [searchFn]="searchCategories"  >
           </ng-select>
         </div>
 
@@ -38,6 +45,17 @@
           <input class="form-check-input" type="checkbox" id="hasBase" formControlName="hasBase">
           <label class="form-check-label" for="hasBase">Tiene Base</label>
         </div>
+
+        <div class="mb-3">
+          <label for="size" class="form-label">Tamaño</label>
+          <input type="text" id="size" formControlName="size" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+          <label for="targetAge" class="form-label">Edad Recomendada</label>
+          <input type="text" id="targetAge" formControlName="targetAge" class="form-control" />
+        </div>
+        
 
         <div class="mb-3">
             <label for="releaseDate" class="form-label">Fecha de Lanzamiento</label>

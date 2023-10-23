@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
 
-namespace Application.Inventories.Queries.GetInventories;
+namespace Application.Maintainer.Inventories.Queries.GetInventories;
 
 public class InventoryDto
 {

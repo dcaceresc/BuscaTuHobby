@@ -4,7 +4,9 @@
     {
         public int id { get; set; }
         public string name { get; set; } = default!;
+        public int franchiseId { get; set; }
         public bool active { get; set; }
-        public ICollection<Product> Products { get; set; } = default!;
+        
+        public virtual Franchise Franchise { get; set; } = default!;
     }
 }
