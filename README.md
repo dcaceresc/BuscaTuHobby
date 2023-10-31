@@ -1,6 +1,6 @@
-# BuscaTuGunpla
+# BuscaTuHobby
 
-**BuscaTuGunpla** es una aplicación que te permite buscar y comparar precios de Gunplas y maquetas de distintas tiendas en línea. Esta aplicación utiliza **.NET** para el backend y **Angular** para el frontend, y sigue la estructura propuesta por **Jason Taylor** en su Clean Architecture (https://github.com/jasontaylordev/CleanArchitecture).
+**BuscaTuHobby** es una aplicación que te permite buscar y comparar precios de Gunplas y maquetas de distintas tiendas en línea. Esta aplicación utiliza **.NET** para el backend y **Angular** para el frontend, y sigue la estructura propuesta por **Jason Taylor** en su Clean Architecture (https://github.com/jasontaylordev/CleanArchitecture).
 
 ## Funcionalidades Principales (En Proceso)
 
@@ -21,7 +21,7 @@ Asegúrate de tener instaladas las siguientes herramientas antes de comenzar:
 
 ### Configuración del Proyecto 
 
-1. Clona este repositorio: `git clone https://github.com/dcaceresc/BuscaTuGunpla.git` 
+1. Clona este repositorio: `git clone https://github.com/dcaceresc/BuscaTuHobby.git` 
 2. Navega al directorio del proyecto y abre una terminal.
 3. Ejecuta `dotnet restore` para restaurar las dependencias del proyecto.
 4. Diriguete al directorio `/src/Web/ClientApp`
@@ -40,7 +40,7 @@ Asegúrate de tener instaladas las siguientes herramientas antes de comenzar:
 
 ## Problemas
 
-Si tiene problemas, hágamelo saber planteando un [nuevo problema](https://github.com/dcaceresc/BuscaTuGunpla/issues).
+Si tiene problemas, hágamelo saber planteando un [nuevo problema](https://github.com/dcaceresc/BuscaTuHobby/issues).
 
 ## Licencia
 
@@ -48,5 +48,5 @@ Este proyecto se distribuye bajo la licencia [MIT](LICENSE).
 
 
 
-¡Gracias por utilizar BuscaTuGunpla!
+¡Gracias por utilizar BuscaTuHobby!
 

@@ -14,8 +14,6 @@ import { CategoriesService } from 'src/app/core/services/categories.service';
 import { categoryDto } from 'src/app/core/models/category.model';
 import { FranchisesService } from 'src/app/core/services/franchises.service';
 import { franchiseDto } from 'src/app/core/models/franchise.model';
-import { GroupsService } from 'src/app/core/services/groups.service';
-import { groupDto } from 'src/app/core/models/group.model';
 
 @Component({
   standalone: true,
@@ -113,24 +111,6 @@ export class AddProductComponent {
     
   }
 
-
-  // onCategoriesChange(){
-  //   const category = this.categories.filter(category => category.id this.productForm.get('categories')?.value);
-
-  //   console.log(category);
-
-  //   if(!category){
-  //     this.selectedCategoryGroup = [];
-  //     this.loadCategories();
-  //   }else{
-  //     // this.selectedCategoryGroup.push(category?.groupName!);
-  //   }
-
-  //   console.log(this.selectedCategoryGroup);
-  //   this.categories = this.categories.filter(category => !this.selectedCategoryGroup.includes(category.groupName));
-
-    
-  // }
 
   searchCategories(term :string, item :any):boolean {
     term = term.toLowerCase();

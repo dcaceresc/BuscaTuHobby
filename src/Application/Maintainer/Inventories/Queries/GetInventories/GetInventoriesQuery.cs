@@ -15,7 +15,7 @@ public class GetInventoriesQuery : IRequest<IList<InventoryDto>>
 
         public async Task<IList<InventoryDto>> Handle(GetInventoriesQuery request, CancellationToken cancellationToken)
         {
-            return await _context.Inventories.AsNoTracking().ProjectTo<InventoryDto>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
+            return await _context.Inventories.Include(x => x.Product).Include(x => x.Store).AsNoTracking().ProjectTo<InventoryDto>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
         }
     }
 }

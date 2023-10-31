@@ -23,7 +23,8 @@ public class CreateInventoryCommand : IRequest<int>
             {
                 productId = request.productId,
                 storeId = request.storeId,
-                price = request.price
+                price = request.price,
+                active = true
             };
 
             _context.Inventories.Add(entity);
