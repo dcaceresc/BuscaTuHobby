@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -15,7 +15,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 })
 export class AddCategoryComponent {
   categoryForm! : FormGroup;
-  groups : groupDto[] = [];
+  groups = signal<groupDto[]>([]);
 
   constructor(private formbuilder: FormBuilder, private categoriesService: CategoriesService, private groupsService : GroupsService, private router:Router) {
     this.createForm();
@@ -32,7 +32,7 @@ export class AddCategoryComponent {
   loadGroups(){
     this.groupsService.GetAll().subscribe(
       (groups) => {
-        this.groups = groups.filter(group => group.active);
+        this.groups.set(groups.filter(group => group.active));
       }
     )
   }

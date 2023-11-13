@@ -1,6 +1,8 @@
 <h3 class="mt-3">Series</h3>
 
-<a class="btn bg-primary mb-2" [routerLink]="['/maintainer/series/create']">Crear Serie</a>
+<a class="btn bg-primary mb-2" [routerLink]="['/maintainer/series/create']">
+  Crear Serie
+</a>
 
 <table class="table table-stripped table-bordered">
   <thead class="bg-primary">
@@ -12,31 +14,44 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let serie of getPaginatedData(); let i = index">
-      <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
-      <td>{{serie.name}}</td>
-      <td>{{serie.franchiseName}}</td>
+    @for (serie of getPaginatedData(); track serie; let i = $index) {
+    <tr>
+      <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
+      <td>{{ serie.name }}</td>
+      <td>{{ serie.franchiseName }}</td>
       <td>
-        <a [routerLink]="['/maintainer/series/edit/', serie.id]" class="btn bg-primary me-2">
+        <a
+          [routerLink]="['/maintainer/series/edit/', serie.id]"
+          class="btn bg-primary me-2"
+        >
           <fa-icon [icon]="faEdit"></fa-icon> Editar
         </a>
-        <a class="btn"
-           [ngClass]="serie.active ? 'bg-danger' : 'bg-success'"
-           (click)="toggle(serie.id!)">
+        <a
+          class="btn"
+          [ngClass]="serie.active ? 'bg-danger' : 'bg-success'"
+          (click)="toggle(serie.id!)"
+        >
           <fa-icon [icon]="faPowerOff"></fa-icon>
-          {{ serie.active ? 'Desactivar' : 'Activar' }}
+          {{ serie.active ? "Desactivar" : "Activar" }}
         </a>
       </td>
     </tr>
+    }
   </tbody>
 </table>
 
 <nav aria-label="Page navigation example">
   <ul class="pagination justify-content-end">
-    <li class="page-item" [ngClass]="{ 'disabled': currentPage === 1 }"><a class="page-link" (click)="setPage(currentPage - 1)">Anterior</a></li>
-    <li class="page-item" *ngFor="let page of range(1)" [ngClass]="{ 'active': currentPage === page }">
+    <li class="page-item" [ngClass]="{ disabled: currentPage() === 1 }">
+      <a class="page-link" (click)="setPage(currentPage() - 1)">Anterior</a>
+    </li>
+    @for (page of range(1); track page) {
+    <li class="page-item" [ngClass]="{ active: currentPage() === page }">
       <a class="page-link" (click)="setPage(page)">{{ page }}</a>
     </li>
-    <li class="page-item" [ngClass]="{ 'disabled': currentPage === nPage() }"><a class="page-link" (click)="setPage(currentPage + 1)">Siguiente</a></li>
+    }
+    <li class="page-item" [ngClass]="{ disabled: currentPage() === nPage() }">
+      <a class="page-link" (click)="setPage(currentPage() + 1)">Siguiente</a>
+    </li>
   </ul>
 </nav>

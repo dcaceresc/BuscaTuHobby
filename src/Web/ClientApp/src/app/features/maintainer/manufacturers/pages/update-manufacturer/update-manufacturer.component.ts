@@ -13,7 +13,6 @@ import { ManufacturersService } from 'src/app/core/services/manufacturers.servic
 })
 export class UpdateManufacturerComponent {
   manufacturerId!:string | null;
-  manufacturer!: manufacturerVM;
   manufacturerForm! : FormGroup;
 
   constructor(private manufacturersService: ManufacturersService,

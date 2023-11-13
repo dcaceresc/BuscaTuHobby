@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { franchiseVM } from 'src/app/core/models/franchise.model';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FranchisesService } from 'src/app/core/services/franchises.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -13,7 +12,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class UpdateFranchiseComponent {
   franchiseId!:string | null;
-  franchise!: franchiseVM;
   franchiseForm! : FormGroup;
 
   constructor(private franchisesService: FranchisesService,

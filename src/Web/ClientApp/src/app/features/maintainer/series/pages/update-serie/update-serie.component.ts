@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SeriesService } from 'src/app/core/services/series.service';
@@ -16,9 +16,8 @@ import { NgSelectModule } from '@ng-select/ng-select';
 })
 export class UpdateSerieComponent {
   serieId!:string | null;
-  serie!: serieVM;
   serieForm! : FormGroup;
-  franchises : franchiseDto[] = [];
+  franchises = signal<franchiseDto[]>([])
 
   constructor(private seriesService: SeriesService,
     private router: Router,
@@ -55,7 +54,7 @@ export class UpdateSerieComponent {
   loadFranchises(){
     this.franchisesService.GetAll().subscribe(
       (franchises) => {
-        this.franchises = franchises.filter(frachise => frachise.active);
+        this.franchises.set(franchises.filter(frachise => frachise.active));
       }
     )
   }

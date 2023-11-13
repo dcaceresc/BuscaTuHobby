@@ -3,17 +3,17 @@
       Crear Inventario
     </div>
     <div class="card-body">
-      <form [formGroup]="manufacturerForm" (ngSubmit)="onSubmit()">
+      <form [formGroup]="inventoryForm" (ngSubmit)="onSubmit()">
     
         <div class="mb-3">
           <label for="productId" class="form-label">Productos:</label>
-          <ng-select id="productId" formControlName="productId" bindLabel="name" bindValue="id" [items]="products">
+          <ng-select id="productId" formControlName="productId" bindLabel="name" bindValue="id" [items]="products()">
           </ng-select>
         </div>
 
         <div class="mb-3">
           <label for="storeId" class="form-label">Tiendas:</label>
-          <ng-select id="storeId" formControlName="storeId" bindLabel="name" bindValue="id" [items]="stores">
+          <ng-select id="storeId" formControlName="storeId" bindLabel="name" bindValue="id" [items]="stores()">
           </ng-select>
         </div>
 
@@ -23,7 +23,7 @@
         </div>
   
         <div class="d-flex justify-content-end">
-          <button type="submit" class="btn bg-primary me-2" [disabled]="manufacturerForm.invalid">Guardar</button>
+          <button type="submit" class="btn bg-primary me-2" [disabled]="inventoryForm.invalid">Guardar</button>
           <button type="button" class="btn bg-secundary" (click)="onCancel()">Cancelar</button>
         </div>
       </form>

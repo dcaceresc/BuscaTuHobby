@@ -2,6 +2,7 @@
 using Application.Maintainer.Inventories.Commands.ToggleInventory;
 using Application.Maintainer.Inventories.Commands.UpdateInventory;
 using Application.Maintainer.Inventories.Queries.GetInventories;
+using Application.Maintainer.Inventories.Queries.GetInventoryById;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,12 @@ public class InventoriesController : ApiController
     public async Task<IList<InventoryDto>> Get()
     {
         return await Mediator.Send(new GetInventoriesQuery());
+    }
+
+    [HttpGet("{id}")]
+    public async Task<InventoryVM> GetById(int id)
+    {
+        return await Mediator.Send(new GetInventoryIdQuery() { id = id });
     }
 
     [HttpPost]

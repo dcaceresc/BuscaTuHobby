@@ -13,7 +13,6 @@ import { groupVM } from 'src/app/core/models/group.model';
 })
 export class UpdateGroupComponent {
   groupId!:string | null;
-  group!: groupVM;
   groupForm! : FormGroup;
 
   constructor(private groupsService: GroupsService,

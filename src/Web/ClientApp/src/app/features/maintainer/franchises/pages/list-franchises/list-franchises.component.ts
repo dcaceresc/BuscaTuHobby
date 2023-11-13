@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -13,26 +13,26 @@ import { FranchisesService } from 'src/app/core/services/franchises.service';
   styleUrls: ['./list-franchises.component.scss']
 })
 export class ListFranchisesComponent {
-  franchises!:franchiseDto[];
+  franchises = signal<franchiseDto[]>([]);
   faPowerOff = faPowerOff;
   faEdit = faEdit;
-  currentPage = 1;
+  currentPage = signal(1);
   itemsPerPage = 10;
 
   constructor(private franchisesService:FranchisesService) {}
 
   ngOnInit(): void {
-    this.franchisesService.GetAll().subscribe(items => this.franchises = items);
+    this.franchisesService.GetAll().subscribe(items => this.franchises.set(items));
   }
 
   getPaginatedData(){
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const startIndex = (this.currentPage() - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    return this.franchises?.slice(startIndex,endIndex);
+    return this.franchises()?.slice(startIndex,endIndex);
   }
 
   setPage(pageNumber: number) {
-    this.currentPage = pageNumber;
+    this.currentPage.set(pageNumber);
   }
 
   range(start: number) {
@@ -44,16 +44,16 @@ export class ListFranchisesComponent {
   }
 
   nPage(){
-    return Math.ceil(this.franchises?.length / this.itemsPerPage)
+    return Math.ceil(this.franchises()?.length / this.itemsPerPage)
   }
 
   toggle(id:number){
-    const group = this.franchises.find(x => x.id === id);
+    const group = this.franchises().find(x => x.id === id);
 
     if(group){
       this.franchisesService.Toggle(id).subscribe(
         () => {
-          this.franchisesService.GetAll().subscribe(items => this.franchises = items);
+          this.franchisesService.GetAll().subscribe(items => this.franchises.set(items));
         }
       );
     }

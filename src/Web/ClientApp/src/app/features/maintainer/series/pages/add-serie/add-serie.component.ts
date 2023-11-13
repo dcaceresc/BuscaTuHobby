@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -15,7 +15,7 @@ import { franchiseDto } from 'src/app/core/models/franchise.model';
 })
 export class AddSerieComponent {
   serieForm! : FormGroup;
-  franchises : franchiseDto[] = [];
+  franchises = signal<franchiseDto[]>([]);
 
   constructor(private formbuilder: FormBuilder,
               private seriesService: SeriesService,
@@ -35,7 +35,7 @@ export class AddSerieComponent {
   loadFranchises(){
     this.franchisesService.GetAll().subscribe(
       (franchises) => {
-        this.franchises = franchises.filter(frachise => frachise.active);
+        this.franchises.set(franchises.filter(frachise => frachise.active));
       }
     )
   }

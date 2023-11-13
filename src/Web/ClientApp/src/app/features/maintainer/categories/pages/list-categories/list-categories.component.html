@@ -3,7 +3,7 @@
 <a class="btn bg-primary mb-2" [routerLink]="['/maintainer/categories/create']">Crear Categoria</a>
 
 
-<table class="table table-stripped table-bordered">
+<!-- <table class="table table-stripped table-bordered">
   <thead class="bg-primary">
     <tr>
       <th>#</th>
@@ -13,8 +13,9 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let category of getPaginatedData(); let i = index">
-      <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+    @for (category of getPaginatedData(); track category; let i = $index) {
+  <tr>
+      <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
       <td>{{category.name}}</td>
       <td>{{category.groupName}}</td>
       <td>
@@ -29,15 +30,20 @@
         </a>
       </td>
     </tr>
+}
   </tbody>
 </table>
 
 <nav aria-label="Page navigation example">
   <ul class="pagination justify-content-end">
-    <li class="page-item" [ngClass]="{ 'disabled': currentPage === 1 }"><a class="page-link" (click)="setPage(currentPage - 1)">Anterior</a></li>
-    <li class="page-item" *ngFor="let page of range(1)" [ngClass]="{ 'active': currentPage === page }">
+    <li class="page-item" [ngClass]="{ 'disabled': currentPage() === 1 }"><a class="page-link" (click)="setPage(currentPage() - 1)">Anterior</a></li>
+    @for (page of range(1); track page) {
+  <li class="page-item" [ngClass]="{ 'active': currentPage() === page }">
       <a class="page-link" (click)="setPage(page)">{{ page }}</a>
     </li>
-    <li class="page-item" [ngClass]="{ 'disabled': currentPage === nPage() }"><a class="page-link" (click)="setPage(currentPage + 1)">Siguiente</a></li>
+}
+    <li class="page-item" [ngClass]="{ 'disabled': currentPage() === nPage() }"><a class="page-link" (click)="setPage(currentPage() + 1)">Siguiente</a></li>
   </ul>
-</nav>
+</nav> -->
+
+<app-table [columns]="columns" [data]="categories"></app-table>

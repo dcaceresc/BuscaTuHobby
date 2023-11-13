@@ -13,7 +13,6 @@ import { StoresService } from 'src/app/core/services/stores.service';
 })
 export class UpdateStoreComponent {
   storeId!:string | null;
-  store!: storeVM;
   storeForm! : FormGroup;
 
   constructor(private storesService: StoresService,

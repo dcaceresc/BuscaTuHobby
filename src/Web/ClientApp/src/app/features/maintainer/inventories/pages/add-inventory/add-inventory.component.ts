@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -16,9 +16,9 @@ import { NgSelectModule } from '@ng-select/ng-select';
   styleUrls: ['./add-inventory.component.scss']
 })
 export class AddInventoryComponent {
-  manufacturerForm! : FormGroup;
-  products : productDto[] =[];
-  stores : storeDto[] =[];
+  inventoryForm! : FormGroup;
+  products = signal<productDto[]>([]);
+  stores = signal<storeDto[]>([]);
 
   constructor(
     private formbuilder: FormBuilder, 
@@ -32,7 +32,7 @@ export class AddInventoryComponent {
   }
 
   createForm() {
-    this.manufacturerForm = this.formbuilder.group({
+    this.inventoryForm = this.formbuilder.group({
       productId: ['',Validators.required],
       storeId: ['',Validators.required],
       price: [0,Validators.required],
@@ -42,7 +42,7 @@ export class AddInventoryComponent {
   loadProducts(){
     this.productsService.GetAll().subscribe(
       (products) => {
-        this.products = products;
+        this.products.set(products.filter(product => product.active));
       }
     )
   }
@@ -50,14 +50,14 @@ export class AddInventoryComponent {
   loadStores(){
     this.storesService.GetAll().subscribe(
       (stores) => {
-        this.stores = stores;
+        this.stores.set(stores.filter(store => store.active));
       }
     )
   }
 
   onSubmit():void{
-    if(this.manufacturerForm.valid){
-      this.inventoriesService.Create(this.manufacturerForm.value).subscribe(() => {
+    if(this.inventoryForm.valid){
+      this.inventoriesService.Create(this.inventoryForm.value).subscribe(() => {
         this.router.navigate(['maintainer/inventories']);
       }, error => {
         // Manejar el error

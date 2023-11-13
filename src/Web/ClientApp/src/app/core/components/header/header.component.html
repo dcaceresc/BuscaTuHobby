@@ -238,7 +238,8 @@
     ></button>
   </div>
   <div class="offcanvas-body">
-    <div *ngIf="isAuthenticated | async">
+    @if (isAuthenticated | async) {
+<div>
       <h5>Mantenedor</h5>
 
       <ul class="navbar-nav">
@@ -271,6 +272,7 @@
         </li>
       </ul>
     </div>
+}
 
     <h5>Buscar por Categoria</h5>
 

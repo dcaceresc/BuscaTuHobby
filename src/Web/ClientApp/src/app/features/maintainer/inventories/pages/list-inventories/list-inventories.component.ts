@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { inventoryDto } from 'src/app/core/models/inventory.model';
 import { faEdit, faPowerOff } from '@fortawesome/free-solid-svg-icons';
@@ -13,26 +13,26 @@ import { InventoriesService } from 'src/app/core/services/inventories.service';
   styleUrls: ['./list-inventories.component.scss']
 })
 export class ListInventoriesComponent {
-  manufacturers!:inventoryDto[];
+  inventories = signal<inventoryDto[]>([]);
   faPowerOff = faPowerOff;
   faEdit = faEdit;
-  currentPage = 1;
+  currentPage = signal(1);
   itemsPerPage = 10;
 
   constructor(private inventoriesService:InventoriesService) {}
 
   ngOnInit(): void {
-    this.inventoriesService.GetAll().subscribe(items => this.manufacturers = items);
+    this.inventoriesService.GetAll().subscribe(items => this.inventories.set(items));
   }
 
   getPaginatedData(){
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const startIndex = (this.currentPage() - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    return this.manufacturers?.slice(startIndex,endIndex);
+    return this.inventories()?.slice(startIndex,endIndex);
   }
 
   setPage(pageNumber: number) {
-    this.currentPage = pageNumber;
+    this.currentPage.set(pageNumber);
   }
 
   range(start: number) {
@@ -44,16 +44,16 @@ export class ListInventoriesComponent {
   }
 
   nPage(){
-    return Math.ceil(this.manufacturers?.length / this.itemsPerPage)
+    return Math.ceil(this.inventories()?.length / this.itemsPerPage)
   }
 
   toggle(id:number){
-    const manufacturer = this.manufacturers.find(x => x.id === id);
+    const inventory = this.inventories().find(x => x.id === id);
 
-    if(manufacturer){
+    if(inventory){
       this.inventoriesService.Toggle(id).subscribe(
         () => {
-          this.inventoriesService.GetAll().subscribe(items => this.manufacturers = items);
+          this.inventoriesService.GetAll().subscribe(items => this.inventories.set(items));
         }
       );
     }

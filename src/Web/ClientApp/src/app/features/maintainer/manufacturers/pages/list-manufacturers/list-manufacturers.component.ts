@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -13,26 +13,26 @@ import { manufacturerDto } from 'src/app/core/models/manufacturer.model';
   styleUrls: ['./list-manufacturers.component.scss']
 })
 export class ListManufacturersComponent {
-  manufacturers!:manufacturerDto[];
+  manufacturers = signal<manufacturerDto[]>([]);
   faPowerOff = faPowerOff;
   faEdit = faEdit;
-  currentPage = 1;
+  currentPage = signal(1);
   itemsPerPage = 10;
 
   constructor(private manufacturersService:ManufacturersService) {}
 
   ngOnInit(): void {
-    this.manufacturersService.GetAll().subscribe(items => this.manufacturers = items);
+    this.manufacturersService.GetAll().subscribe(items => this.manufacturers.set(items));
   }
 
   getPaginatedData(){
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const startIndex = (this.currentPage() - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    return this.manufacturers?.slice(startIndex,endIndex);
+    return this.manufacturers()?.slice(startIndex,endIndex);
   }
 
   setPage(pageNumber: number) {
-    this.currentPage = pageNumber;
+    this.currentPage.set(pageNumber);
   }
 
   range(start: number) {
@@ -44,16 +44,16 @@ export class ListManufacturersComponent {
   }
 
   nPage(){
-    return Math.ceil(this.manufacturers?.length / this.itemsPerPage)
+    return Math.ceil(this.manufacturers()?.length / this.itemsPerPage)
   }
 
   toggle(id:number){
-    const manufacturer = this.manufacturers.find(x => x.id === id);
+    const manufacturer = this.manufacturers().find(x => x.id === id);
 
     if(manufacturer){
       this.manufacturersService.Toggle(id).subscribe(
         () => {
-          this.manufacturersService.GetAll().subscribe(items => this.manufacturers = items);
+          this.manufacturersService.GetAll().subscribe(items => this.manufacturers.set(items));
         }
       );
     }

@@ -12,7 +12,7 @@
 
         <div class="mb-3">
           <label for="groupId" class="form-label">Grupo</label>
-          <ng-select id="groupId" formControlName="groupId" bindLabel="name" bindValue="id" [items]="groups">
+          <ng-select id="groupId" formControlName="groupId" bindLabel="name" bindValue="id" [items]="groups()">
           </ng-select>
         </div>
     
@@ -21,7 +21,5 @@
           <button type="button" class="btn bg-secundary" (click)="onCancel()">Cancelar</button>
         </div>
       </form>
-  
-  
     </div>
   </div>

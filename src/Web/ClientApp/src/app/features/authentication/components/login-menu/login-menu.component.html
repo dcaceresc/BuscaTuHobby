@@ -22,7 +22,8 @@
       </li>
 </ul> -->
 
-<div class="d-grid d-flex" *ngIf="(isAuthenticated | async) !== true">
+@if ((isAuthenticated | async) !== true) {
+<div class="d-grid d-flex">
   <a class="btn btn-login-menu me-md-2" [routerLink]="['/authentication/register']">
     <fa-icon [icon]="faUserPlus"></fa-icon> 
   </a>
@@ -30,8 +31,10 @@
     <fa-icon [icon]="faSignInAlt"></fa-icon> 
   </a>
 </div>
+}
 
-<div class="d-grid d-flex" *ngIf="isAuthenticated | async">
+@if (isAuthenticated | async) {
+<div class="d-grid d-flex">
   <a class="btn btn-login-menu me-md-2" [routerLink]="['/authentication/profile']">
     <fa-icon [icon]="faUser"></fa-icon>  Perfil
   </a>
@@ -39,3 +42,4 @@
     <fa-icon [icon]="faSignOutAlt"></fa-icon> 
   </a>
 </div>
+}

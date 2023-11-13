@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -13,26 +13,26 @@ import { serieDto } from 'src/app/core/models/serie.model';
   styleUrls: ['./list-series.component.scss']
 })
 export class ListSeriesComponent {
-  series!:serieDto[];
+  series = signal<serieDto[]>([]);
   faPowerOff = faPowerOff;
   faEdit = faEdit;
-  currentPage = 1;
+  currentPage = signal(1);
   itemsPerPage = 10;
 
   constructor(private seriesService:SeriesService) {}
 
   ngOnInit(): void {
-    this.seriesService.GetAll().subscribe(items => this.series = items);
+    this.seriesService.GetAll().subscribe(items => this.series.set(items));
   }
 
   getPaginatedData(){
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const startIndex = (this.currentPage() - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    return this.series?.slice(startIndex,endIndex);
+    return this.series()?.slice(startIndex,endIndex);
   }
 
   setPage(pageNumber: number) {
-    this.currentPage = pageNumber;
+    this.currentPage.set(pageNumber);
   }
 
   range(start: number) {
@@ -48,12 +48,12 @@ export class ListSeriesComponent {
   }
 
   toggle(id:number){
-    const serie = this.series.find(x => x.id === id);
+    const serie = this.series().find(x => x.id === id);
 
     if(serie){
       this.seriesService.Toggle(id).subscribe(
         () => {
-          this.seriesService.GetAll().subscribe(items => this.series = items);
+          this.seriesService.GetAll().subscribe(items => this.series.set(items));
         }
       );
     }

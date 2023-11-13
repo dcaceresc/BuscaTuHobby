@@ -11,7 +11,8 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let group of getPaginatedData(); let i = index">
+    @for (group of getPaginatedData(); track group; let i = $index) {
+  <tr>
       <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
       <td>{{group.name}}</td>
       <td>
@@ -26,15 +27,18 @@
         </a>
       </td>
     </tr>
+}
   </tbody>
 </table>
 
 <nav aria-label="Page navigation example">
   <ul class="pagination justify-content-end">
     <li class="page-item" [ngClass]="{ 'disabled': currentPage === 1 }"><a class="page-link" (click)="setPage(currentPage - 1)">Anterior</a></li>
-    <li class="page-item" *ngFor="let page of range(1)" [ngClass]="{ 'active': currentPage === page }">
+    @for (page of range(1); track page) {
+  <li class="page-item" [ngClass]="{ 'active': currentPage === page }">
       <a class="page-link" (click)="setPage(page)">{{ page }}</a>
     </li>
+}
     <li class="page-item" [ngClass]="{ 'disabled': currentPage === nPage() }"><a class="page-link" (click)="setPage(currentPage + 1)">Siguiente</a></li>
   </ul>
 </nav>

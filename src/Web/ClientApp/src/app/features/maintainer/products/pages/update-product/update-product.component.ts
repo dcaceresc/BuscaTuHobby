@@ -1,9 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, Signal, signal } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductsService } from 'src/app/core/services/products.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { productVM } from 'src/app/core/models/product.model';
 import { ScalesService } from 'src/app/core/services/scales.service';
 import { ManufacturersService } from 'src/app/core/services/manufacturers.service';
 import { FranchisesService } from 'src/app/core/services/franchises.service';
@@ -25,13 +24,12 @@ import { NgSelectModule } from '@ng-select/ng-select';
 })
 export class UpdateProductComponent {
   productId!:string | null;
-  product!: productVM;
   productForm! : FormGroup;
-  scales:scaleDto[] = [];
-  manufacturers:manufacturerDto[] = [];
-  franchises:franchiseDto[] =[];
-  series:serieByFranchiseDto[] = [];
-  categories : categoryDto[] = [];
+  scales = signal<scaleDto[]>([]);
+  manufacturers = signal<manufacturerDto[]>([]);
+  franchises = signal<franchiseDto[]>([]);
+  series = signal<serieByFranchiseDto[]>([]);
+  categories = signal<categoryDto[]>([]);
 
   constructor(private productsService: ProductsService,
     private scalesService : ScalesService,
@@ -98,7 +96,7 @@ export class UpdateProductComponent {
   loadScales(){
     this.scalesService.GetAll().subscribe(
       (scales) => {
-        this.scales = scales.filter(scale => scale.active);
+        this.scales.set(scales.filter(scale => scale.active));
       }
     );
   }
@@ -107,7 +105,7 @@ export class UpdateProductComponent {
   loadManufactures(){
     this.manufacturersService.GetAll().subscribe(
       (manufacturers) => {
-        this.manufacturers = manufacturers.filter(manufacturer => manufacturer.active);
+        this.manufacturers.set(manufacturers.filter(manufacturer => manufacturer.active));
       }
     )
   }
@@ -115,7 +113,7 @@ export class UpdateProductComponent {
   loadFranchises(){
     this.franschisesService.GetAll().subscribe(
       (franchises) => {
-        this.franchises = franchises.filter(franchise => franchise.active);
+        this.franchises.set(franchises.filter(franchise => franchise.active));
       }
     ) 
   }
@@ -124,7 +122,7 @@ export class UpdateProductComponent {
   loadCategories(){
     this.categoriesService.GetAll().subscribe(
       (categories) => {
-        this.categories = categories;
+        this.categories.set(categories.filter(category => category.active));
       }
     )
   }
@@ -135,11 +133,11 @@ export class UpdateProductComponent {
     if(franchiseId != null){
       this.seriesService.GetbyFranchise(franchiseId).subscribe(
         (series) => {
-          this.series = series;
+          this.series.set(series);
         }
       )
     }else{
-      this.series = [];
+      this.series.set([]);
     }
   }
 

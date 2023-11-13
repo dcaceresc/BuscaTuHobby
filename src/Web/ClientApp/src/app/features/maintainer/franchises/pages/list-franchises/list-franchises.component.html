@@ -11,8 +11,9 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let frachise of getPaginatedData(); let i = index">
-      <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
+    @for (frachise of getPaginatedData(); track frachise; let i = $index) {
+  <tr>
+      <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
       <td>{{frachise.name}}</td>
       <td>
         <a [routerLink]="['/maintainer/franchises/edit/', frachise.id]" class="btn bg-primary me-2">
@@ -26,15 +27,18 @@
         </a>
       </td>
     </tr>
+}
   </tbody>
 </table>
 
 <nav aria-label="Page navigation example">
   <ul class="pagination justify-content-end">
-    <li class="page-item" [ngClass]="{ 'disabled': currentPage === 1 }"><a class="page-link" (click)="setPage(currentPage - 1)">Anterior</a></li>
-    <li class="page-item" *ngFor="let page of range(1)" [ngClass]="{ 'active': currentPage === page }">
+    <li class="page-item" [ngClass]="{ 'disabled': currentPage() === 1 }"><a class="page-link" (click)="setPage(currentPage() - 1)">Anterior</a></li>
+    @for (page of range(1); track page) {
+  <li class="page-item" [ngClass]="{ 'active': currentPage() === page }">
       <a class="page-link" (click)="setPage(page)">{{ page }}</a>
     </li>
-    <li class="page-item" [ngClass]="{ 'disabled': currentPage === nPage() }"><a class="page-link" (click)="setPage(currentPage + 1)">Siguiente</a></li>
+}
+    <li class="page-item" [ngClass]="{ 'disabled': currentPage() === nPage() }"><a class="page-link" (click)="setPage(currentPage() + 1)">Siguiente</a></li>
   </ul>
 </nav>

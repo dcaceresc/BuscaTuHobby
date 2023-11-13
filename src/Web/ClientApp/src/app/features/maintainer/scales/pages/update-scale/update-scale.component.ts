@@ -13,7 +13,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class UpdateScaleComponent {
   scaleId!:string | null;
-  scale!: scaleVM;
   scaleForm! : FormGroup;
 
   constructor(private scalesService: ScalesService,

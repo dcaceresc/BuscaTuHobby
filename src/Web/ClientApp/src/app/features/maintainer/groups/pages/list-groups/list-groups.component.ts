@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { groupDto } from 'src/app/core/models/group.model';
@@ -13,7 +13,7 @@ import { RouterLink } from '@angular/router';
   styleUrls: ['./list-groups.component.scss']
 })
 export class ListGroupsComponent {
-  groups!:groupDto[];
+  groups = signal<groupDto[]>([]);
   faPowerOff = faPowerOff;
   faEdit = faEdit;
   currentPage = 1;
@@ -22,13 +22,13 @@ export class ListGroupsComponent {
   constructor(private groupsService:GroupsService) {}
 
   ngOnInit(): void {
-    this.groupsService.GetAll().subscribe(items => this.groups = items);
+    this.groupsService.GetAll().subscribe(items => this.groups.set(items));
   }
 
   getPaginatedData(){
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
-    return this.groups?.slice(startIndex,endIndex);
+    return this.groups()?.slice(startIndex,endIndex);
   }
 
   setPage(pageNumber: number) {
@@ -48,12 +48,12 @@ export class ListGroupsComponent {
   }
 
   toggle(id:number){
-    const group = this.groups.find(x => x.id === id);
+    const group = this.groups().find(x => x.id === id);
 
     if(group){
       this.groupsService.Toggle(id).subscribe(
         () => {
-          this.groupsService.GetAll().subscribe(items => this.groups = items);
+          this.groupsService.GetAll().subscribe(items => this.groups.set(items));
         }
       );
     }

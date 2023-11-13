@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProductsService } from 'src/app/core/services/products.service';
@@ -8,7 +8,7 @@ import { scaleDto } from 'src/app/core/models/scale.model';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { ManufacturersService } from 'src/app/core/services/manufacturers.service';
 import { manufacturerDto } from 'src/app/core/models/manufacturer.model';
-import { serieByFranchiseDto, serieDto } from 'src/app/core/models/serie.model';
+import { serieByFranchiseDto } from 'src/app/core/models/serie.model';
 import { SeriesService } from 'src/app/core/services/series.service';
 import { CategoriesService } from 'src/app/core/services/categories.service';
 import { categoryDto } from 'src/app/core/models/category.model';
@@ -23,12 +23,11 @@ import { franchiseDto } from 'src/app/core/models/franchise.model';
 })
 export class AddProductComponent {
   productForm! : FormGroup;
-  scales:scaleDto[] = [];
-  manufacturers:manufacturerDto[] = [];
-  franchises:franchiseDto[] =[];
-  series:serieByFranchiseDto[] = [];
-  categories : categoryDto[] = [];
-  selectedCategoryGroup:string[] = [];
+  scales = signal<scaleDto[]>([]);
+  manufacturers = signal<manufacturerDto[]>([]);
+  franchises = signal<franchiseDto[]>([]);
+  series = signal<serieByFranchiseDto[]>([]);
+  categories = signal<categoryDto[]>([]);
 
 
   constructor(private formbuilder: FormBuilder, 
@@ -65,7 +64,7 @@ export class AddProductComponent {
   loadScales(){
     this.scalesService.GetAll().subscribe(
       (scales) => {
-        this.scales = scales.filter(scale => scale.active);
+        this.scales.set(scales.filter(scale => scale.active));
       }
     );
   }
@@ -74,7 +73,7 @@ export class AddProductComponent {
   loadManufactures(){
     this.manufacturersService.GetAll().subscribe(
       (manufacturers) => {
-        this.manufacturers = manufacturers.filter(manufacturer => manufacturer.active);
+        this.manufacturers.set(manufacturers.filter(manufacturer => manufacturer.active));
       }
     )
   }
@@ -82,7 +81,7 @@ export class AddProductComponent {
   loadFranchises(){
     this.franschisesService.GetAll().subscribe(
       (franchises) => {
-        this.franchises = franchises.filter(franchise => franchise.active);
+        this.franchises.set(franchises.filter(franchise => franchise.active));
       }
     ) 
   }
@@ -91,7 +90,7 @@ export class AddProductComponent {
   loadCategories(){
     this.categoriesService.GetAll().subscribe(
       (categories) => {
-        this.categories = categories;
+        this.categories.set(categories.filter(category => category.active));
       }
     )
   }
@@ -102,11 +101,11 @@ export class AddProductComponent {
     if(franchiseId != null){
       this.seriesService.GetbyFranchise(franchiseId).subscribe(
         (series) => {
-          this.series = series;
+          this.series.set(series);
         }
       )
     }else{
-      this.series = [];
+      this.series.set([]);
     }
     
   }

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { categoryVM } from 'src/app/core/models/category.model';
@@ -16,9 +16,8 @@ import { groupDto } from 'src/app/core/models/group.model';
 })
 export class UpdateCategoryComponent {
   categoryId!:string | null;
-  category!: categoryVM;
   categoryForm! : FormGroup;
-  groups : groupDto[] = [];
+  groups = signal<groupDto[]>([]);
 
   constructor(private categoriesService: CategoriesService,
     private router: Router,
@@ -54,7 +53,7 @@ export class UpdateCategoryComponent {
   loadGroups(){
     this.groupsService.GetAll().subscribe(
       (groups) => {
-        this.groups = groups.filter(group => group.active);
+        this.groups.set(groups.filter(group => group.active));
       }
     )
   }
