@@ -1,7 +1,7 @@
 import { Routes } from "@angular/router";
-import { LoginComponent } from "./components/login/login.component";
+import { LoginComponent } from "./pages/login/login.component";
 import { ApplicationPaths } from "src/app/core/constants/authorization.constants";
-import { LogoutComponent } from "./components/logout/logout.component";
+import { LogoutComponent } from "./pages/logout/logout.component";
 
 export const routes:Routes = [
     { path: ApplicationPaths.Register, component: LoginComponent },

@@ -1,0 +1,7 @@
+<h3 class="mt-3">Escalas</h3>
+
+<a class="btn bg-primary mb-2" [routerLink]="['/maintainer/scales/create']">
+  Crear Escala
+</a>
+
+<app-table [columns]="columns" [data]="scales" (editEvent)="onEdit($event)" (toggleEvent)="onToggle($event)"></app-table>
