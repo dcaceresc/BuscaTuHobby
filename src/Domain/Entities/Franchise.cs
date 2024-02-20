@@ -1,10 +1,34 @@
 ﻿namespace Domain.Entities;
 public class Franchise : AuditableEntity
 {
-    public int id { get; set; }
-    public string name { get; set; } = default!;
-    public bool active { get; set; }
+    private Franchise(string franchiseName)
+    {
+        FranchiseId = Guid.NewGuid();
+        FranchiseName = franchiseName;
+        IsActive = true;
+    }
 
-    public virtual ICollection<Serie> Serie { get; set; } = default!;
-    public virtual ICollection<Product> Products { get; set; } = default!;
+
+    public Guid FranchiseId { get; private set; }
+    public string FranchiseName { get; private set; } = default!;
+    public bool IsActive { get; private set; }
+
+    public virtual ICollection<Serie> Series { get; private set; } = default!;
+    public virtual ICollection<Product> Products { get; private set; } = default!;
+
+    public static Franchise Create(string franchiseName)
+    {
+        return new Franchise(franchiseName);
+    }
+
+    public void Update(string franchiseName)
+    {
+        FranchiseName = franchiseName;
+    }
+
+    public void ToggleActive()
+    {
+        IsActive = !IsActive;
+    }
+
 }

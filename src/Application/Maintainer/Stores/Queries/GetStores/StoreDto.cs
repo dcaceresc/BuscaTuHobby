@@ -1,18 +1,20 @@
-﻿using Application.Common.Mappings;
-using Domain.Entities;
+﻿using Domain.Entities;
 
 namespace Application.Maintainer.Stores.Queries.GetStores;
 
-public class StoreDto : IMapFrom<StoreDto>
+public class StoreDto
 {
-    public int id { get; set; }
-    public string name { get; set; } = default!;
-    public string address { get; set; } = default!;
-    public string webSite { get; set; } = default!;
-    public bool active { get; set; }
+    public int StoreId { get; set; }
+    public string StoreName { get; set; } = default!;
+    public string StoreAddress { get; set; } = default!;
+    public string StoreWebSite { get; set; } = default!;
+    public bool IsActive { get; set; }
 
-    public void Mapping(Profile profile)
+    public class Mapping : Profile
     {
-        profile.CreateMap<Store, StoreDto>();
+        public Mapping()
+        {
+            CreateMap<Store, StoreDto>();
+        }
     }
 }

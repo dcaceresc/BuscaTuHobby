@@ -2,8 +2,19 @@
 
 public class ProductCategory : AuditableEntity
 {
-    public int productId { get; set; }
+    private ProductCategory(Guid productId, Guid categoryId)
+    {
+        ProductId = productId;
+        CategoryId = categoryId;
+    }
+
+    public Guid ProductId { get; set; } = default!;
     public Product Product { get; set; } = default!;
-    public int categoryId { get; set; }
+    public Guid CategoryId { get; set; } = default!;
     public Category Category { get; set; } = default!;
+
+    public static ProductCategory Create(Guid productId, Guid categoryId)
+    {
+        return new ProductCategory(productId, categoryId);
+    }
 }

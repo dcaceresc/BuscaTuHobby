@@ -1,31 +1,20 @@
 ﻿using Domain.Entities;
 
 namespace Application.Maintainer.Franchises.Commands.CreateFranchise;
-public class CreateFranchiseCommand : IRequest<int>
-{
-    public string name { get; set; } = default!;
-}
+public record CreateFranchiseCommand(string FranchiseName) : IRequest<Guid>;
 
-public class CreateFranchiseCommandHandler : IRequestHandler<CreateFranchiseCommand, int>
+public class CreateFranchiseCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateFranchiseCommand, Guid>
 {
-    private readonly IApplicationDbContext _context;
+    private readonly IApplicationDbContext _context = context;
 
-    public CreateFranchiseCommandHandler(IApplicationDbContext context)
+    public async Task<Guid> Handle(CreateFranchiseCommand request, CancellationToken cancellationToken)
     {
-        _context = context;
-    }
-    public async Task<int> Handle(CreateFranchiseCommand request, CancellationToken cancellationToken)
-    {
-        var entity = new Franchise
-        {
-            name = request.name,
-            active = true
-        };
+        var entity = Franchise.Create(request.FranchiseName);
 
         _context.Franchises.Add(entity);
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return entity.id;
+        return entity.FranchiseId;
     }
 }

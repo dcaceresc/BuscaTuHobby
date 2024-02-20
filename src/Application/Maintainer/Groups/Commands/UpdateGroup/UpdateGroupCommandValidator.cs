@@ -6,8 +6,8 @@ public class UpdateGroupCommandValidator : AbstractValidator<UpdateGroupCommand>
 {
     public UpdateGroupCommandValidator()
     {
-        RuleFor(v => v.id).NotNull().NotEmpty();
-        RuleFor(v => v.name).NotNull().NotEmpty();
+        RuleFor(v => v.GroupId).NotNull().NotEmpty();
+        RuleFor(v => v.GroupName).NotNull().NotEmpty();
     }
 }
 

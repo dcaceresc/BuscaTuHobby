@@ -5,9 +5,9 @@ public class CreateInventoryCommandValidator : AbstractValidator<CreateInventory
 {
     public CreateInventoryCommandValidator()
     {
-        RuleFor(v => v.productId).NotNull();
-        RuleFor(v => v.storeId).NotNull();
-        RuleFor(v => v.price).NotNull();
+        RuleFor(v => v.ProductId).NotNull();
+        RuleFor(v => v.StoreId).NotNull();
+        RuleFor(v => v.Price).NotNull();
 
     }
 }

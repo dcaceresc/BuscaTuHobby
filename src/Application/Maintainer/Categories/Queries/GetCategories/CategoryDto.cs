@@ -4,10 +4,10 @@ namespace Application.Maintainer.Categories.Queries.GetCategories;
 
 public class CategoryDto
 {
-    public int id { get; set; }
-    public string name { get; set; } = default!;
-    public string groupName { get; set; } = default!;
-    public bool active { get; set; }
+    public int CategoryId { get; set; }
+    public string CategoryName { get; set; } = default!;
+    public string GroupName { get; set; } = default!;
+    public bool ISActive { get; set; }
 
 
 
@@ -16,7 +16,7 @@ public class CategoryDto
         public Mapping()
         {
             CreateMap<Category, CategoryDto>().
-                ForMember(d => d.groupName, opt => opt.MapFrom(x => x.Group.name));
+                ForMember(d => d.GroupName, opt => opt.MapFrom(x => x.Group.GroupName));
         }
     }
 }

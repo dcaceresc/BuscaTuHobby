@@ -1,32 +1,20 @@
-﻿using Application.Common.Exceptions;
-using Domain.Entities;
+﻿namespace Application.Maintainer.Scales.Commands.ToggleScale;
 
-namespace Application.Maintainer.Scales.Commands.ToggleScale;
+public record ToggleScaleCommand(Guid ScaleId) : IRequest;
 
-public class ToggleScaleCommand : IRequest
+public class ToggleScaleCommandHandler(IApplicationDbContext context) : IRequestHandler<ToggleScaleCommand>
 {
-    public int id { get; set; }
+    private readonly IApplicationDbContext _context = context;
 
-    public class ToggleScaleCommandHandler : IRequestHandler<ToggleScaleCommand>
+    public async Task Handle(ToggleScaleCommand request, CancellationToken cancellationToken)
     {
-        private readonly IApplicationDbContext _context;
+        var scale = await _context.Scales.FindAsync([request.ScaleId], cancellationToken);
 
-        public ToggleScaleCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
-        public async Task Handle(ToggleScaleCommand request, CancellationToken cancellationToken)
-        {
-            var entity = await _context.Scales.FindAsync(request.id);
+        Guard.Against.NotFound(request.ScaleId, scale);
 
-            if (entity == null)
-                throw new NotFoundException(nameof(Scale), request.id);
+        scale.ToggleActive();
 
-            entity.active = !entity.active;
+        await _context.SaveChangesAsync(cancellationToken);
 
-
-            await _context.SaveChangesAsync(cancellationToken);
-
-        }
     }
 }

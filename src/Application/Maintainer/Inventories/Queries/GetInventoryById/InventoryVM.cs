@@ -1,12 +1,12 @@
 ﻿using Domain.Entities;
 
 namespace Application.Maintainer.Inventories.Queries.GetInventoryById;
-public class InventoryVM 
+public class InventoryVM
 {
-    public int id { get; set; }
-    public int storeId { get; set; }
-    public int productId { get; set; }
-    public int price { get; set; }
+    public Guid InventoryId { get; set; }
+    public Guid StoreId { get; set; }
+    public Guid ProductId { get; set; }
+    public int Price { get; set; }
 
     public class Mapping : Profile
     {

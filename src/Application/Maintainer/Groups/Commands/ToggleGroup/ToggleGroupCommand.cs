@@ -1,31 +1,19 @@
-﻿using Application.Common.Exceptions;
-using Domain.Entities;
+﻿namespace Application.Maintainer.Groups.Commands.ToggleGroup;
 
+public record ToggleGroupCommand(Guid GroupId) : IRequest;
 
-namespace Application.Maintainer.Groups.Commands.ToggleGroup;
-
-public class ToggleGroupCommand : IRequest
+public class ToggleCategoryCommandHandler(IApplicationDbContext context) : IRequestHandler<ToggleGroupCommand>
 {
-    public int id { get; set; }
+    private readonly IApplicationDbContext _context = context;
 
-    public class ToggleCategoryCommandHandler : IRequestHandler<ToggleGroupCommand>
+    public async Task Handle(ToggleGroupCommand request, CancellationToken cancellationToken)
     {
-        private readonly IApplicationDbContext _context;
-        public ToggleCategoryCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
+        var entity = await _context.Groups.FindAsync([request.GroupId], cancellationToken);
 
-        public async Task Handle(ToggleGroupCommand request, CancellationToken cancellationToken)
-        {
-            var entity = await _context.Groups.FindAsync(request.id);
+        Guard.Against.NotFound(request.GroupId, entity);
 
-            if (entity == null)
-                throw new NotFoundException(nameof(Group), request.id);
+        entity.ToggleActive();
 
-            entity.active = !entity.active;
-
-            await _context.SaveChangesAsync(cancellationToken);
-        }
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

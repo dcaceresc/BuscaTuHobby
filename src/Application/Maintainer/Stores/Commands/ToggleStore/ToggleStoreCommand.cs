@@ -1,33 +1,20 @@
-﻿using Application.Common.Exceptions;
-using Domain.Entities;
+﻿namespace Application.Maintainer.Stores.Commands.ToggleStore;
 
-namespace Application.Maintainer.Stores.Commands.ToggleStore;
+public record ToggleStoreCommand(Guid SerieId) : IRequest;
 
-public class ToggleStoreCommand : IRequest
+public class ToggleStoreCommandHandler(IApplicationDbContext context) : IRequestHandler<ToggleStoreCommand>
 {
-    public int id { get; set; }
+    private readonly IApplicationDbContext _context = context;
 
-    public class ToggleStoreCommandHandler : IRequestHandler<ToggleStoreCommand>
+    public async Task Handle(ToggleStoreCommand request, CancellationToken cancellationToken)
     {
-        private readonly IApplicationDbContext _context;
+        var serie = await _context.Stores.FindAsync([request.SerieId], cancellationToken);
 
-        public ToggleStoreCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
+        Guard.Against.NotFound(request.SerieId, serie);
 
-        public async Task Handle(ToggleStoreCommand request, CancellationToken cancellationToken)
-        {
-            var entity = await _context.Stores.FindAsync(request.id);
+        serie.ToggleActive();
 
-            if (entity == null)
-                throw new NotFoundException(nameof(Store), request.id);
+        await _context.SaveChangesAsync(cancellationToken);
 
-            entity.active = !entity.active;
-
-
-            await _context.SaveChangesAsync(cancellationToken);
-
-        }
     }
 }

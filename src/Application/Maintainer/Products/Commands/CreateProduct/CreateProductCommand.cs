@@ -2,67 +2,43 @@
 
 namespace Application.Maintainer.Products.Commands.CreateProduct;
 
-public class CreateProductCommand : IRequest<int>
+public record CreateProductCommand : IRequest<Guid>
 {
-    public string name { get; set; } = default!;
-    public int scaleId { get; set; }
-    public int manufacturerId { get; set; }
-    public int franchiseId { get; set; }
-    public int? serieId { get; set; }
-    public bool hasBase { get; set; }
-    public string targetAge { get; set; } = default!;
-    public string size { get; set; } = default!;
-    public string description { get; set; } = default!;
-    public DateTime releaseDate { get; set; }
-    public IList<int> categories { get; set; } = default!;
-
-    public class CreateProductCommandHandler : IRequestHandler<CreateProductCommand, int>
-    {
-        private readonly IApplicationDbContext _context;
-
-        public CreateProductCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<int> Handle(CreateProductCommand request, CancellationToken cancellationToken)
-        {
-            var entity = new Product
-            {
-                name = request.name,
-                scaleId = request.scaleId,
-                manufacturerId = request.manufacturerId,
-                franchiseId = request.franchiseId,
-                serieId = request.serieId,
-                hasBase = request.hasBase,
-                targetAge = request.targetAge,
-                size = request.size,
-                description = request.description,
-                releaseDate = request.releaseDate,
-                active = true
-            };
-
-            _context.Products.Add(entity);
-            await _context.SaveChangesAsync(cancellationToken);
-
-
-            foreach (var item in request.categories)
-            {
-                var categoryProduct = new ProductCategory
-                {
-                    categoryId = item,
-                    productId = entity.id
-                };
-
-               _context.ProductCategories.Add(categoryProduct);
-            }
-
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return entity.id;
-        }
-    }
-
+    public string ProductName { get; init; } = default!;
+    public Guid ScaleId { get; init; }
+    public Guid ManufacturerId { get; init; }
+    public Guid FranchiseId { get; init; }
+    public Guid SerieId { get; init; }
+    public bool ProductHasBase { get; init; }
+    public string ProductTargetAge { get; init; } = default!;
+    public string ProductSize { get; init; } = default!;
+    public string ProductDescription { get; init; } = default!;
+    public DateTime ProductReleaseDate { get; init; }
+    public IList<Guid> CategoryIds { get; init; } = default!;
 
 }
 
+public class CreateProductCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateProductCommand, Guid>
+{
+    private readonly IApplicationDbContext _context = context;
+
+    public async Task<Guid> Handle(CreateProductCommand request, CancellationToken cancellationToken)
+    {
+        var product = Product.Create(request.ProductName, request.ScaleId, request.ManufacturerId, request.FranchiseId, request.SerieId, request.ProductHasBase, request.ProductTargetAge, request.ProductSize, request.ProductDescription, request.ProductReleaseDate);
+
+        _context.Products.Add(product);
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        foreach (var item in request.CategoryIds)
+        {
+            var categoryProduct = product.AssignCategory(item);
+
+            _context.ProductCategories.Add(categoryProduct);
+        }
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return product.ProductId;
+    }
+}

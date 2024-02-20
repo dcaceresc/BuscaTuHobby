@@ -6,13 +6,13 @@ public class UpdateProductCommandValidator : AbstractValidator<UpdateProductComm
 {
     public UpdateProductCommandValidator()
     {
-        RuleFor(v => v.id).NotNull();
-        RuleFor(v => v.name).NotNull();
-        RuleFor(v => v.scaleId).NotNull();
-        RuleFor(v => v.manufacturerId).NotNull();
-        RuleFor(v => v.franchiseId).NotNull();
-        RuleFor(v => v.hasBase).NotNull();
-        RuleFor(v => v.description).NotNull();
-        RuleFor(v => v.releaseDate).NotNull();
+        RuleFor(v => v.ProductId).NotNull();
+        RuleFor(v => v.ProductName).NotNull();
+        RuleFor(v => v.ScaleId).NotNull();
+        RuleFor(v => v.ManufacturerId).NotNull();
+        RuleFor(v => v.FranchiseId).NotNull();
+        RuleFor(v => v.ProductHasBase).NotNull();
+        RuleFor(v => v.ProductDescription).NotNull();
+        RuleFor(v => v.ProductReleaseDate).NotNull();
     }
 }

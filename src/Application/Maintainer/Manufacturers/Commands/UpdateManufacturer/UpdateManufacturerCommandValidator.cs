@@ -6,7 +6,7 @@ public class UpdateManufacturerCommandValidator : AbstractValidator<UpdateManufa
 {
     public UpdateManufacturerCommandValidator()
     {
-        RuleFor(v => v.name).NotNull().NotEmpty();
+        RuleFor(v => v.ManufacturerName).NotNull().NotEmpty();
 
     }
 }

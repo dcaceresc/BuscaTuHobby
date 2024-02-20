@@ -4,9 +4,9 @@ namespace Application.Maintainer.Groups.Queries.GetGroups;
 
 public class GroupDto
 {
-    public int id { get; set; }
-    public string name { get; set; } = default!;
-    public bool active { get; set; }
+    public Guid GroupId { get; set; }
+    public string GroupName { get; set; } = default!;
+    public bool IsActive { get; set; }
 
     public class Mapping : Profile
     {

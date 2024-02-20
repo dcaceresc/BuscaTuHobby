@@ -6,9 +6,9 @@ public class UpdateStoreCommandValidator : AbstractValidator<UpdateStoreCommand>
 {
     public UpdateStoreCommandValidator()
     {
-        RuleFor(v => v.id).NotNull();
-        RuleFor(v => v.name).NotNull();
-        RuleFor(v => v.address).NotNull();
-        RuleFor(v => v.webSite).NotNull();
+        RuleFor(v => v.StoreId).NotNull();
+        RuleFor(v => v.StoreName).NotNull();
+        RuleFor(v => v.StoreAddress).NotNull();
+        RuleFor(v => v.StoreWebSite).NotNull();
     }
 }

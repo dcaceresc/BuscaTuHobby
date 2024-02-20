@@ -1,21 +1,17 @@
 ﻿namespace Application.Maintainer.Series.Queries.GetSeriesByFranchise;
-public class GetSeriesByFranchiseQuery : IRequest<IList<SerieByFranchiseDto>>
-{
-    public int franchiseId { get; set; }
-}
+public record GetSeriesByFranchiseQuery(Guid FranchiseId) : IRequest<IList<SerieByFranchiseDto>>;
 
-public class GetSeriesByFranchiseQueryHandler : IRequestHandler<GetSeriesByFranchiseQuery, IList<SerieByFranchiseDto>>
+public class GetSeriesByFranchiseQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetSeriesByFranchiseQuery, IList<SerieByFranchiseDto>>
 {
-    private readonly IApplicationDbContext _context;
-    private readonly IMapper _mapper;
+    private readonly IApplicationDbContext _context = context;
+    private readonly IMapper _mapper = mapper;
 
-    public GetSeriesByFranchiseQueryHandler(IApplicationDbContext context,IMapper mapper)
-    {
-        _context = context;
-        _mapper = mapper;
-    }
     public async Task<IList<SerieByFranchiseDto>> Handle(GetSeriesByFranchiseQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Series.Where(x => x.franchiseId == request.franchiseId).AsNoTracking().ProjectTo<SerieByFranchiseDto>(_mapper.ConfigurationProvider).ToListAsync(cancellationToken);
+        return await _context.Series
+            .Where(x => x.FranchiseId == request.FranchiseId)
+            .AsNoTracking()
+            .ProjectTo<SerieByFranchiseDto>(_mapper.ConfigurationProvider)
+            .ToListAsync(cancellationToken);
     }
-} 
+}

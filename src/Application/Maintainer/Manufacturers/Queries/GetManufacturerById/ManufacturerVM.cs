@@ -3,8 +3,8 @@
 namespace Application.Maintainer.Manufacturers.Queries.GetManufacturerById;
 public class ManufacturerVM
 {
-    public int id { get; set; }
-    public string name { get; set; } = default!;
+    public Guid ManufacturerId { get; set; }
+    public string ManufacturerName { get; set; } = default!;
 
 
     public class Mapping : Profile

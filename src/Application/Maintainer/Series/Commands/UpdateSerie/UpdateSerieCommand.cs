@@ -1,35 +1,19 @@
-﻿using Application.Common.Exceptions;
-using Domain.Entities;
+﻿namespace Application.Maintainer.Series.Commands.UpdateSerie;
 
-namespace Application.Maintainer.Series.Commands.UpdateSerie;
-
-public class UpdateSerieCommand : IRequest
+public record UpdateSerieCommand(Guid SerieId, string SerieName, Guid FranchiseId) : IRequest;
+public class UpdateSerieCommandHandler(IApplicationDbContext context) : IRequestHandler<UpdateSerieCommand>
 {
-    public int id { get; set; }
-    public string name { get; set; } = default!;
-    public int franchiseId { get; set; }
-    public class UpdateSerieCommandHandler : IRequestHandler<UpdateSerieCommand>
+    private readonly IApplicationDbContext _context = context;
+
+    public async Task Handle(UpdateSerieCommand request, CancellationToken cancellationToken)
     {
-        private readonly IApplicationDbContext _context;
+        var serie = await _context.Series.FindAsync([request.SerieId], cancellationToken);
 
-        public UpdateSerieCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
+        Guard.Against.NotFound(request.SerieId, serie);
 
-        public async Task Handle(UpdateSerieCommand request, CancellationToken cancellationToken)
-        {
-            var entity = await _context.Series.FindAsync(request.id);
+        serie.Update(request.SerieName, request.FranchiseId);
 
-            if (entity == null)
-                throw new NotFoundException(nameof(Serie), request.id);
+        await _context.SaveChangesAsync(cancellationToken);
 
-            entity.name = request.name;
-            entity.franchiseId = request.franchiseId;
-
-            await _context.SaveChangesAsync(cancellationToken);
-
-        }
     }
 }
-

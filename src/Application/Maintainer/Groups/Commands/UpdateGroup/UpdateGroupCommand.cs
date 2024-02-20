@@ -1,32 +1,18 @@
-﻿using Application.Common.Exceptions;
-using Domain.Entities;
+﻿namespace Application.Maintainer.Groups.Commands.UpdateGroup;
 
-namespace Application.Maintainer.Groups.Commands.UpdateGroup;
+public record UpdateGroupCommand(Guid GroupId, string GroupName) : IRequest;
 
-public class UpdateGroupCommand : IRequest
+public class UpdateCategoryCommandHandler(IApplicationDbContext context) : IRequestHandler<UpdateGroupCommand>
 {
-    public int id { get; set; }
-    public string name { get; set; } = default!;
-}
-
-public class UpdateCategoryCommandHandler : IRequestHandler<UpdateGroupCommand>
-{
-    private readonly IApplicationDbContext _context;
-    public UpdateCategoryCommandHandler(IApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly IApplicationDbContext _context = context;
 
     public async Task Handle(UpdateGroupCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.Groups.FindAsync(request.id);
+        var entity = await _context.Groups.FindAsync([request.GroupId], cancellationToken);
 
-        if (entity == null)
-        {
-            throw new NotFoundException(nameof(Group), request.id);
-        }
+        Guard.Against.NotFound(request.GroupId, entity);
 
-        entity.name = request.name;
+        entity.Update(request.GroupName);
 
         await _context.SaveChangesAsync(cancellationToken);
     }

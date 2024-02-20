@@ -4,9 +4,9 @@ namespace Application.Maintainer.Series.Queries.GetSerieById;
 
 public class SerieVM
 {
-    public int id { get; set; }
-    public string name { get; set; } = default!;
-    public int franchiseId { get; set; }
+    public Guid SerieId { get; set; }
+    public string SerieName { get; set; } = default!;
+    public Guid FranchiseId { get; set; }
 
     public class Mapping : Profile
     {

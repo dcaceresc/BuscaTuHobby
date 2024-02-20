@@ -1,7 +1,0 @@
-<h3 class="mt-3">Tiendas</h3>
-
-<a class="btn bg-primary mb-2" [routerLink]="['/maintainer/stores/create']">
-  Crear Tienda
-</a>
-
-<app-table [columns]="columns" [data]="stores" (editEvent)="onEdit($event)" (toggleEvent)="onToggle($event)"></app-table>

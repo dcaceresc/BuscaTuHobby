@@ -10,7 +10,6 @@ namespace Application.Common.Interfaces
         DbSet<ProductCategory> ProductCategories { get; }
         DbSet<Inventory> Inventories { get; }
         DbSet<Manufacturer> Manufacturers { get; }
-        DbSet<Photo> Photos { get; }
         DbSet<Scale> Scales { get; }
         DbSet<Serie> Series { get; }
         DbSet<Store> Stores { get; }

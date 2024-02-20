@@ -6,7 +6,7 @@ public class UpdateSerieCommandValidator : AbstractValidator<UpdateSerieCommand>
 {
     public UpdateSerieCommandValidator()
     {
-        RuleFor(v => v.name).NotNull().NotEmpty();
+        RuleFor(v => v.SerieName).NotNull().NotEmpty();
     }
 }
 

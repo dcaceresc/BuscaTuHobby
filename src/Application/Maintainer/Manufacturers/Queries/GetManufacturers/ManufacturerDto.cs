@@ -4,9 +4,9 @@ namespace Application.Maintainer.Manufacturers.Queries.GetManufacturers;
 
 public class ManufacturerDto
 {
-    public int id { get; set; }
-    public string name { get; set; } = default!;
-    public bool active { get; set; }
+    public Guid ManufacturerId { get; set; }
+    public string ManufacturerName { get; set; } = default!;
+    public bool IsActive { get; set; }
     public class Mapping : Profile
     {
         public Mapping()

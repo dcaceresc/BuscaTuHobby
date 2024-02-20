@@ -2,32 +2,20 @@
 
 namespace Application.Maintainer.Series.Commands.CreateSerie;
 
-public class CreateSerieCommand : IRequest<int>
+public record CreateSerieCommand(string SerieName, Guid FranchiseId) : IRequest<Guid>;
+
+public class CreateSerieCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateSerieCommand, Guid>
 {
-    public string name { get; set; } = default!;
-    public int franchiseId { get; set; }
-    public class CreateSerieCommandHandler : IRequestHandler<CreateSerieCommand, int>
+    private readonly IApplicationDbContext _context = context;
+
+    public async Task<Guid> Handle(CreateSerieCommand request, CancellationToken cancellationToken)
     {
-        private readonly IApplicationDbContext _context;
+        var serie = Serie.Create(request.SerieName, request.FranchiseId);
 
-        public CreateSerieCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
-        public async Task<int> Handle(CreateSerieCommand request, CancellationToken cancellationToken)
-        {
-            var entity = new Serie
-            {
-                name = request.name,
-                franchiseId = request.franchiseId,
-                active = true
-            };
+        _context.Series.Add(serie);
 
-            _context.Series.Add(entity);
-            await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
-            return entity.id;
-        }
+        return serie.SerieId;
     }
 }
-

@@ -2,36 +2,19 @@
 
 namespace Application.Maintainer.Inventories.Commands.CreateInventory;
 
-public class CreateInventoryCommand : IRequest<int>
+public record CreateInventoryCommand(Guid ProductId, Guid StoreId, int Price) : IRequest<Guid>;
+
+public class CreateInventoryCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateInventoryCommand, Guid>
 {
-    public int productId { get; set; }
-    public int storeId { get; set; }
-    public int price { get; set; }
+    private readonly IApplicationDbContext _context = context;
 
-    public class CreateInventoryCommandHandler : IRequestHandler<CreateInventoryCommand, int>
+    public async Task<Guid> Handle(CreateInventoryCommand request, CancellationToken cancellationToken)
     {
-        private readonly IApplicationDbContext _context;
+        var inventory = Inventory.Create(request.ProductId, request.StoreId, request.Price);
 
-        public CreateInventoryCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
+        _context.Inventories.Add(inventory);
 
-        public async Task<int> Handle(CreateInventoryCommand request, CancellationToken cancellationToken)
-        {
-            var entity = new Inventory
-            {
-                productId = request.productId,
-                storeId = request.storeId,
-                price = request.price,
-                active = true
-            };
-
-            _context.Inventories.Add(entity);
-
-            await _context.SaveChangesAsync(cancellationToken);
-            return entity.id;
-        }
+        await _context.SaveChangesAsync(cancellationToken);
+        return inventory.InventoryId;
     }
-
 }

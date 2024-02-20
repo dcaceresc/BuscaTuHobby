@@ -1,31 +1,20 @@
 ﻿using Domain.Entities;
 
 namespace Application.Maintainer.Groups.Commands.CreateGroup;
-public class CreateGroupCommand : IRequest<int>
+public record CreateGroupCommand(string GroupName) : IRequest<Guid>;
+
+public class CreateCategoryCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateGroupCommand, Guid>
 {
-    public string name { get; set; } = default!;
+    private readonly IApplicationDbContext _context = context;
 
-
-    public class CreateCategoryCommandHandler : IRequestHandler<CreateGroupCommand, int>
+    public async Task<Guid> Handle(CreateGroupCommand request, CancellationToken cancellationToken)
     {
-        private readonly IApplicationDbContext _context;
+        var entity = Group.Create(request.GroupName);
 
-        public CreateCategoryCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
+        _context.Groups.Add(entity);
 
-        public async Task<int> Handle(CreateGroupCommand request, CancellationToken cancellationToken)
-        {
-            var entity = new Group
-            {
-                name = request.name,
-                active = true
-            };
+        await _context.SaveChangesAsync(cancellationToken);
 
-            _context.Groups.Add(entity);
-            await _context.SaveChangesAsync(cancellationToken);
-            return entity.id;
-        }
+        return entity.GroupId;
     }
 }

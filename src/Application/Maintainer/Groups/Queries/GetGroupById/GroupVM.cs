@@ -1,12 +1,11 @@
 ﻿using Domain.Entities;
 
-namespace Application.Maintainer.Groups.Queries.GetGroupById
+namespace Application.Maintainer.Groups.Queries.GetGroupById;
+
+public class GroupVM
 {
-    public class GroupVM
-    {
-        public int id { get; set; }
-        public string name { get; set; } = default!;
-    }
+    public Guid GroupId { get; set; }
+    public string GroupName { get; set; } = default!;
 
 
     public class Mapping : Profile
@@ -17,3 +16,4 @@ namespace Application.Maintainer.Groups.Queries.GetGroupById
         }
     }
 }
+

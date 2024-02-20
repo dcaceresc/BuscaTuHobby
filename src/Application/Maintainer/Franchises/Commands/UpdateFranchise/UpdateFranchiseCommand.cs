@@ -1,29 +1,17 @@
-﻿using Application.Common.Exceptions;
-using Domain.Entities;
+﻿namespace Application.Maintainer.Franchises.Commands.UpdateFranchise;
+public record UpdateFranchiseCommand(Guid FranchiseId, string FranchiseName) : IRequest;
 
-namespace Application.Maintainer.Franchises.Commands.UpdateFranchise;
-public class UpdateFranchiseCommand : IRequest
+public class UpdateFranchiseCommandHandler(IApplicationDbContext context) : IRequestHandler<UpdateFranchiseCommand>
 {
-    public int id { get; set; }
-    public string name { get; set; } = default!;
-}
+    private readonly IApplicationDbContext _context = context;
 
-public class UpdateFranchiseCommandHandler : IRequestHandler<UpdateFranchiseCommand>
-{
-    private readonly IApplicationDbContext _context;
-
-    public UpdateFranchiseCommandHandler(IApplicationDbContext context)
-    {
-        _context = context;
-    }
     public async Task Handle(UpdateFranchiseCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.Franchises.FindAsync(request.id);
+        var entity = await _context.Franchises.FindAsync([request.FranchiseId], cancellationToken);
 
-        if (entity == null)
-            throw new NotFoundException(nameof(Franchise), request.id);
+        Guard.Against.NotFound(request.FranchiseId, entity);
 
-        entity.name = request.name;
+        entity.Update(request.FranchiseName);
 
         await _context.SaveChangesAsync(cancellationToken);
     }

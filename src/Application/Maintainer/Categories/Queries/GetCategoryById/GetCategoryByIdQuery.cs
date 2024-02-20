@@ -1,23 +1,18 @@
 ﻿namespace Application.Maintainer.Categories.Queries.GetCategoryById;
 
-public class GetCategoryByIdQuery : IRequest<CategoryVM>
-{
-    public int id { get; set; }
-}
+public record GetCategoryByIdQuery(Guid CategoryId) : IRequest<CategoryVM>;
 
-public class GetSubCategoryByIdQueryHandler : IRequestHandler<GetCategoryByIdQuery, CategoryVM>
+public class GetSubCategoryByIdQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetCategoryByIdQuery, CategoryVM>
 {
-    private readonly IApplicationDbContext _context;
-    private readonly IMapper _mapper;
-
-    public GetSubCategoryByIdQueryHandler(IApplicationDbContext context, IMapper mapper)
-    {
-        _context = context;
-        _mapper = mapper;
-    }
+    private readonly IApplicationDbContext _context = context;
+    private readonly IMapper _mapper = mapper;
 
     public async Task<CategoryVM> Handle(GetCategoryByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Categories.Where(x => x.id == request.id).AsNoTracking().ProjectTo<CategoryVM>(_mapper.ConfigurationProvider).FirstAsync(cancellationToken);
+        return await _context.Categories
+            .Where(x => x.CategoryId == request.CategoryId)
+            .AsNoTracking()
+            .ProjectTo<CategoryVM>(_mapper.ConfigurationProvider)
+            .FirstAsync(cancellationToken);
     }
 }

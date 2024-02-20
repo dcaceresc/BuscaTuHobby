@@ -1,24 +1,21 @@
 ﻿namespace Application.Maintainer.Groups.Queries.GetGroupById;
 
-public class GetGroupByIdQuery : IRequest<GroupVM>
-{
-    public int id { get; set; }
-}
+public record GetGroupByIdQuery(Guid GroupId) : IRequest<GroupVM>;
 
-public class GetCategoryByIdQueryHandler : IRequestHandler<GetGroupByIdQuery, GroupVM>
+public class GetCategoryByIdQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetGroupByIdQuery, GroupVM>
 {
-    private readonly IApplicationDbContext _context;
-    private readonly IMapper _mapper;
-
-    public GetCategoryByIdQueryHandler(IApplicationDbContext context, IMapper mapper)
-    {
-        _context = context;
-        _mapper = mapper;
-    }
+    private readonly IApplicationDbContext _context = context;
+    private readonly IMapper _mapper = mapper;
 
     public async Task<GroupVM> Handle(GetGroupByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Groups.Where(x => x.id == request.id).AsNoTracking().ProjectTo<GroupVM>(_mapper.ConfigurationProvider).FirstAsync(cancellationToken);
+        var category = await _context.Groups.
+            ProjectTo<GroupVM>(_mapper.ConfigurationProvider).
+            FirstOrDefaultAsync(x => x.GroupId == request.GroupId, cancellationToken);
+
+        Guard.Against.NotFound(request.GroupId, category);
+
+        return category;
     }
 }
 

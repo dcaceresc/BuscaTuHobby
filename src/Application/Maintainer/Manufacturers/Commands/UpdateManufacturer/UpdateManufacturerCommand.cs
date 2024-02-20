@@ -1,36 +1,18 @@
-﻿using Application.Common.Exceptions;
-using Domain.Entities;
+﻿namespace Application.Maintainer.Manufacturers.Commands.UpdateManufacturer;
 
-namespace Application.Maintainer.Manufacturers.Commands.UpdateManufacturer;
+public record UpdateManufacturerCommand(Guid ManufacturerId, string ManufacturerName) : IRequest;
 
-public class UpdateManufacturerCommand : IRequest
+public class UpdateManufacturerCommandHandler(IApplicationDbContext context) : IRequestHandler<UpdateManufacturerCommand>
 {
-    public int id { get; set; }
-    public string name { get; set; } = default!;
+    private readonly IApplicationDbContext _context = context;
 
-    public class UpdateManufacturerCommandHandler : IRequestHandler<UpdateManufacturerCommand>
+    public async Task Handle(UpdateManufacturerCommand request, CancellationToken cancellationToken)
     {
-        private readonly IApplicationDbContext _context;
+        var manufacturer = await _context.Manufacturers.FindAsync([request.ManufacturerId], cancellationToken);
 
-        public UpdateManufacturerCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
+        Guard.Against.NotFound(request.ManufacturerId, manufacturer);
 
-        public async Task Handle(UpdateManufacturerCommand request, CancellationToken cancellationToken)
-        {
-            var entity = await _context.Manufacturers.FindAsync(request.id);
+        await _context.SaveChangesAsync(cancellationToken);
 
-            if (entity == null)
-            {
-                throw new NotFoundException(nameof(Manufacturer), request.id);
-            }
-
-            entity.name = request.name;
-
-            await _context.SaveChangesAsync(cancellationToken);
-
-        }
     }
 }
-

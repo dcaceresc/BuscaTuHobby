@@ -2,11 +2,35 @@
 
 public class Category : AuditableEntity
 {
-    public int id { get; set; }
-    public string name { get; set; } = default!;
-    public int groupId { get; set; }
-    public bool active { get; set; }
-    public virtual Group Group { get; set; } = default!;
-    public virtual ICollection<ProductCategory> CategoryProducts { get; set; } = default!;
+    private Category(string categoryName, Guid groupId)
+    {
+        CategoryId = new Guid();
+        CategoryName = categoryName;
+        GroupId = groupId;
+    }
+
+
+    public Guid CategoryId { get; private set; }
+    public string CategoryName { get; private set; } = default!;
+    public Guid GroupId { get; private set; }
+    public bool IsActive { get; private set; }
+    public virtual Group Group { get; private set; } = default!;
+    public virtual ICollection<ProductCategory> ProductCategories { get; private set; } = default!;
+
+    public static Category Create(string categoryName, Guid groupId)
+    {
+        return new Category(categoryName, groupId);
+    }
+
+    public void Update(string categoryName, Guid groupId)
+    {
+        CategoryName = categoryName;
+        GroupId = groupId;
+    }
+
+    public void ToggleActive()
+    {
+        IsActive = !IsActive;
+    }
 
 }

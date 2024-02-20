@@ -2,37 +2,20 @@
 
 namespace Application.Maintainer.Stores.Commands.CreateStore;
 
-public class CreateStoreCommand : IRequest<int>
+public record CreateStoreCommand(string StoreName, string StoreAddress, string StoreWebSite) : IRequest<Guid>;
+
+public class CreateStoreCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateStoreCommand, Guid>
 {
-    public string name { get; set; } = default!;
-    public string address { get; set; } = default!;
-    public string webSite { get; set; } = default!;
+    private readonly IApplicationDbContext _context = context;
 
-
-    public class CreateStoreCommandHandler : IRequestHandler<CreateStoreCommand, int>
+    public async Task<Guid> Handle(CreateStoreCommand request, CancellationToken cancellationToken)
     {
-        private readonly IApplicationDbContext _context;
+        var store = Store.Create(request.StoreName, request.StoreAddress, request.StoreWebSite);
 
-        public CreateStoreCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
+        _context.Stores.Add(store);
 
-        public async Task<int> Handle(CreateStoreCommand request, CancellationToken cancellationToken)
-        {
-            var entity = new Store
-            {
-                name = request.name,
-                address = request.address,
-                webSite = request.webSite,
-                active = true
-            };
+        await _context.SaveChangesAsync(cancellationToken);
 
-            _context.Stores.Add(entity);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return entity.id;
-        }
+        return store.StoreId;
     }
-
 }

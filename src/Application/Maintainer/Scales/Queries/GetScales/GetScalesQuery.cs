@@ -1,21 +1,18 @@
 ﻿namespace Application.Maintainer.Scales.Queries.GetScales;
 
-public class GetScalesQuery : IRequest<IList<ScaleDto>>
-{
-    public class GetScalesQueryHandler : IRequestHandler<GetScalesQuery, IList<ScaleDto>>
-    {
-        private readonly IApplicationDbContext _context;
-        private readonly IMapper _mapper;
+public record GetScalesQuery : IRequest<IList<ScaleDto>>;
 
-        public GetScalesQueryHandler(IApplicationDbContext context, IMapper mapper)
-        {
-            _context = context;
-            _mapper = mapper;
-        }
-        public async Task<IList<ScaleDto>> Handle(GetScalesQuery request, CancellationToken cancellationToken)
-        {
-            return _mapper.Map<IList<ScaleDto>>(await _context.Scales.ToListAsync());
-        }
+public class GetScalesQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetScalesQuery, IList<ScaleDto>>
+{
+    private readonly IApplicationDbContext _context = context;
+    private readonly IMapper _mapper = mapper;
+
+    public async Task<IList<ScaleDto>> Handle(GetScalesQuery request, CancellationToken cancellationToken)
+    {
+        return await _context.Scales
+            .AsNoTracking()
+            .ProjectTo<ScaleDto>(_mapper.ConfigurationProvider)
+            .ToListAsync(cancellationToken);
     }
 }
 

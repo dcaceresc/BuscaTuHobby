@@ -7,9 +7,9 @@ public class UpdateInventoryCommandValidator : AbstractValidator<UpdateInventory
 {
     public UpdateInventoryCommandValidator()
     {
-        RuleFor(v => v.id).NotNull();
-        RuleFor(v => v.productId).NotNull();
-        RuleFor(v => v.storeId).NotNull();
-        RuleFor(v => v.price).NotNull();
+        RuleFor(v => v.InventoryId).NotNull();
+        RuleFor(v => v.ProductId).NotNull();
+        RuleFor(v => v.StoreId).NotNull();
+        RuleFor(v => v.Price).NotNull();
     }
 }

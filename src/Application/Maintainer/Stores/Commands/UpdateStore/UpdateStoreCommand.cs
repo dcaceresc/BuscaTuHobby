@@ -1,38 +1,26 @@
-﻿using Application.Common.Exceptions;
-using Domain.Entities;
+﻿namespace Application.Maintainer.Stores.Commands.UpdateStore;
 
-namespace Application.Maintainer.Stores.Commands.UpdateStore;
-
-public class UpdateStoreCommand : IRequest
+public record UpdateStoreCommand : IRequest
 {
-    public int id { get; set; }
-    public string name { get; set; } = default!;
-    public string address { get; set; } = default!;
-    public string webSite { get; set; } = default!;
+    public Guid StoreId { get; init; }
+    public string StoreName { get; init; } = default!;
+    public string StoreAddress { get; init; } = default!;
+    public string StoreWebSite { get; init; } = default!;
 
-    public class UpdateStoreCommandHandler : IRequestHandler<UpdateStoreCommand>
+}
+
+public class UpdateStoreCommandHandler(IApplicationDbContext context) : IRequestHandler<UpdateStoreCommand>
+{
+    private readonly IApplicationDbContext _context = context;
+
+    public async Task Handle(UpdateStoreCommand request, CancellationToken cancellationToken)
     {
-        private readonly IApplicationDbContext _context;
+        var store = await _context.Stores.FindAsync([request.StoreId], cancellationToken);
 
-        public UpdateStoreCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
+        Guard.Against.NotFound(request.StoreId, store);
 
-        public async Task Handle(UpdateStoreCommand request, CancellationToken cancellationToken)
-        {
-            var entity = await _context.Stores.FindAsync(request.id);
+        store.Update(request.StoreName, request.StoreAddress, request.StoreWebSite);
 
-            if (entity == null)
-            {
-                throw new NotFoundException(nameof(Store), request.id);
-            }
-
-            entity.name = request.name;
-            entity.address = request.address;
-            entity.webSite = request.webSite;
-
-            await _context.SaveChangesAsync(cancellationToken);
-        }
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

@@ -3,9 +3,8 @@
 namespace Application.Maintainer.Franchises.Queries.GetFranchiseById;
 public class FranchiseVM
 {
-    public int id { get; set; }
-    public string name { get; set; } = default!;
-    public int franchiseId { get; set; }
+    public Guid FranchiseId { get; set; }
+    public string FranchiseName { get; set; } = default!;
 
     public class Mapping : Profile
     {

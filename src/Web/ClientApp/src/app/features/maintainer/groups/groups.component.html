@@ -1,5 +1,0 @@
-<h3 class="mt-3">Grupos</h3>
-
-<a class="btn bg-primary mb-2" [routerLink]="['/maintainer/groups/create']">Crear Grupo</a>
-
-<app-table [columns]="columns" [data]="groups" (editEvent)="onEdit($event)" (toggleEvent)="onToggle($event)"></app-table>

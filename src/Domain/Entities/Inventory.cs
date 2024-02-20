@@ -2,12 +2,39 @@
 
 public class Inventory : AuditableEntity
 {
-    public int id { get; set; }
-    public int storeId { get; set; }
-    public int productId { get; set; }
-    public int price { get; set; }
-    public bool active { get; set; }
+    private Inventory(Guid storeId, Guid productId, int price)
+    {
+        InventoryId = Guid.NewGuid();
+        StoreId = storeId;
+        ProductId = productId;
+        Price = price;
+        IsActive = true;
+    }
 
-    public virtual Product Product { get; set; } = default!;
-    public virtual Store Store { get; set; } = default!;
+    public Guid InventoryId { get; private set; }
+    public Guid StoreId { get; private set; }
+    public Guid ProductId { get; private set; }
+    public int Price { get; private set; }
+    public bool IsActive { get; private set; }
+
+    public virtual Product Product { get; private set; } = default!;
+    public virtual Store Store { get; private set; } = default!;
+
+
+    public static Inventory Create(Guid storeId, Guid productId, int price)
+    {
+        return new Inventory(storeId, productId, price);
+    }
+
+    public void Update(Guid storeId, Guid productId, int price)
+    {
+        StoreId = storeId;
+        ProductId = productId;
+        Price = price;
+    }
+
+    public void ToggleActive()
+    {
+        IsActive = !IsActive;
+    }
 }

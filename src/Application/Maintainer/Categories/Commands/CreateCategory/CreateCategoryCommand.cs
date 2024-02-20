@@ -2,34 +2,20 @@
 
 namespace Application.Maintainer.Categories.Commands.CreateCategory;
 
-public class CreateCategoryCommand : IRequest<int>
+public record CreateCategoryCommand(string CategoryName, Guid GroupId) : IRequest<Guid>;
+
+public class CreateSubCategoryCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateCategoryCommand, Guid>
 {
-    public string name { get; set; } = default!;
-    public int groupId { get; set; }
-}
+    private readonly IApplicationDbContext _context = context;
 
-public class CreateSubCategoryCommandHandler : IRequestHandler<CreateCategoryCommand, int>
-{
-    private readonly IApplicationDbContext _context;
-
-    public CreateSubCategoryCommandHandler(IApplicationDbContext context)
+    public async Task<Guid> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
-        _context = context;
-    }
-
-    public async Task<int> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
-    {
-        var entity = new Category
-        {
-            name = request.name,
-            groupId = request.groupId,
-            active = true
-        };
+        var entity = Category.Create(request.CategoryName, request.GroupId);
 
         _context.Categories.Add(entity);
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return entity.id;
+        return entity.CategoryId;
     }
 }

@@ -6,7 +6,7 @@ public class CreateGroupCommandValidator : AbstractValidator<CreateGroupCommand>
 {
     public CreateGroupCommandValidator()
     {
-        RuleFor(v => v.name).NotNull().NotEmpty();
+        RuleFor(v => v.GroupName).NotNull().NotEmpty();
     }
 }
 

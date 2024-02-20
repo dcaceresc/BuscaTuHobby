@@ -1,5 +1,0 @@
-<h3 class="mt-3">Inventarios</h3>
-
-<a class="btn bg-primary mb-2" [routerLink]="['/maintainer/inventories/create']">Crear Inventario</a>
-
-<app-table [columns]="columns" [data]="inventories" (editEvent)="onEdit($event)" (toggleEvent)="onToggle($event)"></app-table>

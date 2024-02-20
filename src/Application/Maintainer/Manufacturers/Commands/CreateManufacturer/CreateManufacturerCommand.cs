@@ -2,31 +2,19 @@
 
 namespace Application.Maintainer.Manufacturers.Commands.CreateManufacturer;
 
-public class CreateManufacturerCommand : IRequest<int>
+public record CreateManufacturerCommand(string ManufacturerName) : IRequest<Guid>;
+public class CreateManufacturerCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateManufacturerCommand, Guid>
 {
-    public string name { get; set; } = default!;
+    private readonly IApplicationDbContext _context = context;
 
-    public class CreateManufacturerCommandHandler : IRequestHandler<CreateManufacturerCommand, int>
+    public async Task<Guid> Handle(CreateManufacturerCommand request, CancellationToken cancellationToken)
     {
-        private readonly IApplicationDbContext _context;
+        var manufacturer = Manufacturer.Create(request.ManufacturerName);
 
-        public CreateManufacturerCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
+        _context.Manufacturers.Add(manufacturer);
 
-        public async Task<int> Handle(CreateManufacturerCommand request, CancellationToken cancellationToken)
-        {
-            var entity = new Manufacturer
-            {
-                name = request.name,
-                active = true
-            };
+        await _context.SaveChangesAsync(cancellationToken);
 
-            _context.Manufacturers.Add(entity);
-            await _context.SaveChangesAsync(cancellationToken);
-            return entity.id;
-        }
+        return manufacturer.ManufacturerId;
     }
 }
-

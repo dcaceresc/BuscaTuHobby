@@ -4,8 +4,8 @@ namespace Application.Maintainer.Scales.Queries.GetScaleById;
 
 public class ScaleVM
 {
-    public int id { get; set; }
-    public string name { get; set; } = default!;
+    public Guid ScaleId { get; set; }
+    public string ScaleName { get; set; } = default!;
 
 
     public class Mapping : Profile

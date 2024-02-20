@@ -1,32 +1,19 @@
-﻿using Application.Common.Exceptions;
-using Domain.Entities;
+﻿namespace Application.Maintainer.Inventories.Commands.ToggleInventory;
 
-namespace Application.Maintainer.Inventories.Commands.ToggleInventory;
-
-public class ToggleInventoryCommand : IRequest
+public record ToggleInventoryCommand(Guid InventoryId) : IRequest;
+public class ToggleSaleCommandHandler(IApplicationDbContext context) : IRequestHandler<ToggleInventoryCommand>
 {
-    public int id { get; set; }
+    private readonly IApplicationDbContext _context = context;
 
-    public class ToggleSaleCommandHandler : IRequestHandler<ToggleInventoryCommand>
+    public async Task Handle(ToggleInventoryCommand request, CancellationToken cancellationToken)
     {
-        private readonly IApplicationDbContext _context;
+        var inventory = await _context.Inventories.FindAsync([request.InventoryId], cancellationToken);
 
-        public ToggleSaleCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
+        Guard.Against.NotFound(request.InventoryId, inventory);
 
-        public async Task Handle(ToggleInventoryCommand request, CancellationToken cancellationToken)
-        {
-            var entity = await _context.Inventories.FindAsync(request.id);
+        inventory.ToggleActive();
 
-            if (entity == null)
-                throw new NotFoundException(nameof(Inventory), request.id);
+        await _context.SaveChangesAsync(cancellationToken);
 
-            entity.active = !entity.active;
-
-            await _context.SaveChangesAsync(cancellationToken);
-
-        }
     }
 }

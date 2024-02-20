@@ -2,11 +2,12 @@
 
 public class Review : AuditableEntity
 {
-    public int id { get; set; }
-    public int storeId { get; set; }
-    public string userId { get; set; } = default!;
-    public int ranking { get; set; }
-    public string message { get; set; } = default!;
+    public Guid ReviewId { get; set; }
+    public Guid StoreId { get; set; }
+    public Guid UserId { get; set; }
+    public int ReviewRanking { get; set; }
+    public string ReviewMessage { get; set; } = default!;
 
     public Store Store { get; set; } = default!;
+    public User User { get; set; } = default!;
 }

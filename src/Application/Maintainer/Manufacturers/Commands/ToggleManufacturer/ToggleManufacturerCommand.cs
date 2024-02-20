@@ -1,33 +1,20 @@
-﻿using Application.Common.Exceptions;
-using Domain.Entities;
+﻿namespace Application.Maintainer.Manufacturers.Commands.ToggleManufacturer;
 
-namespace Application.Maintainer.Manufacturers.Commands.ToggleManufacturer;
+public record ToggleManufacturerCommand(Guid ManufacturerId) : IRequest;
 
-public class ToggleManufacturerCommand : IRequest
+public class ToggleManufacturerCommandHandler(IApplicationDbContext context) : IRequestHandler<ToggleManufacturerCommand>
 {
-    public int id { get; set; }
+    private readonly IApplicationDbContext _context = context;
 
-    public class ToggleManufacturerCommandHandler : IRequestHandler<ToggleManufacturerCommand>
+    public async Task Handle(ToggleManufacturerCommand request, CancellationToken cancellationToken)
     {
-        private readonly IApplicationDbContext _context;
+        var manufacturer = await _context.Manufacturers.FindAsync([request.ManufacturerId], cancellationToken);
 
-        public ToggleManufacturerCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
+        Guard.Against.NotFound(request.ManufacturerId, manufacturer);
 
-        public async Task Handle(ToggleManufacturerCommand request, CancellationToken cancellationToken)
-        {
-            var entity = await _context.Manufacturers.FindAsync(request.id);
+        manufacturer.ToggleActive();
 
-            if (entity == null)
-                throw new NotFoundException(nameof(Manufacturer), request.id);
+        await _context.SaveChangesAsync(cancellationToken);
 
-            entity.active = !entity.active;
-
-            await _context.SaveChangesAsync(cancellationToken);
-
-        }
     }
 }
-

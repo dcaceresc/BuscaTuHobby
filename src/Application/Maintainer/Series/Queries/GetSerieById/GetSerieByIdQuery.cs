@@ -1,23 +1,20 @@
 ﻿namespace Application.Maintainer.Series.Queries.GetSerieById;
 
-public class GetSerieByIdQuery : IRequest<SerieVM>
+public record GetSerieByIdQuery(Guid SerieId) : IRequest<SerieVM>;
+public class GetSerieByIdQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetSerieByIdQuery, SerieVM>
 {
-    public int id { get; set; }
-}
-
-public class GetSerieByIdQueryHandler : IRequestHandler<GetSerieByIdQuery, SerieVM>
-{
-    private readonly IApplicationDbContext _context;
-    private readonly IMapper _mapper;
-
-    public GetSerieByIdQueryHandler(IApplicationDbContext context, IMapper mapper)
-    {
-        _context = context;
-        _mapper = mapper;
-    }
+    private readonly IApplicationDbContext _context = context;
+    private readonly IMapper _mapper = mapper;
 
     public async Task<SerieVM> Handle(GetSerieByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Series.Where(x => x.id == request.id).AsNoTracking().ProjectTo<SerieVM>(_mapper.ConfigurationProvider).FirstAsync(cancellationToken);
+        var serie = await _context.Series
+            .AsNoTracking()
+            .ProjectTo<SerieVM>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(x => x.SerieId == request.SerieId, cancellationToken);
+
+        Guard.Against.NotFound(request.SerieId, serie);
+
+        return serie;
     }
 }

@@ -1,28 +1,17 @@
-﻿using Application.Common.Exceptions;
-using Domain.Entities;
+﻿namespace Application.Maintainer.Franchises.Commands.ToggleFranchise;
+public record ToggleFranchiseCommand(Guid FranchiseId) : IRequest;
 
-namespace Application.Maintainer.Franchises.Commands.ToggleFranchise;
-public class ToggleFranchiseCommand : IRequest
+public class ToggleFranchiseCommandHandler(IApplicationDbContext context) : IRequestHandler<ToggleFranchiseCommand>
 {
-    public int id { get; set; }
-}
+    private readonly IApplicationDbContext _context = context;
 
-public class ToggleFranchiseCommandHandler : IRequestHandler<ToggleFranchiseCommand>
-{
-    private readonly IApplicationDbContext _context;
-
-    public ToggleFranchiseCommandHandler(IApplicationDbContext context)
-    {
-        _context = context;
-    }
     public async Task Handle(ToggleFranchiseCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.Franchises.FindAsync(request.id);
+        var entity = await _context.Franchises.FindAsync([request.FranchiseId], cancellationToken);
 
-        if (entity == null)
-            throw new NotFoundException(nameof(Franchise), request.id);
+        Guard.Against.NotFound(request.FranchiseId, entity);
 
-        entity.active = !entity.active;
+        entity.ToggleActive();
 
         await _context.SaveChangesAsync(cancellationToken);
     }

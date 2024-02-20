@@ -2,9 +2,9 @@
 
 public class FavoriteProduct : AuditableEntity
 {
-    public int favoriteId { get; set; }
+    public Guid FavoriteId { get; set; }
     public Favorite Favorite { get; set; } = default!;
 
-    public int productId { get; set; }
+    public Guid ProductId { get; set; }
     public Product Product { get; set; } = default!;
 }

@@ -1,23 +1,21 @@
 ﻿namespace Application.Maintainer.Stores.Queries.GetStoreById;
 
-public class GetStoreByIdQuery : IRequest<StoreVM>
-{
-    public int id { get; set; }
-}
+public record GetStoreByIdQuery(Guid StoreId) : IRequest<StoreVM>;
 
-public class GetStoreByIdQueryHandler : IRequestHandler<GetStoreByIdQuery, StoreVM>
+public class GetStoreByIdQueryHandler(IApplicationDbContext context, IMapper mapper) : IRequestHandler<GetStoreByIdQuery, StoreVM>
 {
-    private readonly IApplicationDbContext _context;
-    private readonly IMapper _mapper;
-
-    public GetStoreByIdQueryHandler(IApplicationDbContext context, IMapper mapper)
-    {
-        _context = context;
-        _mapper = mapper;
-    }
+    private readonly IApplicationDbContext _context = context;
+    private readonly IMapper _mapper = mapper;
 
     public async Task<StoreVM> Handle(GetStoreByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _context.Stores.Where(x => x.id == request.id).AsNoTracking().ProjectTo<StoreVM>(_mapper.ConfigurationProvider).FirstAsync(cancellationToken);
+        var store = await _context.Stores
+               .AsNoTracking()
+               .ProjectTo<StoreVM>(_mapper.ConfigurationProvider)
+               .FirstOrDefaultAsync(x => x.StoreId == request.StoreId, cancellationToken);
+
+        Guard.Against.NotFound(request.StoreId, store);
+
+        return store;
     }
 }

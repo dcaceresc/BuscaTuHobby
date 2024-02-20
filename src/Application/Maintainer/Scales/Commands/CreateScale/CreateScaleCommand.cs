@@ -2,32 +2,20 @@
 
 namespace Application.Maintainer.Scales.Commands.CreateScale;
 
-public class CreateScaleCommand : IRequest<int>
+public record CreateScaleCommand(string ScaleName) : IRequest<Guid>;
+
+public class CreateScaleCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateScaleCommand, Guid>
 {
-    public string name { get; set; } = default!;
+    private readonly IApplicationDbContext _context = context;
 
-    public class CreateScaleCommandHandler : IRequestHandler<CreateScaleCommand, int>
+    public async Task<Guid> Handle(CreateScaleCommand request, CancellationToken cancellationToken)
     {
-        private readonly IApplicationDbContext _context;
+        var scale = Scale.Create(request.ScaleName);
 
-        public CreateScaleCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
+        _context.Scales.Add(scale);
 
+        await _context.SaveChangesAsync(cancellationToken);
 
-        public async Task<int> Handle(CreateScaleCommand request, CancellationToken cancellationToken)
-        {
-            var entity = new Scale
-            {
-                name = request.name,
-                active = true
-            };
-
-            _context.Scales.Add(entity);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return entity.id;
-        }
+        return scale.ScaleId;
     }
 }

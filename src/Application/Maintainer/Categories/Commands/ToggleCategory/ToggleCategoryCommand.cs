@@ -1,29 +1,17 @@
-﻿using Application.Common.Exceptions;
-using Domain.Entities;
+﻿namespace Application.Maintainer.Categories.Commands.ToggleCategory;
+public record ToggleCategoryCommand(Guid CategoryId) : IRequest;
 
-namespace Application.Maintainer.Categories.Commands.ToggleCategory;
-public class ToggleCategoryCommand : IRequest
+public class ToggleSubCategoryCommandHandler(IApplicationDbContext context) : IRequestHandler<ToggleCategoryCommand>
 {
-    public int id { get; set; }
-}
-
-public class ToggleSubCategoryCommandHandler : IRequestHandler<ToggleCategoryCommand>
-{
-    private readonly IApplicationDbContext _context;
-
-    public ToggleSubCategoryCommandHandler(IApplicationDbContext context)
-    {
-        _context = context;
-    }
+    private readonly IApplicationDbContext _context = context;
 
     public async Task Handle(ToggleCategoryCommand request, CancellationToken cancellationToken)
     {
-        var entity = await _context.Categories.FindAsync(request.id);
+        var entity = await _context.Categories.FindAsync([request.CategoryId], cancellationToken);
 
-        if (entity == null)
-            throw new NotFoundException(nameof(Category), request.id);
+        Guard.Against.NotFound(request.CategoryId, entity);
 
-        entity.active = !entity.active;
+        entity.ToggleActive();
 
         await _context.SaveChangesAsync(cancellationToken);
     }

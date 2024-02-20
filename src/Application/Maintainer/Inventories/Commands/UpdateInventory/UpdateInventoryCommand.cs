@@ -1,36 +1,25 @@
-﻿using Application.Common.Exceptions;
-using Domain.Entities;
+﻿namespace Application.Maintainer.Inventories.Commands.UpdateInventory;
 
-namespace Application.Maintainer.Inventories.Commands.UpdateInventory;
-
-public class UpdateInventoryCommand : IRequest
+public record UpdateInventoryCommand : IRequest
 {
-    public int id { get; set; }
-    public int productId { get; set; }
-    public int storeId { get; set; }
-    public int price { get; set; }
+    public Guid InventoryId { get; init; }
+    public Guid ProductId { get; init; }
+    public Guid StoreId { get; init; }
+    public int Price { get; init; }
+}
 
-    public class UpdateInventoryCommandHandler : IRequestHandler<UpdateInventoryCommand>
+public class UpdateInventoryCommandHandler(IApplicationDbContext context) : IRequestHandler<UpdateInventoryCommand>
+{
+    private readonly IApplicationDbContext _context = context;
+
+    public async Task Handle(UpdateInventoryCommand request, CancellationToken cancellationToken)
     {
-        private readonly IApplicationDbContext _context;
+        var inventory = await _context.Inventories.FindAsync([request.InventoryId], cancellationToken);
 
-        public UpdateInventoryCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
+        Guard.Against.NotFound(request.InventoryId, inventory);
 
-        public async Task Handle(UpdateInventoryCommand request, CancellationToken cancellationToken)
-        {
-            var entity = await _context.Inventories.FindAsync(request.id);
+        inventory.Update(request.ProductId, request.StoreId, request.Price);
 
-            if (entity == null)
-                throw new NotFoundException(nameof(Inventory), request.id);
-
-            entity.productId = request.productId;
-            entity.storeId = request.storeId;
-            entity.price = request.price;
-
-            await _context.SaveChangesAsync(cancellationToken);
-        }
+        await _context.SaveChangesAsync(cancellationToken);
     }
 }

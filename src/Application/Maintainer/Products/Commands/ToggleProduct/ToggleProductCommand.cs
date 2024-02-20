@@ -1,32 +1,20 @@
-﻿using Application.Common.Exceptions;
-using Domain.Entities;
+﻿namespace Application.Maintainer.Products.Commands.ToggleProduct;
 
-namespace Application.Maintainer.Products.Commands.ToggleProduct;
+public record ToggleProductCommand(Guid ProductId) : IRequest;
 
-public class ToggleProductCommand : IRequest
+public class ToggleProductCommandHandler(IApplicationDbContext context) : IRequestHandler<ToggleProductCommand>
 {
-    public int id { get; set; }
+    private readonly IApplicationDbContext _context = context;
 
-    public class ToggleProductCommandHandler : IRequestHandler<ToggleProductCommand>
+    public async Task Handle(ToggleProductCommand request, CancellationToken cancellationToken)
     {
-        private readonly IApplicationDbContext _context;
+        var product = await _context.Products.FindAsync([request.ProductId], cancellationToken);
 
-        public ToggleProductCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
+        Guard.Against.NotFound(request.ProductId, product);
 
-        public async Task Handle(ToggleProductCommand request, CancellationToken cancellationToken)
-        {
-            var entity = await _context.Products.FindAsync(request.id);
+        product.ToggleActive();
 
-            if (entity == null)
-                throw new NotFoundException(nameof(Product), request.id);
+        await _context.SaveChangesAsync(cancellationToken);
 
-            entity.active = !entity.active;
-
-            await _context.SaveChangesAsync(cancellationToken);
-
-        }
     }
 }

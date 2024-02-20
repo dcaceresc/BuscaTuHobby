@@ -1,35 +1,19 @@
-﻿using Application.Common.Exceptions;
-using Domain.Entities;
+﻿namespace Application.Maintainer.Scales.Commands.UpdateScale;
 
-namespace Application.Maintainer.Scales.Commands.UpdateScale;
+public record UpdateScaleCommand(Guid ScaleId, string ScaleName) : IRequest;
 
-public class UpdateScaleCommand : IRequest
+public class UpdateScaleCommandHandler(IApplicationDbContext context) : IRequestHandler<UpdateScaleCommand>
 {
-    public int id { get; set; }
-    public string name { get; set; } = default!;
+    private readonly IApplicationDbContext _context = context;
 
-    public class UpdateScaleCommandHandler : IRequestHandler<UpdateScaleCommand>
+    public async Task Handle(UpdateScaleCommand request, CancellationToken cancellationToken)
     {
-        private readonly IApplicationDbContext _context;
+        var scale = await _context.Scales.FindAsync([request.ScaleId], cancellationToken);
 
-        public UpdateScaleCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
+        Guard.Against.NotFound(request.ScaleId, scale);
 
-        public async Task Handle(UpdateScaleCommand request, CancellationToken cancellationToken)
-        {
-            var entity = await _context.Scales.FindAsync(request.id);
+        scale.Update(request.ScaleName);
 
-            if (entity == null)
-            {
-                throw new NotFoundException(nameof(Scale), request.id);
-            }
-
-            entity.name = request.name;
-
-            await _context.SaveChangesAsync(cancellationToken);
-        }
+        await _context.SaveChangesAsync(cancellationToken);
     }
-
 }
