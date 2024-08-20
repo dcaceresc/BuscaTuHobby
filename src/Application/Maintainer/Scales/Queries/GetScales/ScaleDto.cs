@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Scales.Queries.GetScales;
+﻿namespace Application.Maintainer.Scales.Queries.GetScales;
 
 public class ScaleDto
 {

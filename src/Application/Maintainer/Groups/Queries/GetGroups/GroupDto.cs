@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Groups.Queries.GetGroups;
+﻿namespace Application.Maintainer.Groups.Queries.GetGroups;
 
 public class GroupDto
 {

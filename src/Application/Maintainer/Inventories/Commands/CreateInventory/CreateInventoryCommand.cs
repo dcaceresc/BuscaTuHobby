@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Inventories.Commands.CreateInventory;
+﻿namespace Application.Maintainer.Inventories.Commands.CreateInventory;
 
 public record CreateInventoryCommand(Guid ProductId, Guid StoreId, int Price) : IRequest<Guid>;
 

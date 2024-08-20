@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Products.Queries.GetProducts;
+﻿namespace Application.Maintainer.Products.Queries.GetProducts;
 
 public class ProductDto
 {

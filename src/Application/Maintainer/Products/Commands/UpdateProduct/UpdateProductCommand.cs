@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Products.Commands.UpdateProduct;
+﻿namespace Application.Maintainer.Products.Commands.UpdateProduct;
 
 public class UpdateProductCommand : IRequest
 {

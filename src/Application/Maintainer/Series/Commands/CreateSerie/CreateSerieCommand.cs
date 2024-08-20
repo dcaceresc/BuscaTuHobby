@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Series.Commands.CreateSerie;
+﻿namespace Application.Maintainer.Series.Commands.CreateSerie;
 
 public record CreateSerieCommand(string SerieName, Guid FranchiseId) : IRequest<Guid>;
 

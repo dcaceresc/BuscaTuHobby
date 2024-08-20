@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Scales.Commands.CreateScale;
+﻿namespace Application.Maintainer.Scales.Commands.CreateScale;
 
 public record CreateScaleCommand(string ScaleName) : IRequest<Guid>;
 

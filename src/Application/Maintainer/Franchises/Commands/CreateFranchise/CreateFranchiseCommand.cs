@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Franchises.Commands.CreateFranchise;
+﻿namespace Application.Maintainer.Franchises.Commands.CreateFranchise;
 public record CreateFranchiseCommand(string FranchiseName) : IRequest<Guid>;
 
 public class CreateFranchiseCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateFranchiseCommand, Guid>

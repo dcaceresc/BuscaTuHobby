@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Products.Commands.CreateProduct;
+﻿namespace Application.Maintainer.Products.Commands.CreateProduct;
 
 public record CreateProductCommand : IRequest<Guid>
 {

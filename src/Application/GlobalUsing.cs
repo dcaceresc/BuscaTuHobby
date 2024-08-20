@@ -2,5 +2,8 @@
 global using Ardalis.GuardClauses;
 global using AutoMapper;
 global using AutoMapper.QueryableExtensions;
+global using Domain.Entities;
+global using Domain.Common;
+global using Application.Common.Exceptions;
 global using MediatR;
 global using Microsoft.EntityFrameworkCore;

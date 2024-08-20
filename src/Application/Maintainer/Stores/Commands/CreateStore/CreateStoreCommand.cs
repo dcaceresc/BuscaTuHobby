@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Stores.Commands.CreateStore;
+﻿namespace Application.Maintainer.Stores.Commands.CreateStore;
 
 public record CreateStoreCommand(string StoreName, string StoreAddress, string StoreWebSite) : IRequest<Guid>;
 

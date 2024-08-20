@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Series.Queries.GetSerieById;
+﻿namespace Application.Maintainer.Series.Queries.GetSerieById;
 
 public class SerieVM
 {

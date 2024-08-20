@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Categories.Queries.GetCategoryById;
+﻿namespace Application.Maintainer.Categories.Queries.GetCategoryById;
 
 public class CategoryVM
 {

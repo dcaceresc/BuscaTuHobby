@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Groups.Commands.CreateGroup;
+﻿namespace Application.Maintainer.Groups.Commands.CreateGroup;
 public record CreateGroupCommand(string GroupName) : IRequest<Guid>;
 
 public class CreateCategoryCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateGroupCommand, Guid>

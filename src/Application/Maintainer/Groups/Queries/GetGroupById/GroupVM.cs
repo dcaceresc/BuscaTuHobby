@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Groups.Queries.GetGroupById;
+﻿namespace Application.Maintainer.Groups.Queries.GetGroupById;
 
 public class GroupVM
 {

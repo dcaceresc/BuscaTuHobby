@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Stores.Queries.GetStoreById;
+﻿namespace Application.Maintainer.Stores.Queries.GetStoreById;
 
 public class StoreVM
 {

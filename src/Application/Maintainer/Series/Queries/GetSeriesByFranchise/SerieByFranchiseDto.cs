@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Series.Queries.GetSeriesByFranchise;
+﻿namespace Application.Maintainer.Series.Queries.GetSeriesByFranchise;
 
 public class SerieByFranchiseDto
 {

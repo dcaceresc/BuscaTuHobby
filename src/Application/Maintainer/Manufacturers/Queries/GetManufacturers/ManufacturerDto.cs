@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Manufacturers.Queries.GetManufacturers;
+﻿namespace Application.Maintainer.Manufacturers.Queries.GetManufacturers;
 
 public class ManufacturerDto
 {

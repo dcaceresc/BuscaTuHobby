@@ -1,13 +1,11 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Categories.Queries.GetCategories;
+﻿namespace Application.Maintainer.Categories.Queries.GetCategories;
 
 public class CategoryDto
 {
-    public int CategoryId { get; set; }
+    public Guid CategoryId { get; set; }
     public string CategoryName { get; set; } = default!;
     public string GroupName { get; set; } = default!;
-    public bool ISActive { get; set; }
+    public bool IsActive { get; set; }
 
 
 

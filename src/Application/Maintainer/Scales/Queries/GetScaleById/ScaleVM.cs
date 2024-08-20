@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Scales.Queries.GetScaleById;
+﻿namespace Application.Maintainer.Scales.Queries.GetScaleById;
 
 public class ScaleVM
 {

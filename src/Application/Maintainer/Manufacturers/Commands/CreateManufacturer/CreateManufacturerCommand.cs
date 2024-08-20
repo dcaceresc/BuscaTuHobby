@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Manufacturers.Commands.CreateManufacturer;
+﻿namespace Application.Maintainer.Manufacturers.Commands.CreateManufacturer;
 
 public record CreateManufacturerCommand(string ManufacturerName) : IRequest<Guid>;
 public class CreateManufacturerCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateManufacturerCommand, Guid>

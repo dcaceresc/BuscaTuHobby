@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Products.Queries.GetProductById;
+﻿namespace Application.Maintainer.Products.Queries.GetProductById;
 
 public class ProductVM
 {

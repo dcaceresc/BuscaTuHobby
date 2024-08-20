@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Stores.Queries.GetStores;
+﻿namespace Application.Maintainer.Stores.Queries.GetStores;
 
 public class StoreDto
 {

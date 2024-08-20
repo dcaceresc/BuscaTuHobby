@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Inventories.Queries.GetInventoryById;
+﻿namespace Application.Maintainer.Inventories.Queries.GetInventoryById;
 public class InventoryVM
 {
     public Guid InventoryId { get; set; }

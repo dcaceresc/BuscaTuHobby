@@ -1,21 +1,27 @@
-﻿using Domain.Entities;
+﻿namespace Application.Maintainer.Categories.Commands.CreateCategory;
 
-namespace Application.Maintainer.Categories.Commands.CreateCategory;
+public record CreateCategoryCommand(string CategoryName, Guid GroupId) : IRequest<ApiResponse>;
 
-public record CreateCategoryCommand(string CategoryName, Guid GroupId) : IRequest<Guid>;
-
-public class CreateSubCategoryCommandHandler(IApplicationDbContext context) : IRequestHandler<CreateCategoryCommand, Guid>
+public class CreateSubCategoryCommandHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<CreateCategoryCommand, ApiResponse>
 {
     private readonly IApplicationDbContext _context = context;
+    private readonly IApiResponseService _responseService = responseService;
 
-    public async Task<Guid> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<ApiResponse> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
     {
-        var entity = Category.Create(request.CategoryName, request.GroupId);
+        try
+        {
+            var entity = Category.Create(request.CategoryName, request.GroupId);
 
-        _context.Categories.Add(entity);
+            _context.Categories.Add(entity);
 
-        await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
 
-        return entity.CategoryId;
+            return _responseService.Success("Categoría creada exitosamente");
+        }
+        catch (Exception ex)
+        {
+            return _responseService.Fail(ex.Message);
+        }        
     }
 }

@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Franchises.Queries.GetFranchises;
+﻿namespace Application.Maintainer.Franchises.Queries.GetFranchises;
 public class FranchiseDto
 {
     public Guid FranchiseId { get; set; }

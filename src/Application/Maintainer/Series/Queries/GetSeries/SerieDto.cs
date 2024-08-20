@@ -1,6 +1,4 @@
-﻿using Domain.Entities;
-
-namespace Application.Maintainer.Series.Queries.GetSeries;
+﻿namespace Application.Maintainer.Series.Queries.GetSeries;
 
 public class SerieDto
 {
