@@ -1,19 +1,35 @@
 ﻿namespace Application.Maintainer.Groups.Commands.ToggleGroup;
 
-public record ToggleGroupCommand(Guid GroupId) : IRequest;
+public record ToggleGroup(Guid GroupId) : IRequest<ApiResponse>;
 
-public class ToggleCategoryCommandHandler(IApplicationDbContext context) : IRequestHandler<ToggleGroupCommand>
+public class ToggleGroupHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<ToggleGroup,ApiResponse>
 {
     private readonly IApplicationDbContext _context = context;
+    private readonly IApiResponseService _responseService = responseService;
 
-    public async Task Handle(ToggleGroupCommand request, CancellationToken cancellationToken)
+    public async Task<ApiResponse> Handle(ToggleGroup request, CancellationToken cancellationToken)
     {
-        var entity = await _context.Groups.FindAsync([request.GroupId], cancellationToken);
+        try
+        {
+            var entity = await _context.Groups.FindAsync([request.GroupId], cancellationToken);
 
-        Guard.Against.NotFound(request.GroupId, entity);
+            Guard.Against.NotFound(entity,$"No existe grupo con la id {request.GroupId}");
 
-        entity.ToggleActive();
+            entity.ToggleActive();
 
-        await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return _responseService.Success("Grupo actualizado correctamente");
+        }
+        catch (Common.Exceptions.NotFoundException e)
+        {
+            return _responseService.Fail(e.Message);
+        }
+        catch (Exception)
+        {
+            return _responseService.Fail("No se pudo actualizar el grupo");
+        }
+
+        
     }
 }

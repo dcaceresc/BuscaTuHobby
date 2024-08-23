@@ -2,7 +2,7 @@
 
 namespace Application.Maintainer.Manufacturers.Commands.CreateManufacturer;
 
-public class CreateManufacturerCommandValidator : AbstractValidator<CreateManufacturerCommand>
+public class CreateManufacturerCommandValidator : AbstractValidator<CreateManufacturer>
 {
     public CreateManufacturerCommandValidator()
     {

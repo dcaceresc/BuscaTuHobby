@@ -8,7 +8,7 @@ public class ApiResponseService : IApiResponseService
 
     public ApiResponse<T> Success<T>(T data)
     {
-        return new ApiResponse<T> { Success = true, Data = data};
+        return new ApiResponse<T> { Success = true, Data = data };
     }
 
     public ApiResponse Fail(string message)

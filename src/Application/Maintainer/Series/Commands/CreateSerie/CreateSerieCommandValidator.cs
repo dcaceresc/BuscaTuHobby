@@ -2,7 +2,7 @@
 
 namespace Application.Maintainer.Series.Commands.CreateSerie
 {
-    public class CreateSerieCommandValidator : AbstractValidator<CreateSerieCommand>
+    public class CreateSerieCommandValidator : AbstractValidator<CreateSerie>
     {
         public CreateSerieCommandValidator()
         {

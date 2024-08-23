@@ -2,7 +2,7 @@
 
 namespace Application.Maintainer.Series.Commands.UpdateSerie;
 
-public class UpdateSerieCommandValidator : AbstractValidator<UpdateSerieCommand>
+public class UpdateSerieCommandValidator : AbstractValidator<UpdateSerie>
 {
     public UpdateSerieCommandValidator()
     {

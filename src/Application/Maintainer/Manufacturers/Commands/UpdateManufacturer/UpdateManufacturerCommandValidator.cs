@@ -2,7 +2,7 @@
 
 namespace Application.Maintainer.Manufacturers.Commands.UpdateManufacturer;
 
-public class UpdateManufacturerCommandValidator : AbstractValidator<UpdateManufacturerCommand>
+public class UpdateManufacturerCommandValidator : AbstractValidator<UpdateManufacturer>
 {
     public UpdateManufacturerCommandValidator()
     {

@@ -24,9 +24,9 @@ public class StoresModule : CarterModule
 
     private static async Task<IResult> GetStoreById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetStoreByIdQuery(id)));
 
-    private static async Task<IResult> CreateStore(ISender sender, CreateStoreCommand command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> CreateStore(ISender sender, CreateStore command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateStore(ISender sender, Guid id, UpdateStoreCommand command)
+    private static async Task<IResult> UpdateStore(ISender sender, Guid id, UpdateStore command)
     {
         if (id != command.StoreId)
             return Results.BadRequest();
@@ -38,7 +38,7 @@ public class StoresModule : CarterModule
 
     private static async Task<IResult> ToggleStore(ISender sender, Guid id)
     {
-        await sender.Send(new ToggleStoreCommand(id));
+        await sender.Send(new ToggleStore(id));
 
         return Results.NoContent();
     }

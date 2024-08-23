@@ -3,6 +3,7 @@ using Application.Maintainer.Scales.Commands.ToggleScale;
 using Application.Maintainer.Scales.Commands.UpdateScale;
 using Application.Maintainer.Scales.Queries.GetScaleById;
 using Application.Maintainer.Scales.Queries.GetScales;
+using Domain.Common;
 
 namespace WebAPI.Modules;
 
@@ -20,26 +21,19 @@ public class ScalesModule : CarterModule
 
     }
 
-    private static async Task<IResult> GetScales(ISender sender) => Results.Ok(await sender.Send(new GetScalesQuery()));
+    private static async Task<IResult> GetScales(ISender sender) => Results.Ok(await sender.Send(new GetScales()));
 
-    private static async Task<IResult> GetScaleById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetScaleByIdQuery(id)));
+    private static async Task<IResult> GetScaleById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetScaleById(id)));
 
-    private static async Task<IResult> CreateScale(ISender sender, CreateScaleCommand command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> CreateScale(ISender sender, CreateScale command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateScale(ISender sender, Guid id, UpdateScaleCommand command)
+    private static async Task<IResult> UpdateScale(ISender sender, Guid id, UpdateScale command)
     {
         if (id != command.ScaleId)
-            return Results.BadRequest();
+            return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {id} no coincide con la Id de la escala {command.ScaleId}" });
 
-        await sender.Send(command);
-
-        return Results.NoContent();
+        return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleScale(ISender sender, Guid id)
-    {
-        await sender.Send(new ToggleScaleCommand(id));
-
-        return Results.NoContent();
-    }
+    private static async Task<IResult> ToggleScale(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleScale(id)));
 }

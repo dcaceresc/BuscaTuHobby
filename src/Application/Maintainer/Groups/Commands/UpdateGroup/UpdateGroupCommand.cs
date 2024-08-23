@@ -1,20 +1,34 @@
 ﻿namespace Application.Maintainer.Groups.Commands.UpdateGroup;
 
-public record UpdateGroupCommand(Guid GroupId, string GroupName) : IRequest;
+public record UpdateGroup(Guid GroupId, string GroupName) : IRequest<ApiResponse>;
 
-public class UpdateCategoryCommandHandler(IApplicationDbContext context) : IRequestHandler<UpdateGroupCommand>
+public class UpdateGroupHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<UpdateGroup, ApiResponse>
 {
     private readonly IApplicationDbContext _context = context;
+    private readonly IApiResponseService _responseService = responseService;
 
-    public async Task Handle(UpdateGroupCommand request, CancellationToken cancellationToken)
+    public async Task<ApiResponse> Handle(UpdateGroup request, CancellationToken cancellationToken)
     {
-        var entity = await _context.Groups.FindAsync([request.GroupId], cancellationToken);
+        try
+        {
+            var entity = await _context.Groups.FindAsync([request.GroupId], cancellationToken);
 
-        Guard.Against.NotFound(request.GroupId, entity);
+            Guard.Against.NotFound(entity, $"No existe grupo con la Id {request.GroupId}");
 
-        entity.Update(request.GroupName);
+            entity.Update(request.GroupName);
 
-        await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
+
+            return _responseService.Success("Grupo actualizado correctamente");
+        }
+        catch (Common.Exceptions.NotFoundException e)
+        {
+            return _responseService.Fail(e.Message);
+        }
+        catch (Exception)
+        {
+            return _responseService.Fail("No se pudo actualizar el grupo");
+        }
     }
 }
 

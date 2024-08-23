@@ -3,6 +3,7 @@ using Application.Maintainer.Franchises.Commands.ToggleFranchise;
 using Application.Maintainer.Franchises.Commands.UpdateFranchise;
 using Application.Maintainer.Franchises.Queries.GetFranchiseById;
 using Application.Maintainer.Franchises.Queries.GetFranchises;
+using Domain.Common;
 
 namespace WebAPI.Modules;
 
@@ -19,26 +20,19 @@ public class FranchisesModule : CarterModule
         group.MapDelete("{id:guid}", ToggleFranchise);
     }
 
-    private static async Task<IResult> GetFranchises(ISender sender) => Results.Ok(await sender.Send(new GetFranchisesQuery()));
+    private static async Task<IResult> GetFranchises(ISender sender) => Results.Ok(await sender.Send(new GetFranchises()));
 
-    private static async Task<IResult> GetFranchiseById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetFranchiseByIdQuery(id)));
+    private static async Task<IResult> GetFranchiseById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetFranchiseById(id)));
 
-    private static async Task<IResult> CreateFranchise(ISender sender, CreateFranchiseCommand command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> CreateFranchise(ISender sender, CreateFranchise command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateFranchise(ISender sender, Guid id, UpdateFranchiseCommand command)
+    private static async Task<IResult> UpdateFranchise(ISender sender, Guid id, UpdateFranchise command)
     {
         if (id != command.FranchiseId)
-            return Results.BadRequest();
+            return Results.Ok(new ApiResponse { Success = false, Message = $"La id de la ruta {id} no coincide con la de la franquicia {command.FranchiseId}"});
 
-        await sender.Send(command);
-
-        return Results.NoContent();
+        return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleFranchise(ISender sender, Guid id)
-    {
-        await sender.Send(new ToggleFranchiseCommand(id));
-
-        return Results.NoContent();
-    }
+    private static async Task<IResult> ToggleFranchise(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleFranchise(id)));
 }

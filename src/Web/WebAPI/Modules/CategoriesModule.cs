@@ -3,6 +3,7 @@ using Application.Maintainer.Categories.Commands.ToggleCategory;
 using Application.Maintainer.Categories.Commands.UpdateCategory;
 using Application.Maintainer.Categories.Queries.GetCategories;
 using Application.Maintainer.Categories.Queries.GetCategoryById;
+using Domain.Common;
 
 namespace WebAPI.Modules;
 
@@ -21,26 +22,19 @@ public class CategoriesModule : CarterModule
 
     }
 
-    private static async Task<IResult> GetCategories(ISender sender) => Results.Ok(await sender.Send(new GetCategoriesQuery()));
+    private static async Task<IResult> GetCategories(ISender sender) => Results.Ok(await sender.Send(new GetCategories()));
 
-    private static async Task<IResult> GetCategoryById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetCategoryByIdQuery(id)));
+    private static async Task<IResult> GetCategoryById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetCategoryById(id)));
 
-    private static async Task<IResult> CreateCategory(ISender sender, CreateCategoryCommand command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> CreateCategory(ISender sender, CreateCategory command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateCategory(ISender sender, Guid id, UpdateCategoryCommand command)
+    private static async Task<IResult> UpdateCategory(ISender sender, Guid id, UpdateCategory command)
     {
         if (id != command.CategoryId)
-            return Results.BadRequest();
+            return Results.Ok(new ApiResponse { Success = false, Message = $"La id de la ruta {id} no coincide con la de la categoría {command.CategoryId}" });
 
-        await sender.Send(command);
-
-        return Results.NoContent();
+        return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleCategory(ISender sender, Guid id)
-    {
-        await sender.Send(new ToggleCategoryCommand(id));
-
-        return Results.NoContent();
-    }
+    private static async Task<IResult> ToggleCategory(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleCategory(id)));
 }

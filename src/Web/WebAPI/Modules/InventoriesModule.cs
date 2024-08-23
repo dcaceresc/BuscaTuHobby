@@ -4,6 +4,7 @@ using Application.Maintainer.Inventories.Commands.ToggleInventory;
 using Application.Maintainer.Inventories.Commands.UpdateInventory;
 using Application.Maintainer.Inventories.Queries.GetInventories;
 using Application.Maintainer.Inventories.Queries.GetInventoryById;
+using Domain.Common;
 
 namespace WebAPI.Modules;
 
@@ -21,26 +22,19 @@ public class InventoriesModule : CarterModule
 
     }
 
-    private static async Task<IResult> GetInventories(ISender sender) => Results.Ok(await sender.Send(new GetInventoriesQuery()));
+    private static async Task<IResult> GetInventories(ISender sender) => Results.Ok(await sender.Send(new GetInventories()));
 
-    private static async Task<IResult> GetInventoryById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetInventoryByIdQuery(id)));
+    private static async Task<IResult> GetInventoryById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetInventoryById(id)));
 
-    private static async Task<IResult> CreateInventory(ISender sender, CreateInventoryCommand command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> CreateInventory(ISender sender, CreateInventory command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateInventory(ISender sender, Guid id, UpdateInventoryCommand command)
+    private static async Task<IResult> UpdateInventory(ISender sender, Guid id, UpdateInventory command)
     {
         if (id != command.InventoryId)
-            return Results.BadRequest();
+            return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {id} no coincide con la Id del inventario {command.InventoryId}" });
 
-        await sender.Send(command);
-
-        return Results.NoContent();
+        return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleInventory(ISender sender, Guid id)
-    {
-        await sender.Send(new ToggleInventoryCommand(id));
-
-        return Results.NoContent();
-    }
+    private static async Task<IResult> ToggleInventory(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleInventory(id)));
 }

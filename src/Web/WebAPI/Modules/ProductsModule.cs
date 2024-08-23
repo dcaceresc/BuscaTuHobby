@@ -3,6 +3,7 @@ using Application.Maintainer.Products.Commands.ToggleProduct;
 using Application.Maintainer.Products.Commands.UpdateProduct;
 using Application.Maintainer.Products.Queries.GetProductById;
 using Application.Maintainer.Products.Queries.GetProducts;
+using Domain.Common;
 
 namespace WebAPI.Modules;
 
@@ -21,26 +22,19 @@ public class ProductsModule : CarterModule
     }
 
 
-    private static async Task<IResult> GetProducts(ISender sender) => Results.Ok(await sender.Send(new GetProductsQuery()));
+    private static async Task<IResult> GetProducts(ISender sender) => Results.Ok(await sender.Send(new GetProducts()));
 
-    private static async Task<IResult> GetProductById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetProductByIdQuery(id)));
+    private static async Task<IResult> GetProductById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetProductById(id)));
 
-    private static async Task<IResult> CreateProduct(ISender sender, CreateProductCommand command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> CreateProduct(ISender sender, CreateProduct command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateProduct(ISender sender, Guid id, UpdateProductCommand command)
+    private static async Task<IResult> UpdateProduct(ISender sender, Guid id, UpdateProduct command)
     {
         if (id != command.ProductId)
-            return Results.BadRequest();
+            return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {id} no coincide con la Id del producto {command.ProductId}" });
 
-        await sender.Send(command);
-
-        return Results.NoContent();
+        return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleProduct(ISender sender, Guid id)
-    {
-        await sender.Send(new ToggleProductCommand(id));
-
-        return Results.NoContent();
-    }
+    private static async Task<IResult> ToggleProduct(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleProduct(id)));
 }

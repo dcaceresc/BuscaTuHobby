@@ -2,7 +2,7 @@
 
 namespace Application.Maintainer.Stores.Commands.CreateStore;
 
-public class CreateStoreCommandValidator : AbstractValidator<CreateStoreCommand>
+public class CreateStoreCommandValidator : AbstractValidator<CreateStore>
 {
     public CreateStoreCommandValidator()
     {

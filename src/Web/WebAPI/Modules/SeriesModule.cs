@@ -22,15 +22,15 @@ public class SeriesModule : CarterModule
 
     }
 
-    private static async Task<IResult> GetSeries(ISender sender) => Results.Ok(await sender.Send(new GetSeriesQuery()));
+    private static async Task<IResult> GetSeries(ISender sender) => Results.Ok(await sender.Send(new GetSeries()));
 
-    private static async Task<IResult> GetSeriesById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetSerieByIdQuery(id)));
+    private static async Task<IResult> GetSeriesById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetSerieById(id)));
 
-    private static async Task<IResult> GetSeriesByFranchise(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetSeriesByFranchiseQuery(id)));
+    private static async Task<IResult> GetSeriesByFranchise(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetSeriesByFranchise(id)));
 
-    private static async Task<IResult> CreateSeries(ISender sender, CreateSerieCommand command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> CreateSeries(ISender sender, CreateSerie command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateSeries(ISender sender, Guid id, UpdateSerieCommand command)
+    private static async Task<IResult> UpdateSeries(ISender sender, Guid id, UpdateSerie command)
     {
         if (id != command.SerieId)
             return Results.BadRequest();
@@ -42,7 +42,7 @@ public class SeriesModule : CarterModule
 
     private static async Task<IResult> ToggleSeries(ISender sender, Guid id)
     {
-        await sender.Send(new ToggleSerieCommand(id));
+        await sender.Send(new ToggleSerie(id));
 
         return Results.NoContent();
     }

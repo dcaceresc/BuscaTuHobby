@@ -2,7 +2,7 @@
 
 namespace Application.Maintainer.Scales.Commands.UpdateScale;
 
-public class UpdateScaleCommandValidator : AbstractValidator<UpdateScaleCommand>
+public class UpdateScaleCommandValidator : AbstractValidator<UpdateScale>
 {
     public UpdateScaleCommandValidator()
     {

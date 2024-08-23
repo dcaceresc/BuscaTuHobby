@@ -3,6 +3,7 @@ using Application.Maintainer.Manufacturers.Commands.ToggleManufacturer;
 using Application.Maintainer.Manufacturers.Commands.UpdateManufacturer;
 using Application.Maintainer.Manufacturers.Queries.GetManufacturerById;
 using Application.Maintainer.Manufacturers.Queries.GetManufacturers;
+using Domain.Common;
 
 namespace WebAPI.Modules;
 
@@ -20,25 +21,18 @@ public class ManufacturersModule : CarterModule
 
     }
 
-    private static async Task<IResult> GetManufacturers(ISender sender) => Results.Ok(await sender.Send(new GetManufacturersQuery()));
+    private static async Task<IResult> GetManufacturers(ISender sender) => Results.Ok(await sender.Send(new GetManufacturers()));
 
-    private static async Task<IResult> GetManufacturerById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetManufacturerByIdQuery(id)));
-    private static async Task<IResult> CreateManufacturer(ISender sender, CreateManufacturerCommand command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> GetManufacturerById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetManufacturerById(id)));
+    private static async Task<IResult> CreateManufacturer(ISender sender, CreateManufacturer command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateManufacturer(ISender sender, Guid id, UpdateManufacturerCommand command)
+    private static async Task<IResult> UpdateManufacturer(ISender sender, Guid id, UpdateManufacturer command)
     {
         if (id != command.ManufacturerId)
-            return Results.BadRequest();
+            return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {id} no coincide con la del fabricante {command.ManufacturerId}" });
 
-        await sender.Send(command);
-
-        return Results.NoContent();
+        return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleManufacturer(ISender sender, Guid id)
-    {
-        await sender.Send(new ToggleManufacturerCommand(id));
-
-        return Results.NoContent();
-    }
+    private static async Task<IResult> ToggleManufacturer(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleManufacturer(id)));
 }

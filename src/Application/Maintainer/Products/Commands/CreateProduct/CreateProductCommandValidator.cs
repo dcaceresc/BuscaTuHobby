@@ -2,7 +2,7 @@
 
 namespace Application.Maintainer.Products.Commands.CreateProduct;
 
-public class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
+public class CreateProductCommandValidator : AbstractValidator<CreateProduct>
 {
     public CreateProductCommandValidator()
     {

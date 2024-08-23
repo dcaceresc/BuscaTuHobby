@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 
 namespace Application.Maintainer.Inventories.Commands.CreateInventory;
-public class CreateInventoryCommandValidator : AbstractValidator<CreateInventoryCommand>
+public class CreateInventoryCommandValidator : AbstractValidator<CreateInventory>
 {
     public CreateInventoryCommandValidator()
     {

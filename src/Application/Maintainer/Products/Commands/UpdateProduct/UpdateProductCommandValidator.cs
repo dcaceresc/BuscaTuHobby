@@ -2,7 +2,7 @@
 
 namespace Application.Maintainer.Products.Commands.UpdateProduct;
 
-public class UpdateProductCommandValidator : AbstractValidator<UpdateProductCommand>
+public class UpdateProductCommandValidator : AbstractValidator<UpdateProduct>
 {
     public UpdateProductCommandValidator()
     {

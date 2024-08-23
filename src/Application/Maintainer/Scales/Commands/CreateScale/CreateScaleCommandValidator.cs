@@ -2,7 +2,7 @@
 
 namespace Application.Maintainer.Scales.Commands.CreateScale;
 
-public class CreateScaleCommandValidator : AbstractValidator<CreateScaleCommand>
+public class CreateScaleCommandValidator : AbstractValidator<CreateScale>
 {
     public CreateScaleCommandValidator()
     {

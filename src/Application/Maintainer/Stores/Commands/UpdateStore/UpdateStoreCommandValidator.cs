@@ -2,7 +2,7 @@
 
 namespace Application.Maintainer.Stores.Commands.UpdateStore;
 
-public class UpdateStoreCommandValidator : AbstractValidator<UpdateStoreCommand>
+public class UpdateStoreCommandValidator : AbstractValidator<UpdateStore>
 {
     public UpdateStoreCommandValidator()
     {
