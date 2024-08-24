@@ -4,6 +4,7 @@ using Application.Maintainer.Series.Commands.UpdateSerie;
 using Application.Maintainer.Series.Queries.GetSerieById;
 using Application.Maintainer.Series.Queries.GetSeries;
 using Application.Maintainer.Series.Queries.GetSeriesByFranchise;
+using Domain.Common;
 
 namespace WebAPI.Modules;
 
@@ -33,17 +34,10 @@ public class SeriesModule : CarterModule
     private static async Task<IResult> UpdateSeries(ISender sender, Guid id, UpdateSerie command)
     {
         if (id != command.SerieId)
-            return Results.BadRequest();
+            return Results.Ok(new ApiResponse { Success = false,  Message = $"La Id de la ruta {id} no coincide con la Id de la serie {command.SerieId}" });
 
-        await sender.Send(command);
-
-        return Results.NoContent();
+        return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleSeries(ISender sender, Guid id)
-    {
-        await sender.Send(new ToggleSerie(id));
-
-        return Results.NoContent();
-    }
+    private static async Task<IResult> ToggleSeries(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleSerie(id)));
 }

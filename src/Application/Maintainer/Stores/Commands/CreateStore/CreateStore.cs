@@ -1,19 +1,27 @@
 ﻿namespace Application.Maintainer.Stores.Commands.CreateStore;
 
-public record CreateStore(string StoreName, string StoreAddress, string StoreWebSite) : IRequest<Guid>;
+public record CreateStore(string StoreName, string StoreAddress, string StoreWebSite) : IRequest<ApiResponse>;
 
-public class CreateStoreHandler(IApplicationDbContext context) : IRequestHandler<CreateStore, Guid>
+public class CreateStoreHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<CreateStore, ApiResponse>
 {
     private readonly IApplicationDbContext _context = context;
+    private readonly IApiResponseService _responseService = responseService;
 
-    public async Task<Guid> Handle(CreateStore request, CancellationToken cancellationToken)
+    public async Task<ApiResponse> Handle(CreateStore request, CancellationToken cancellationToken)
     {
-        var store = Store.Create(request.StoreName, request.StoreAddress, request.StoreWebSite);
+        try
+        {
+            var store = Store.Create(request.StoreName, request.StoreAddress, request.StoreWebSite);
 
-        _context.Stores.Add(store);
+            _context.Stores.Add(store);
 
-        await _context.SaveChangesAsync(cancellationToken);
+            await _context.SaveChangesAsync(cancellationToken);
 
-        return store.StoreId;
+            return _responseService.Success("Tienda cerrada correctamente");
+        }
+        catch (Exception)
+        {
+            return _responseService.Fail("Error al cerrar la tienda");
+        }
     }
 }

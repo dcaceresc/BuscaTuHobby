@@ -2,7 +2,7 @@
 
 namespace Application.Maintainer.Groups.Commands.UpdateGroup;
 
-public class UpdateGroupCommandValidator : AbstractValidator<UpdateGroupCommand>
+public class UpdateGroupCommandValidator : AbstractValidator<UpdateGroup>
 {
     public UpdateGroupCommandValidator()
     {

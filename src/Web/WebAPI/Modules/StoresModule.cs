@@ -3,6 +3,7 @@ using Application.Maintainer.Stores.Commands.ToggleStore;
 using Application.Maintainer.Stores.Commands.UpdateStore;
 using Application.Maintainer.Stores.Queries.GetStoreById;
 using Application.Maintainer.Stores.Queries.GetStores;
+using Domain.Common;
 
 namespace WebAPI.Modules;
 
@@ -29,17 +30,10 @@ public class StoresModule : CarterModule
     private static async Task<IResult> UpdateStore(ISender sender, Guid id, UpdateStore command)
     {
         if (id != command.StoreId)
-            return Results.BadRequest();
+            return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {id} no coincide con la Id de la tienda {command.StoreId}" });
 
-        await sender.Send(command);
-
-        return Results.NoContent();
+        return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleStore(ISender sender, Guid id)
-    {
-        await sender.Send(new ToggleStore(id));
-
-        return Results.NoContent();
-    }
+    private static async Task<IResult> ToggleStore(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleStore(id)));
 }
