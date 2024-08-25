@@ -37,6 +37,6 @@ public class UpdateStoreHandler(IApplicationDbContext context, IApiResponseServi
             return _responseService.Fail("Ocurrió un error al actualizar la tienda");
         }
 
-       
+
     }
 }

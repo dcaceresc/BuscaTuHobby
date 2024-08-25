@@ -13,7 +13,7 @@ public class ToggleManufacturerHandler(IApplicationDbContext context, IApiRespon
         {
             var manufacturer = await _context.Manufacturers.FindAsync([request.ManufacturerId], cancellationToken);
 
-            Guard.Against.NotFound(manufacturer,$"No existe fabricante con la Id {request.ManufacturerId}");
+            Guard.Against.NotFound(manufacturer, $"No existe fabricante con la Id {request.ManufacturerId}");
 
             manufacturer.ToggleActive();
 

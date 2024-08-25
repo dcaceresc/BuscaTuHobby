@@ -1,7 +1,7 @@
 ﻿namespace Application.Maintainer.Franchises.Commands.UpdateFranchise;
 public record UpdateFranchise(Guid FranchiseId, string FranchiseName) : IRequest<ApiResponse>;
 
-public class UpdateFranchiseHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<UpdateFranchise,ApiResponse>
+public class UpdateFranchiseHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<UpdateFranchise, ApiResponse>
 {
     private readonly IApplicationDbContext _context = context;
     private readonly IApiResponseService _responseService = responseService;

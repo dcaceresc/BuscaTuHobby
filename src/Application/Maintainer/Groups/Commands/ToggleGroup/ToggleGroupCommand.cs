@@ -2,7 +2,7 @@
 
 public record ToggleGroup(Guid GroupId) : IRequest<ApiResponse>;
 
-public class ToggleGroupHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<ToggleGroup,ApiResponse>
+public class ToggleGroupHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<ToggleGroup, ApiResponse>
 {
     private readonly IApplicationDbContext _context = context;
     private readonly IApiResponseService _responseService = responseService;
@@ -13,7 +13,7 @@ public class ToggleGroupHandler(IApplicationDbContext context, IApiResponseServi
         {
             var entity = await _context.Groups.FindAsync([request.GroupId], cancellationToken);
 
-            Guard.Against.NotFound(entity,$"No existe grupo con la id {request.GroupId}");
+            Guard.Against.NotFound(entity, $"No existe grupo con la id {request.GroupId}");
 
             entity.ToggleActive();
 
@@ -30,6 +30,6 @@ public class ToggleGroupHandler(IApplicationDbContext context, IApiResponseServi
             return _responseService.Fail("No se pudo actualizar el grupo");
         }
 
-        
+
     }
 }

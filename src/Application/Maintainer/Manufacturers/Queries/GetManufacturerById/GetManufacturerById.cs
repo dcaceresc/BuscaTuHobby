@@ -28,6 +28,6 @@ public class GetManufacturerByIdHandler(IApplicationDbContext context, IMapper m
             return _responseService.Fail<ManufacturerVM>("No se pudo obtener el fabricante");
         }
 
-       
+
     }
 }

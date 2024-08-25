@@ -36,6 +36,6 @@ public class UpdateInventoryHandler(IApplicationDbContext context, IApiResponseS
             return _responseService.Fail("No se pudo actualizar el inventario");
         }
 
-        
+
     }
 }

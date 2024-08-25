@@ -24,6 +24,6 @@ public class CreateSerieHandler(IApplicationDbContext context, IApiResponseServi
             return _responseService.Fail("Ocurrió un error al crear la serie");
         }
 
-        
+
     }
 }

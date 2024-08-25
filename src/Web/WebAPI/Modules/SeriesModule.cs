@@ -34,7 +34,7 @@ public class SeriesModule : CarterModule
     private static async Task<IResult> UpdateSeries(ISender sender, Guid id, UpdateSerie command)
     {
         if (id != command.SerieId)
-            return Results.Ok(new ApiResponse { Success = false,  Message = $"La Id de la ruta {id} no coincide con la Id de la serie {command.SerieId}" });
+            return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {id} no coincide con la Id de la serie {command.SerieId}" });
 
         return Results.Ok(await sender.Send(command));
     }

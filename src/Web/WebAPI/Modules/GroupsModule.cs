@@ -28,7 +28,7 @@ public class GroupsModule : CarterModule
     private static async Task<IResult> UpdateGroup(ISender sender, Guid id, UpdateGroup command)
     {
         if (id != command.GroupId)
-            return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {id} no coincide con la del grupo {command.GroupId}"});
+            return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {id} no coincide con la del grupo {command.GroupId}" });
 
         return Results.Ok(await sender.Send(command));
     }

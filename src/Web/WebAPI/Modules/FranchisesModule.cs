@@ -29,7 +29,7 @@ public class FranchisesModule : CarterModule
     private static async Task<IResult> UpdateFranchise(ISender sender, Guid id, UpdateFranchise command)
     {
         if (id != command.FranchiseId)
-            return Results.Ok(new ApiResponse { Success = false, Message = $"La id de la ruta {id} no coincide con la de la franquicia {command.FranchiseId}"});
+            return Results.Ok(new ApiResponse { Success = false, Message = $"La id de la ruta {id} no coincide con la de la franquicia {command.FranchiseId}" });
 
         return Results.Ok(await sender.Send(command));
     }

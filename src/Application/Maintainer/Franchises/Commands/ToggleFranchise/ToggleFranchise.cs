@@ -1,7 +1,7 @@
 ﻿namespace Application.Maintainer.Franchises.Commands.ToggleFranchise;
 public record ToggleFranchise(Guid FranchiseId) : IRequest<ApiResponse>;
 
-public class ToggleFranchiseHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<ToggleFranchise,ApiResponse>
+public class ToggleFranchiseHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<ToggleFranchise, ApiResponse>
 {
     private readonly IApplicationDbContext _context = context;
     private readonly IApiResponseService _responseService = responseService;
@@ -12,7 +12,7 @@ public class ToggleFranchiseHandler(IApplicationDbContext context, IApiResponseS
         {
             var entity = await _context.Franchises.FindAsync([request.FranchiseId], cancellationToken);
 
-            Guard.Against.NotFound(entity,$"No existe franquicia con Id {request.FranchiseId}");
+            Guard.Against.NotFound(entity, $"No existe franquicia con Id {request.FranchiseId}");
 
             entity.ToggleActive();
 
@@ -29,6 +29,6 @@ public class ToggleFranchiseHandler(IApplicationDbContext context, IApiResponseS
             return _responseService.Fail("Error al actualizar el estado de la franquicia");
         }
 
-        
+
     }
 }

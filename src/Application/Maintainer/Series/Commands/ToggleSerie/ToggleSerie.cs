@@ -25,6 +25,6 @@ public class ToggleSerieHandler(IApplicationDbContext context, IApiResponseServi
             return _responseService.Fail("Ocurrió un error al actualizar la serie");
         }
 
-        
+
     }
 }

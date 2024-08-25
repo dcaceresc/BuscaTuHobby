@@ -1,7 +1,7 @@
 ﻿namespace Application.Maintainer.Inventories.Commands.ToggleInventory;
 
 public record ToggleInventory(Guid InventoryId) : IRequest<ApiResponse>;
-public class ToggleInventoryHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<ToggleInventory,ApiResponse>
+public class ToggleInventoryHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<ToggleInventory, ApiResponse>
 {
     private readonly IApplicationDbContext _context = context;
     private readonly IApiResponseService _responseService = responseService;
