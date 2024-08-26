@@ -1,15 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
+import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-categories',
+  selector: 'app-groups',
   standalone: true,
   imports: [
-    RouterLink,ButtonComponent
+    CommonModule,ButtonComponent,RouterLink
   ],
-  templateUrl : './categories.component.html',
+  templateUrl: './groups.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CategoriesComponent { }
+export class GroupsComponent { }
