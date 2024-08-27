@@ -5,6 +5,6 @@
       <app-button [routerLink]="['/maintainer/categories/add']" [class]="'btn btn-success'" [text]="'Crear Grupo'" [icon]="'add'"></app-button> 
     </div>
     <div class="card-body">
-  
-    </div>  
+      <app-table [columns]="columns" [data]="data"></app-table>
+    </div> 
   </div>

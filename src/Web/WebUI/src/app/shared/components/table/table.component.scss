@@ -1,3 +1,11 @@
-:host {
-  display: block;
+.table-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-container {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: flex-end;
+  margin-left: 80%;
 }

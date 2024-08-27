@@ -14,36 +14,36 @@
               </tr>
             </thead>
             <tbody>
-              <!-- @for (row of getPaginatedData(); track row; let i = $index) {
-                  <tr>
-                      @for (column of columns; track column) { 
-                          @if ($index === 0) {
-                              <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
-                          }@else if (column.key === "isActive") {
-                              <td>
-                                  <a class="btn bg-primary me-2" (click)="onEdit(row[columns[0].key])">
-                                      <fa-icon [icon]="faEdit"></fa-icon> Editar 
-                                  </a>
-                                  <a class="btn" [ngClass]="row['isActive'] ? 'btn-warning' : 'btn-success'" (click)="onToggle(row[columns[0].key])">
-                                      <fa-icon [icon]="faPowerOff"></fa-icon>
-                                      {{ row["isActive"] ? "Pausar" : "Reanudar" }}
-                                  </a>
-                              </td>
-                          }@else {
-                              <td>
-                                  {{ row[column.key] }}
-                              </td>
-                          } 
-                      }
-                  </tr>
-              } -->
+            @for (row of getPaginatedData(); track row; let i = $index) {
+                <tr>
+                    @for (column of columns; track column) { 
+                        @if ($index === 0) {
+                            <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
+                        }@else if (column.key === "isActive") {
+                            <td>
+                                <a class="btn bg-primary me-2" (click)="onEdit(row[columns[0].key])">
+                                    <fa-icon [icon]="faEdit"></fa-icon> Editar 
+                                </a>
+                                <a class="btn" [ngClass]="row['isActive'] ? 'btn-warning' : 'btn-success'" (click)="onToggle(row[columns[0].key])">
+                                    <fa-icon [icon]="faPowerOff"></fa-icon>
+                                    {{ row["isActive"] ? "Pausar" : "Reanudar" }}
+                                </a>
+                            </td>
+                        }@else {
+                            <td>
+                                {{ row[column.key] }}
+                            </td>
+                        } 
+                    }
+                </tr>
+            } 
             </tbody>
           </table>
     </div>
     
     
     
-    <!-- <nav aria-label="Page navigation example">
+    <nav aria-label="Page navigation example">
       <ul class="pagination justify-content-end">
         <li class="page-item" [ngClass]="{ 'disabled': currentPage() === 1 }">
             <a class="page-link" (click)="setPage(currentPage() - 1)">
@@ -61,6 +61,6 @@
             </a>
         </li>
       </ul>
-    </nav> -->
+    </nav>
 </div>
 
