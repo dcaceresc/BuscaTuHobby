@@ -252,23 +252,14 @@ namespace Infrastructure.Data
                 entity.HasIndex(e => e.Email)
                 .IsUnique();
 
-                entity.Property(e => e.Email)
-                .HasMaxLength(50);
-
-                entity.Property(e => e.FirstName)
-                .HasMaxLength(50);
-
-                entity.Property(e => e.LastName)
-                .HasMaxLength(50);
-
-                entity.Property(e => e.Password)
-                .HasMaxLength(50);
-
-                entity.Property(e => e.PhoneNumber)
-                .HasMaxLength(50);
-
-                entity.Property(e => e.UserName)
-                .HasMaxLength(50);
+                entity.Property(e => e.UserName).IsRequired().HasMaxLength(256);
+                entity.Property(e => e.Email).HasMaxLength(256);
+                entity.Property(e => e.PasswordHash).IsRequired();
+                entity.Property(e => e.SecurityStamp).IsRequired();
+                entity.Property(e => e.EmailConfirmed).IsRequired();
+                entity.Property(e => e.LockoutEnabled).IsRequired();
+                entity.Property(e => e.AccessFailedCount).IsRequired();
+                entity.Property(e => e.LastLoginDate);
             });
 
             builder.Entity<UserRole>(entity =>

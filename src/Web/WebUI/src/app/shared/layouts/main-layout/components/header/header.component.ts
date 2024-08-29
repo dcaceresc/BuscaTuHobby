@@ -4,12 +4,13 @@ import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBars, faHeart, faMagnifyingGlass, faSignInAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
+import { LoginMenuComponent } from '../../../../../features/security/components/login-menu/login-menu.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
   imports: [
-    RouterLink,FontAwesomeModule
+    RouterLink,FontAwesomeModule,LoginMenuComponent
   ],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss',

@@ -1,5 +1,6 @@
 using Application;
 using Infrastructure;
+using Infrastructure.Data;
 using WebAPI;
 
 
@@ -23,6 +24,11 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    await app.InitialiseDatabaseAsync();
+}
+else
+{
+    app.UseHsts();
 }
 
 app.UseAuthentication();
