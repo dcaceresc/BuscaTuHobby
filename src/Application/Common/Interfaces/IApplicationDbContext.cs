@@ -12,6 +12,9 @@
         DbSet<Serie> Series { get; }
         DbSet<Store> Stores { get; }
         DbSet<Category> Categories { get; }
+        DbSet<User> Users { get; }
+        DbSet<Role> Roles { get; }
+        DbSet<UserRole> UserRoles { get; }
 
 
 

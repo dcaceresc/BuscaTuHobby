@@ -13,6 +13,10 @@ const routes: Routes = [
       { 
         path: 'maintainer', 
         loadChildren: () => import("./features/maintainer/maintainer.routes").then(m => m.routes)
+      },
+      {
+        path: 'security',
+        loadChildren: () => import("./features/security/security.routes").then(m => m.routes)
       }
     ]
   }
