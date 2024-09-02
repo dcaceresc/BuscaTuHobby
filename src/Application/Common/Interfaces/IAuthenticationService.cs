@@ -1,7 +1,8 @@
-﻿namespace Application.Common.Interfaces
+﻿namespace Application.Common.Interfaces;
+
+public interface IAuthenticationService
 {
-    public interface IAuthenticationService
-    {
-        string? UserId { get; }
-    }
+    string? UserName { get; }
+    public string CreateAccessToken(string username, IList<string> roles);
+    public Task AuthenticationLOGMOD(string userName, string password);
 }

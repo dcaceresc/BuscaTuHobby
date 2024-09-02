@@ -14,6 +14,7 @@
         DbSet<Category> Categories { get; }
         DbSet<User> Users { get; }
         DbSet<Role> Roles { get; }
+        DbSet<RefreshToken> RefreshTokens { get; }
         DbSet<UserRole> UserRoles { get; }
 
 

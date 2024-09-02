@@ -22,11 +22,11 @@ public static class InitialiserExtensions
 }
 
 
-public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitialiser> logger, ApplicationDbContext context, IdentityService identityService)
+public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitialiser> logger, ApplicationDbContext context, IIdentityService identityService)
 {
     private readonly ILogger<ApplicationDbContextInitialiser> _logger = logger;
     private readonly ApplicationDbContext _context = context;
-    private readonly IdentityService _identityService = identityService;
+    private readonly IIdentityService _identityService = identityService;
 
     public async Task InitialiseAsync()
     {

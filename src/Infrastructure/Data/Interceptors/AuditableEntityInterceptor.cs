@@ -29,13 +29,13 @@ public class AuditableEntityInterceptor(IAuthenticationService authenticationSer
         {
             if (entry.State == EntityState.Added)
             {
-                entry.Entity.CreatedBy = _authenticationService.UserId;
+                entry.Entity.CreatedBy = _authenticationService.UserName;
                 entry.Entity.Created = DateTime.Now;
             }
 
             if (entry.State == EntityState.Added || entry.State == EntityState.Modified || entry.HasChangedOwnedEntities())
             {
-                entry.Entity.LastModifiedBy = _authenticationService.UserId;
+                entry.Entity.LastModifiedBy = _authenticationService.UserName;
                 entry.Entity.LastModified = DateTime.Now;
             }
         }

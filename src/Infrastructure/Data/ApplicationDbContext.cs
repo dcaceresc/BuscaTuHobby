@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using System.ComponentModel;
 
 namespace Infrastructure.Data
 {
@@ -14,6 +15,7 @@ namespace Infrastructure.Data
         public DbSet<Product> Products => Set<Product>();
         public DbSet<ProductCategory> ProductCategories => Set<ProductCategory>();
         public DbSet<ProductImage> ProductImages => Set<ProductImage>();
+        public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
         public DbSet<Review> Reviews => Set<Review>();
         public DbSet<Role> Roles => Set<Role>();
         public DbSet<Scale> Scales => Set<Scale>();
@@ -39,7 +41,6 @@ namespace Infrastructure.Data
                 entity.Property(e => e.CategoryName)
                 .HasMaxLength(50);
             });
-
 
             builder.Entity<Favorite>(entity =>
             {
@@ -168,6 +169,17 @@ namespace Infrastructure.Data
 
             });
 
+            builder.Entity<RefreshToken>(entity => {
+                entity.HasKey(e => e.RefreshTokenId);
+
+                entity.Property(e => e.RefreshTokenId)
+                .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.RefreshTokenValue)
+                .HasColumnType("varchar(32)");
+            });
+
+
             builder.Entity<Review>(entity =>
             {
                 entity.HasKey(e => e.ReviewId);
@@ -254,11 +266,11 @@ namespace Infrastructure.Data
 
                 entity.Property(e => e.UserName).IsRequired().HasMaxLength(256);
                 entity.Property(e => e.Email).HasMaxLength(256);
-                entity.Property(e => e.PasswordHash).IsRequired();
-                entity.Property(e => e.SecurityStamp).IsRequired();
-                entity.Property(e => e.EmailConfirmed).IsRequired();
-                entity.Property(e => e.LockoutEnabled).IsRequired();
-                entity.Property(e => e.AccessFailedCount).IsRequired();
+                entity.Property(e => e.PasswordHash);
+                entity.Property(e => e.SecurityStamp);
+                entity.Property(e => e.EmailConfirmed);
+                entity.Property(e => e.LockoutEnabled);
+                entity.Property(e => e.AccessFailedCount);
                 entity.Property(e => e.LastLoginDate);
             });
 

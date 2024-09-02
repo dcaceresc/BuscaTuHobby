@@ -11,6 +11,7 @@ public class User : AuditableEntity
         EmailConfirmed = false;
         LockoutEnabled = true;
         AccessFailedCount = 0;
+        IsActive = true;
     }
 
 
@@ -21,10 +22,11 @@ public class User : AuditableEntity
     public string PasswordHash { get; private set; } 
     public string SecurityStamp { get; private set; } 
     public bool EmailConfirmed { get; private set; } 
-    public DateTime? LockoutEnd { get; set; } 
-    public bool LockoutEnabled { get; set; } 
-    public int AccessFailedCount { get; set; } 
-    public DateTime? LastLoginDate { get; set; }
+    public DateTime? LockoutEnd { get; private set; } 
+    public bool LockoutEnabled { get; private set; } 
+    public int AccessFailedCount { get; private set; } 
+    public DateTime? LastLoginDate { get; private set; }
+    public bool IsActive { get; private set; }
 
     public ICollection<Review> Reviews { get; set; } = default!;
     public ICollection<Favorite> Favorites { get; set; } = default!;
@@ -39,5 +41,18 @@ public class User : AuditableEntity
     public UserRole AssignRole(Guid roleId)
     {
         return new UserRole(UserId, roleId);
+    }
+
+    public void LoginSuccess()
+    {
+        AccessFailedCount = 0;
+        LastLoginDate = DateTime.Now;
+    }
+
+    public void LoginFail()
+    {
+        AccessFailedCount++;
+        if (AccessFailedCount >= 5)
+            LockoutEnd = DateTime.Now.AddMinutes(15);
     }
 }

@@ -14,4 +14,21 @@ public static class CustomGuards
 
         return input;
     }
+
+    public static void ForbiddenAccess(this IGuardClause guardClause, string message)
+    {
+        guardClause.NullOrEmpty(message, nameof(message));
+
+        throw new ForbiddenAccessException(message);
+    }
+
+    public static T InvalidInput<T>(this IGuardClause guardClause, T input, Func<T, bool> predicate, string message)
+    {
+        guardClause.NullOrEmpty(message, nameof(message));
+
+        if (!predicate(input))
+            throw new ArgumentException(message);
+
+        return input;
+    }
 }
