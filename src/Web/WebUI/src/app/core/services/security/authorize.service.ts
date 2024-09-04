@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, map, Observable, of } from 'rxjs';
 import { ApiResponse } from '../../models/apiResponse.model';
-import { AdminLoginRequestCommand, UserLoginRequestCommand, UserTokenResponse } from '../../models/security/account.model';
+import { AdminLoginRequestCommand, UserLogin, UserTokenResponse } from '../../models/security/account.model';
 
 @Injectable({
   providedIn: 'root'
@@ -32,8 +32,8 @@ export class AuthorizeService {
   }
 
 
-  public login(user : UserLoginRequestCommand) {
-    return this.http.post<ApiResponse<UserTokenResponse>>('/api/Security/Account/UserLogin',user )
+  public login(user : UserLogin) {
+    return this.http.post<ApiResponse<UserTokenResponse>>('/api/security/account/userLogin',user )
         .pipe(map(response => {
             if (response.success) {
               this.userValue = response.data;

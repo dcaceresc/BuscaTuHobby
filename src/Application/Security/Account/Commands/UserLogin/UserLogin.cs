@@ -19,13 +19,13 @@ public class UserLoginHandler(IApplicationDbContext context, IApiResponseService
 
             Guard.Against.InvalidInput(user, userIsActive, "La cuenta se encuentra desactivamente");
 
-            bool userIsLockedOut(User user) => user.LockoutEnabled && user.LockoutEnd > DateTime.Now;
+            bool userIsLockedOut(User user) => !(user.LockoutEnabled && user.LockoutEnd > DateTime.Now);
 
             Guard.Against.InvalidInput(user, userIsLockedOut, "La cuenta se encuentra bloqueada por numero de intentos fallidos");
 
             bool passwordIsValid(User user) => _identityService.VerifyHashedPassword(user.PasswordHash, request.Password);
 
-            Guard.Against.InvalidInput(user,passwordIsValid, "Usuario o Contraseña incorrectos");
+            Guard.Against.InvalidInput(user, passwordIsValid, "Usuario o Contraseña incorrectos");
 
             user.LoginSuccess();
 

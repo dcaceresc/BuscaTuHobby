@@ -1,7 +1,5 @@
 ﻿using Domain.Entities;
-using Infrastructure.Services;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -60,7 +58,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         await SeedRoleAsync("Administrator");
         await SeedRoleAsync("User");
 
-        await SeedUserAsync("admin@localhost","admin123", "SuperAdmin");
+        await SeedUserAsync("admin@localhost", "admin123", "SuperAdmin");
 
         await _context.SaveChangesAsync();
     }
@@ -74,11 +72,11 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         }
     }
 
-    private async Task SeedUserAsync(string userName, string password , string roleName)
+    private async Task SeedUserAsync(string userName, string password, string roleName)
     {
         if (!_context.Users.Any(x => x.UserName == userName))
         {
-            var user = User.Create(userName,_identityService.HashPassword(password));
+            var user = User.Create(userName, _identityService.HashPassword(password));
 
             await _context.Users.AddAsync(user);
 

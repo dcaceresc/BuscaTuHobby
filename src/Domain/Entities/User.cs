@@ -16,15 +16,15 @@ public class User : AuditableEntity
 
 
 
-    public Guid UserId { get; private set; } 
-    public string UserName { get; private set; } 
-    public string Email { get; private set; } 
-    public string PasswordHash { get; private set; } 
-    public string SecurityStamp { get; private set; } 
-    public bool EmailConfirmed { get; private set; } 
-    public DateTime? LockoutEnd { get; private set; } 
-    public bool LockoutEnabled { get; private set; } 
-    public int AccessFailedCount { get; private set; } 
+    public Guid UserId { get; private set; }
+    public string UserName { get; private set; }
+    public string Email { get; private set; }
+    public string PasswordHash { get; private set; }
+    public string SecurityStamp { get; private set; }
+    public bool EmailConfirmed { get; private set; }
+    public DateTime? LockoutEnd { get; private set; }
+    public bool LockoutEnabled { get; private set; }
+    public int AccessFailedCount { get; private set; }
     public DateTime? LastLoginDate { get; private set; }
     public bool IsActive { get; private set; }
 

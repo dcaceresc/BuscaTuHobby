@@ -27,6 +27,7 @@
     "jest-editor-support": "*",
     "run-script-os": "*",
     "rxjs": "~7.8.1",
+    "sweetalert2": "^11.13.1",
     "tslib": "^2.6.2",
     "zone.js": "~0.14.10"
   },

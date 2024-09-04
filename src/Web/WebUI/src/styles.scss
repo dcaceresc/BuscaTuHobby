@@ -54,3 +54,16 @@ button:disabled{
     }
   }
 }
+
+
+/* You can add global styles to this file, and also import other style files */
+.notificacion-success {
+  background-color: #198754 !important; /* Fondo verde */
+  color: white;
+}
+
+/* Estilos personalizados para la notificaci�n de error */
+.notificacion-error {
+  background-color: #dc3545 !important; /* Fondo rojo para notificaci�n de peligro */
+  color: white;
+}

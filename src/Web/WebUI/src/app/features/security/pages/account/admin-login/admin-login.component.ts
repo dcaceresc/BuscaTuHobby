@@ -2,12 +2,12 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
-  selector: 'app-account',
+  selector: 'app-admin-login',
   standalone: true,
   imports: [
     CommonModule,
   ],
-  templateUrl: './account.component.html',
+  templateUrl: './admin-login.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AccountComponent { }
+export class AdminLoginComponent { }

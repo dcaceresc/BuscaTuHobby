@@ -1,5 +1,4 @@
 ﻿using Domain.Entities;
-using System.ComponentModel;
 
 namespace Infrastructure.Data
 {
@@ -169,7 +168,8 @@ namespace Infrastructure.Data
 
             });
 
-            builder.Entity<RefreshToken>(entity => {
+            builder.Entity<RefreshToken>(entity =>
+            {
                 entity.HasKey(e => e.RefreshTokenId);
 
                 entity.Property(e => e.RefreshTokenId)

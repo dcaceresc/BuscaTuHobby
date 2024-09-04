@@ -1,5 +1,5 @@
-export interface UserLoginRequestCommand{
-    userName: string;
+export interface UserLogin{
+    email: string;
     password: string;
 }
 

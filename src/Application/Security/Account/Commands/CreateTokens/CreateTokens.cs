@@ -3,7 +3,7 @@
 namespace Application.Security.Account.Commands.CreateTokens;
 public record CreateTokens(string UserName) : IRequest<ApiResponse<TokenModel>>;
 
-public class CreateTokensHandler(IApplicationDbContext context, IAuthenticationService authenticationService, IIdentityService identityService, IApiResponseService responseService) 
+public class CreateTokensHandler(IApplicationDbContext context, IAuthenticationService authenticationService, IIdentityService identityService, IApiResponseService responseService)
     : IRequestHandler<CreateTokens, ApiResponse<TokenModel>>
 {
     private readonly IApplicationDbContext _context = context;
