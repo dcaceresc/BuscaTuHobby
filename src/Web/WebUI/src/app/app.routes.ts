@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AdminGuard } from './core/guards/admin.guard';
 
 const routes: Routes = [
   {
@@ -12,11 +13,16 @@ const routes: Routes = [
       },
       { 
         path: 'maintainer', 
-        loadChildren: () => import("./features/maintainer/maintainer.routes").then(m => m.routes)
+        loadChildren: () => import("./features/maintainer/maintainer.routes").then(m => m.routes),
+        canActivate:[AdminGuard]
       },
       {
         path: 'security',
         loadChildren: () => import("./features/security/security.routes").then(m => m.routes)
+      },
+      {
+        path: 'forbidden',
+        loadComponent: () => import('./shared/components/forbidden/forbidden.component').then(m => m.ForbiddenComponent)
       }
     ]
   }

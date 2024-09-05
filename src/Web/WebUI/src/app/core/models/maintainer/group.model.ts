@@ -3,3 +3,13 @@ export interface GroupDto{
     groupName: string;
     isActive: boolean;
 }
+
+
+export interface CreaterGroup{
+    groupName:string;
+}
+
+export interface UpdateGroup{
+    groupId:string;
+    groupName:string;
+}

@@ -7,6 +7,7 @@ public class Category : AuditableEntity
         CategoryId = new Guid();
         CategoryName = categoryName;
         GroupId = groupId;
+        IsActive = true;
     }
 
 

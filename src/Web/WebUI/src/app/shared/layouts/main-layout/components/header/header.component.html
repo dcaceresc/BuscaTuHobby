@@ -1,65 +1,15 @@
-<div
-  class="offcanvas offcanvas-start"
-  tabindex="-1"
-  id="offcanvasExample"
-  aria-labelledby="offcanvasExampleLabel"
->
+<div  class="offcanvas offcanvas-start"  tabindex="-1"  id="offcanvasExample"  aria-labelledby="offcanvasExampleLabel">
   <div class="offcanvas-header">
     <h5 class="offcanvas-title" id="offcanvasExampleLabel">Hola, Piloto</h5>
-
     <button type="button" #btnCloseOffCanvas class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body">
-    @if (isAuthenticated) {
-<div>
-      <h5>Mantenedor</h5>
-
-      <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/maintainer/categories']" (click)="onClose()">Categorias</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/maintainer/groups']" (click)="onClose()">Grupos</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/maintainer/franchises']">Franquicias</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/maintainer/products']">Productos</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/maintainer/manufacturers']">Fabricantes</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/maintainer/inventories']">Inventario</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/maintainer/scales']">Escalas</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/maintainer/series']">Series</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" [routerLink]="['/maintainer/stores']">Tiendas</a>
-        </li>
-      </ul>
-    </div>
-}
 
     <h5>Buscar por Categoria</h5>
 
     <ul class="navbar-nav">
       <li class="nav-item dropdown">
-        <a
-          class="nav-link dropdown-toggle"
-          href="#"
-          id="gradosDropdown"
-          role="button"
-          data-bs-toggle="dropdown"
-          aria-haspopup="true"
-          aria-expanded="false"
-          style="color: white"
-        >
+        <a class="nav-link dropdown-toggle" href="#" id="gradosDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white">
           Categorias
         </a>
         <div class="dropdown-menu" aria-labelledby="gradosDropdown">
@@ -72,16 +22,7 @@
 
     <ul class="navbar-nav dropend">
       <li class="nav-item dropdown">
-        <a
-          class="nav-link dropdown-toggle"
-          href="#"
-          id="escalasDropdown"
-          role="button"
-          data-bs-toggle="dropdown"
-          aria-haspopup="true"
-          aria-expanded="false"
-          style="color: white"
-        >
+        <a class="nav-link dropdown-toggle" href="#" id="escalasDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: white">
           Escalas 
         </a>
         <div class="dropdown-menu" aria-labelledby="escalasDropdown">
@@ -119,12 +60,14 @@
       </div>
       
       <div class="container d-flex justify-content-end order-4">
+        @if(roles.includes('Administrador') || roles.includes('SuperAdmin')){
+          <app-administration-menu />
+        }
         <div class="d-grid d-flex" >
-          <a class="btn btn-login-menu me-md-2" title="Favoritos">
+          <a class="btn btn-header-menu me-md-2" title="Favoritos">
             <fa-icon [icon]="faHeart"></fa-icon> 
           </a>
         </div>
-        <!-- <app-login-menu></app-login-menu> -->
          <app-login-menu />
       </div>
 

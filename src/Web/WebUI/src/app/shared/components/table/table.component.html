@@ -24,7 +24,7 @@
                                 <a class="btn bg-primary me-2" (click)="onEdit(row[columns[0].key])">
                                     <fa-icon [icon]="faEdit"></fa-icon> Editar 
                                 </a>
-                                <a class="btn" [ngClass]="row['isActive'] ? 'btn-warning' : 'btn-success'" (click)="onToggle(row[columns[0].key])">
+                                <a class="btn" [ngClass]="row['isActive'] ? 'bg-warning' : 'btn-success'" (click)="onToggle(row[columns[0].key])">
                                     <fa-icon [icon]="faPowerOff"></fa-icon>
                                     {{ row["isActive"] ? "Pausar" : "Reanudar" }}
                                 </a>

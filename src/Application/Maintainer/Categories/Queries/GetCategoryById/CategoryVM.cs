@@ -2,9 +2,9 @@
 
 public class CategoryVM
 {
-    public int id { get; set; }
-    public string name { get; set; } = default!;
-    public int groupId { get; set; }
+    public Guid CategoryId { get; set; }
+    public string CategoryName { get; set; } = default!;
+    public Guid GroupId { get; set; }
 
 
     public class Mapping : Profile

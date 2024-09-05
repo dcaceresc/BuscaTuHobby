@@ -1,5 +1,23 @@
-import type { CanActivateFn } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
+import { AuthorizeService } from '../services/security/authorize.service';
 
-export const authorizeGuard: CanActivateFn = (route, state) => {
-  return true;
+export const AuthorizeGuard: CanActivateFn = (route, state) => {
+
+
+  const router = inject(Router);
+  const authorizeService = inject(AuthorizeService);
+
+
+  const user = authorizeService.userValue;
+
+  if (user) {
+    // authorized so return true
+    return true;
+  }
+
+
+  router.navigate([''], { queryParams: { returnUrl: state.url } });
+
+  return false;
 };

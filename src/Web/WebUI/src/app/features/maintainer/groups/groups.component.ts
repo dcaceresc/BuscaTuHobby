@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TableComponent } from '../../../shared/components/table/table.component';
 import { GroupService } from '../../../core/services/maintainer/group.service';
 import { GroupDto } from '../../../core/models/maintainer/group.model';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-groups',
@@ -18,6 +19,8 @@ import { GroupDto } from '../../../core/models/maintainer/group.model';
 export class GroupsComponent implements OnInit {
   
   private groupService = inject(GroupService);
+  private notificationService = inject(NotificationService);
+  private router = inject(Router);
 
   public columns :any[] = [];
   public data = signal<GroupDto[]>([]);
@@ -26,8 +29,8 @@ export class GroupsComponent implements OnInit {
   public ngOnInit(): void {
     this.columns = [
       { name: '#', key: 'groupId' },
-      { name: 'Nombre', prop: 'groupName' },
-      { name: 'Acciones', prop: 'IsActive' },
+      { name: 'Nombre', key: 'groupName' },
+      { name: 'Acciones', key: 'isActive' },
     ];
     this.loadGroups();
   }
@@ -37,16 +40,36 @@ export class GroupsComponent implements OnInit {
       next: (response) => {
         
         if (!response.success) {
-          console.error(response.message);
+          this.notificationService.showError('Error', response.message);
           return;
         }
 
         this.data.set(response.data);
       },
-      error: (error) => {
-        console.error(error);
+      error: () => {
+        this.notificationService.showDefaultError();
       },
     })
+  }
+
+  public onEdit(id: number) {
+    this.router.navigate(['/maintainer/groups/update', id]);
+  }
+
+  public onToggle(id: number) {
+    this.groupService.toggleGroup(id.toString()).subscribe({
+      next: (response) => {
+        if (!response.success) {
+          this.notificationService.showError('Error', response.message);
+          return;
+        }
+        this.notificationService.showSuccess('Exito', response.message);
+        this.loadGroups();
+      },
+      error: () => {
+        this.notificationService.showDefaultError();
+      }
+    });
   }
 
 

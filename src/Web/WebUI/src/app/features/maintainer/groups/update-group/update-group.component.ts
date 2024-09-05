@@ -1,80 +1,71 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { CategoryService } from '../../../../core/services/maintainer/category.service';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GroupService } from '../../../../core/services/maintainer/group.service';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { GroupDto } from '../../../../core/models/maintainer/group.model';
 
 @Component({
-  selector: 'app-add-category',
+  selector: 'app-update-group',
   standalone: true,
   imports: [
     CommonModule,ReactiveFormsModule
   ],
-  templateUrl: './add-category.component.html',
+  templateUrl: './update-group.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AddCategoryComponent implements OnInit { 
+export class UpdateGroupComponent implements OnInit{
 
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private formBuilder = inject(FormBuilder);
-  private categoryService = inject(CategoryService);
   private groupService = inject(GroupService);
   private notificationService = inject(NotificationService);
 
-  public categoryForm! : FormGroup;
-  public groups = signal<GroupDto[]>([]);
+  public groupId!: string | null;
+  public groupForm!: FormGroup;
 
   public ngOnInit(): void {
-    this.categoryForm = this.formBuilder.group({
-      categoryName: ['',Validators.required],
-      groupId: ['',Validators.required]
+    this.groupId = this.route.snapshot.paramMap.get('id');
+    this.groupForm = this.formBuilder.group({
+      groupId: [this.groupId],
+      groupName: ['', Validators.required]
     });
-
-    this.loadGroups();
-
-
-  }
-
-  public loadGroups() {
-    this.groupService.getGroups().subscribe({
+    this.groupService.getGroupById(this.groupId).subscribe({
       next: (response) => {
         if (!response.success) {
           this.notificationService.showError('Error', response.message);
           return;
         }
-        this.groups.set(response.data);
+        this.groupForm.patchValue(response.data);
       },
       error: () => {
         this.notificationService.showDefaultError();
-      },
+      }
     });
   }
 
 
-  public onSubmit() {
-    if (this.categoryForm.invalid) {
+  public onSubmit(): void {
+    if (this.groupForm.invalid) {
       return;
     }
-
-    this.categoryService.createCategory(this.categoryForm.value).subscribe({
+    this.groupService.updateGroup(this.groupId, this.groupForm.value).subscribe({
       next: (response) => {
         if (!response.success) {
           this.notificationService.showError('Error', response.message);
           return;
         }
-        this.notificationService.showSuccess('Éxito', 'Categoría creada correctamente');
-        this.router.navigate(['/maintainer/categories']);
+        this.notificationService.showSuccess('Exito',response.message);
+        this.router.navigate(['/maintainer/groups']);
       },
       error: () => {
         this.notificationService.showDefaultError();
-      },
+      }
     });
   }
 
-  public onCancel() {
-    this.router.navigate(['/maintainer/categories']);
+  public onCancel(): void {
+    this.router.navigate(['/maintainer/groups']);
   }
 }

@@ -8,5 +8,9 @@ export const routes : Routes =[
     {
         path : 'add', 
         loadComponent : () => import('./add-category/add-category.component').then(m => m.AddCategoryComponent)
+    },
+    {
+        path : 'update/:id', 
+        loadComponent : () => import('./update-category/update-category.component').then(m => m.UpdateCategoryComponent)
     }
 ];
