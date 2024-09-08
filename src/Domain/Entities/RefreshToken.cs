@@ -1,5 +1,5 @@
 ﻿namespace Domain.Entities;
-public class RefreshToken
+public class RefreshToken : AuditableEntity
 {
     private RefreshToken(Guid userId)
     {

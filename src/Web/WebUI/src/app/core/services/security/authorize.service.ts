@@ -31,6 +31,12 @@ export class AuthorizeService {
     this.userSubject.next(user);
   }
 
+  public isAuthenticated(): Observable<boolean> {
+    return this.user.pipe(
+      map(user => user !== null)
+    );
+  }
+
 
   public login(user : UserLogin) {
     return this.http.post<ApiResponse<UserTokenResponse>>('/api/security/account/userLogin',user )

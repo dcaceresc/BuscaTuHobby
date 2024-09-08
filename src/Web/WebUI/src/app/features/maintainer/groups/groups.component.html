@@ -1,10 +1,9 @@
 <div class="card">
     <div class="card-header bg-primary d-flex justify-content-between align-items-center">
       <h4 class="card-title">Listado de Grupos</h4>
-      <!-- <a class="btn btn-success" [routerLink]="['/maintainer/categories/create']">Crear Categoria</a> -->
       <app-button [routerLink]="['/maintainer/groups/add']" [class]="'btn btn-success'" [text]="'Crear Grupo'" [icon]="'add'"></app-button> 
     </div>
     <div class="card-body">
       <app-table [columns]="columns" [data]="data" (editEvent)="onEdit($event)" (toggleEvent)="onToggle($event)"></app-table>
     </div> 
-  </div>
+</div>

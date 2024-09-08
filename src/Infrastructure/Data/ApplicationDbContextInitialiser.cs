@@ -72,11 +72,11 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         }
     }
 
-    private async Task SeedUserAsync(string userName, string password, string roleName)
+    private async Task SeedUserAsync(string email, string password, string roleName)
     {
-        if (!_context.Users.Any(x => x.UserName == userName))
+        if (!_context.Users.Any(x => x.Email == email))
         {
-            var user = User.Create(userName, _identityService.HashPassword(password));
+            var user = User.Create(email, _identityService.HashPassword(password));
 
             await _context.Users.AddAsync(user);
 

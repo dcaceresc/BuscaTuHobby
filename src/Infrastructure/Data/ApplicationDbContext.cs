@@ -264,7 +264,6 @@ namespace Infrastructure.Data
                 entity.HasIndex(e => e.Email)
                 .IsUnique();
 
-                entity.Property(e => e.UserName).IsRequired().HasMaxLength(256);
                 entity.Property(e => e.Email).HasMaxLength(256);
                 entity.Property(e => e.PasswordHash);
                 entity.Property(e => e.SecurityStamp);
@@ -297,6 +296,7 @@ namespace Infrastructure.Data
             ConfigureAuditableEntity<Product>(builder);
             ConfigureAuditableEntity<ProductCategory>(builder);
             ConfigureAuditableEntity<ProductImage>(builder);
+            ConfigureAuditableEntity<RefreshToken>(builder);
             ConfigureAuditableEntity<Review>(builder);
             ConfigureAuditableEntity<Role>(builder);
             ConfigureAuditableEntity<Scale>(builder);

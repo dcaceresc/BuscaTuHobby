@@ -52,11 +52,11 @@ export class GroupsComponent implements OnInit {
     })
   }
 
-  public onEdit(id: number) {
+  public onEdit(id: string) {
     this.router.navigate(['/maintainer/groups/update', id]);
   }
 
-  public onToggle(id: number) {
+  public onToggle(id: string) {
     this.groupService.toggleGroup(id.toString()).subscribe({
       next: (response) => {
         if (!response.success) {

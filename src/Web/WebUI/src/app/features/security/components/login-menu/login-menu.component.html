@@ -1,5 +1,5 @@
 
-@if (!isAuthenticated()) {
+@if ((isAuthenticated | async) === false) {
     <div class="d-grid d-flex">
       <a class="btn btn-header-menu me-md-2" [routerLink]="['/security/account/register']">
         <fa-icon [icon]="faUserPlus"></fa-icon> 
@@ -10,7 +10,7 @@
     </div>
     }
     
-    @if (isAuthenticated()) {
+    @if ((isAuthenticated | async) === true) {
     <div class="d-grid d-flex">
       <a class="btn btn-header-menu me-md-2" [routerLink]="['/security/account/profile']">
         <fa-icon [icon]="faUser"></fa-icon>  Perfil

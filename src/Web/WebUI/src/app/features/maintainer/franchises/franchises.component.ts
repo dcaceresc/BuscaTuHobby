@@ -1,40 +1,41 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { FranchiseService } from '../../../core/services/maintainer/franchise.service';
 import { Router, RouterLink } from '@angular/router';
+import { NotificationService } from '../../../core/services/notification.service';
+import { FranchiseDto } from '../../../core/models/maintainer/franchise.model';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
 import { TableComponent } from '../../../shared/components/table/table.component';
-import { CategoryService } from '../../../core/services/maintainer/category.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { CategoryDto } from '../../../core/models/maintainer/category.model';
 
 @Component({
-  selector: 'app-categories',
+  selector: 'app-franchises',
   standalone: true,
   imports: [
     RouterLink,ButtonComponent,TableComponent
   ],
-  templateUrl : './categories.component.html',
+  templateUrl: './franchises.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CategoriesComponent implements OnInit{
-  
-  private router = inject(Router);
-  private categoryService = inject(CategoryService);
+export class FranchisesComponent implements OnInit { 
+
+  private franchiseService = inject(FranchiseService);
   private notificationService = inject(NotificationService);
+  private router = inject(Router);
 
   public columns :any[] = [];
-  public data = signal<CategoryDto[]>([]);
-  
-  public ngOnInit(): void {
+  public data = signal<FranchiseDto[]>([]);
+
+  public ngOnInit(){
+
     this.columns = [
-      { name: '#', key: 'categoryId' },
-      { name: 'Nombre', key: 'categoryName' },
-      { name: 'Grupo', key: 'groupName' },
-      { name: 'Acciones', key: 'isActive' },
+      { name: '#', key: 'franchiseId' },
+      { name: 'Nombre', key : 'franchiseName'},
+      { name: 'Acciones', key: 'isActive'}
     ];
-    this.categoryService.getCategories().subscribe({
+
+    this.franchiseService.getFranchises().subscribe({
       next: (response) => {
-        
+
         if (!response.success) {
           this.notificationService.showError('Error', response.message);
           return;
@@ -42,19 +43,18 @@ export class CategoriesComponent implements OnInit{
 
         this.data.set(response.data);
       },
-      error: () => {
-        this.notificationService.showDefaultError();
-      },
+      error: (error) => {
+        this.notificationService.showError('Error', error);
+      }
     });
-    
   }
 
-  public onEdit(categoryId: string): void {
-    this.router.navigate(['maintainer/categories/update', categoryId]);
+  public onEdit(id: string) {
+    this.router.navigate(['/maintainer/franchises/update', id]);
   }
 
-  public onToggle(categoryId: string): void {
-    this.categoryService.toggleCategory(categoryId.toString()).subscribe({
+  public onToggle(id:string){
+    this.franchiseService.toggleFranchise(id).subscribe({
       next: (response) => {
         if (!response.success) {
           this.notificationService.showError('Error', response.message);
@@ -65,10 +65,9 @@ export class CategoriesComponent implements OnInit{
       },
       error: () => {
         this.notificationService.showDefaultError();
-      },
+      }
     });
   }
-
 
 
 }

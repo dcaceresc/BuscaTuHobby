@@ -61,14 +61,14 @@
       
       <div class="container d-flex justify-content-end order-4">
         @if(roles.includes('Administrador') || roles.includes('SuperAdmin')){
-          <app-administration-menu />
+          <app-administration-menu [isSuperAdmin]="roles.includes('SuperAdmin')" />
         }
         <div class="d-grid d-flex" >
           <a class="btn btn-header-menu me-md-2" title="Favoritos">
             <fa-icon [icon]="faHeart"></fa-icon> 
           </a>
         </div>
-         <app-login-menu />
+         <app-login-menu [isAuthenticated]="isAuthenticated" />
       </div>
 
       

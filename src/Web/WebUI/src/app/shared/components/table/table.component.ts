@@ -17,8 +17,8 @@ export class TableComponent {
 
   @Input() data = signal<any[]>([]);
   @Input() columns:any[] = []
-  @Output() editEvent : EventEmitter<number> = new EventEmitter<number>();
-  @Output() toggleEvent : EventEmitter<number> = new EventEmitter<number>();
+  @Output() editEvent : EventEmitter<string> = new EventEmitter<string>();
+  @Output() toggleEvent : EventEmitter<string> = new EventEmitter<string>();
 
   public currentPage = signal(1);
   public readonly itemsPerPage = 10;
@@ -72,11 +72,11 @@ export class TableComponent {
   }
 
 
-  public onEdit(id: number){
+  public onEdit(id: string){
     this.editEvent.emit(id);
   }
 
-  public onToggle(id: number) {
+  public onToggle(id: string) {
     this.toggleEvent.emit(id);
   }
 

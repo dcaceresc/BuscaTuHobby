@@ -31,7 +31,7 @@ public class UpdateRefreshTokenHandler(IApplicationDbContext context, IApiRespon
 
             Guard.Against.NotFound(user, $"El usuario con el refreshToken {request.RefreshToken} no existe");
 
-            var accessToken = _authenticationService.CreateAccessToken(user.UserName, user.UserRoles.Select(x => x.Role.RoleName).ToList());
+            var accessToken = _authenticationService.CreateAccessToken(user.Email, user.UserRoles.Select(x => x.Role.RoleName).ToList());
 
             var newRefreshToken = RefreshToken.Create(user.UserId);
 

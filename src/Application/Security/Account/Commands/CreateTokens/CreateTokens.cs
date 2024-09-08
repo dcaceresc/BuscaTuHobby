@@ -1,23 +1,22 @@
 ﻿using Application.Common.Models;
 
 namespace Application.Security.Account.Commands.CreateTokens;
-public record CreateTokens(string UserName) : IRequest<ApiResponse<TokenModel>>;
+public record CreateTokens(string Email) : IRequest<ApiResponse<TokenModel>>;
 
-public class CreateTokensHandler(IApplicationDbContext context, IAuthenticationService authenticationService, IIdentityService identityService, IApiResponseService responseService)
+public class CreateTokensHandler(IApplicationDbContext context, IAuthenticationService authenticationService, IApiResponseService responseService)
     : IRequestHandler<CreateTokens, ApiResponse<TokenModel>>
 {
     private readonly IApplicationDbContext _context = context;
     private readonly IAuthenticationService _authenticationService = authenticationService;
-    private readonly IIdentityService _identityService = identityService;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<TokenModel>> Handle(CreateTokens request, CancellationToken cancellationToken)
     {
         try
         {
-            var user = await _context.Users.Where(x => x.UserName == request.UserName).FirstOrDefaultAsync(cancellationToken);
+            var user = await _context.Users.Where(x => x.Email == request.Email).FirstOrDefaultAsync(cancellationToken);
 
-            Guard.Against.NotFound(user, $"No existe usuario con el nombre de usuario {request.UserName}");
+            Guard.Against.NotFound(user, $"No existe usuario con el Email {request.Email}");
 
             var refreshToken = RefreshToken.Create(user.UserId);
 
@@ -33,12 +32,12 @@ public class CreateTokensHandler(IApplicationDbContext context, IAuthenticationS
 
             var roles = await _context.Users
                     .Include(x => x.UserRoles)
-                    .Where(x => x.UserName == request.UserName).Select(x => x.UserRoles.Select(x => x.Role.RoleName).First())
+                    .Where(x => x.Email == request.Email).Select(x => x.UserRoles.Select(x => x.Role.RoleName).First())
                     .ToListAsync(cancellationToken);
 
             return _responseService.Success(new TokenModel
             {
-                AccessToken = _authenticationService.CreateAccessToken(request.UserName, roles),
+                AccessToken = _authenticationService.CreateAccessToken(request.Email, roles),
                 RefreshToken = refreshToken.RefreshTokenValue
             });
         }

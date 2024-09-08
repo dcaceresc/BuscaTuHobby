@@ -29,10 +29,17 @@ export class HeaderComponent{
   faUserPlus = faUserPlus;
   faBars = faBars;
   faHeart = faHeart;
+  public isAuthenticated!: Observable<boolean>;
   public roles: string[] = [];
 
   constructor() { 
-    this.roles = this.authorizeService.getRoles();
+    this.isAuthenticated = this.authorizeService.isAuthenticated();
+
+    this.isAuthenticated.subscribe((isAuthenticated: boolean) => {
+      if (isAuthenticated === true) {
+        this.roles = this.authorizeService.getRoles();
+      }
+    });
   }
 
   public onClose(){

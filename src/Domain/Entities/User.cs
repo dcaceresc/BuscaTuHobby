@@ -1,11 +1,10 @@
 ﻿namespace Domain.Entities;
 public class User : AuditableEntity
 {
-    public User(string userName, string passwordHash)
+    public User(string email, string passwordHash)
     {
         UserId = Guid.NewGuid();
-        UserName = userName;
-        Email = userName;
+        Email = email;
         PasswordHash = passwordHash;
         SecurityStamp = Guid.NewGuid().ToString();
         EmailConfirmed = false;
@@ -17,7 +16,6 @@ public class User : AuditableEntity
 
 
     public Guid UserId { get; private set; }
-    public string UserName { get; private set; }
     public string Email { get; private set; }
     public string PasswordHash { get; private set; }
     public string SecurityStamp { get; private set; }
@@ -33,9 +31,9 @@ public class User : AuditableEntity
     public ICollection<UserRole> UserRoles { get; set; } = default!;
 
 
-    public static User Create(string userName, string passwordHash)
+    public static User Create(string email, string passwordHash)
     {
-        return new User(userName, passwordHash);
+        return new User(email, passwordHash);
     }
 
     public UserRole AssignRole(Guid roleId)
