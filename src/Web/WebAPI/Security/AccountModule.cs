@@ -2,6 +2,7 @@
 using Application.Security.Account.Commands.CreateTokens;
 using Application.Security.Account.Commands.UpdateRefreshToken;
 using Application.Security.Account.Commands.UserLogin;
+using Application.Security.Account.Commands.UserRegister;
 
 namespace WebAPI.Security;
 
@@ -13,6 +14,7 @@ public class AccountModule : CarterModule
 
         group.MapPost("userLogin", UserLogin);
         group.MapPost("adminLogin", AdminLogin);
+        group.MapPost("userRegister", Register);
         group.MapPost("refreshToken", UpdateRefreshToken);
     }
 
@@ -42,10 +44,7 @@ public class AccountModule : CarterModule
         return Results.Ok(response);
     }
 
-    private static async Task<IResult> UpdateRefreshToken(ISender sender, UpdateRefreshToken command)
-    {
-        var result = await sender.Send(command);
+    private static async Task<IResult> Register(ISender sender, UserRegister command) => Results.Ok(await sender.Send(command));
 
-        return Results.Ok(result);
-    }
+    private static async Task<IResult> UpdateRefreshToken(ISender sender, UpdateRefreshToken command) => Results.Ok(await sender.Send(command));
 }

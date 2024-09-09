@@ -15,7 +15,7 @@
       <a class="btn btn-header-menu me-md-2" [routerLink]="['/security/account/profile']">
         <fa-icon [icon]="faUser"></fa-icon>  Perfil
       </a>
-      <a class="btn btn-header-menu" [routerLink]='["/security/account/logout"]' [state]='{ local: true }' title="Cerra Sesión">
+      <a class="btn btn-header-menu" (click)="logout()" title="Cerra Sesión">
         <fa-icon [icon]="faSignOutAlt"></fa-icon> 
       </a>
     </div>

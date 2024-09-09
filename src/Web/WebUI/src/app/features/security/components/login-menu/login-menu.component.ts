@@ -20,6 +20,8 @@ export class LoginMenuComponent {
 
   @Input() isAuthenticated! : Observable<boolean>;
 
+  private authorizeService = inject(AuthorizeService);
+
 
   public userName = signal<string | null | undefined>(null);
   public faSignInAlt = faSignInAlt;
@@ -27,5 +29,9 @@ export class LoginMenuComponent {
   public faUserPlus = faUserPlus;
   public faUser = faUser;
 
+  public logout() {
+    this.authorizeService.logout();
+  }
 
- }
+
+}

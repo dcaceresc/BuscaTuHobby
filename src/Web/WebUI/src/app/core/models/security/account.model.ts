@@ -3,6 +3,13 @@ export interface UserLogin{
     password: string;
 }
 
+export interface UserRegister{
+    email: string;
+    password: string;
+    confirmPassword: string;
+    acceptTerms: boolean;
+}
+
 export interface AdminLoginRequestCommand{
     userName: string;
     password: string;

@@ -3,6 +3,7 @@ public record CreateUser : IRequest<ApiResponse>
 {
     public string Email { get; init; } = default!;
     public string Password { get; init; } = default!;
+    public IList<Guid> RolesId { get; init; } = default!;
 
 }
 

@@ -8,61 +8,51 @@
               <div class="row">
                 <div class="col-12">
                   <div class="mb-5">
-                    <div class="text-center mb-4">
-                      <a href="#!">
-                        <img src="./assets/img/bsb-logo.svg" alt="BootstrapBrain Logo" width="175" height="57">
-                      </a>
-                    </div>
-                    <h2 class="h4 text-center">Registration</h2>
-                    <h3 class="fs-6 fw-normal text-secondary text-center m-0">Enter your details to register</h3>
+                    <h2 class="h4 text-center">Bienvenido a BuscaTuHobby!</h2>
+                    <h3 class="fs-6 fw-normal text-secondary text-center m-0">Ingresa tus datos para registrarte</h3>
                   </div>
                 </div>
               </div>
-              <form action="#!">
+              <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
                 <div class="row gy-3 overflow-hidden">
                   <div class="col-12">
-                    <div class="form-floating mb-3">
-                      <input type="text" class="form-control" name="firstName" id="firstName" placeholder="First Name" required>
-                      <label for="firstName" class="form-label">First Name</label>
-                    </div>
-                  </div>
-                  <div class="col-12">
-                    <div class="form-floating mb-3">
-                      <input type="text" class="form-control" name="lastName" id="lastName" placeholder="First Name" required>
-                      <label for="lastName" class="form-label">Last Name</label>
-                    </div>
-                  </div>
-                  <div class="col-12">
-                    <div class="form-floating mb-3">
-                      <input type="email" class="form-control" name="email" id="email" placeholder="name@example.com" required>
+                    <div class="form-floating mb-3 ">
+                      <input type="email" class="form-control"  id="email" formControlName="email" placeholder="name@example.com" required>
                       <label for="email" class="form-label">Email</label>
                     </div>
                   </div>
                   <div class="col-12">
                     <div class="form-floating mb-3">
-                      <input type="password" class="form-control" name="password" id="password" value="" placeholder="Password" required>
-                      <label for="password" class="form-label">Password</label>
+                      <input type="password" class="form-control" id="password" formControlName="password" placeholder="Password" required>
+                      <label for="password" class="form-label">Contraseña</label>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-floating mb-3">
+                      <input type="password" class="form-control" id="confirmPassword" formControlName="confirmPassword" placeholder="Confirm Password" required>
+                      <label for="password" class="form-label">Confirmar Contraseña</label>
                     </div>
                   </div>
                   <div class="col-12">
                     <div class="form-check">
-                      <input class="form-check-input" type="checkbox" value="" name="iAgree" id="iAgree" required>
+                      <input class="form-check-input" type="checkbox" id="iAgree" formControlName="acceptTerms" required>
                       <label class="form-check-label text-secondary" for="iAgree">
-                        I agree to the <a href="#!" class="link-primary text-decoration-none">terms and conditions</a>
+                        Acepto los <a href="#!" class="link-primary text-decoration-none">términos y condiciones</a>
                       </label>
                     </div>
                   </div>
                   <div class="col-12">
                     <div class="d-grid">
-                      <button class="btn bsb-btn-xl btn-primary" type="submit">Sign up</button>
+                      <button class="btn bsb-btn-xl btn-primary" type="submit">CREAR CUENTA</button>
                     </div>
                   </div>
                 </div>
               </form>
+              
               <div class="row">
                 <div class="col-12">
                   <hr class="mt-5 mb-4 border-secondary-subtle">
-                  <p class="m-0 text-secondary text-center">Already have an account? <a [routerLink]='["/login"]' class="link-primary text-decoration-none">Sign in</a></p>
+                  <p class="m-0 text-secondary text-center">¿Ya tienes una cuenta? <a [routerLink]='["/security/account/login"]' class="link-primary text-decoration-none">Iniciar sesión</a></p>
                 </div>
               </div>
               <div class="row">
