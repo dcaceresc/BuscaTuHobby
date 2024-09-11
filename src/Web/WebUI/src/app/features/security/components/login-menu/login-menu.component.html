@@ -12,7 +12,7 @@
     
     @if ((isAuthenticated | async) === true) {
     <div class="d-grid d-flex">
-      <a class="btn btn-header-menu me-md-2" [routerLink]="['/security/account/profile']">
+      <a class="btn btn-header-menu me-md-2" >
         <fa-icon [icon]="faUser"></fa-icon>  Perfil
       </a>
       <a class="btn btn-header-menu" (click)="logout()" title="Cerra Sesión">

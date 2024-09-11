@@ -58,7 +58,7 @@ export class UsersComponent implements OnInit {
 
 
   public onEdit(userId: string) {
-    this.router.navigate(['/security/users', userId]);
+    this.router.navigate(['/security/users/update', userId]);
   }
 
   public onToggle(userId: string) {

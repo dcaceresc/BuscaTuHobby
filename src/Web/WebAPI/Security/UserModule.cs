@@ -8,8 +8,8 @@ public class UserModule : CarterModule
 {
     public override void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("api/security/users").RequireAuthorization();
-
+        var group = app.MapGroup("api/security/users")
+            .RequireAuthorization(policy => policy.RequireRole("SuperAdmin", "Administrator"));
 
         group.MapGet("", GetUsers);
         group.MapPost("", CreateUser);

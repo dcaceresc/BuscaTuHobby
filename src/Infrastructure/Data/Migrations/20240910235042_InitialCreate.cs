@@ -68,6 +68,7 @@ namespace Infrastructure.Data.Migrations
                 {
                     RoleId = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "(newid())"),
                     RoleName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedBy = table.Column<string>(type: "varchar(30)", nullable: true),
                     LastModified = table.Column<DateTime>(type: "datetime2", nullable: true),
