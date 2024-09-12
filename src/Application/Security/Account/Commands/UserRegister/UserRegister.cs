@@ -7,17 +7,17 @@ public record UserRegister : IRequest<ApiResponse>
     public bool AcceptTerms { get; init; }
 }
 
-public class UserRegisterHandler(IApplicationDbContext context, IApiResponseService responseService, IIdentityService identityService) : IRequestHandler<UserRegister, ApiResponse>
+public class UserRegisterHandler(IApplicationDbContext context, IApiResponseService responseService, IUtilityService utilityService) : IRequestHandler<UserRegister, ApiResponse>
 {
     private readonly IApplicationDbContext _context = context;
     private readonly IApiResponseService _responseService = responseService;
-    private readonly IIdentityService _identityService = identityService;
+    private readonly IUtilityService _utilityService = utilityService;
 
     public async Task<ApiResponse> Handle(UserRegister request, CancellationToken cancellationToken)
     {
         try
         {
-            if (!_identityService.IsValidEmail(request.Email))
+            if (!_utilityService.IsValidEmail(request.Email))
                 return _responseService.Fail("Email inválido");
 
             if (request.Password != request.ConfirmPassword)
@@ -30,7 +30,7 @@ public class UserRegisterHandler(IApplicationDbContext context, IApiResponseServ
 
             Guard.Against.InvalidInput(request.Email, userExists,"El email ya existe");
 
-            var user = User.Create(request.Email, _identityService.HashPassword(request.Password));
+            var user = User.Create(request.Email, _utilityService.HashPassword(request.Password));
 
             _context.Users.Add(user);
 

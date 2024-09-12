@@ -7,3 +7,17 @@ export interface UserDto{
     roleNames:string[];
     isActive:boolean;
 }
+
+export interface UserVM{
+    userId:string;
+    email:string;
+    emailConfirmed:boolean;
+    lockoutEnabled:boolean;
+    lockoutEnd:Date | null;
+}
+
+
+export interface CreateUser{
+    email:string;
+    roleIds:string[];
+}

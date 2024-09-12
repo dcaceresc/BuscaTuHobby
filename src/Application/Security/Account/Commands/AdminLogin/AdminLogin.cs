@@ -1,10 +1,10 @@
 ﻿namespace Application.Security.Account.Commands.AdminLogin;
 public record AdminLogin(string Email, string Password, string Supplanted) : IRequest<ApiResponse>;
 
-public class AdminLoginHandler(IApplicationDbContext context, IIdentityService identityService, IApiResponseService responseService) : IRequestHandler<AdminLogin, ApiResponse>
+public class AdminLoginHandler(IApplicationDbContext context, IUtilityService utilityService, IApiResponseService responseService) : IRequestHandler<AdminLogin, ApiResponse>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IIdentityService _identityService = identityService;
+    private readonly IUtilityService _utilityService = utilityService;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse> Handle(AdminLogin request, CancellationToken cancellationToken)
@@ -34,7 +34,7 @@ public class AdminLoginHandler(IApplicationDbContext context, IIdentityService i
 
             Guard.Against.InvalidInput(request.Supplanted, usuplantedIsValid, "Usuario Suplantado no existe o se encuentra bloqueado");
 
-            bool passwordIsValid(User user) => _identityService.VerifyHashedPassword(user.PasswordHash, request.Password);
+            bool passwordIsValid(User user) => _utilityService.VerifyHashedPassword(user.PasswordHash, request.Password);
 
             Guard.Against.InvalidInput(superAdmin, passwordIsValid, "Usuario o Contraseña incorrectos");
 

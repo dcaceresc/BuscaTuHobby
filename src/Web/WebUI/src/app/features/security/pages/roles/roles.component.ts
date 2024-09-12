@@ -57,7 +57,19 @@ export class RolesComponent implements OnInit {
   }
 
   public onToggle(roleId: string) {
+    this.roleService.toggleRole(roleId).subscribe({
+      next: (response) => {
+        if (!response.success) {
+          this.notificationService.showError('Error', response.message);
+          return;
+        }
 
+        this.loadRoles();
+      },
+      error: () => {
+        this.notificationService.showDefaultError();
+      },
+    });
   }
 
 }

@@ -3,19 +3,26 @@
       Crear Usuario
     </div>
     <div class="card-body">
-      <!-- <form [formGroup]="groupForm" (ngSubmit)="onSubmit()">
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
     
-        <div class="mb-3">
-          <label for="groupName" class="form-label">Nombre Grupo</label>
-          <input type="text" class="form-control" id="groupName" formControlName="groupName" required>
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="email" formControlName="email" placeholder="Email" required>
+          <label for="email" class="form-label">Email</label>
+          
         </div>
 
-  
+        <div class="ng-select-container-custom mb-3">
+          <label for="roleIds" class="floating-label">Permisos</label>
+          <ng-select [items]="roles()" bindValue="roleId" bindLabel="roleName" [multiple]="true" id="roleIds" formControlName="roleIds" class="form-select ng-select-custom">
+          </ng-select>
+        </div>
+
+      
         <div class="d-flex justify-content-end">
-          <button type="submit" class="btn bg-primary me-2" [disabled]="groupForm.invalid">Guardar</button>
+          <button type="submit" class="btn bg-primary me-2" [disabled]="userForm.invalid">Guardar</button>
           <button type="button" class="btn bg-secundary" (click)="onCancel()">Cancelar</button>
         </div>
-      </form> -->
+      </form>
   
   
     </div>

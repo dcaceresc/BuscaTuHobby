@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { UserDto } from '../../models/security/user.model';
+import { CreateUser, UserDto, UserVM } from '../../models/security/user.model';
 import { ApiResponse } from '../../models/apiResponse.model';
 
 @Injectable({
@@ -12,6 +12,14 @@ export class UserService {
 
   public getUsers() {
     return this.http.get<ApiResponse<UserDto[]>>('/api/security/users');
+  }
+
+  public getUserById(userId: string | null) {
+    return this.http.get<ApiResponse<UserVM>>(`/api/security/users/${userId}`);
+  }
+
+  public createUser(user: CreateUser) {
+    return this.http.post<ApiResponse<any>>('/api/security/users', user);
   }
 
 }

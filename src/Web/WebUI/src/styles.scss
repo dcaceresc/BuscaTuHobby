@@ -87,3 +87,48 @@ button:disabled{
     border-bottom: 1px solid white
   }
 }
+
+.ng-select-container-custom {
+  position: relative;
+}
+
+.floating-label {
+  position: absolute;
+  top: 0.1rem;
+  left: 0.75rem;
+  background-color: white;
+  padding: 0 0.25rem;
+  font-size: 1rem;
+  color: #6c757d;
+  transition: all 0.2s ease-in-out;
+  pointer-events: none;
+  z-index: 1; /* Label siempre visible por encima del select */
+}
+
+.ng-select-custom .ng-select-container {
+  border: none; /* Quita el borde del ng-select */
+  box-shadow: none; /* Elimina cualquier sombra del borde */
+  height: calc(2.5rem + 2px); /* Altura ajustada para coincidir con el estilo Bootstrap */
+  padding-top: 1.5rem;
+  margin-top: 1.2rem;
+}
+
+.ng-select-custom {
+  display: flex;
+  align-items: center; /* Centrado vertical */
+  padding: 0;
+}
+
+.ng-select-custom .ng-select-container:focus,
+.ng-select-custom .ng-select-container.ng-select-focused {
+  border: none; /* Elimina el borde cuando está enfocado */
+  box-shadow: none; /* Elimina la sombra al hacer foco */
+}
+
+.ng-select-custom.ng-select-focused:not(.ng-select-opened) > .ng-select-container {
+  border-color: transparent; /* Elimina el borde */
+  box-shadow: none; /* Elimina cualquier sombra adicional */
+}
+
+
+

@@ -1,11 +1,11 @@
 ﻿namespace Application.Security.Account.Commands.UserLogin;
 public record UserLogin(string Email, string Password) : IRequest<ApiResponse>;
 
-public class UserLoginHandler(IApplicationDbContext context, IApiResponseService responseService, IIdentityService identityService) : IRequestHandler<UserLogin, ApiResponse>
+public class UserLoginHandler(IApplicationDbContext context, IApiResponseService responseService, IUtilityService utilityService) : IRequestHandler<UserLogin, ApiResponse>
 {
     private readonly IApplicationDbContext _context = context;
     private readonly IApiResponseService _responseService = responseService;
-    private readonly IIdentityService _identityService = identityService;
+    private readonly IUtilityService _utilityService = utilityService;
 
     public async Task<ApiResponse> Handle(UserLogin request, CancellationToken cancellationToken)
     {
@@ -23,7 +23,7 @@ public class UserLoginHandler(IApplicationDbContext context, IApiResponseService
 
             Guard.Against.InvalidInput(user, userIsLockedOut, "La cuenta se encuentra bloqueada por numero de intentos fallidos");
 
-            bool passwordIsValid(User user) => _identityService.VerifyHashedPassword(user.PasswordHash, request.Password);
+            bool passwordIsValid(User user) => _utilityService.VerifyHashedPassword(user.PasswordHash, request.Password);
 
             Guard.Against.InvalidInput(user, passwordIsValid, "Usuario o Contraseña incorrectos");
 

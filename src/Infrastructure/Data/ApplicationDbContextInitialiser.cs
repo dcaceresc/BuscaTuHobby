@@ -20,11 +20,11 @@ public static class InitialiserExtensions
 }
 
 
-public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitialiser> logger, ApplicationDbContext context, IIdentityService identityService)
+public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitialiser> logger, ApplicationDbContext context, IUtilityService utilityService)
 {
     private readonly ILogger<ApplicationDbContextInitialiser> _logger = logger;
     private readonly ApplicationDbContext _context = context;
-    private readonly IIdentityService _identityService = identityService;
+    private readonly IUtilityService _utilityService = utilityService;
 
     public async Task InitialiseAsync()
     {
@@ -76,7 +76,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
     {
         if (!_context.Users.Any(x => x.Email == email))
         {
-            var user = User.Create(email, _identityService.HashPassword(password));
+            var user = User.Create(email, _utilityService.HashPassword(password));
 
             await _context.Users.AddAsync(user);
 

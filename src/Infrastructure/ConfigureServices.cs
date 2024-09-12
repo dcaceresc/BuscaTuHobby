@@ -28,7 +28,7 @@ public static class ConfigureServices
         services.AddScoped<ApplicationDbContextInitialiser>();
 
         services.AddScoped<IApiResponseService, ApiResponseService>();
-        services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<IUtilityService, UtilityService>();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>

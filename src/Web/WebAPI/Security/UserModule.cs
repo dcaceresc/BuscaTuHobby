@@ -1,5 +1,6 @@
 ﻿using Application.Security.Users.Commands.CreateUser;
 using Application.Security.Users.Commands.UpdateUser;
+using Application.Security.Users.Queries.GetUserById;
 using Application.Security.Users.Queries.GetUsers;
 
 namespace WebAPI.Security;
@@ -12,11 +13,14 @@ public class UserModule : CarterModule
             .RequireAuthorization(policy => policy.RequireRole("SuperAdmin", "Administrator"));
 
         group.MapGet("", GetUsers);
+        group.MapGet("{id:guid}", GetUserById);
         group.MapPost("", CreateUser);
         group.MapPut("{id:guid}", UpdateUser);
     }
 
     private static async Task<IResult> GetUsers(ISender sender) => Results.Ok(await sender.Send(new GetUsers()));
+
+    private static async Task<IResult> GetUserById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetUserById(id)));
 
     private static async Task<IResult> CreateUser(ISender sender, CreateUser command) => Results.Ok(await sender.Send(command));
 
