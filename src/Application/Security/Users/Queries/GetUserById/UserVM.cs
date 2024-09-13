@@ -7,7 +7,7 @@ public class UserVM
     public bool EmailConfirmed { get; set; }
     public DateTime? LockoutEnd { get; set; }
     public bool LockoutEnabled { get; set; }
-    public IList<string> RoleIds { get; set; } = default!;
+    public IList<Guid> RoleIds { get; set; } = default!;
 
 
 
@@ -16,7 +16,7 @@ public class UserVM
         public Mapping()
         {
             CreateMap<User, UserVM>()
-                .ForMember(d => d.RoleIds, opt => opt.MapFrom(s => s.UserRoles.Select(x => x.RoleId.ToString()).ToList()));
+                .ForMember(d => d.RoleIds, opt => opt.MapFrom(s => s.UserRoles.Select(x => x.RoleId).ToList()));
         }
     }
 }

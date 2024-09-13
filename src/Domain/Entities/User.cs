@@ -53,4 +53,12 @@ public class User : AuditableEntity
         if (AccessFailedCount >= 5)
             LockoutEnd = DateTime.Now.AddMinutes(15);
     }
+
+    public void Update(string email, bool emailConfirmed, bool lockoutEnabled, DateTime? lockoutEnd)
+    {
+        Email = email;
+        EmailConfirmed = emailConfirmed;
+        LockoutEnabled = lockoutEnabled;
+        LockoutEnd = lockoutEnd;
+    }
 }

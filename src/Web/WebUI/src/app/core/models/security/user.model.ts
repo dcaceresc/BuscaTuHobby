@@ -14,6 +14,7 @@ export interface UserVM{
     emailConfirmed:boolean;
     lockoutEnabled:boolean;
     lockoutEnd:Date | null;
+    roleIds:string[];
 }
 
 

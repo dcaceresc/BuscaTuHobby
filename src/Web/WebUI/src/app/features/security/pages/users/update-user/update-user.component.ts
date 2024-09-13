@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UserService } from '../../../../../core/services/security/user.service';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NotificationService } from '../../../../../core/services/notification.service';
 import { RoleService } from '../../../../../core/services/security/role.service';
 import { RoleDto } from '../../../../../core/models/security/role.model';
@@ -36,11 +36,11 @@ export class UpdateUserComponent implements OnInit {
 
     this.userForm = this.formBuilder.group({
       userId: [this.userId],
-      email: [''],
-      roleIds:[''],
-      emailConfirmed: [false],
-      lockoutEnabled: [false],
-      lockoutEnd: [null],
+      email: ['',Validators.required],
+      roleIds:['',Validators.required],
+      emailConfirmed: [],
+      lockoutEnabled: [],
+      lockoutEnd: [],
     });
 
     
@@ -51,11 +51,7 @@ export class UpdateUserComponent implements OnInit {
           this.notificationService.showError('Error', response.message);
           return;
         }
-
-        console.log(response.data);
-
         this.userForm.patchValue(response.data);
-
       },
       error: () => {
         this.notificationService.showDefaultError();
@@ -82,7 +78,24 @@ export class UpdateUserComponent implements OnInit {
 
 
   public onSubmit(){
+    if(this.userForm.invalid){
+      return;
+    }
 
+    this.userService.updateUser(this.userForm.value).subscribe({
+      next: (response) => {
+        if(!response.success){
+          this.notificationService.showError("Error",response.message);
+          return;
+        }
+
+        this.notificationService.showSuccess("Success",response.message);
+        this.router.navigate(['/security/users']);
+      },
+      error: () => {
+        this.notificationService.showDefaultError();
+      }
+    });
   }
 
   public onCancel(){

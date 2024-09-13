@@ -1,7 +1,7 @@
-export interface RoleDto{
-    roleId:string;
-    roleName:string;
-    isActive:boolean;
+export interface RoleDto {
+    roleId: string;
+    roleName: string;
+    isActive: boolean;
 }
 
 export interface RoleVM{
