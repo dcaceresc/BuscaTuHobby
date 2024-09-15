@@ -1,7 +1,4 @@
-﻿
-using Application.Common.Interfaces;
-
-namespace Application.Security.Users.Commands.UpdateUser;
+﻿namespace Application.Security.Users.Commands.UpdateUser;
 public record UpdateUser : IRequest<ApiResponse>
 {
     public Guid UserId { get; init; }

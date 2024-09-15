@@ -10,7 +10,7 @@ public class UpdateRoleHandler(IApplicationDbContext context, IApiResponseServic
     {
         try
         {
-            var role = await _context.Roles.FindAsync([request.RoleId],cancellationToken);
+            var role = await _context.Roles.FindAsync([request.RoleId], cancellationToken);
 
             Guard.Against.NotFound(role, $"No existe permiso con la Id {request.RoleId}");
 

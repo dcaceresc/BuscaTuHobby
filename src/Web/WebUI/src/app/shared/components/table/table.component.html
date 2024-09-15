@@ -16,24 +16,11 @@
             <tbody>
             @for (row of getPaginatedData(); track row; let i = $index) {
                 <tr>
+                    <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
                     @for (column of columns; track column) { 
-                        @if ($index === 0) {
-                            <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
-                        }@else if (column.key === "isActive") {
-                            <td>
-                                <a class="btn bg-primary me-2" (click)="onEdit(row[columns[0].key])">
-                                    <fa-icon [icon]="faEdit"></fa-icon> Editar 
-                                </a>
-                                <a class="btn" [ngClass]="row['isActive'] ? 'bg-warning' : 'btn-success'" (click)="onToggle(row[columns[0].key])">
-                                    <fa-icon [icon]="faPowerOff"></fa-icon>
-                                    {{ row["isActive"] ? "Pausar" : "Reanudar" }}
-                                </a>
-                            </td>
-                        }@else {
-                            <td>
-                                {{ row[column.key] }}
-                            </td>
-                        } 
+                        @if($index !== 0){
+                            <td> {{ row[column.key] }}</td>
+                        }
                     }
                 </tr>
             } 

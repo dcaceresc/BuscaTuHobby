@@ -61,4 +61,9 @@ public class User : AuditableEntity
         LockoutEnabled = lockoutEnabled;
         LockoutEnd = lockoutEnd;
     }
+
+    public void ToggleActive()
+    {
+        IsActive = !IsActive;
+    }
 }

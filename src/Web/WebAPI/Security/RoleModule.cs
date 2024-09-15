@@ -16,8 +16,8 @@ public class RoleModule : CarterModule
         group.MapGet("", GetRoles);
         group.MapGet("{id:guid}", GetRoleById);
         group.MapPost("", CreateUser);
-        group.MapPut("{id:guid}", UpdateUser);
-        group.MapDelete("{id:guid}", ToggleUser);
+        group.MapPut("{id:guid}", UpdateRole);
+        group.MapDelete("{id:guid}", ToggleRole);
 
     }
 
@@ -28,7 +28,7 @@ public class RoleModule : CarterModule
 
     private static async Task<IResult> CreateUser(ISender sender, CreateRole command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateUser(ISender sender, Guid id, UpdateRole command)
+    private static async Task<IResult> UpdateRole(ISender sender, Guid id, UpdateRole command)
     {
         if (id != command.RoleId)
             return Results.Ok(new ApiResponse { Success = false, Message = $"La id de la ruta {id} no coincide con la del permiso {command.RoleId}" });
@@ -36,7 +36,7 @@ public class RoleModule : CarterModule
         return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleUser(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleRole(id)));
+    private static async Task<IResult> ToggleRole(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleRole(id)));
 
 
 }

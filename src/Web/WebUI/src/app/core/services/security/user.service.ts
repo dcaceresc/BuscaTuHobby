@@ -26,4 +26,8 @@ export class UserService {
     return this.http.put<ApiResponse<any>>(`/api/security/users/${user.userId}`, user);
   }
 
+  public toggleUser(userId: string) {
+    return this.http.delete<ApiResponse<any>>(`/api/security/users/${userId}`);
+  }
+
 }

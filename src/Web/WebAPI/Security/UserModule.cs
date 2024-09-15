@@ -1,4 +1,5 @@
 ﻿using Application.Security.Users.Commands.CreateUser;
+using Application.Security.Users.Commands.ToggleUser;
 using Application.Security.Users.Commands.UpdateUser;
 using Application.Security.Users.Queries.GetUserById;
 using Application.Security.Users.Queries.GetUsers;
@@ -16,6 +17,7 @@ public class UserModule : CarterModule
         group.MapGet("{id:guid}", GetUserById);
         group.MapPost("", CreateUser);
         group.MapPut("{id:guid}", UpdateUser);
+        group.MapDelete("{id:guid}", ToggleUser);
     }
 
     private static async Task<IResult> GetUsers(ISender sender) => Results.Ok(await sender.Send(new GetUsers()));
@@ -30,4 +32,6 @@ public class UserModule : CarterModule
 
         return Results.Ok(result);
     }
+
+    private static async Task<IResult> ToggleUser(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleUser(id)));
 }

@@ -16,7 +16,7 @@ public class GetUserByIdHandler(IApplicationDbContext context, IMapper mapper, I
                 .FirstOrDefaultAsync(x => x.UserId == request.UserId, cancellationToken);
 
 
-            Guard.Against.NotFound(user,$"No existe usuario con la Id {request.UserId}");
+            Guard.Against.NotFound(user, $"No existe usuario con la Id {request.UserId}");
 
             return _responseService.Success(user);
         }

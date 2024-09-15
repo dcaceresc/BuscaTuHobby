@@ -28,7 +28,7 @@ public class UserRegisterHandler(IApplicationDbContext context, IApiResponseServ
 
             bool userExists(string email) => !_context.Users.Any(x => x.Email == email);
 
-            Guard.Against.InvalidInput(request.Email, userExists,"El email ya existe");
+            Guard.Against.InvalidInput(request.Email, userExists, "El email ya existe");
 
             var user = User.Create(request.Email, _utilityService.HashPassword(request.Password));
 
@@ -63,5 +63,5 @@ public class UserRegisterHandler(IApplicationDbContext context, IApiResponseServ
         }
     }
 
-    
+
 }

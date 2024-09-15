@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, signal } from '@angular/core';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { FontAwesomeModule, IconDefinition } from '@fortawesome/angular-fontawesome';
 import { faEdit, faPowerOff } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -17,13 +17,11 @@ export class TableComponent {
 
   @Input() data = signal<any[]>([]);
   @Input() columns:any[] = []
-  @Output() editEvent : EventEmitter<string> = new EventEmitter<string>();
-  @Output() toggleEvent : EventEmitter<string> = new EventEmitter<string>();
+  @Input() actions: { icon: IconDefinition, label: string, actionKey: string, cssClass: string }[] = []; // Acciones personalizables
+  @Output() actionEvent: EventEmitter<{ id: string, actionKey: string }> = new EventEmitter<{ id: string, actionKey: string }>();
 
   public currentPage = signal(1);
   public readonly itemsPerPage = 10;
-  public faEdit = faEdit;
-  public faPowerOff = faPowerOff;
   public searchTerm :string = '';
 
   public onSearch(event: Event){
@@ -48,11 +46,8 @@ export class TableComponent {
   }
 
   public getFilteredData() {
-  // Se espera que 'data' sea una función que devuelve un conjunto de datos
   return this.data()?.filter((item) => {
-    // Para cada elemento ('item') en el conjunto de datos, se realiza la siguiente comprobación
     return Object.entries(item).some(([key, value]) => {
-      // Se omite la columna 'IsActive' en la búsqueda
       if (key.toLowerCase() === 'isactive') {
         return false; // Ignorar la columna 'IsActive'
       }
@@ -71,13 +66,8 @@ export class TableComponent {
     return filteredData?.slice(startIndex,endIndex);
   }
 
-
-  public onEdit(id: string){
-    this.editEvent.emit(id);
-  }
-
-  public onToggle(id: string) {
-    this.toggleEvent.emit(id);
+  public onAction(id: string, actionKey: string) {
+    this.actionEvent.emit({ id, actionKey });
   }
 
 }

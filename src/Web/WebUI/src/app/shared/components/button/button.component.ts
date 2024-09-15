@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faPencil, faPlus, faPowerOff, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { faPencil, faPlus, faPowerOff, faRotate, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-button',
@@ -16,7 +16,7 @@ import { faPencil, faPlus, faPowerOff, IconDefinition } from '@fortawesome/free-
   </button>`,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ButtonComponent { 
+export class ButtonComponent implements OnInit{ 
 
   @Input() class: string = "";
   @Input() text: string = "";
@@ -24,7 +24,7 @@ export class ButtonComponent {
 
   public faIcon! : IconDefinition 
 
-  constructor() { 
+  public ngOnInit(): void {
     switch(this.icon){
       case "add":
         this.faIcon = faPlus;
@@ -34,6 +34,9 @@ export class ButtonComponent {
         break;
       case "toggle":
         this.faIcon = faPowerOff;
+        break;
+      case "refresh":
+        this.faIcon = faRotate;
         break;
       default:
         this.faIcon = faPlus;

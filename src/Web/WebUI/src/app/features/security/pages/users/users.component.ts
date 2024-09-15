@@ -6,12 +6,14 @@ import { Router, RouterLink } from '@angular/router';
 import { UserService } from '../../../../core/services/security/user.service';
 import { UserDto } from '../../../../core/models/security/user.model';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'app-users',
   standalone: true,
   imports: [
-    RouterLink,ButtonComponent,TableComponent
+    RouterLink,ButtonComponent,TableComponent,FontAwesomeModule
   ],
   templateUrl: './users.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -22,20 +24,10 @@ export class UsersComponent implements OnInit {
   private userService = inject(UserService);
   private notificationService = inject(NotificationService);
 
-  public columns : any[] = [];
-  public data = signal<UserDto[]>([]);
+  public users = signal<UserDto[]>([]);
+  public checkIcon = faCheck;
 
   public ngOnInit() {
-    this.columns = [
-      { name: '#', key: 'userId' },
-      { name: 'Email', key: 'email' },
-      { name: 'Email Confirmed', key: 'emailConfirmed' },
-      { name: 'Lockout Enabled', key: 'lockoutEnabled' },
-      { name: 'Lockout End', key: 'lockoutEnd' },
-      { name: 'Roles', key: 'roleNames' },
-      { name: 'Acciones', key: 'isActive' },
-    ];
-
     this.loadUsers();
   }
 
@@ -47,10 +39,9 @@ export class UsersComponent implements OnInit {
           return;
         }
 
-        this.data.set(response.data);
+        this.users.set(response.data);
       },
-      error: (e) => {
-        console.error(e);
+      error: () => {
         this.notificationService.showDefaultError();
       },
     });
@@ -62,6 +53,18 @@ export class UsersComponent implements OnInit {
   }
 
   public onToggle(userId: string) {
-    
+    this.userService.toggleUser(userId).subscribe({
+      next: (response) => {
+        if (!response.success) {
+          this.notificationService.showError('Error', response.message);
+          return;
+        }
+
+        this.loadUsers();
+      },
+      error: () => {
+        this.notificationService.showDefaultError();
+      }
+    });
   }
 }

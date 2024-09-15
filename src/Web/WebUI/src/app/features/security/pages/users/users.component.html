@@ -4,6 +4,49 @@
       <app-button [routerLink]="['/security/users/add']" [class]="'btn btn-success'" [text]="'Crear Usuario'" [icon]="'add'"></app-button> 
     </div>
     <div class="card-body">
-      <app-table [columns]="columns" [data]="data" (editEvent)="onEdit($event)" (toggleEvent)="onToggle($event)"></app-table>
+      <!-- <app-table [columns]="columns" [data]="data" (editEvent)="onEdit($event)" (toggleEvent)="onToggle($event)"></app-table> -->
+      
+      <div class="table-responsive">
+        <table class="table table-stripped table-bordered">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Email</th>
+              <th>Email Confirmado</th>
+              <th>Bloqueo Habilitado</th>
+              <th>Bloquedo Hasta</th>
+              <th>Permisos</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of users(); track $index) {
+              <tr>
+                <td>{{$index + 1 }}</td>
+                <td>{{user.email}}</td>
+                <td class="text-center">
+                  @if(user.emailConfirmed){
+                    <fa-icon [icon]="checkIcon" class="text-center"></fa-icon>
+                  }
+                </td>
+                <td class="text-center">
+                  @if(user.lockoutEnabled){
+                    <fa-icon [icon]="checkIcon" class="text-center"></fa-icon>
+                  }
+                </td>
+                <td>{{user.lockoutEnd}}</td>
+                <td>{{user.roleNames}}</td>
+                <td>
+                  <app-button (click)="onEdit(user.userId)" [class]="'btn bg-primary'" [text]="'Editar'" [icon]="'edit'"></app-button>
+                  <span>&nbsp;</span>
+                  <app-button (click)="onToggle(user.userId)" [class]="'btn ' + (user.isActive ? 'bg-warning' : 'btn-success')" [text]="user.isActive ? 'Pausar' : 'Reanudar'" [icon]="'toggle'"></app-button>
+                  <span>&nbsp;</span>
+                  <app-button (click)="onEdit(user.userId)" [class]="'btn bg-info'" [text]="'Reiniciar Contraseña'" [icon]="'refresh'"></app-button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     </div>  
 </div>

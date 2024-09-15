@@ -3,7 +3,7 @@ export interface UserDto{
     email:string;
     emailConfirmed:boolean;
     lockoutEnabled:boolean;
-    lockoutEnd:Date | null;
+    lockoutEnd:string;
     roleNames:string[];
     isActive:boolean;
 }

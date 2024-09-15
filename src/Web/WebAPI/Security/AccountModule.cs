@@ -25,7 +25,7 @@ public class AccountModule : CarterModule
         var result = await sender.Send(command);
 
         if (!result.Success)
-            return Results.Ok(command);
+            return Results.Ok(result);
 
         var response = await sender.Send(new CreateTokens(command.Email));
 
@@ -37,7 +37,7 @@ public class AccountModule : CarterModule
         var result = await sender.Send(command);
 
         if (!result.Success)
-            return Results.Ok(command);
+            return Results.Ok(result);
 
         var response = await sender.Send(new CreateTokens(command.Email));
 

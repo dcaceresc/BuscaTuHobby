@@ -44,6 +44,7 @@ export class UserLoginComponent implements OnInit {
 
         if (!response.success){
           this.notificationService.showError('Error', response.message );
+          return;
         }
 
         this.router.navigate(['/']);

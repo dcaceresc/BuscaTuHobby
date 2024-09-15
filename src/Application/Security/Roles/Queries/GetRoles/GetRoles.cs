@@ -1,7 +1,7 @@
 ﻿namespace Application.Security.Roles.Queries.GetRoles;
 public record GetRoles : IRequest<ApiResponse<List<RoleDto>>>;
 
-public class GetRolesHandler(IApplicationDbContext context, IMapper mapper,  IApiResponseService responseService) : IRequestHandler<GetRoles, ApiResponse<List<RoleDto>>>
+public class GetRolesHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetRoles, ApiResponse<List<RoleDto>>>
 {
     private readonly IApplicationDbContext _context = context;
     private readonly IMapper _mapper = mapper;

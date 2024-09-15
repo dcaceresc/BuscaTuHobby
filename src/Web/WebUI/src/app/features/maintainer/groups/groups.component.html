@@ -4,6 +4,6 @@
       <app-button [routerLink]="['/maintainer/groups/add']" [class]="'btn btn-success'" [text]="'Crear Grupo'" [icon]="'add'"></app-button> 
     </div>
     <div class="card-body">
-      <app-table [columns]="columns" [data]="data" (editEvent)="onEdit($event)" (toggleEvent)="onToggle($event)"></app-table>
+      <app-table [columns]="columns" [data]="data"></app-table>
     </div> 
 </div>
