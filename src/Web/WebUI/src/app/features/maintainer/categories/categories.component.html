@@ -4,6 +4,6 @@
     <app-button [routerLink]="['/maintainer/categories/add']" [class]="'btn btn-success'" [text]="'Crear Categoria'" [icon]="'add'"></app-button> 
   </div>
   <div class="card-body">
-    <app-table [columns]="columns" [data]="data"></app-table>
+    <app-table [columns]="columns" [data]="data" [actions]="actions" (actionEvent)="onAction($event)" />
   </div>  
 </div>

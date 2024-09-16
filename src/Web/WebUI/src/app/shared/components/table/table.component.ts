@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
 import { FontAwesomeModule, IconDefinition } from '@fortawesome/angular-fontawesome';
-import { faEdit, faPowerOff } from '@fortawesome/free-solid-svg-icons';
+import { FaIconService } from '../../../core/services/fa-icon.service';
 
 @Component({
   selector: 'app-table',
@@ -23,6 +23,7 @@ export class TableComponent {
   public currentPage = signal(1);
   public readonly itemsPerPage = 10;
   public searchTerm :string = '';
+  public faIconService = inject(FaIconService);
 
   public onSearch(event: Event){
     this.searchTerm = (event.target as HTMLInputElement).value;
@@ -69,5 +70,11 @@ export class TableComponent {
   public onAction(id: string, actionKey: string) {
     this.actionEvent.emit({ id, actionKey });
   }
+
+  public isBoolean(value: any): boolean {
+    return typeof value === 'boolean';
+  }
+
+  
 
 }

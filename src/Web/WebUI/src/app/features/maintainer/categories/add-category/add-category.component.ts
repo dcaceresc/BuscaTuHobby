@@ -6,12 +6,13 @@ import { CategoryService } from '../../../../core/services/maintainer/category.s
 import { GroupService } from '../../../../core/services/maintainer/group.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { GroupDto } from '../../../../core/models/maintainer/group.model';
+import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-add-category',
   standalone: true,
   imports: [
-    CommonModule,ReactiveFormsModule
+    CommonModule,ReactiveFormsModule,NgSelectModule
   ],
   templateUrl: './add-category.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,

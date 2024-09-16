@@ -18,10 +18,45 @@
                 <tr>
                     <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
                     @for (column of columns; track column) { 
-                        @if($index !== 0){
-                            <td> {{ row[column.key] }}</td>
+                        @if($index !== 0 && column.key !== 'isActive') {
+                            
+                            @if (isBoolean(row[column.key]))
+                            {
+                                <td class="text-center">
+                                    @if (row[column.key]) {
+                                        <fa-icon [icon]="this.faIconService.getIcon('Check')"></fa-icon>
+                                    }
+                                </td>
+                                
+                            }
+                            @else
+                            {
+                                <td>
+                                    {{ row[column.key] }}
+                                </td>
+                                
+                            }
                         }
                     }
+                    <td>
+                        @for (action of actions; track $index) {
+
+                            @if (action.actionKey !== 'toggle') {
+                                <button class="btn" [ngClass]="action.cssClass" (click)="onAction(row[columns[0].key], action.actionKey)">
+                                    <fa-icon [icon]="action.icon"></fa-icon> {{ action.label }}
+                                </button>
+                                <span>&nbsp;</span>
+                            }@else {
+                                <button class="btn" [ngClass]="row['isActive'] ? 'btn-warning' : 'btn-success'" (click)="onAction(row[columns[0].key], action.actionKey)">
+                                    <fa-icon [icon]="action.icon"></fa-icon> {{ row['isActive'] ? 'Pausar' : 'Reanudar' }}
+                                </button>
+                                <span>&nbsp;</span>
+                            }
+
+                            
+                        }
+                    </td>
+                   
                 </tr>
             } 
             </tbody>

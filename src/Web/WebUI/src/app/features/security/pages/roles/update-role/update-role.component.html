@@ -5,9 +5,9 @@
   <div class="card-body">
     <form [formGroup]="roleForm" (ngSubmit)="onSubmit()">
   
-      <div class="mb-3">
-        <label for="roleName" class="form-label">Nombre Permiso</label>
-        <input type="text" class="form-control" id="roleName" formControlName="roleName" required>
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="roleName" formControlName="roleName" placeholder="Nombre" required>
+        <label for="roleName" class="form-label">Nombre</label>
       </div>
 
 

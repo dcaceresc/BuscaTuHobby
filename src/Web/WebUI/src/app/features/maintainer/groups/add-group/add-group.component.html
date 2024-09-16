@@ -5,9 +5,9 @@
     <div class="card-body">
       <form [formGroup]="groupForm" (ngSubmit)="onSubmit()">
     
-        <div class="mb-3">
-          <label for="groupName" class="form-label">Nombre Grupo</label>
-          <input type="text" class="form-control" id="groupName" formControlName="groupName" required>
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="groupName" formControlName="groupName" placeholder="Nombre" required>
+          <label for="groupName" class="form-label">Nombre</label>
         </div>
 
   

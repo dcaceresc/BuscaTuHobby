@@ -6,6 +6,7 @@ import { TableComponent } from '../../../shared/components/table/table.component
 import { GroupService } from '../../../core/services/maintainer/group.service';
 import { GroupDto } from '../../../core/models/maintainer/group.model';
 import { NotificationService } from '../../../core/services/notification.service';
+import { FaIconService } from '../../../core/services/fa-icon.service';
 
 @Component({
   selector: 'app-groups',
@@ -21,9 +22,11 @@ export class GroupsComponent implements OnInit {
   private groupService = inject(GroupService);
   private notificationService = inject(NotificationService);
   private router = inject(Router);
+  private faIconService = inject(FaIconService);
 
   public columns :any[] = [];
   public data = signal<GroupDto[]>([]);
+  public actions: any[] = [];
   
   
   public ngOnInit(): void {
@@ -32,6 +35,12 @@ export class GroupsComponent implements OnInit {
       { name: 'Nombre', key: 'groupName' },
       { name: 'Acciones', key: 'isActive' },
     ];
+
+    this.actions = [
+      { icon: this.faIconService.getIcon('Edit'), label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
+      { icon: this.faIconService.getIcon('Toggle'), actionKey: 'toggle'},
+    ]
+
     this.loadGroups();
   }
 
@@ -72,7 +81,15 @@ export class GroupsComponent implements OnInit {
     });
   }
 
-
-
+  public onAction(event: { id: string, actionKey: string }) {
+    switch (event.actionKey) {
+      case 'edit':
+        this.onEdit(event.id);
+        break;
+      case 'toggle':
+        this.onToggle(event.id);
+        break;
+    }
+  }
 
 }

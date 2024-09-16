@@ -6,6 +6,7 @@ import { Router, RouterLink } from '@angular/router';
 import { RoleService } from '../../../../core/services/security/role.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { RoleDto } from '../../../../core/models/security/role.model';
+import { faEdit, faPowerOff } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-roles',
@@ -24,6 +25,7 @@ export class RolesComponent implements OnInit {
 
   public columns : any[] = [];
   public data = signal<RoleDto[]>([]);
+  public actions : any[] = [];
 
 
   public ngOnInit(): void {
@@ -32,6 +34,11 @@ export class RolesComponent implements OnInit {
       { name: 'Nombre', key: 'roleName' },
       { name: 'Acciones', key: 'isActive' },
     ];
+
+    this.actions = [
+      { icon: faEdit, label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
+      { icon: faPowerOff, label: '', actionKey: 'toggle', cssClass: '' },
+    ]
 
     this.loadRoles();
   }
@@ -50,6 +57,17 @@ export class RolesComponent implements OnInit {
         this.notificationService.showDefaultError();
       },
     });
+  }
+
+  public onAction(event: { id: string, actionKey: string }) {
+    switch (event.actionKey) {
+      case 'edit':
+        this.onEdit(event.id);
+        break;
+      case 'toggle':
+        this.onToggle(event.id);
+        break;
+    }
   }
 
   public onEdit(roleId: string) {

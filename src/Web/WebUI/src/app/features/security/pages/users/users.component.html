@@ -4,9 +4,9 @@
       <app-button [routerLink]="['/security/users/add']" [class]="'btn btn-success'" [text]="'Crear Usuario'" [icon]="'add'"></app-button> 
     </div>
     <div class="card-body">
-      <!-- <app-table [columns]="columns" [data]="data" (editEvent)="onEdit($event)" (toggleEvent)="onToggle($event)"></app-table> -->
+      <app-table [columns]="columns" [data]="data" [actions]="actions" (actionEvent)="onAction($event)"></app-table>
       
-      <div class="table-responsive">
+      <!-- <div class="table-responsive">
         <table class="table table-stripped table-bordered">
           <thead>
             <tr>
@@ -47,6 +47,6 @@
             }
           </tbody>
         </table>
-      </div>
+      </div> -->
     </div>  
 </div>

@@ -5,18 +5,15 @@
     <div class="card-body">
       <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
     
-        <div class="mb-3">
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="categoryName" formControlName="categoryName" placeholder="Nombre" required>
           <label for="categoryName" class="form-label">Nombre</label>
-          <input type="text" class="form-control" id="categoryName" formControlName="categoryName" required>
         </div>
 
-        <div class="mb-3">
-            <label for="groupId" class="form-label">Grupo</label>
-            <select class="form-select" formControlName="groupId">
-                @for (group of groups(); track $index) {
-                    <option [value]="group.groupId">{{ group.groupName }}</option>
-                }
-            </select>
+        <div class="ng-select-container-custom mb-3">
+          <label for="roleIds" class="floating-label">Permisos</label>
+          <ng-select [items]="groups()" bindValue="groupId" bindLabel="groupName" id="groupId" formControlName="groupId" class="form-select ng-select-custom">
+          </ng-select>
         </div>
 
   
