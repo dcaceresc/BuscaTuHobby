@@ -22,6 +22,10 @@ public class AdminLoginHandler(IApplicationDbContext context, IUtilityService ut
 
             Guard.Against.InvalidInput(superAdmin, userIsActive, "La cuenta se encuentra desactivamente");
 
+            bool userIsConfirmed(User user) => user.EmailConfirmed;
+
+            Guard.Against.InvalidInput(superAdmin, userIsConfirmed, "La cuenta no ha sido confirmada");
+
             bool userIsLockedOut(User user) => !(user.LockoutEnabled && user.LockoutEnd > DateTime.Now);
 
             Guard.Against.InvalidInput(superAdmin, userIsLockedOut, "La cuenta se encuentra bloqueada por numero de intentos fallidos");

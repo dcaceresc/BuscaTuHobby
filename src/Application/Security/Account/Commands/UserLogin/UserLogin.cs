@@ -19,6 +19,10 @@ public class UserLoginHandler(IApplicationDbContext context, IApiResponseService
 
             Guard.Against.InvalidInput(user, userIsActive, "La cuenta se encuentra desactivamente");
 
+            bool userIsConfirmed(User user) => user.EmailConfirmed;
+
+            Guard.Against.InvalidInput(user, userIsConfirmed, "La cuenta no ha sido confirmada");
+
             bool userIsLockedOut(User user) => !(user.LockoutEnabled && user.LockoutEnd > DateTime.Now);
 
             Guard.Against.InvalidInput(user, userIsLockedOut, "La cuenta se encuentra bloqueada por numero de intentos fallidos");

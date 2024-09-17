@@ -29,6 +29,7 @@ public static class ConfigureServices
 
         services.AddScoped<IApiResponseService, ApiResponseService>();
         services.AddScoped<IUtilityService, UtilityService>();
+        services.AddScoped<IEmailService, EmailService>();
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>

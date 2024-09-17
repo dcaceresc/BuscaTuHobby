@@ -7,11 +7,12 @@ public record UserRegister : IRequest<ApiResponse>
     public bool AcceptTerms { get; init; }
 }
 
-public class UserRegisterHandler(IApplicationDbContext context, IApiResponseService responseService, IUtilityService utilityService) : IRequestHandler<UserRegister, ApiResponse>
+public class UserRegisterHandler(IApplicationDbContext context, IApiResponseService responseService, IUtilityService utilityService, IEmailService emailService) : IRequestHandler<UserRegister, ApiResponse>
 {
     private readonly IApplicationDbContext _context = context;
     private readonly IApiResponseService _responseService = responseService;
     private readonly IUtilityService _utilityService = utilityService;
+    private readonly IEmailService _emailService = emailService;
 
     public async Task<ApiResponse> Handle(UserRegister request, CancellationToken cancellationToken)
     {
@@ -45,6 +46,10 @@ public class UserRegisterHandler(IApplicationDbContext context, IApiResponseServ
             _context.UserRoles.Add(userRole);
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            var token = _utilityService.GenerateEmailConfirmationToken(user);
+
+            await _emailService.SendEmailAsync(user.Email, "Confirmar Email", _emailService.GetEmailRegisterTemplate(user.UserId,token));
 
             return _responseService.Success("Usuario creado exitosamente");
 

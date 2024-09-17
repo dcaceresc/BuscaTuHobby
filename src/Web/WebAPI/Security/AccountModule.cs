@@ -1,4 +1,5 @@
 ﻿using Application.Security.Account.Commands.AdminLogin;
+using Application.Security.Account.Commands.ConfirmEmail;
 using Application.Security.Account.Commands.CreateTokens;
 using Application.Security.Account.Commands.UpdateRefreshToken;
 using Application.Security.Account.Commands.UserLogin;
@@ -16,9 +17,8 @@ public class AccountModule : CarterModule
         group.MapPost("adminLogin", AdminLogin);
         group.MapPost("userRegister", Register);
         group.MapPost("refreshToken", UpdateRefreshToken);
+        group.MapPost("confirmEmail", ConfirmEmail);
     }
-
-
 
     private static async Task<IResult> UserLogin(ISender sender, UserLogin command)
     {
@@ -47,4 +47,6 @@ public class AccountModule : CarterModule
     private static async Task<IResult> Register(ISender sender, UserRegister command) => Results.Ok(await sender.Send(command));
 
     private static async Task<IResult> UpdateRefreshToken(ISender sender, UpdateRefreshToken command) => Results.Ok(await sender.Send(command));
+
+    private static async Task<IResult> ConfirmEmail(ISender sender, ConfirmEmail command) => Results.Ok(await sender.Send(command));
 }

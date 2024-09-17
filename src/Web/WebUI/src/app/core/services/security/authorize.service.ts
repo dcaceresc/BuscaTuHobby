@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, map, Observable, of } from 'rxjs';
 import { ApiResponse } from '../../models/apiResponse.model';
-import { AdminLoginRequestCommand, UserLogin, UserRegister, UserTokenResponse } from '../../models/security/account.model';
+import { AdminLoginRequestCommand, ConfirmEmail, UserLogin, UserRegister, UserTokenResponse } from '../../models/security/account.model';
 
 @Injectable({
   providedIn: 'root'
@@ -60,6 +60,10 @@ export class AuthorizeService {
 
   public register(user : UserRegister) {
     return this.http.post<ApiResponse<any>>('/api/security/account/UserRegister',user);
+  }
+
+  public confirmEmail(user: ConfirmEmail) {
+    return this.http.post<ApiResponse<any>>('/api/security/account/ConfirmEmail', user);
   }
 
   public logout(): void{

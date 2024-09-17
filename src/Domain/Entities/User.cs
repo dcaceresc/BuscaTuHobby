@@ -54,6 +54,12 @@ public class User : AuditableEntity
             LockoutEnd = DateTime.Now.AddMinutes(15);
     }
 
+    public void ConfirmEmail()
+    {
+        EmailConfirmed = true;
+    }
+
+
     public void Update(string email, bool emailConfirmed, bool lockoutEnabled, DateTime? lockoutEnd)
     {
         Email = email;

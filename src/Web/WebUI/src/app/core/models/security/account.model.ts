@@ -20,3 +20,8 @@ export interface UserTokenResponse{
     accessToken: string;
     refreshToken: string;
 }
+
+export interface ConfirmEmail{
+    userId: string;
+    token: string;
+}

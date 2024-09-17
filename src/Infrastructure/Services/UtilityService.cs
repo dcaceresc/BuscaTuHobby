@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Domain.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Infrastructure.Services;
@@ -35,5 +39,31 @@ public class UtilityService : IUtilityService
         Random random = new();
         return new string(Enumerable.Repeat(_chars, length)
        .Select(s => s[random.Next(s.Length)]).ToArray());
+    }
+
+    public string GenerateEmailConfirmationToken(User user)
+    {
+        // Concatenar el UserId y el SecurityStamp
+        var tokenInput = $"{user.UserId}:{user.SecurityStamp}";
+
+        // Generar un hash basado en el UserId y SecurityStamp para mayor seguridad
+        var tokenBytes = Encoding.UTF8.GetBytes(tokenInput);
+        var hashedToken = Convert.ToBase64String(SHA256.Create().ComputeHash(tokenBytes));
+
+        // Codificar el token en formato URL
+        return WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(hashedToken));
+    }
+
+    public bool ValidateEmailConfirmationToken(User user, string token)
+    {
+        var decodedToken = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
+
+        // Volver a generar el hash a partir de los valores originales
+        var expectedTokenInput = $"{user.UserId}:{user.SecurityStamp}";
+        var expectedTokenBytes = Encoding.UTF8.GetBytes(expectedTokenInput);
+        var expectedToken = Convert.ToBase64String(SHA256.Create().ComputeHash(expectedTokenBytes));
+
+        // Comparar el token generado con el token proporcionado
+        return decodedToken == expectedToken;
     }
 }
