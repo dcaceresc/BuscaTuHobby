@@ -6,7 +6,7 @@ public record CreateProduct : IRequest<ApiResponse>
     public Guid ScaleId { get; init; }
     public Guid ManufacturerId { get; init; }
     public Guid FranchiseId { get; init; }
-    public Guid SerieId { get; init; }
+    public Guid? SerieId { get; init; }
     public bool ProductHasBase { get; init; }
     public string ProductTargetAge { get; init; } = default!;
     public string ProductSize { get; init; } = default!;

@@ -74,10 +74,14 @@ button:disabled{
   border: 1px solid $green;
   margin-right: 10px;
 
-  i{
-    margin-right: 10px; /* Adjust the spacing between the icon and text */
-  }
+  &:hover {
+		background-color: $green;
+		color: $darkBlue;
+	}
+  
 }
+
+
 
 .offcanvas{
   background-color: $darkBlue;

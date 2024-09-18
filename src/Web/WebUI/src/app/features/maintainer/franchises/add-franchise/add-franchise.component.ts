@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/cor
 import { FranchiseService } from '../../../../core/services/maintainer/franchise.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-add-franchise',
@@ -18,6 +19,7 @@ export class AddFranchiseComponent implements OnInit {
   private franchiseService = inject(FranchiseService);
   private formBuilder = inject(FormBuilder);
   private router = inject(Router);
+  private notificationService = inject(NotificationService);
 
   public franchiseForm!: FormGroup;
 
@@ -34,7 +36,17 @@ export class AddFranchiseComponent implements OnInit {
     }
 
     this.franchiseService.addFranchise(this.franchiseForm.value).subscribe({
-
+      next: (response) => {
+        if (!response.success) {
+          this.notificationService.showError('Error', response.message);
+          return;
+        }
+        this.notificationService.showSuccess('Success', response.message);
+        this.router.navigate(['/maintainer/franchises']);
+      },
+      error: () => {
+        this.notificationService.showDefaultError();
+      }
     });
 
   }

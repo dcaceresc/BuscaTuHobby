@@ -2,7 +2,7 @@
 
 public class ScaleDto
 {
-    public int ScaleId { get; set; }
+    public Guid ScaleId { get; set; }
     public string ScaleName { get; set; } = default!;
     public bool IsActive { get; set; }
 

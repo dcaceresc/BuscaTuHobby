@@ -68,6 +68,13 @@ public class Product : AuditableEntity
         return categoryProduct;
     }
 
+    public ProductImage AssignImage(int productImageOrder)
+    {
+        var productImage = ProductImage.Create(productImageOrder, ProductId);
+
+        return productImage;
+    }
+
     public void ToggleActive()
     {
         IsActive = !IsActive;

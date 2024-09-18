@@ -1,0 +1,80 @@
+<div class="card mt-3">
+    <div class="card-header bg-primary">
+      Crear Producto
+    </div>
+    <div class="card-body">
+      <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+    
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="productName" formControlName="productName" placeholder="Nombre" required>
+          <label for="productName" class="form-label">Nombre</label>
+        </div>
+
+        <div class="ng-select-container-custom mb-3">
+            <label for="roleIds" class="floating-label">Escala</label>
+            <ng-select [items]="scales()" bindValue="scaleId" bindLabel="scaleName" id="franchiseId" formControlName="scaleId" class="form-select ng-select-custom">
+            </ng-select>
+        </div>
+
+        <div class="ng-select-container-custom mb-3">
+            <label for="roleIds" class="floating-label">Fabricante</label>
+            <ng-select [items]="manufacturers()" bindValue="manufacturerId" bindLabel="manufacturerName" id="manufacturerId" formControlName="manufacturerId" class="form-select ng-select-custom">
+            </ng-select>
+        </div>
+
+        <div class="ng-select-container-custom mb-3">
+            <label for="roleIds" class="floating-label">Franquicia</label>
+            <ng-select [items]="franchises()" bindValue="franchiseId" bindLabel="franchiseName" id="franchiseId" formControlName="franchiseId" class="form-select ng-select-custom" (change)="onChangeFranchise()">
+            </ng-select>
+        </div>
+
+        <div class="ng-select-container-custom mb-3">
+            <label for="roleIds" class="floating-label">Serie</label>
+            <ng-select [items]="series()" bindValue="serieId" bindLabel="serieName" id="serieId" formControlName="serieId" class="form-select ng-select-custom">
+            </ng-select>
+        </div>
+
+        <div class="form-floating mb-3">
+            <select class="form-select" id="productHasBase" formControlName="productHasBase">
+              <option [ngValue]="true">Si</option>
+              <option [ngValue]="false">No</option>
+            </select>
+            <label for="productHasBase">Tiene Base</label>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input class="form-control" id="productTargetAge " formControlName="productTargetAge" placeholder="Edad de objetivo" required>
+            <label for="productTargetAge">Edad de objetivo</label>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input class="form-control" id="productSize " formControlName="productSize" placeholder="Tamaño" required>
+            <label for="productSize">Tamaño</label>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input class="form-control" type="date" id="productReleaseDate " formControlName="productReleaseDate" placeholder="Fecha de Lanzamiento" required>
+            <label for="productReleaseDate">Fecha de Lanzamiento</label>
+        </div>
+
+        <div class="ng-select-container-custom mb-3">
+            <label for="roleIds" class="floating-label">Categorias</label>
+            <ng-select [items]="categories()" bindValue="categoryId" bindLabel="categoryName" [multiple]="true" id="categoryId" formControlName="categoryIds" class="form-select ng-select-custom">
+            </ng-select>
+        </div>
+
+        <div class="form-floating mb-3">
+          <textarea class="form-control" placeholder="Leave a comment here" id="productDescription" formControlName="productDescription" style="resize: none;height: 200px;"></textarea>
+          <label for="productDescription">Descripción</label>
+        </div>
+
+  
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn bg-primary me-2" [disabled]="productForm.invalid">Guardar</button>
+          <button type="button" class="btn bg-secundary" (click)="onCancel()">Cancelar</button>
+        </div>
+      </form>
+  
+  
+    </div>
+  </div>

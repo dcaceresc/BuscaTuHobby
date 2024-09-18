@@ -1,0 +1,32 @@
+<div class="card mt-3">
+    <div class="card-header bg-primary">
+      Crear Tienda
+    </div>
+    <div class="card-body">
+      <form [formGroup]="storeForm" (ngSubmit)="onSubmit()">
+    
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="storeName" formControlName="storeName" placeholder="Nombre" required>
+          <label for="storeName" class="form-label">Nombre</label>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="storeAddress" formControlName="storeAddress" placeholder="Dirección" required>
+            <label for="storeAddress" class="form-label">Dirección</label>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="storeWebSite" formControlName="storeWebSite" placeholder="Sitio Web" required>
+            <label for="storeWebSite" class="form-label">Sitio Web</label>
+        </div>
+
+  
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn bg-primary me-2" [disabled]="storeForm.invalid">Guardar</button>
+          <button type="button" class="btn bg-secundary" (click)="onCancel()">Cancelar</button>
+        </div>
+      </form>
+  
+  
+    </div>
+  </div>

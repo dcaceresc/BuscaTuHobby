@@ -39,7 +39,6 @@
 <header class="py-3 mb-3 border-bottom">
   <div class="container d-grid gap-3 align-items-center" style="grid-template-columns: 60px 60px 1fr ;">
     <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none order-2 order-lg-1">
-      <!-- <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg> -->
       <img src="./../../../../assets/images/logo.png" alt="Logo" height="60" width="90">
     </a>
 
@@ -60,17 +59,21 @@
       </div>
       
       <div class="container d-flex justify-content-end order-4">
-        @if(roles.includes('Administrador') || roles.includes('SuperAdmin')){
-          <app-administration-menu [isSuperAdmin]="roles.includes('SuperAdmin')" />
-        }
-        <div class="d-grid d-flex" >
+
+        <div class="d-grid d-flex">
+
+          @if(roles.includes('Administrador') || roles.includes('SuperAdmin')){
+            <app-administration-menu [isSuperAdmin]="roles.includes('SuperAdmin')" />
+          }
+
           <a class="btn btn-header-menu me-md-2" title="Favoritos">
-            <fa-icon [icon]="faHeart"></fa-icon> 
+        <fa-icon [icon]="faHeart"></fa-icon> 
           </a>
+
         </div>
+
          <app-login-menu [isAuthenticated]="isAuthenticated" />
       </div>
-
       
 
     </div>

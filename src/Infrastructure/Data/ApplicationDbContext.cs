@@ -130,7 +130,7 @@ namespace Infrastructure.Data
                 .IsUnique();
 
                 entity.Property(e => e.ProductName)
-                .HasMaxLength(50);
+                .HasMaxLength(200);
 
                 entity.Property(e => e.ProductTargetAge)
                 .HasMaxLength(50);
@@ -138,8 +138,7 @@ namespace Infrastructure.Data
                 entity.Property(e => e.ProductSize)
                 .HasMaxLength(50);
 
-                entity.Property(e => e.ProductDescription)
-                .HasMaxLength(1000);
+                entity.Property(e => e.ProductDescription);
 
             });
 

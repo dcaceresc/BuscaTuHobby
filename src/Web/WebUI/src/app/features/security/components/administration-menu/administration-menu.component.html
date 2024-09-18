@@ -1,6 +1,6 @@
-<div class="d-grid d-flex" >
-    <button class="btn btn-header-menu" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Administrador</button>
-</div>
+<button class="btn btn-header-menu" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
+  <fa-icon [icon]="adminIcon"></fa-icon> Admin
+</button>
 
 
 
@@ -46,22 +46,22 @@
             <a class="nav-link" [routerLink]="['/maintainer/franchises']" (click)="onClose()">Franquicias</a>
           </li>
           <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/products']">Productos</a>
+            <a class="nav-link" [routerLink]="['/maintainer/products']" (click)="onClose()">Productos</a>
           </li>
           <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/manufacturers']">Fabricantes</a>
+            <a class="nav-link" [routerLink]="['/maintainer/manufacturers']" (click)="onClose()">Fabricantes</a>
           </li>
           <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/inventories']">Inventario</a>
+            <a class="nav-link" [routerLink]="['/maintainer/inventories']" (click)="onClose()">Inventario</a>
           </li>
           <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/scales']">Escalas</a>
+            <a class="nav-link" [routerLink]="['/maintainer/scales']" (click)="onClose()">Escalas</a>
           </li>
           <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/series']">Series</a>
+            <a class="nav-link" [routerLink]="['/maintainer/series']" (click)="onClose()">Series</a>
           </li>
           <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/stores']">Tiendas</a>
+            <a class="nav-link" [routerLink]="['/maintainer/stores']" (click)="onClose()">Tiendas</a>
           </li>
         </ul>
       </div>

@@ -14,6 +14,8 @@ public class UpdateManufacturerHandler(IApplicationDbContext context, IApiRespon
 
             Guard.Against.NotFound(manufacturer, $"No existe fabricante con la Id {request.ManufacturerId}");
 
+            manufacturer.Update(request.ManufacturerName);
+
             await _context.SaveChangesAsync(cancellationToken);
 
             return responseService.Success("Fabricante actualizado correctamente");

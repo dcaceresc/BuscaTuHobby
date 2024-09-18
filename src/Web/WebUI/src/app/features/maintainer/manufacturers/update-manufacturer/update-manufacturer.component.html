@@ -1,0 +1,22 @@
+<div class="card mt-3">
+    <div class="card-header bg-primary">
+      Editar Fabricante
+    </div>
+    <div class="card-body">
+      <form [formGroup]="manufacturerForm" (ngSubmit)="onSubmit()">
+    
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="manufacturerName" formControlName="manufacturerName" placeholder="Nombre" required>
+          <label for="manufacturerName" class="form-label">Nombre</label>
+        </div>
+
+  
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn bg-primary me-2" [disabled]="manufacturerForm.invalid">Guardar</button>
+          <button type="button" class="btn bg-secundary" (click)="onCancel()">Cancelar</button>
+        </div>
+      </form>
+  
+  
+    </div>
+  </div>
