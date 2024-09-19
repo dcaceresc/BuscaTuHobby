@@ -2,7 +2,7 @@
 
 public class Product : AuditableEntity
 {
-    private Product(string productName, Guid scaleId, Guid manufacturerId, Guid franchiseId, Guid? serieId, bool productHasBase, string productTargetAge, string productSize, string productDescription, DateTime productReleaseDate)
+    private Product(string productName, Guid scaleId, Guid manufacturerId, Guid franchiseId, Guid? serieId, bool productHasBase, string productTargetAge, string productSize, string productDescription, DateOnly productReleaseDate)
     {
         ProductId = Guid.NewGuid();
         ProductName = productName;
@@ -29,7 +29,7 @@ public class Product : AuditableEntity
     public string ProductTargetAge { get; private set; } = default!;
     public string ProductSize { get; private set; } = default!;
     public string ProductDescription { get; private set; } = default!;
-    public DateTime ProductReleaseDate { get; private set; }
+    public DateOnly ProductReleaseDate { get; private set; }
     public bool IsActive { get; private set; }
 
     public virtual Manufacturer Manufacturer { get; private set; } = default!;
@@ -42,12 +42,12 @@ public class Product : AuditableEntity
     public virtual ICollection<ProductCategory> ProductCategories { get; private set; } = default!;
 
 
-    public static Product Create(string productName, Guid scaleId, Guid manufacturerId, Guid franchiseId, Guid? serieId, bool productHasBase, string productTargetAge, string productSize, string productDescription, DateTime productReleaseDate)
+    public static Product Create(string productName, Guid scaleId, Guid manufacturerId, Guid franchiseId, Guid? serieId, bool productHasBase, string productTargetAge, string productSize, string productDescription, DateOnly productReleaseDate)
     {
         return new Product(productName, scaleId, manufacturerId, franchiseId, serieId, productHasBase, productTargetAge, productSize, productDescription, productReleaseDate);
     }
 
-    public void Update(string productName, Guid scaleId, Guid manufacturerId, Guid franchiseId, Guid? serieId, bool productHasBase, string productTargetAge, string productSize, string productDescription, DateTime productReleaseDate)
+    public void Update(string productName, Guid scaleId, Guid manufacturerId, Guid franchiseId, Guid? serieId, bool productHasBase, string productTargetAge, string productSize, string productDescription, DateOnly productReleaseDate)
     {
         ProductName = productName;
         ScaleId = scaleId;

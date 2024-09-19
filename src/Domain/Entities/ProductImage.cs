@@ -9,7 +9,6 @@ public class ProductImage : AuditableEntity
         ProductId = productId;
     }
 
-
     public Guid ProductImageId { get; set; }
     public int ProductImageOrder { get; set; }
     public Guid ProductId { get; set; } = default!;

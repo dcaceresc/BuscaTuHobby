@@ -38,4 +38,5 @@ export interface CreateProduct{
     productDescription:string;
     productReleaseDate:string;
     categoryIds:string[];
+    productImages:string[];
 }

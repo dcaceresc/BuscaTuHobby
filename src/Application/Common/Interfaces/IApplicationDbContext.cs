@@ -2,10 +2,12 @@
 {
     public interface IApplicationDbContext
     {
+        DbSet<Configuration> Configurations { get; }
         DbSet<Group> Groups { get; }
         DbSet<Franchise> Franchises { get; }
         DbSet<Product> Products { get; }
         DbSet<ProductCategory> ProductCategories { get; }
+        DbSet<ProductImage> ProductImages { get; }
         DbSet<Inventory> Inventories { get; }
         DbSet<Manufacturer> Manufacturers { get; }
         DbSet<Scale> Scales { get; }

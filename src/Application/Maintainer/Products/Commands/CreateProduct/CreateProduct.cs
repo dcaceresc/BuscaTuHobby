@@ -11,15 +11,17 @@ public record CreateProduct : IRequest<ApiResponse>
     public string ProductTargetAge { get; init; } = default!;
     public string ProductSize { get; init; } = default!;
     public string ProductDescription { get; init; } = default!;
-    public DateTime ProductReleaseDate { get; init; }
+    public DateOnly ProductReleaseDate { get; init; }
     public IList<Guid> CategoryIds { get; init; } = default!;
+    public IList<string> ProductImages { get; init; } = default!;
 
 }
 
-public class CreateProductHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<CreateProduct, ApiResponse>
+public class CreateProductHandler(IApplicationDbContext context, IApiResponseService responseService, IUtilityService utilityService) : IRequestHandler<CreateProduct, ApiResponse>
 {
     private readonly IApplicationDbContext _context = context;
     private readonly IApiResponseService _responseService = responseService;
+    private readonly IUtilityService _utilityService = utilityService;
 
     public async Task<ApiResponse> Handle(CreateProduct request, CancellationToken cancellationToken)
     {
@@ -39,6 +41,18 @@ public class CreateProductHandler(IApplicationDbContext context, IApiResponseSer
             }
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            for (var i = 0; i < request.ProductImages.Count; i++)
+            {
+                var productImage = product.AssignImage(i);
+
+                _context.ProductImages.Add(productImage);
+
+                await _context.SaveChangesAsync(cancellationToken);
+
+                await _utilityService.SaveImagen(request.ProductImages[i], productImage.ProductImageId);
+
+            }
 
             return _responseService.Success("Producto creado correctamente");
         }

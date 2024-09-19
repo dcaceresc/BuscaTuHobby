@@ -49,7 +49,7 @@ public class UserRegisterHandler(IApplicationDbContext context, IApiResponseServ
 
             var token = _utilityService.GenerateEmailConfirmationToken(user);
 
-            await _emailService.SendEmailAsync(user.Email, "Confirmar Email", _emailService.GetEmailRegisterTemplate(user.UserId,token));
+            await _emailService.SendEmailAsync(user.Email, "Confirmar Email", _emailService.GetEmailRegisterTemplate(user.UserId, token));
 
             return _responseService.Success("Usuario creado exitosamente");
 

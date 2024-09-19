@@ -12,7 +12,7 @@ public class UpdateProduct : IRequest<ApiResponse>
     public string ProductTargetAge { get; init; } = default!;
     public string ProductSize { get; init; } = default!;
     public string ProductDescription { get; init; } = default!;
-    public DateTime ProductReleaseDate { get; init; }
+    public DateOnly ProductReleaseDate { get; init; }
     public IList<Guid> CategoryIds { get; init; } = default!;
 }
 

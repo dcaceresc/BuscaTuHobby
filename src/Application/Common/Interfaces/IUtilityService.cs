@@ -7,4 +7,5 @@ public interface IUtilityService
     bool IsValidEmail(string email);
     string GenerateEmailConfirmationToken(User user);
     bool ValidateEmailConfirmationToken(User user, string token);
+    Task SaveImagen(string image, Guid name);
 }

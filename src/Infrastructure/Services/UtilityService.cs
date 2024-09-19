@@ -66,4 +66,19 @@ public class UtilityService : IUtilityService
         // Comparar el token generado con el token proporcionado
         return decodedToken == expectedToken;
     }
+
+    public async Task SaveImagen(string image, Guid name)
+    {
+        string imagesFolderPath = "Imagenes";
+        if (!Directory.Exists(imagesFolderPath))
+        {
+            Directory.CreateDirectory(imagesFolderPath);
+        }
+
+        string base64Image = image;
+        byte[] imageBytes = Convert.FromBase64String(base64Image);
+        string imageName = $"{name}.jpg";
+        string imagePath = Path.Combine(imagesFolderPath, imageName);
+        await File.WriteAllBytesAsync(imagePath, imageBytes);
+    }
 }

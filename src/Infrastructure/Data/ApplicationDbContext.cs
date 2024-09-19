@@ -3,8 +3,11 @@
 namespace Infrastructure.Data
 {
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options), IApplicationDbContext
-    {
+    { 
+        
         public DbSet<Category> Categories => Set<Category>();
+
+        public DbSet<Configuration> Configurations => Set<Configuration>();
         public DbSet<Favorite> Favorites => Set<Favorite>();
         public DbSet<FavoriteProduct> FavoriteProducts => Set<FavoriteProduct>();
         public DbSet<Franchise> Franchises => Set<Franchise>();
@@ -39,6 +42,23 @@ namespace Infrastructure.Data
 
                 entity.Property(e => e.CategoryName)
                 .HasMaxLength(50);
+            });
+
+            builder.Entity<Configuration>(entity =>
+            {
+                entity.HasKey(e => e.ConfigurationId);
+
+                entity.Property(e => e.ConfigurationId)
+                .HasDefaultValueSql("(newid())");
+
+                entity.HasIndex(e => e.ConfigurationName)
+                .IsUnique();
+
+                entity.Property(e => e.ConfigurationName)
+                .HasMaxLength(100);
+
+                entity.Property(e => e.ConfigurationValue)
+                .HasMaxLength(4000);
             });
 
             builder.Entity<Favorite>(entity =>
@@ -133,10 +153,10 @@ namespace Infrastructure.Data
                 .HasMaxLength(200);
 
                 entity.Property(e => e.ProductTargetAge)
-                .HasMaxLength(50);
+                .HasMaxLength(100);
 
                 entity.Property(e => e.ProductSize)
-                .HasMaxLength(50);
+                .HasMaxLength(100);
 
                 entity.Property(e => e.ProductDescription);
 
@@ -162,8 +182,6 @@ namespace Infrastructure.Data
                 entity.Property(e => e.ProductImageId)
                 .HasDefaultValueSql("(newid())");
 
-                entity.Property(e => e.ProductImagePath)
-                .HasMaxLength(100);
 
             });
 
@@ -286,6 +304,7 @@ namespace Infrastructure.Data
             });
 
             ConfigureAuditableEntity<Category>(builder);
+            ConfigureAuditableEntity<Configuration>(builder);
             ConfigureAuditableEntity<Favorite>(builder);
             ConfigureAuditableEntity<FavoriteProduct>(builder);
             ConfigureAuditableEntity<Franchise>(builder);

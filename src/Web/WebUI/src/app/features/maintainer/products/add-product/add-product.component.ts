@@ -11,7 +11,7 @@ import { SerieService } from '../../../../core/services/maintainer/serie.service
 import { ScaleDto } from '../../../../core/models/maintainer/scale.model';
 import { ManufacturerDto } from '../../../../core/models/maintainer/manufacturer.model';
 import { FranchiseDto } from '../../../../core/models/maintainer/franchise.model';
-import { SerieByFranchiseDto, SerieDto } from '../../../../core/models/maintainer/serie.model';
+import { SerieByFranchiseDto } from '../../../../core/models/maintainer/serie.model';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { CategoryDto } from '../../../../core/models/maintainer/category.model';
 import { CategoryService } from '../../../../core/services/maintainer/category.service';
@@ -44,6 +44,7 @@ export class AddProductComponent implements OnInit {
   public series = signal<SerieByFranchiseDto[]>([]);
   public categories = signal<CategoryDto[]>([]);
   public today = new Date().toISOString().split('T')[0];
+  public productImage = signal<string[]>([]);
 
 
   public ngOnInit(): void {
@@ -59,6 +60,7 @@ export class AddProductComponent implements OnInit {
       productDescription: ['',Validators.required],
       productReleaseDate: [this.today,Validators.required],
       categoryIds: ['', Validators.required],
+      productImages: ['',Validators.required],
     });
 
     this.loadScales();
@@ -143,8 +145,7 @@ export class AddProductComponent implements OnInit {
             this.series.set(series);
 
         },
-        error: (error) => {
-          console.log(error);
+        error: () => {
           this.notificationService.showDefaultError();
         },
       });
@@ -175,12 +176,37 @@ export class AddProductComponent implements OnInit {
     this.loadSeries();
   }
 
+  public onImageChange(event: any): void {
+    const files = event.target.files;
+    const readers = [];
+
+    this.productImage.set([]);
+
+    for (let i = 0; i < files.length; i++) {
+      const reader = new FileReader();
+      readers.push(reader);
+
+      reader.onload = (e) => {
+        // @ts-ignore
+        const base64Image = e.target!.result as string;
+        this.productImage.update(images => [...images, base64Image]);
+        this.productForm.get('productImages')?.setValue(this.productImage());
+      };
+
+      reader.readAsDataURL(files[i]);
+    }
+
+    
+  }
+
 
   public onSubmit(): void {
 
     if (this.productForm.invalid) {
       return;
     }
+
+    console.log(this.productForm.get('productImages')?.value);
 
     this.productService.createProduct(this.productForm.value).subscribe({
       next: (response) => {

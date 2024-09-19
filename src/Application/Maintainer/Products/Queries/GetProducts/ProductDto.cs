@@ -19,7 +19,7 @@ public class ProductDto
                 ForMember(d => d.ScaleName, opt => opt.MapFrom(s => s.Scale.ScaleName)).
                 ForMember(d => d.ManufacturerName, opt => opt.MapFrom(s => s.Manufacturer.ManufacturerName)).
                 ForMember(d => d.FranchiseName, opt => opt.MapFrom(s => s.Franchise.FranchiseName)).
-                ForMember(d => d.SerieName, opt => opt.MapFrom(s => s.Serie!.SerieName)).
+                ForMember(d => d.SerieName, opt => opt.MapFrom(s => s.Serie != null ? s.Serie.SerieName : "Toda la Franquicia" )).
                 ForMember(d => d.Categories, opt => opt.MapFrom(s => s.ProductCategories.Select(cp => cp.Category.CategoryName).ToList()));
         }
     }

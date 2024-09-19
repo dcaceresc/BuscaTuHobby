@@ -35,7 +35,7 @@ public class EmailService(IConfiguration configuration) : IEmailService
     }
 
 
-    public string GetEmailRegisterTemplate(Guid userId, string token )
+    public string GetEmailRegisterTemplate(Guid userId, string token)
     {
         // Obtener la URL base desde appsettings
         var baseUrl = _configuration["BaseUrl"];
