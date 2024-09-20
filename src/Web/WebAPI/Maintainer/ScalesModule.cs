@@ -5,7 +5,7 @@ using Application.Maintainer.Scales.Queries.GetScaleById;
 using Application.Maintainer.Scales.Queries.GetScales;
 using Domain.Common;
 
-namespace WebAPI.Modules;
+namespace WebAPI.Maintainer;
 
 public class ScalesModule : CarterModule
 {

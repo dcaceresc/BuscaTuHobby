@@ -6,7 +6,7 @@ using Application.Maintainer.Inventories.Queries.GetInventories;
 using Application.Maintainer.Inventories.Queries.GetInventoryById;
 using Domain.Common;
 
-namespace WebAPI.Modules;
+namespace WebAPI.Maintainer;
 
 public class InventoriesModule : CarterModule
 {

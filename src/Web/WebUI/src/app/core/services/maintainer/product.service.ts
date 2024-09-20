@@ -21,7 +21,11 @@ export class ProductService {
 
   public createProduct(product: CreateProduct) {
 
-    return this.http.post<ApiResponse<ProductDto>>('/api/products', product);
+    return this.http.post<ApiResponse<string>>('/api/products', product);
+  }
+
+  public createProductImages(id: string | null, images: FormData) {
+    return this.http.post<ApiResponse<any>>(`/api/products/${id}/images`, images);
   }
 
   public updateProduct(id : string | null,product: ProductDto) {

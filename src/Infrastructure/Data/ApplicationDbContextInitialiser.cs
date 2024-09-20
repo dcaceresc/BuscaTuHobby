@@ -78,6 +78,8 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         {
             var user = User.Create(email, _utilityService.HashPassword(password));
 
+            user.Update(email, true, false, null);
+
             await _context.Users.AddAsync(user);
 
             await _context.SaveChangesAsync();

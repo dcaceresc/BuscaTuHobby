@@ -1,6 +1,6 @@
 ﻿namespace Application.Maintainer.Products.Commands.CreateProduct;
 
-public record CreateProduct : IRequest<ApiResponse>
+public record CreateProduct : IRequest<ApiResponse<Guid>>
 {
     public string ProductName { get; init; } = default!;
     public Guid ScaleId { get; init; }
@@ -13,17 +13,15 @@ public record CreateProduct : IRequest<ApiResponse>
     public string ProductDescription { get; init; } = default!;
     public DateOnly ProductReleaseDate { get; init; }
     public IList<Guid> CategoryIds { get; init; } = default!;
-    public IList<string> ProductImages { get; init; } = default!;
 
 }
 
-public class CreateProductHandler(IApplicationDbContext context, IApiResponseService responseService, IUtilityService utilityService) : IRequestHandler<CreateProduct, ApiResponse>
+public class CreateProductHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<CreateProduct, ApiResponse<Guid>>
 {
     private readonly IApplicationDbContext _context = context;
     private readonly IApiResponseService _responseService = responseService;
-    private readonly IUtilityService _utilityService = utilityService;
 
-    public async Task<ApiResponse> Handle(CreateProduct request, CancellationToken cancellationToken)
+    public async Task<ApiResponse<Guid>> Handle(CreateProduct request, CancellationToken cancellationToken)
     {
         try
         {
@@ -42,23 +40,11 @@ public class CreateProductHandler(IApplicationDbContext context, IApiResponseSer
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            for (var i = 0; i < request.ProductImages.Count; i++)
-            {
-                var productImage = product.AssignImage(i);
-
-                _context.ProductImages.Add(productImage);
-
-                await _context.SaveChangesAsync(cancellationToken);
-
-                await _utilityService.SaveImagen(request.ProductImages[i], productImage.ProductImageId);
-
-            }
-
-            return _responseService.Success("Producto creado correctamente");
+            return _responseService.Success(product.ProductId);
         }
         catch (Exception)
         {
-            return _responseService.Fail("No se pudo crear el producto");
+            return _responseService.Fail<Guid>("No se pudo crear el producto");
         }
     }
 }

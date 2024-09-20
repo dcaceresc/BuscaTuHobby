@@ -17,6 +17,7 @@ public class GetProductByIdHandler(IApplicationDbContext context, IMapper mapper
                            .Include(x => x.ProductCategories)
                            .Include(x => x.Franchise)
                            .ThenInclude(x => x.Series)
+                           .Include(x => x.ProductImages)
                            .AsNoTracking()
                            .ProjectTo<ProductVM>(_mapper.ConfigurationProvider)
                            .FirstOrDefaultAsync(x => x.ProductId == request.ProductId, cancellationToken);

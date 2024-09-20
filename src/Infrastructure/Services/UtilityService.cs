@@ -69,7 +69,8 @@ public class UtilityService : IUtilityService
 
     public async Task SaveImagen(string image, Guid name)
     {
-        string imagesFolderPath = "Imagenes";
+        string imagesFolderPath = SiteConfig.FolderImage;
+
         if (!Directory.Exists(imagesFolderPath))
         {
             Directory.CreateDirectory(imagesFolderPath);

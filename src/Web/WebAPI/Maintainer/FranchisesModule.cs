@@ -5,7 +5,7 @@ using Application.Maintainer.Franchises.Queries.GetFranchiseById;
 using Application.Maintainer.Franchises.Queries.GetFranchises;
 using Domain.Common;
 
-namespace WebAPI.Modules;
+namespace WebAPI.Maintainer;
 
 public class FranchisesModule : CarterModule
 {

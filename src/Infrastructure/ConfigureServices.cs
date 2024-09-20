@@ -1,4 +1,5 @@
-﻿using Infrastructure.Data.Interceptors;
+﻿using Infrastructure.Configuration;
+using Infrastructure.Data.Interceptors;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -26,6 +27,7 @@ public static class ConfigureServices
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
         services.AddScoped<ApplicationDbContextInitialiser>();
+        services.AddScoped<ConfigurationInitializer>();
 
         services.AddScoped<IApiResponseService, ApiResponseService>();
         services.AddScoped<IUtilityService, UtilityService>();

@@ -1,6 +1,7 @@
 ﻿using Application.Maintainer.Configurations.Commands.CreateConfiguration;
 using Application.Maintainer.Configurations.Commands.ToggleConfiguration;
 using Application.Maintainer.Configurations.Commands.UpdateConfiguration;
+using Application.Maintainer.Configurations.Queries.GetConfigurationById;
 using Application.Maintainer.Configurations.Queries.GetConfigurations;
 using Domain.Common;
 
@@ -13,6 +14,7 @@ public class ConfigurationsModule : CarterModule
         var group = app.MapGroup("api/configurations").RequireAuthorization();
 
         group.MapGet("", GetConfigurations);
+        group.MapGet("{id:guid}", GetConfigurationById);
         group.MapPost("", CreateConfiguration);
         group.MapPut("{id:guid}", UpdateConfiguration);
         group.MapDelete("{id:guid}", ToggleConfiguration);
@@ -20,6 +22,8 @@ public class ConfigurationsModule : CarterModule
     }
 
     private static async Task<IResult> GetConfigurations(ISender sender) => Results.Ok(await sender.Send(new GetConfigurations()));
+
+    private static async Task<IResult> GetConfigurationById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetConfigurationById(id)));
 
     private static async Task<IResult> CreateConfiguration(ISender sender, CreateConfiguration command) => Results.Ok(await sender.Send(command));
 

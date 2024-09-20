@@ -23,6 +23,7 @@ export interface ProductVM{
     productDescription:string;
     productReleaseDate:string;
     categoryIds:string[];
+    productImages:string[];
 }
 
 

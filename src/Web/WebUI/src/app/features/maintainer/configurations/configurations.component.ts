@@ -59,13 +59,33 @@ export class ConfigurationsComponent implements OnInit {
     });
   }
 
+  public onEdit(id: string): void {
+    this.router.navigate(['/maintainer/configurations/update', id]);
+  }
+
+  public onToggle(id: string): void {
+    this.configurationService.toggleConfiguration(id).subscribe({
+      next: (response) => {
+        if (!response.success) {
+          this.notificationService.showError('Error', response.message);
+          return;
+        }
+        this.notificationService.showSuccess('Exito', response.message);
+        this.loadConfigurations();
+      },
+      error: () => {
+        this.notificationService.showDefaultError();
+      }
+    });
+  }
+
   public onAction(event: { id: string, actionKey: string }) {
     switch (event.actionKey) {
       case 'edit':
-        // this.onEdit(event.id);
+        this.onEdit(event.id);
         break;
       case 'toggle':
-        // this.onToggle(event.id);
+        this.onToggle(event.id);
         break;
     }
   }

@@ -44,7 +44,8 @@ export class AddProductComponent implements OnInit {
   public series = signal<SerieByFranchiseDto[]>([]);
   public categories = signal<CategoryDto[]>([]);
   public today = new Date().toISOString().split('T')[0];
-  public productImage = signal<string[]>([]);
+  public productImagePreview = signal<string[]>([]);
+  public productImage = signal<File[]>([]);
 
 
   public ngOnInit(): void {
@@ -60,7 +61,6 @@ export class AddProductComponent implements OnInit {
       productDescription: ['',Validators.required],
       productReleaseDate: [this.today,Validators.required],
       categoryIds: ['', Validators.required],
-      productImages: ['',Validators.required],
     });
 
     this.loadScales();
@@ -179,24 +179,35 @@ export class AddProductComponent implements OnInit {
   public onImageChange(event: any): void {
     const files = event.target.files;
     const readers = [];
+    const maxSize = 5 * 1024 * 1024; // Máximo de 5MB
 
-    this.productImage.set([]);
-
+    this.productImagePreview.set([]);
+  
+    this.productImage.set(files);
+  
     for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+  
+      if (!file.type.startsWith('image/')) {
+        this.notificationService.showError('Error', 'Solo se permiten imágenes');
+        continue;
+      }
+  
+      if (file.size > maxSize) {
+        this.notificationService.showError('Error', 'El archivo supera el tamaño máximo permitido (5MB)');
+        continue;
+      }
+  
       const reader = new FileReader();
       readers.push(reader);
-
+  
       reader.onload = (e) => {
-        // @ts-ignore
         const base64Image = e.target!.result as string;
-        this.productImage.update(images => [...images, base64Image]);
-        this.productForm.get('productImages')?.setValue(this.productImage());
+        this.productImagePreview.update(images => [...images, base64Image]);
       };
-
-      reader.readAsDataURL(files[i]);
+  
+      reader.readAsDataURL(file);
     }
-
-    
   }
 
 
@@ -206,7 +217,11 @@ export class AddProductComponent implements OnInit {
       return;
     }
 
-    console.log(this.productForm.get('productImages')?.value);
+    if (this.productImage().length === 0) {
+      this.notificationService.showError('Error', 'Debe seleccionar al menos una imagen');
+      return;
+    }
+
 
     this.productService.createProduct(this.productForm.value).subscribe({
       next: (response) => {
@@ -214,7 +229,30 @@ export class AddProductComponent implements OnInit {
           this.notificationService.showError("Error",response.message);
           return;
         }
-        this.notificationService.showSuccess("Exito",response.message);
+        
+
+        const productId = response.data as string;
+
+        const formData = new FormData();
+
+        for(let i = 0; i < this.productImage().length; i++){
+          formData.append('productImages', this.productImage()[i]);
+        }
+
+        this.productService.createProductImages(productId, formData).subscribe({
+          next: (response) => {
+            if(!response.success){
+              this.notificationService.showError("Error",response.message);
+              return;
+            }
+          },
+          error: () => {
+            this.notificationService.showDefaultError();
+          },
+        });
+
+
+
         this.router.navigate(['/maintainer/products']);
       },
       error: (error) => {

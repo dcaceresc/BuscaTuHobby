@@ -5,7 +5,7 @@ using Application.Maintainer.Manufacturers.Queries.GetManufacturerById;
 using Application.Maintainer.Manufacturers.Queries.GetManufacturers;
 using Domain.Common;
 
-namespace WebAPI.Modules;
+namespace WebAPI.Maintainer;
 
 public class ManufacturersModule : CarterModule
 {

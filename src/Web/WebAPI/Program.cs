@@ -1,5 +1,6 @@
 using Application;
 using Infrastructure;
+using Infrastructure.Configuration;
 using Infrastructure.Data;
 using WebAPI;
 
@@ -18,6 +19,8 @@ var app = builder.Build();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
+
+await app.InitialiseConfigurationAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

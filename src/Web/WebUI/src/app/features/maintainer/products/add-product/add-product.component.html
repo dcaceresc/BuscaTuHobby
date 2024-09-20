@@ -107,20 +107,20 @@
       </div>
       <div class="tab-pane fade" id="imagenes" role="tabpanel" aria-labelledby="imagenes-tab">
         <div class="form-floating mt-2 mb-3">
-          <input type="file" class="form-control" id="productImages" formControlName="productImages" (change)="onImageChange($event)" multiple>
+          <input type="file" class="form-control" id="productImages" (change)="onImageChange($event)" multiple required>
           <label for="productImages">Subir Imágenes</label>
         </div>
 
         <h3 class="mt-3">Vista Previa</h3>
 
 
-        @if (productImage().length > 0) {
+        <div *ngIf="productImagePreview().length > 0">
           <div id="carouselExampleIndicators" data-bs-theme="dark" class="carousel slide mt-3" data-bs-ride="carousel">
             <div class="carousel-indicators">
-              <button *ngFor="let image of productImage(); let i = index" type="button" data-bs-target="#carouselExampleIndicators" [attr.data-bs-slide-to]="i" [class.active]="i === 0" [attr.aria-current]="i === 0 ? 'true' : null" [attr.aria-label]="'Slide ' + (i + 1)"></button>
+              <button *ngFor="let image of productImagePreview(); let i = index" type="button" data-bs-target="#carouselExampleIndicators" [attr.data-bs-slide-to]="i" [class.active]="i === 0" [attr.aria-current]="i === 0 ? 'true' : null" [attr.aria-label]="'Slide ' + (i + 1)"></button>
             </div>
             <div class="carousel-inner">
-              <div class="carousel-item" *ngFor="let image of productImage(); let i = index" [class.active]="i === 0">
+              <div class="carousel-item" *ngFor="let image of productImagePreview(); let i = index" [class.active]="i === 0">
                 <img [src]="image" class="d-block w-50 mx-auto" alt="...">
               </div>
             </div>
@@ -133,9 +133,7 @@
               <span class="visually-hidden">Next</span>
             </button>
           </div>
-        }@else{
-          <p class="text-center mt-3">No se han subido imágenes</p>
-        }
+        </div>
        
 
       </div>

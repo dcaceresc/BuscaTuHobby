@@ -5,7 +5,7 @@ using Application.Maintainer.Groups.Queries.GetGroupById;
 using Application.Maintainer.Groups.Queries.GetGroups;
 using Domain.Common;
 
-namespace WebAPI.Modules;
+namespace WebAPI.Maintainer;
 
 public class GroupsModule : CarterModule
 {

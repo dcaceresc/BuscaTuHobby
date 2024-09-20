@@ -3,11 +3,11 @@
 namespace Infrastructure.Data
 {
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options), IApplicationDbContext
-    { 
-        
+    {
+
         public DbSet<Category> Categories => Set<Category>();
 
-        public DbSet<Configuration> Configurations => Set<Configuration>();
+        public DbSet<Domain.Entities.Configuration> Configurations => Set<Domain.Entities.Configuration>();
         public DbSet<Favorite> Favorites => Set<Favorite>();
         public DbSet<FavoriteProduct> FavoriteProducts => Set<FavoriteProduct>();
         public DbSet<Franchise> Franchises => Set<Franchise>();
@@ -44,7 +44,7 @@ namespace Infrastructure.Data
                 .HasMaxLength(50);
             });
 
-            builder.Entity<Configuration>(entity =>
+            builder.Entity<Domain.Entities.Configuration>(entity =>
             {
                 entity.HasKey(e => e.ConfigurationId);
 
@@ -304,7 +304,7 @@ namespace Infrastructure.Data
             });
 
             ConfigureAuditableEntity<Category>(builder);
-            ConfigureAuditableEntity<Configuration>(builder);
+            ConfigureAuditableEntity<Domain.Entities.Configuration>(builder);
             ConfigureAuditableEntity<Favorite>(builder);
             ConfigureAuditableEntity<FavoriteProduct>(builder);
             ConfigureAuditableEntity<Franchise>(builder);

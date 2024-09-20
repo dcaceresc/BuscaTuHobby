@@ -5,7 +5,7 @@ using Application.Maintainer.Categories.Queries.GetCategories;
 using Application.Maintainer.Categories.Queries.GetCategoryById;
 using Domain.Common;
 
-namespace WebAPI.Modules;
+namespace WebAPI.Maintainer;
 
 public class CategoriesModule : CarterModule
 {

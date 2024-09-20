@@ -6,7 +6,7 @@ using Application.Maintainer.Series.Queries.GetSeries;
 using Application.Maintainer.Series.Queries.GetSeriesByFranchise;
 using Domain.Common;
 
-namespace WebAPI.Modules;
+namespace WebAPI.Maintainer;
 
 public class SeriesModule : CarterModule
 {

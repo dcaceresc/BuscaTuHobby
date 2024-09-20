@@ -45,6 +45,7 @@ public static class ConfigureServices
 
         services.AddSingleton<IAuthenticationService, AuthenticationService>();
 
+
         services.AddAuthorizationBuilder()
            .AddPolicy("SuperAdmin", policy => policy.RequireRole("SuperAdmin"))
            .AddPolicy("Administrator", policy => policy.RequireRole("SuperAdmin", "Administrator"));

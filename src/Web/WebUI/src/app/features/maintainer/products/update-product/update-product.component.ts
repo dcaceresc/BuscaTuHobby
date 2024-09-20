@@ -47,6 +47,8 @@ export class UpdateProductComponent implements OnInit {
   public series = signal<SerieByFranchiseDto[]>([]);
   public categories = signal<CategoryDto[]>([]);
   public today = new Date().toISOString().split('T')[0];
+  public productImagePreview = signal<{path: string , base64: string}[]>([]);
+  public productImage = signal<File[]>([]);
 
 
   public ngOnInit(): void {
@@ -80,6 +82,15 @@ export class UpdateProductComponent implements OnInit {
         if (response.data.serieId === null) {
           this.productForm.get('serieId')?.setValue('');
         }
+
+        var images  = new Array<{path: string , base64: string}>();
+        for (let i = 0; i < response.data.productImages.length; i++) {
+          images.push({path: response.data.productImages[i], base64: ''});
+        }
+
+        this.productImagePreview.set(images);
+
+        console.log(response.data.productImages);
 
         this.loadSeries();
       },

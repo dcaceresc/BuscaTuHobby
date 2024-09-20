@@ -5,7 +5,7 @@ using Application.Maintainer.Stores.Queries.GetStoreById;
 using Application.Maintainer.Stores.Queries.GetStores;
 using Domain.Common;
 
-namespace WebAPI.Modules;
+namespace WebAPI.Maintainer;
 
 public class StoresModule : CarterModule
 {
