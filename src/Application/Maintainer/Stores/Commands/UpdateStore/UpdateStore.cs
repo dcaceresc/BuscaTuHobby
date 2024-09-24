@@ -4,7 +4,6 @@ public record UpdateStore : IRequest<ApiResponse>
 {
     public Guid StoreId { get; init; }
     public string StoreName { get; init; } = default!;
-    public string StoreAddress { get; init; } = default!;
     public string StoreWebSite { get; init; } = default!;
 
 }
@@ -22,7 +21,7 @@ public class UpdateStoreHandler(IApplicationDbContext context, IApiResponseServi
 
             Guard.Against.NotFound(store, $"No existe tienda con la Id {request.StoreId}");
 
-            store.Update(request.StoreName, request.StoreAddress, request.StoreWebSite);
+            store.Update(request.StoreName, request.StoreWebSite);
 
             await _context.SaveChangesAsync(cancellationToken);
 

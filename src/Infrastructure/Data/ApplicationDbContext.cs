@@ -6,7 +6,7 @@ namespace Infrastructure.Data
     {
 
         public DbSet<Category> Categories => Set<Category>();
-
+        public DbSet<City> Cities => Set<City>();
         public DbSet<Domain.Entities.Configuration> Configurations => Set<Domain.Entities.Configuration>();
         public DbSet<Favorite> Favorites => Set<Favorite>();
         public DbSet<FavoriteProduct> FavoriteProducts => Set<FavoriteProduct>();
@@ -18,11 +18,13 @@ namespace Infrastructure.Data
         public DbSet<ProductCategory> ProductCategories => Set<ProductCategory>();
         public DbSet<ProductImage> ProductImages => Set<ProductImage>();
         public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+        public DbSet<Region> Regions => Set<Region>();
         public DbSet<Review> Reviews => Set<Review>();
         public DbSet<Role> Roles => Set<Role>();
         public DbSet<Scale> Scales => Set<Scale>();
         public DbSet<Serie> Series => Set<Serie>();
         public DbSet<Store> Stores => Set<Store>();
+        public DbSet<StoreAddress> StoresAddresses => Set<StoreAddress>();
         public DbSet<User> Users => Set<User>();
         public DbSet<UserRole> UserRoles => Set<UserRole>();
 
@@ -42,6 +44,20 @@ namespace Infrastructure.Data
 
                 entity.Property(e => e.CategoryName)
                 .HasMaxLength(50);
+            });
+
+            builder.Entity<City>(entity =>
+            {
+                entity.HasKey(e => e.CityId);
+
+                entity.Property(e => e.CityId)
+                .HasDefaultValueSql("(newid())");
+
+                entity.HasIndex(e => e.CityName)
+                .IsUnique();
+
+                entity.Property(e => e.CityName)
+                .HasMaxLength(100);
             });
 
             builder.Entity<Domain.Entities.Configuration>(entity =>
@@ -196,6 +212,20 @@ namespace Infrastructure.Data
                 .HasColumnType("varchar(32)");
             });
 
+            builder.Entity<Region>(entity =>
+            {
+                entity.HasKey(e => e.RegionId);
+
+                entity.Property(e => e.RegionId)
+                .HasDefaultValueSql("(newid())");
+
+                entity.HasIndex(e => e.RegionName)
+                .IsUnique();
+
+                entity.Property(e => e.RegionName)
+                .HasMaxLength(100);
+            });
+
 
             builder.Entity<Review>(entity =>
             {
@@ -264,11 +294,22 @@ namespace Infrastructure.Data
                 entity.Property(e => e.StoreName)
                 .HasMaxLength(50);
 
-                entity.Property(e => e.StoreAddress)
-                .HasMaxLength(100);
-
                 entity.Property(e => e.StoreWebSite)
                 .HasMaxLength(100);
+            });
+
+            builder.Entity<StoreAddress>(entity =>
+            {
+                entity.HasKey(e => e.StoreAddressId);
+
+                entity.Property(e => e.StoreAddressId)
+                .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.Street)
+                .HasMaxLength(100);
+
+                entity.Property(e => e.ZipCode)
+                .HasMaxLength(10);
             });
 
             builder.Entity<User>(entity =>

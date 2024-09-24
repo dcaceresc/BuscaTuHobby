@@ -21,12 +21,12 @@ public class Inventory : AuditableEntity
     public virtual Store Store { get; private set; } = default!;
 
 
-    public static Inventory Create(Guid storeId, Guid productId, int price)
+    public static Inventory Create(Guid productId, Guid storeId, int price)
     {
         return new Inventory(storeId, productId, price);
     }
 
-    public void Update(Guid storeId, Guid productId, int price)
+    public void Update(Guid productId, Guid storeId, int price)
     {
         StoreId = storeId;
         ProductId = productId;

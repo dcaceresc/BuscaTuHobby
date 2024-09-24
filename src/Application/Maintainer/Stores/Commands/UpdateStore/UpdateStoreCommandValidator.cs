@@ -8,7 +8,6 @@ public class UpdateStoreCommandValidator : AbstractValidator<UpdateStore>
     {
         RuleFor(v => v.StoreId).NotNull();
         RuleFor(v => v.StoreName).NotNull();
-        RuleFor(v => v.StoreAddress).NotNull();
         RuleFor(v => v.StoreWebSite).NotNull();
     }
 }

@@ -2,11 +2,10 @@
 
 public class Store : AuditableEntity
 {
-    private Store(string storeName, string storeAddress, string storeWebSite)
+    private Store(string storeName, string storeWebSite)
     {
         StoreId = Guid.NewGuid();
         StoreName = storeName;
-        StoreAddress = storeAddress;
         StoreWebSite = storeWebSite;
         IsActive = true;
     }
@@ -14,21 +13,24 @@ public class Store : AuditableEntity
 
     public Guid StoreId { get; private set; }
     public string StoreName { get; private set; } = default!;
-    public string StoreAddress { get; private set; } = default!;
     public string StoreWebSite { get; private set; } = default!;
     public bool IsActive { get; private set; }
     public virtual ICollection<Inventory> Inventories { get; private set; } = default!;
 
-    public static Store Create(string storeName, string storeAddress, string storeWebSite)
+    public static Store Create(string storeName, string storeWebSite)
     {
-        return new Store(storeName, storeAddress, storeWebSite);
+        return new Store(storeName, storeWebSite);
     }
 
-    public void Update(string storeName, string storeAddress, string storeWebSite)
+    public void Update(string storeName, string storeWebSite)
     {
         StoreName = storeName;
-        StoreAddress = storeAddress;
         StoreWebSite = storeWebSite;
+    }
+
+    public StoreAddress AssignAddress(string street, Guid cityId, string? zipCode)
+    {
+        return StoreAddress.Create(street, StoreId, cityId, zipCode);
     }
 
     public void ToggleActive()

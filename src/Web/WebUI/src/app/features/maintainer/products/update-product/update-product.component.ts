@@ -90,8 +90,6 @@ export class UpdateProductComponent implements OnInit {
 
         this.productImagePreview.set(images);
 
-        console.log(response.data.productImages);
-
         this.loadSeries();
       },
       error: () => {

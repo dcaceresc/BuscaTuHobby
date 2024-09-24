@@ -32,7 +32,7 @@ public class ConfigurationInitializer(ILogger<ConfigurationInitializer> logger, 
 
             foreach (var configuration in configurations)
             {
-                SiteConfig.SiteStatus = Convert.ToBoolean(configurations.Find(x => x.ConfigurationName.Equals("ValidaLOGMOD", StringComparison.CurrentCultureIgnoreCase))?.ConfigurationValue ?? "true");
+                SiteConfig.SiteStatus = Convert.ToBoolean(configurations.Find(x => x.ConfigurationName.Equals("SiteStatus", StringComparison.CurrentCultureIgnoreCase))?.ConfigurationValue ?? "true");
                 SiteConfig.FolderImage = configurations.Find(x => x.ConfigurationName.Equals("FolderImage", StringComparison.CurrentCultureIgnoreCase))?.ConfigurationValue ?? "images";
             }
         }

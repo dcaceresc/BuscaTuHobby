@@ -2,6 +2,7 @@
 {
     public interface IApplicationDbContext
     {
+        DbSet<City> Cities { get; }
         DbSet<Configuration> Configurations { get; }
         DbSet<Group> Groups { get; }
         DbSet<Franchise> Franchises { get; }
@@ -13,8 +14,10 @@
         DbSet<Scale> Scales { get; }
         DbSet<Serie> Series { get; }
         DbSet<Store> Stores { get; }
+        DbSet<StoreAddress> StoresAddresses { get; }
         DbSet<Category> Categories { get; }
         DbSet<User> Users { get; }
+        DbSet<Region> Regions { get; }
         DbSet<Role> Roles { get; }
         DbSet<RefreshToken> RefreshTokens { get; }
         DbSet<UserRole> UserRoles { get; }

@@ -1,6 +1,6 @@
 ﻿namespace Application.Maintainer.Stores.Commands.CreateStore;
 
-public record CreateStore(string StoreName, string StoreAddress, string StoreWebSite) : IRequest<ApiResponse>;
+public record CreateStore(string StoreName, string StoreWebSite) : IRequest<ApiResponse>;
 
 public class CreateStoreHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<CreateStore, ApiResponse>
 {
@@ -11,7 +11,7 @@ public class CreateStoreHandler(IApplicationDbContext context, IApiResponseServi
     {
         try
         {
-            var store = Store.Create(request.StoreName, request.StoreAddress, request.StoreWebSite);
+            var store = Store.Create(request.StoreName, request.StoreWebSite);
 
             _context.Stores.Add(store);
 
