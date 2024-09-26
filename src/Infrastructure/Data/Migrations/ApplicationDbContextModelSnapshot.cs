@@ -62,14 +62,14 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("Domain.Entities.City", b =>
+            modelBuilder.Entity("Domain.Entities.Commune", b =>
                 {
-                    b.Property<Guid>("CityId")
+                    b.Property<Guid>("CommuneId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("(newid())");
 
-                    b.Property<string>("CityName")
+                    b.Property<string>("CommuneName")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -92,14 +92,14 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("RegionId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("CityId");
+                    b.HasKey("CommuneId");
 
-                    b.HasIndex("CityName")
+                    b.HasIndex("CommuneName")
                         .IsUnique();
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("Cities");
+                    b.ToTable("Communes");
                 });
 
             modelBuilder.Entity("Domain.Entities.Configuration", b =>
@@ -545,6 +545,9 @@ namespace Infrastructure.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<int>("RegionOrder")
+                        .HasColumnType("int");
+
                     b.HasKey("RegionId");
 
                     b.HasIndex("RegionName")
@@ -752,7 +755,7 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("(newid())");
 
-                    b.Property<Guid>("CityId")
+                    b.Property<Guid>("CommuneId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Created")
@@ -784,7 +787,7 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasKey("StoreAddressId");
 
-                    b.HasIndex("CityId");
+                    b.HasIndex("CommuneId");
 
                     b.HasIndex("StoreId");
 
@@ -887,10 +890,10 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Group");
                 });
 
-            modelBuilder.Entity("Domain.Entities.City", b =>
+            modelBuilder.Entity("Domain.Entities.Commune", b =>
                 {
                     b.HasOne("Domain.Entities.Region", "Region")
-                        .WithMany("Cities")
+                        .WithMany("Communes")
                         .HasForeignKey("RegionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1053,9 +1056,9 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.Entities.StoreAddress", b =>
                 {
-                    b.HasOne("Domain.Entities.City", "City")
+                    b.HasOne("Domain.Entities.Commune", "Commune")
                         .WithMany("StoreAddresses")
-                        .HasForeignKey("CityId")
+                        .HasForeignKey("CommuneId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1065,7 +1068,7 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("City");
+                    b.Navigation("Commune");
 
                     b.Navigation("Store");
                 });
@@ -1094,7 +1097,7 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("ProductCategories");
                 });
 
-            modelBuilder.Entity("Domain.Entities.City", b =>
+            modelBuilder.Entity("Domain.Entities.Commune", b =>
                 {
                     b.Navigation("StoreAddresses");
                 });
@@ -1132,7 +1135,7 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.Entities.Region", b =>
                 {
-                    b.Navigation("Cities");
+                    b.Navigation("Communes");
                 });
 
             modelBuilder.Entity("Domain.Entities.Role", b =>

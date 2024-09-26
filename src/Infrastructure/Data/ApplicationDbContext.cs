@@ -6,7 +6,7 @@ namespace Infrastructure.Data
     {
 
         public DbSet<Category> Categories => Set<Category>();
-        public DbSet<City> Cities => Set<City>();
+        public DbSet<Commune> Communes => Set<Commune>();
         public DbSet<Domain.Entities.Configuration> Configurations => Set<Domain.Entities.Configuration>();
         public DbSet<Favorite> Favorites => Set<Favorite>();
         public DbSet<FavoriteProduct> FavoriteProducts => Set<FavoriteProduct>();
@@ -46,17 +46,17 @@ namespace Infrastructure.Data
                 .HasMaxLength(50);
             });
 
-            builder.Entity<City>(entity =>
+            builder.Entity<Commune>(entity =>
             {
-                entity.HasKey(e => e.CityId);
+                entity.HasKey(e => e.CommuneId);
 
-                entity.Property(e => e.CityId)
+                entity.Property(e => e.CommuneId)
                 .HasDefaultValueSql("(newid())");
 
-                entity.HasIndex(e => e.CityName)
+                entity.HasIndex(e => e.CommuneName)
                 .IsUnique();
 
-                entity.Property(e => e.CityName)
+                entity.Property(e => e.CommuneName)
                 .HasMaxLength(100);
             });
 

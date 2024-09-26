@@ -28,9 +28,9 @@ public class Store : AuditableEntity
         StoreWebSite = storeWebSite;
     }
 
-    public StoreAddress AssignAddress(string street, Guid cityId, string? zipCode)
+    public StoreAddress AssignAddress(string street, Guid communeId, string? zipCode)
     {
-        return StoreAddress.Create(street, StoreId, cityId, zipCode);
+        return StoreAddress.Create(street, StoreId, communeId, zipCode);
     }
 
     public void ToggleActive()

@@ -1,5 +1,5 @@
 ﻿namespace Application.Maintainer.Regions.Commands.CreateRegion;
-public record CreateRegion(string RegionName) : IRequest<ApiResponse>;
+public record CreateRegion(string RegionName, int RegionOrder) : IRequest<ApiResponse>;
 
 public class CreateRegionHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<CreateRegion, ApiResponse>
 {
@@ -10,7 +10,7 @@ public class CreateRegionHandler(IApplicationDbContext context, IApiResponseServ
     {
         try
         {
-            var region = Region.Create(request.RegionName);
+            var region = Region.Create(request.RegionName,request.RegionOrder);
 
             _context.Regions.Add(region);
 

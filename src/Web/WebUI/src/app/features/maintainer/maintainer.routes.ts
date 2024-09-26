@@ -12,4 +12,6 @@ export const routes : Routes =[
     {path: 'products', loadChildren: () => import('./products/products.routes').then(m => m.routes)},
     {path: 'configurations', loadChildren: () => import('./configurations/configurations.routes').then(m => m.routes)},
     {path: 'inventories', loadChildren: () => import('./inventories/inventories.routes').then(m => m.routes)},
+    {path: 'regions', loadChildren: () => import('./regions/regions.routes').then(m => m.routes)},
+    {path: 'communes', loadChildren: () => import('./communes/communes.routes').then(m => m.routes)},
 ];

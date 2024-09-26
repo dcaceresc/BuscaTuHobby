@@ -1,5 +1,5 @@
 ﻿namespace Application.Maintainer.Regions.Commands.UpdateRegion;
-public record UpdateRegion(Guid RegionId, string RegionName) : IRequest<ApiResponse>;
+public record UpdateRegion(Guid RegionId, string RegionName, int RegionOrder) : IRequest<ApiResponse>;
 
 public class UpdateRegionHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<UpdateRegion, ApiResponse>
 {
@@ -14,7 +14,7 @@ public class UpdateRegionHandler(IApplicationDbContext context, IApiResponseServ
 
             Guard.Against.NotFound(region, $"No existe la región con la Id {request.RegionId}");
 
-            region.Update(request.RegionName);
+            region.Update(request.RegionName, request.RegionOrder);
 
             await _context.SaveChangesAsync(cancellationToken);
 

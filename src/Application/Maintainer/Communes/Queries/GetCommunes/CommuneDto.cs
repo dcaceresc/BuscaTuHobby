@@ -1,8 +1,9 @@
-﻿namespace Application.Maintainer.Cities.Queries.GetCities;
+﻿namespace Application.Maintainer.Cities.Queries.GetCommunes;
 
-public class CityDto
+public class CommuneDto
 {
-    public Guid CityId { get; set; }
+    public Guid CommuneId { get; set; }
+    public string CommuneName { get; set; } = default!;
     public string RegionName { get; set; } = default!;
     public bool IsActive { get; set; }
 
@@ -11,7 +12,7 @@ public class CityDto
     {
         public Mapping()
         {
-            CreateMap<City, CityDto>()
+            CreateMap<Commune, CommuneDto>()
                 .ForMember(d => d.RegionName, opt => opt.MapFrom(s => s.Region.RegionName));
         }
     }

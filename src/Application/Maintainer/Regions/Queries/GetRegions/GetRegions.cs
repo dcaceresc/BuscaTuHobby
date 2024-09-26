@@ -14,6 +14,7 @@ public class GetRegionsHandler(IApplicationDbContext context, IMapper mapper, IA
             var regions = await _context.Regions
             .AsNoTracking()
             .ProjectTo<RegionDto>(_mapper.ConfigurationProvider)
+            .OrderBy(x => x.RegionOrder)
             .ToListAsync(cancellationToken);
 
             return _responseService.Success(regions);

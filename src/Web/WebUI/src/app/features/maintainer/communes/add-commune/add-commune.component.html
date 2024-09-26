@@ -1,0 +1,28 @@
+<div class="card mt-3">
+    <div class="card-header bg-primary">
+      Crear Comuna
+    </div>
+    <div class="card-body">
+      <form [formGroup]="communeForm" (ngSubmit)="onSubmit()">
+    
+        <div class="form-floating mb-3">
+          <input type="text" class="form-control" id="communeName" formControlName="communeName" placeholder="Nombre" required>
+          <label for="communeName" class="form-label">Nombre</label>
+        </div>
+
+        <div class="ng-select-container-custom mb-3">
+            <label for="roleIds" class="floating-label">Region</label>
+            <ng-select [items]="regions()" bindValue="regionId" bindLabel="regionName" id="regionId" formControlName="regionId" class="form-select ng-select-custom">
+            </ng-select>
+        </div>
+
+  
+        <div class="d-flex justify-content-end">
+          <button type="submit" class="btn bg-primary me-2" [disabled]="communeForm.invalid">Guardar</button>
+          <button type="button" class="btn bg-secundary" (click)="onCancel()">Cancelar</button>
+        </div>
+      </form>
+  
+  
+    </div>
+  </div>

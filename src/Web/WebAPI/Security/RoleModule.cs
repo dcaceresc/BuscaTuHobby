@@ -11,7 +11,7 @@ public class RoleModule : CarterModule
 {
     public override void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("api/security/roles").RequireAuthorization("SuperAdmin");
+        var group = app.MapGroup("api/security/roles").RequireAuthorization(policy => policy.RequireRole("SuperAdmin"));
 
         group.MapGet("", GetRoles);
         group.MapGet("{id:guid}", GetRoleById);

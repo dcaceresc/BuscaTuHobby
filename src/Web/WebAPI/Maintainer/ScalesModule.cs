@@ -11,7 +11,8 @@ public class ScalesModule : CarterModule
 {
     public override void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("api/scales").RequireAuthorization();
+        var group = app.MapGroup("api/scales")
+            .RequireAuthorization(policy => policy.RequireRole("SuperAdmin", "Administrator"));
 
         group.MapGet("", GetScales);
         group.MapGet("{id:guid}", GetScaleById);

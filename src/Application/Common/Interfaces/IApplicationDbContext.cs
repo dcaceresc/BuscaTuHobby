@@ -2,7 +2,7 @@
 {
     public interface IApplicationDbContext
     {
-        DbSet<City> Cities { get; }
+        DbSet<Commune> Communes { get; }
         DbSet<Configuration> Configurations { get; }
         DbSet<Group> Groups { get; }
         DbSet<Franchise> Franchises { get; }
