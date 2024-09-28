@@ -5,6 +5,11 @@ export interface CommuneDto {
     isActive:boolean;
 }
 
+export interface CommuneByRegion{
+    communeId:string;
+    communeName:string;
+}
+
 export interface CommuneVM{
     communeId:string;
     communeName:string;

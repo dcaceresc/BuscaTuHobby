@@ -71,8 +71,17 @@ export class TableComponent {
     this.actionEvent.emit({ id, actionKey });
   }
 
-  public isBoolean(value: any): boolean {
-    return typeof value === 'boolean';
+
+  public getTypedValue(value: any) : string {
+    if (typeof value === 'boolean') {
+      return "boolean";
+    } else if (Array.isArray(value)) {
+      return "array";
+    } else if (typeof value === 'number') {
+      return "number";
+    }
+
+    return value;
   }
 
   

@@ -20,7 +20,7 @@
                     @for (column of columns; track column) { 
                         @if($index !== 0 && column.key !== 'isActive') {
                             
-                            @if (isBoolean(row[column.key]))
+                            @if (getTypedValue(row[column.key]) === 'boolean')
                             {
                                 <td class="text-center">
                                     @if (row[column.key]) {
@@ -28,6 +28,14 @@
                                     }
                                 </td>
                                 
+                            }@else if (getTypedValue(row[column.key]) === 'array') {
+                                <td>
+                                    <ul>
+                                        @for (item of row[column.key]; track item) {
+                                            <li>{{ item }}</li>
+                                        }
+                                    </ul>
+                                </td>
                             }
                             @else
                             {

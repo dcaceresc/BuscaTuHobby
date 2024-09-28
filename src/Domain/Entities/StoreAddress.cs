@@ -8,6 +8,7 @@ public class StoreAddress : AuditableEntity
         CommuneId = communeId;
         StoreId = storeId;
         ZipCode = zipCode;
+        IsActive = true;
     }
 
     public Guid StoreAddressId { get; private set; }

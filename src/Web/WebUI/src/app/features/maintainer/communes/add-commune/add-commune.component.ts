@@ -31,7 +31,7 @@ export class AddCommuneComponent implements OnInit {
   public ngOnInit() : void {
     this.communeForm = this.formBuilder.group({
       communeName: ['',Validators.required],
-      regionId: ['',Validators.required]
+      regionId: [null,Validators.required]
     });
 
     this.loadRegions();

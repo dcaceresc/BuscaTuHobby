@@ -1,15 +1,22 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { StoreService } from '../../../../core/services/maintainer/store.service';
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { RegionService } from '../../../../core/services/maintainer/region.service';
+import { CommuneService } from '../../../../core/services/maintainer/commune.service';
+import { RegionDto } from '../../../../core/models/maintainer/region.model';
+import { CommuneByRegion, CommuneDto } from '../../../../core/models/maintainer/commune.model';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-add-store',
   standalone: true,
   imports: [
-    CommonModule,ReactiveFormsModule
+    CommonModule,ReactiveFormsModule, ButtonComponent, NgSelectModule
   ],
   templateUrl: './add-store.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -20,15 +27,82 @@ export class AddStoreComponent implements OnInit{
   private formBuilder = inject(FormBuilder);
   private storeService = inject(StoreService);
   private notificationService = inject(NotificationService);
+  private regionService = inject(RegionService);
+  private communeService = inject(CommuneService);
 
   public storeForm!: FormGroup;
+  public regions = signal<RegionDto[]>([]);
+  public communes = signal<CommuneByRegion[]>([]);
 
   public ngOnInit(): void {
     this.storeForm = this.formBuilder.group({
       storeName: ['', Validators.required],
-      storeAddress: ['', Validators.required],
-      storeWebSite: ['', Validators.required]
+      storeWebSite: ['', Validators.required],
+      storeAddress: this.formBuilder.array([]),
     });
+
+    this.addStoreAddress();
+    this.loadRegions();
+  }
+
+  public loadRegions() {
+    this.regionService.getRegions().subscribe({
+      next: (response) => {
+
+        if (!response.success) {
+          this.notificationService.showError('Error', response.message);
+          return;
+        }
+
+        this.regions.set(response.data.filter(region => region.isActive));
+      },
+      error: () => {
+        this.notificationService.showDefaultError();
+      }
+    });
+  }
+
+  public onChangeRegion(index:number): void {
+
+    const regionId = this.storeAddress.at(index).get('regionId')?.value;
+
+    if (!regionId)
+      return;
+
+    this.communeService.getCommunesByRegionId(regionId).subscribe({
+      next: (response) => {
+        if (!response.success) {
+          this.notificationService.showError('Error', response.message);
+          return;
+        }
+
+        this.communes.set(response.data);
+      },
+      error: () => {
+        this.notificationService.showDefaultError();
+      }
+    });
+  }
+
+  
+
+  public addStoreAddress(): void {
+    const storeAddress = this.storeForm.get('storeAddress') as FormArray;
+    storeAddress.push(this.formBuilder.group({
+      storeId: [''],
+      regionId: [null, Validators.required],
+      communeId: [null, Validators.required],
+      street: ['', Validators.required],
+      zipCode: [''],
+    }));
+  }
+
+  public get storeAddress() {
+    return this.storeForm.controls["storeAddress"] as FormArray;
+  }
+
+  public removeStoreAddress(index: number): void {
+    this.storeAddress.removeAt(index);
   }
 
   public onSubmit(): void {
@@ -42,6 +116,31 @@ export class AddStoreComponent implements OnInit{
           this.notificationService.showError("Error", response.message);
           return;
         }
+
+        var storeId = response.data;
+        const saveObservables = [];
+
+        for (let index = 0; index < this.storeAddress.length; index++) {
+          const storeAddress = this.storeAddress.at(index).value;
+
+          storeAddress.storeId = storeId;
+
+          saveObservables.push(this.storeService.createStoreAddress(storeId, storeAddress));
+        }
+
+        forkJoin(saveObservables).subscribe({
+          next: (responses) => {
+            responses.forEach((response) => {
+              if (!response.success) {
+                this.notificationService.showError("Error", response.message);
+                return;
+              }
+            });
+          },
+          error: () => {
+            this.notificationService.showDefaultError();
+          }
+        });
 
         this.notificationService.showSuccess("Exito", response.message);
         this.router.navigate(['/maintainer/stores']);

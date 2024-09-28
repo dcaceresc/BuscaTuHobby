@@ -11,15 +11,42 @@
         </div>
 
         <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="storeAddress" formControlName="storeAddress" placeholder="Dirección" required>
-            <label for="storeAddress" class="form-label">Dirección</label>
-        </div>
-
-        <div class="form-floating mb-3">
             <input type="text" class="form-control" id="storeWebSite" formControlName="storeWebSite" placeholder="Sitio Web" required>
             <label for="storeWebSite" class="form-label">Sitio Web</label>
         </div>
 
+        <div class="card mb-3">
+          <div class="card-header bg-primary d-flex justify-content-between align-items-center">
+            <h6 class="card-title">Direcciones</h6>
+            <app-button [class]="'btn btn-success'" [text]="'Crear Dirección'" [icon]="'add'" (click)="addStoreAddress()"></app-button> 
+          </div>
+          <div class="card-body">
+            <div formArrayName="storeAddress">
+              @for (item of storeAddress.controls; track $index) {
+                <div class="row g-2 mb-3" [formGroupName]="$index">
+                  <div class="col-md-3">
+                    <ng-select formControlName="regionId" [items]="regions()" bindLabel="regionName" bindValue="regionId" placeholder="Seleccione una región" (click)="onChangeRegion($index)" required>
+                    </ng-select>
+                  </div>
+                  <div class="col-md-3">
+                    <ng-select formControlName="communeId" [items]="communes()" bindLabel="communeName" bindValue="communeId" placeholder="Seleccione una comuna" required>
+                    </ng-select>
+                  </div>
+                  <div class="col-md-3">
+                    <input type="text" class="form-control" formControlName="street" placeholder="Calle" (keydown.enter)="$event.preventDefault()" required>
+                  </div>
+                  <div class="col-md-2">
+                    <input type="text" class="form-control" formControlName="zipCode" placeholder="Código Postal" (keydown.enter)="$event.preventDefault()" required>
+                  </div>
+                  <div class="col-md-1">
+                    <app-button [class]="'btn btn-danger'" [text]="'Eliminar'" [icon]="'delete'" (click)="removeStoreAddress($index)"></app-button>
+                  </div>
+                </div>
+              }
+            </div>
+            
+          </div>
+        </div>
   
         <div class="d-flex justify-content-end">
           <button type="submit" class="btn bg-primary me-2" [disabled]="storeForm.invalid">Guardar</button>

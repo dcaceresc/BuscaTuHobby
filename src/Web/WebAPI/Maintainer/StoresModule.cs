@@ -1,6 +1,9 @@
 ﻿using Application.Maintainer.Stores.Commands.CreateStore;
+using Application.Maintainer.Stores.Commands.CreateStoreAddress;
+using Application.Maintainer.Stores.Commands.DeleteStoreAddress;
 using Application.Maintainer.Stores.Commands.ToggleStore;
 using Application.Maintainer.Stores.Commands.UpdateStore;
+using Application.Maintainer.Stores.Commands.UpdateStoreAddress;
 using Application.Maintainer.Stores.Queries.GetStoreById;
 using Application.Maintainer.Stores.Queries.GetStores;
 using Domain.Common;
@@ -17,8 +20,11 @@ public class StoresModule : CarterModule
         group.MapGet("", GetStores);
         group.MapGet("{id:guid}", GetStoreById);
         group.MapPost("", CreateStore);
+        group.MapPost("{id:guid}/address", CreateStoreAddress);
         group.MapPut("{id:guid}", UpdateStore);
+        group.MapPut("{id:guid}/address/{storeAddressId:guid}", UpdateStoreAddress);
         group.MapDelete("{id:guid}", ToggleStore);
+        group.MapDelete("{id:guid}/address/{storeAddressId:guid}", DeleteStoreAddress);
 
     }
 
@@ -28,6 +34,14 @@ public class StoresModule : CarterModule
 
     private static async Task<IResult> CreateStore(ISender sender, CreateStore command) => Results.Ok(await sender.Send(command));
 
+    private static async Task<IResult> CreateStoreAddress(ISender sender, Guid id, CreateStoreAddress command)
+    {
+        if (id != command.StoreId)
+            return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {id} no coincide con la Id de la tienda {command.StoreId}" });
+
+        return Results.Ok(await sender.Send(command));
+    }
+
     private static async Task<IResult> UpdateStore(ISender sender, Guid id, UpdateStore command)
     {
         if (id != command.StoreId)
@@ -36,5 +50,19 @@ public class StoresModule : CarterModule
         return Results.Ok(await sender.Send(command));
     }
 
+    private static async Task<IResult> UpdateStoreAddress(ISender sender, Guid id, Guid storeAddressId, UpdateStoreAddress command)
+    {
+        if (id != command.StoreId)
+            return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {id} no coincide con la Id de la tienda {command.StoreId}" });
+
+        if (storeAddressId != command.StoreAddressId)
+            return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {storeAddressId} no coincide con la Id de la dirección de la tienda {command.StoreAddressId}" });
+
+        return Results.Ok(await sender.Send(command));
+    }
+
     private static async Task<IResult> ToggleStore(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleStore(id)));
+
+    private static async Task<IResult> DeleteStoreAddress(ISender sender, Guid id, Guid storeAddressId) => Results.Ok(await sender.Send(new DeleteStoreAddress(id, storeAddressId)));
+
 }

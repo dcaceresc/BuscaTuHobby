@@ -4,6 +4,7 @@ using Application.Maintainer.Communes.Commands.CreateCommune;
 using Application.Maintainer.Communes.Commands.UpdateCommune;
 using Application.Maintainer.Communes.Commands.ToggleCommune;
 using Application.Maintainer.Communes.Queries.GetCommunes;
+using Application.Maintainer.Communes.Queries.GetCommunesByRegionId;
 
 namespace WebAPI.Maintainer;
 
@@ -16,6 +17,7 @@ public class CommuneModule : CarterModule
 
         group.MapGet("", GetCommunes);
         group.MapGet("{id:guid}", GetCommuneById);
+        group.MapGet("region/{id:guid}", GetCommuneByRegion);
         group.MapPost("", CreateCommune);
         group.MapPut("{id:guid}", UpdateCommune);
         group.MapDelete("{id:guid}", ToggleCommune);
@@ -24,6 +26,8 @@ public class CommuneModule : CarterModule
     private static async Task<IResult> GetCommunes(ISender sender) => Results.Ok(await sender.Send(new GetCommunes()));
 
     private static async Task<IResult> GetCommuneById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetCommuneById(id)));
+
+    private static async Task<IResult> GetCommuneByRegion(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetCommunesByRegionId(id)));
 
     private static async Task<IResult> CreateCommune(ISender sender, CreateCommune command) => Results.Ok(await sender.Send(command));
 

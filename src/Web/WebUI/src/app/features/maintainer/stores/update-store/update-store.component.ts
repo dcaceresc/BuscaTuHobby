@@ -1,15 +1,21 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StoreService } from '../../../../core/services/maintainer/store.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { ButtonComponent } from '../../../../shared/components/button/button.component';
+import { RegionDto } from '../../../../core/models/maintainer/region.model';
+import { CommuneByRegion } from '../../../../core/models/maintainer/commune.model';
+import { NgSelectModule } from '@ng-select/ng-select';
+import { RegionService } from '../../../../core/services/maintainer/region.service';
+import { CommuneService } from '../../../../core/services/maintainer/commune.service';
 
 @Component({
   selector: 'app-update-store',
   standalone: true,
   imports: [
-    CommonModule,ReactiveFormsModule
+    CommonModule,ReactiveFormsModule,ButtonComponent,NgSelectModule
   ],
   templateUrl: './update-store.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -21,9 +27,13 @@ export class UpdateStoreComponent implements OnInit{
   private formBuilder = inject(FormBuilder);
   private storeService = inject(StoreService);
   private notificationService = inject(NotificationService);
+  private regionService = inject(RegionService);
+  private communeService = inject(CommuneService);
 
   public storeForm!: FormGroup;
   public storeId!: string | null;
+  public regions = signal<RegionDto[]>([]);
+  public communes = signal<CommuneByRegion[]>([]);
 
   public ngOnInit(): void {
 
@@ -32,8 +42,8 @@ export class UpdateStoreComponent implements OnInit{
     this.storeForm = this.formBuilder.group({
       storeId: [this.storeId],
       storeName: ['', Validators.required],
-      storeAddress: ['', Validators.required],
-      storeWebSite: ['', Validators.required]
+      storeWebSite: ['', Validators.required],
+      storeAddress: this.formBuilder.array([]),
     });
 
     this.storeService.getStoreById(this.storeId).subscribe({
@@ -45,6 +55,87 @@ export class UpdateStoreComponent implements OnInit{
         }
 
         this.storeForm.patchValue(response.data);
+        response.data.storeAddress.forEach((storeAddress: any, index: number) => {
+          const storeAddressForm = this.formBuilder.group({
+            storeAddressId: [storeAddress.storeAddressId],
+            storeId: [storeAddress.storeId],
+            regionId: [storeAddress.regionId, Validators.required],
+            communeId: [storeAddress.communeId, Validators.required],
+            street: [storeAddress.street, Validators.required],
+            zipCode: [storeAddress.zipCode],
+            deleted: [false]
+          });
+    
+          this.storeAddress.push(storeAddressForm);
+    
+          // Disparar evento de cambio de región para cargar las comunas
+          this.onChangeRegion(index);
+        });
+      },
+      error: () => {
+        this.notificationService.showDefaultError();
+      }
+    });
+
+    this.loadRegions();
+  }
+
+  public loadRegions() {
+    this.regionService.getRegions().subscribe({
+      next: (response) => {
+
+        if (!response.success) {
+          this.notificationService.showError('Error', response.message);
+          return;
+        }
+
+        this.regions.set(response.data.filter(region => region.isActive));
+      },
+      error: () => {
+        this.notificationService.showDefaultError();
+      }
+    });
+  }
+
+
+  public addStoreAddress(): void {
+    const storeAddress = this.storeForm.get('storeAddress') as FormArray;
+    storeAddress.push(this.formBuilder.group({
+      storeAddressId: [null],
+      storeId: [''],
+      regionId: [null, Validators.required],
+      communeId: [null, Validators.required],
+      street: ['', Validators.required],
+      zipCode: [''],
+      deleted: [false]
+    }));
+  }
+
+  public get storeAddress() {
+    return this.storeForm.controls["storeAddress"] as FormArray;
+  }
+
+  public removeStoreAddress(index: number): void {
+    const storeAddress = this.storeAddress.at(index);
+    storeAddress.get('deleted')?.setValue(true);
+
+  }
+
+  public onChangeRegion(index:number): void {
+
+    const regionId = this.storeAddress.at(index).get('regionId')?.value;
+
+    if (!regionId)
+      return;
+
+    this.communeService.getCommunesByRegionId(regionId).subscribe({
+      next: (response) => {
+        if (!response.success) {
+          this.notificationService.showError('Error', response.message);
+          return;
+        }
+
+        this.communes.set(response.data);
       },
       error: () => {
         this.notificationService.showDefaultError();
@@ -64,6 +155,54 @@ export class UpdateStoreComponent implements OnInit{
           this.notificationService.showError("Error", response.message);
           return;
         }
+
+        var storeAddress = this.storeForm.get('storeAddress') as FormArray;
+
+        storeAddress.controls.forEach(control => {
+
+          control.get('storeId')?.setValue(this.storeId);
+
+          if(control.get('deleted')?.value){
+            this.storeService.deleteStoreAddress(this.storeId, control.get('storeAddressId')?.value).subscribe({
+              next: (response) => {
+                if(!response.success){
+                  this.notificationService.showError("Error", response.message);
+                  return;
+                }
+              },
+              error: () => {
+                this.notificationService.showDefaultError();
+              }
+            });
+          }else if(control.get('storeAddressId')?.value == null){
+
+            this.storeService.createStoreAddress(this.storeId, control.value).subscribe({
+              next: (response) => {
+                if(!response.success){
+                  this.notificationService.showError("Error", response.message);
+                  return;
+                }
+              },
+              error: () => {
+                this.notificationService.showDefaultError();
+              }
+            });
+          }else{
+
+            this.storeService.updateStoreAddress(this.storeId, control.get('storeAddressId')?.value, control.value).subscribe({
+              next: (response) => {
+                if(!response.success){
+                  this.notificationService.showError("Error", response.message);
+                  return;
+                }
+              },
+              error: () => {
+                this.notificationService.showDefaultError();
+              }
+            });
+          }
+        });
+
 
         this.notificationService.showSuccess("Success", response.message);
         this.router.navigate(['/maintainer/stores']);

@@ -16,6 +16,7 @@ public class Store : AuditableEntity
     public string StoreWebSite { get; private set; } = default!;
     public bool IsActive { get; private set; }
     public virtual ICollection<Inventory> Inventories { get; private set; } = default!;
+    public virtual ICollection<StoreAddress> StoreAddresses { get; private set; } = default!;
 
     public static Store Create(string storeName, string storeWebSite)
     {

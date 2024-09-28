@@ -13,6 +13,7 @@ public class GetStoreByIdQueryHandler(IApplicationDbContext context, IMapper map
         try
         {
             var store = await _context.Stores
+              .Include(x => x.StoreAddresses)
               .AsNoTracking()
               .ProjectTo<StoreVM>(_mapper.ConfigurationProvider)
               .FirstOrDefaultAsync(x => x.StoreId == request.StoreId, cancellationToken);
