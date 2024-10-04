@@ -32,7 +32,6 @@ export class CategoriesComponent implements OnInit{
     this.columns = [
       { name: '#', key: 'categoryId' },
       { name: 'Nombre', key: 'categoryName' },
-      { name: 'Grupo', key: 'groupName' },
       { name: 'Acciones', key: 'isActive' },
     ];
 

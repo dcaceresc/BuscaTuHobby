@@ -5,13 +5,13 @@ namespace Infrastructure.Data
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options), IApplicationDbContext
     {
 
-        public DbSet<Category> Categories => Set<Category>();
+        public DbSet<SubMenu> SubMenus => Set<SubMenu>();
         public DbSet<Commune> Communes => Set<Commune>();
         public DbSet<Domain.Entities.Configuration> Configurations => Set<Domain.Entities.Configuration>();
         public DbSet<Favorite> Favorites => Set<Favorite>();
         public DbSet<FavoriteProduct> FavoriteProducts => Set<FavoriteProduct>();
         public DbSet<Franchise> Franchises => Set<Franchise>();
-        public DbSet<Group> Groups => Set<Group>();
+        public DbSet<Menu> Menus => Set<Menu>();
         public DbSet<Inventory> Inventories => Set<Inventory>();
         public DbSet<Manufacturer> Manufacturers => Set<Manufacturer>();
         public DbSet<Product> Products => Set<Product>();
@@ -21,7 +21,7 @@ namespace Infrastructure.Data
         public DbSet<Region> Regions => Set<Region>();
         public DbSet<Review> Reviews => Set<Review>();
         public DbSet<Role> Roles => Set<Role>();
-        public DbSet<Scale> Scales => Set<Scale>();
+        public DbSet<Category> Categories => Set<Category>();
         public DbSet<Serie> Series => Set<Serie>();
         public DbSet<Store> Stores => Set<Store>();
         public DbSet<StoreAddress> StoresAddresses => Set<StoreAddress>();
@@ -32,17 +32,17 @@ namespace Infrastructure.Data
         protected override void OnModelCreating(ModelBuilder builder)
         {
 
-            builder.Entity<Category>(entity =>
+            builder.Entity<SubMenu>(entity =>
             {
-                entity.HasKey(e => e.CategoryId);
+                entity.HasKey(e => e.SubMenuId);
 
-                entity.Property(e => e.CategoryId)
+                entity.Property(e => e.SubMenuId)
                 .HasDefaultValueSql("(newid())");
 
-                entity.HasIndex(e => e.CategoryName)
+                entity.HasIndex(e => e.SubMenuName)
                 .IsUnique();
 
-                entity.Property(e => e.CategoryName)
+                entity.Property(e => e.SubMenuName)
                 .HasMaxLength(50);
             });
 
@@ -118,17 +118,17 @@ namespace Infrastructure.Data
                 .HasMaxLength(50);
             });
 
-            builder.Entity<Group>(entity =>
+            builder.Entity<Menu>(entity =>
             {
-                entity.HasKey(e => e.GroupId);
+                entity.HasKey(e => e.MenuId);
 
-                entity.Property(e => e.GroupId)
+                entity.Property(e => e.MenuId)
                 .HasDefaultValueSql("(newid())");
 
-                entity.HasIndex(e => e.GroupName)
+                entity.HasIndex(e => e.MenuName)
                 .IsUnique();
 
-                entity.Property(e => e.GroupName)
+                entity.Property(e => e.MenuName)
                 .HasMaxLength(50);
             });
 
@@ -253,17 +253,17 @@ namespace Infrastructure.Data
                 .HasMaxLength(50);
             });
 
-            builder.Entity<Scale>(entity =>
+            builder.Entity<Category>(entity =>
             {
-                entity.HasKey(e => e.ScaleId);
+                entity.HasKey(e => e.CategoryId);
 
-                entity.Property(e => e.ScaleId)
+                entity.Property(e => e.CategoryId)
                 .HasDefaultValueSql("(newid())");
 
-                entity.HasIndex(e => e.ScaleName)
+                entity.HasIndex(e => e.CategoryName)
                 .IsUnique();
 
-                entity.Property(e => e.ScaleName)
+                entity.Property(e => e.CategoryName)
                 .HasMaxLength(50);
             });
 
@@ -344,12 +344,12 @@ namespace Infrastructure.Data
                 .HasForeignKey(d => d.UserId);
             });
 
-            ConfigureAuditableEntity<Category>(builder);
+            ConfigureAuditableEntity<SubMenu>(builder);
             ConfigureAuditableEntity<Domain.Entities.Configuration>(builder);
             ConfigureAuditableEntity<Favorite>(builder);
             ConfigureAuditableEntity<FavoriteProduct>(builder);
             ConfigureAuditableEntity<Franchise>(builder);
-            ConfigureAuditableEntity<Group>(builder);
+            ConfigureAuditableEntity<Menu>(builder);
             ConfigureAuditableEntity<Inventory>(builder);
             ConfigureAuditableEntity<Manufacturer>(builder);
             ConfigureAuditableEntity<Product>(builder);
@@ -358,7 +358,7 @@ namespace Infrastructure.Data
             ConfigureAuditableEntity<RefreshToken>(builder);
             ConfigureAuditableEntity<Review>(builder);
             ConfigureAuditableEntity<Role>(builder);
-            ConfigureAuditableEntity<Scale>(builder);
+            ConfigureAuditableEntity<Category>(builder);
             ConfigureAuditableEntity<Serie>(builder);
             ConfigureAuditableEntity<Store>(builder);
             ConfigureAuditableEntity<User>(builder);

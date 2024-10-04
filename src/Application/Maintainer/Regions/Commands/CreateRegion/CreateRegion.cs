@@ -10,7 +10,7 @@ public class CreateRegionHandler(IApplicationDbContext context, IApiResponseServ
     {
         try
         {
-            var region = Region.Create(request.RegionName,request.RegionOrder);
+            var region = Region.Create(request.RegionName, request.RegionOrder);
 
             _context.Regions.Add(region);
 

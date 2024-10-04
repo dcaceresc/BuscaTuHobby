@@ -1,5 +1,5 @@
 ﻿namespace Application.Maintainer.Stores.Commands.UpdateStoreAddress;
-public record UpdateStoreAddress(Guid StoreAddressId ,Guid StoreId, string Street, Guid CommuneId, string? ZipCode) : IRequest<ApiResponse>;
+public record UpdateStoreAddress(Guid StoreAddressId, Guid StoreId, string Street, Guid CommuneId, string? ZipCode) : IRequest<ApiResponse>;
 
 public class UpdateStoreAddressHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<UpdateStoreAddress, ApiResponse>
 {
@@ -14,7 +14,7 @@ public class UpdateStoreAddressHandler(IApplicationDbContext context, IApiRespon
 
             Guard.Against.NotFound(storeAddress, $"No existe dirección de la tienda con Id {request.StoreAddressId}");
 
-            storeAddress.Update(request.Street,request.StoreId, request.CommuneId, request.ZipCode);
+            storeAddress.Update(request.Street, request.StoreId, request.CommuneId, request.ZipCode);
 
             await _context.SaveChangesAsync(cancellationToken);
 

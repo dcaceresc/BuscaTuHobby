@@ -1,7 +1,7 @@
 ﻿namespace Domain.Entities;
 public class StoreAddress : AuditableEntity
 {
-    private StoreAddress(string street,Guid storeId, Guid communeId, string? zipCode)
+    private StoreAddress(string street, Guid storeId, Guid communeId, string? zipCode)
     {
         StoreAddressId = Guid.NewGuid();
         Street = street;
@@ -14,7 +14,7 @@ public class StoreAddress : AuditableEntity
     public Guid StoreAddressId { get; private set; }
     public Guid StoreId { get; private set; }
     public string Street { get; private set; } = default!;
-    public Guid CommuneId { get; private set; } 
+    public Guid CommuneId { get; private set; }
     public string? ZipCode { get; private set; }
     public bool IsActive { get; private set; }
 
@@ -23,7 +23,7 @@ public class StoreAddress : AuditableEntity
 
     public static StoreAddress Create(string street, Guid storeId, Guid communeId, string? zipCode)
     {
-        return new StoreAddress(street,storeId, communeId, zipCode);
+        return new StoreAddress(street, storeId, communeId, zipCode);
     }
 
     public void Update(string street, Guid storeId, Guid communeId, string? zipCode)

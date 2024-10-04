@@ -13,7 +13,6 @@ public class GetProductsHandler(IApplicationDbContext context, IMapper mapper, I
         try
         {
             var products = await _context.Products.
-                Include(x => x.Scale).
                 Include(x => x.Manufacturer).
                 Include(x => x.ProductCategories).
                 Include(x => x.Franchise).

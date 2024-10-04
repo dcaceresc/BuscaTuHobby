@@ -22,7 +22,7 @@ public class StoreAddressDto
     public Guid StoreAddressId { get; set; }
     public string Street { get; set; } = default!;
     public Guid CommuneId { get; set; }
-    public Guid RegionId { get; set; } 
+    public Guid RegionId { get; set; }
     public string? ZipCode { get; set; }
 
     public class Mapping : Profile

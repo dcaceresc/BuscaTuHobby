@@ -4,11 +4,9 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { ProductService } from '../../../../core/services/maintainer/product.service';
-import { ScaleService } from '../../../../core/services/maintainer/scale.service';
 import { ManufacturerService } from '../../../../core/services/maintainer/manufacturer.service';
 import { FranchiseService } from '../../../../core/services/maintainer/franchise.service';
 import { SerieService } from '../../../../core/services/maintainer/serie.service';
-import { ScaleDto } from '../../../../core/models/maintainer/scale.model';
 import { ManufacturerDto } from '../../../../core/models/maintainer/manufacturer.model';
 import { FranchiseDto } from '../../../../core/models/maintainer/franchise.model';
 import { SerieByFranchiseDto } from '../../../../core/models/maintainer/serie.model';
@@ -31,14 +29,12 @@ export class AddProductComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private productService = inject(ProductService);
   private notificationService = inject(NotificationService);
-  private scaleService = inject(ScaleService);
   private manufacturerService = inject(ManufacturerService);
   private franchiseService = inject(FranchiseService);
   private serieService = inject(SerieService);
   private categoryService = inject(CategoryService);
 
   public productForm!: FormGroup;
-  public scales = signal<ScaleDto[]>([]);
   public manufacturers = signal<ManufacturerDto[]>([]);
   public franchises = signal<FranchiseDto[]>([]);
   public series = signal<SerieByFranchiseDto[]>([]);
@@ -51,7 +47,6 @@ export class AddProductComponent implements OnInit {
   public ngOnInit(): void {
     this.productForm = this.formBuilder.group({
       productName: ['',Validators.required],
-      scaleId: ['',Validators.required],
       manufacturerId: ['',Validators.required],
       franchiseId: ['',Validators.required],
       serieId: [''],
@@ -63,29 +58,13 @@ export class AddProductComponent implements OnInit {
       categoryIds: ['', Validators.required],
     });
 
-    this.loadScales();
     this.loadManufacturers();
     this.loadFranchises();
     this.loadSeries();
     this.loadCategories();
   }
 
-  public loadScales(): void {
-    this.scaleService.getScales().subscribe({
-      next: (response) => {
 
-        if(!response.success){
-          this.notificationService.showError("Error",response.message);
-          return;
-        }
-
-        this.scales.set(response.data);
-      },
-      error: () => {
-        this.notificationService.showDefaultError();
-      },
-    });
-  }
 
   public loadManufacturers(): void {
     this.manufacturerService.getManufacturers().subscribe({

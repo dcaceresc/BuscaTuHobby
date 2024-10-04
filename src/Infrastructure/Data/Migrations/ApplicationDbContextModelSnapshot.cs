@@ -40,9 +40,6 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("varchar(30)");
 
-                    b.Property<Guid>("GroupId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -56,8 +53,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("CategoryName")
                         .IsUnique();
-
-                    b.HasIndex("GroupId");
 
                     b.ToTable("Categories");
                 });
@@ -235,41 +230,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Franchises");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Group", b =>
-                {
-                    b.Property<Guid>("GroupId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("(newid())");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("varchar(30)");
-
-                    b.Property<string>("GroupName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("varchar(30)");
-
-                    b.HasKey("GroupId");
-
-                    b.HasIndex("GroupName")
-                        .IsUnique();
-
-                    b.ToTable("Groups");
-                });
-
             modelBuilder.Entity("Domain.Entities.Inventory", b =>
                 {
                     b.Property<Guid>("InventoryId")
@@ -345,6 +305,41 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Manufacturers");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Menu", b =>
+                {
+                    b.Property<Guid>("MenuId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("varchar(30)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("varchar(30)");
+
+                    b.Property<string>("MenuName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("MenuId");
+
+                    b.HasIndex("MenuName")
+                        .IsUnique();
+
+                    b.ToTable("Menus");
+                });
+
             modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
                     b.Property<Guid>("ProductId")
@@ -398,9 +393,6 @@ namespace Infrastructure.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<Guid>("ScaleId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid?>("SerieId")
                         .HasColumnType("uniqueidentifier");
 
@@ -412,8 +404,6 @@ namespace Infrastructure.Data.Migrations
 
                     b.HasIndex("ProductName")
                         .IsUnique();
-
-                    b.HasIndex("ScaleId");
 
                     b.HasIndex("SerieId");
 
@@ -633,41 +623,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Roles");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Scale", b =>
-                {
-                    b.Property<Guid>("ScaleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("(newid())");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("varchar(30)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("varchar(30)");
-
-                    b.Property<string>("ScaleName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("ScaleId");
-
-                    b.HasIndex("ScaleName")
-                        .IsUnique();
-
-                    b.ToTable("Scales");
-                });
-
             modelBuilder.Entity("Domain.Entities.Serie", b =>
                 {
                     b.Property<Guid>("SerieId")
@@ -794,6 +749,46 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("StoresAddresses");
                 });
 
+            modelBuilder.Entity("Domain.Entities.SubMenu", b =>
+                {
+                    b.Property<Guid>("SubMenuId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("varchar(30)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("varchar(30)");
+
+                    b.Property<Guid>("MenuId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SubMenuName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("SubMenuId");
+
+                    b.HasIndex("MenuId");
+
+                    b.HasIndex("SubMenuName")
+                        .IsUnique();
+
+                    b.ToTable("SubMenus");
+                });
+
             modelBuilder.Entity("Domain.Entities.User", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -879,17 +874,6 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("UserRoles");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Category", b =>
-                {
-                    b.HasOne("Domain.Entities.Group", "Group")
-                        .WithMany("Categories")
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Group");
-                });
-
             modelBuilder.Entity("Domain.Entities.Commune", b =>
                 {
                     b.HasOne("Domain.Entities.Region", "Region")
@@ -964,12 +948,6 @@ namespace Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Scale", "Scale")
-                        .WithMany("Products")
-                        .HasForeignKey("ScaleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.Entities.Serie", "Serie")
                         .WithMany()
                         .HasForeignKey("SerieId");
@@ -977,8 +955,6 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Franchise");
 
                     b.Navigation("Manufacturer");
-
-                    b.Navigation("Scale");
 
                     b.Navigation("Serie");
                 });
@@ -1063,7 +1039,7 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.Store", "Store")
-                        .WithMany()
+                        .WithMany("StoreAddresses")
                         .HasForeignKey("StoreId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1071,6 +1047,17 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Commune");
 
                     b.Navigation("Store");
+                });
+
+            modelBuilder.Entity("Domain.Entities.SubMenu", b =>
+                {
+                    b.HasOne("Domain.Entities.Menu", "Menu")
+                        .WithMany("SubMenus")
+                        .HasForeignKey("MenuId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Menu");
                 });
 
             modelBuilder.Entity("Domain.Entities.UserRole", b =>
@@ -1114,14 +1101,14 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Series");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Group", b =>
-                {
-                    b.Navigation("Categories");
-                });
-
             modelBuilder.Entity("Domain.Entities.Manufacturer", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Menu", b =>
+                {
+                    b.Navigation("SubMenus");
                 });
 
             modelBuilder.Entity("Domain.Entities.Product", b =>
@@ -1143,14 +1130,11 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("UserRoles");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Scale", b =>
-                {
-                    b.Navigation("Products");
-                });
-
             modelBuilder.Entity("Domain.Entities.Store", b =>
                 {
                     b.Navigation("Inventories");
+
+                    b.Navigation("StoreAddresses");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>

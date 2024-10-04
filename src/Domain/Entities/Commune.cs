@@ -19,7 +19,7 @@ public class Commune : AuditableEntity
 
     public static Commune Create(string communeName, Guid regionId)
     {
-        return new Commune(communeName,regionId);
+        return new Commune(communeName, regionId);
     }
 
     public void Update(string communeName, Guid regionId)

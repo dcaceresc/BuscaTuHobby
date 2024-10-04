@@ -12,7 +12,6 @@ public class GetProductByIdHandler(IApplicationDbContext context, IMapper mapper
         try
         {
             var product = await _context.Products
-                           .Include(x => x.Scale)
                            .Include(x => x.Manufacturer)
                            .Include(x => x.ProductCategories)
                            .Include(x => x.Franchise)

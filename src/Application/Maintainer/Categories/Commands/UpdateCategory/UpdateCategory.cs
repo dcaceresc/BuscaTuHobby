@@ -1,8 +1,8 @@
 ﻿namespace Application.Maintainer.Categories.Commands.UpdateCategory;
 
-public record UpdateCategory(Guid CategoryId, string CategoryName, Guid GroupId) : IRequest<ApiResponse>;
+public record UpdateCategory(Guid CategoryId, string CategoryName) : IRequest<ApiResponse>;
 
-public class UpdateSubCategoryHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<UpdateCategory, ApiResponse>
+public class UpdateScaleHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<UpdateCategory, ApiResponse>
 {
     private readonly IApplicationDbContext _context = context;
     private readonly IApiResponseService _responseService = responseService;
@@ -11,15 +11,15 @@ public class UpdateSubCategoryHandler(IApplicationDbContext context, IApiRespons
     {
         try
         {
-            var entity = await _context.Categories.FindAsync([request.CategoryId], cancellationToken);
+            var category = await _context.Categories.FindAsync([request.CategoryId], cancellationToken);
 
-            Guard.Against.NotFound(entity, $"No existe categoria con la Id {request.CategoryId}");
+            Guard.Against.NotFound(category, $"No existe una categoria con la Id {request.CategoryId}");
 
-            entity.Update(request.CategoryName, request.GroupId);
+            category.Update(request.CategoryName);
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return _responseService.Success("Categoría actualizada exitosamente");
+            return _responseService.Success("Escala actualizada correctamente");
         }
         catch (Common.Exceptions.NotFoundException ex)
         {
@@ -27,7 +27,7 @@ public class UpdateSubCategoryHandler(IApplicationDbContext context, IApiRespons
         }
         catch (Exception)
         {
-            return _responseService.Fail("Error al actualizar la categoría");
+            return _responseService.Fail("Ocurrió un error al actualizar la escala");
         }
     }
 }

@@ -4,12 +4,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductService } from '../../../../core/services/maintainer/product.service';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { ScaleService } from '../../../../core/services/maintainer/scale.service';
+
 import { ManufacturerService } from '../../../../core/services/maintainer/manufacturer.service';
 import { FranchiseService } from '../../../../core/services/maintainer/franchise.service';
 import { SerieService } from '../../../../core/services/maintainer/serie.service';
 import { CategoryService } from '../../../../core/services/maintainer/category.service';
-import { ScaleDto } from '../../../../core/models/maintainer/scale.model';
+
 import { ManufacturerDto } from '../../../../core/models/maintainer/manufacturer.model';
 import { FranchiseDto } from '../../../../core/models/maintainer/franchise.model';
 import { SerieByFranchiseDto } from '../../../../core/models/maintainer/serie.model';
@@ -32,7 +32,7 @@ export class UpdateProductComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
   private productService = inject(ProductService);
   private notificationService = inject(NotificationService);
-  private scaleService = inject(ScaleService);
+
   private manufacturerService = inject(ManufacturerService);
   private franchiseService = inject(FranchiseService);
   private serieService = inject(SerieService);
@@ -41,7 +41,7 @@ export class UpdateProductComponent implements OnInit {
 
   public productId! :string | null;
   public productForm!: FormGroup;
-  public scales = signal<ScaleDto[]>([]);
+
   public manufacturers = signal<ManufacturerDto[]>([]);
   public franchises = signal<FranchiseDto[]>([]);
   public series = signal<SerieByFranchiseDto[]>([]);
@@ -97,7 +97,7 @@ export class UpdateProductComponent implements OnInit {
       }
     });
 
-    this.loadScales();
+
     this.loadManufacturers();
     this.loadFranchises();
     
@@ -105,22 +105,7 @@ export class UpdateProductComponent implements OnInit {
 
   }
 
-  public loadScales(): void {
-    this.scaleService.getScales().subscribe({
-      next: (response) => {
 
-        if(!response.success){
-          this.notificationService.showError("Error",response.message);
-          return;
-        }
-
-        this.scales.set(response.data);
-      },
-      error: () => {
-        this.notificationService.showDefaultError();
-      },
-    });
-  }
 
   public loadManufacturers(): void {
     this.manufacturerService.getManufacturers().subscribe({

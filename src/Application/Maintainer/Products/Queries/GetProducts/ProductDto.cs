@@ -4,7 +4,6 @@ public class ProductDto
 {
     public Guid ProductId { get; set; }
     public string ProductName { get; set; } = default!;
-    public string ScaleName { get; set; } = default!;
     public string ManufacturerName { get; set; } = default!;
     public string FranchiseName { get; set; } = default!;
     public string SerieName { get; set; } = default!;
@@ -16,7 +15,6 @@ public class ProductDto
         public Mapping()
         {
             CreateMap<Product, ProductDto>().
-                ForMember(d => d.ScaleName, opt => opt.MapFrom(s => s.Scale.ScaleName)).
                 ForMember(d => d.ManufacturerName, opt => opt.MapFrom(s => s.Manufacturer.ManufacturerName)).
                 ForMember(d => d.FranchiseName, opt => opt.MapFrom(s => s.Franchise.FranchiseName)).
                 ForMember(d => d.SerieName, opt => opt.MapFrom(s => s.Serie != null ? s.Serie.SerieName : "Toda la Franquicia")).

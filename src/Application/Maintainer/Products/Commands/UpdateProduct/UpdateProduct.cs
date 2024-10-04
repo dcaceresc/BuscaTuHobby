@@ -4,7 +4,6 @@ public class UpdateProduct : IRequest<ApiResponse>
 {
     public Guid ProductId { get; init; }
     public string ProductName { get; init; } = default!;
-    public Guid ScaleId { get; init; }
     public Guid ManufacturerId { get; init; }
     public Guid FranchiseId { get; init; }
     public Guid SerieId { get; init; }
@@ -29,7 +28,7 @@ public class UpdateProductHandler(IApplicationDbContext context, IApiResponseSer
 
             Guard.Against.NotFound(product, $"No existe Producto con la Id {request.ProductId}");
 
-            product.Update(request.ProductName, request.ScaleId, request.ManufacturerId, request.FranchiseId, request.SerieId, request.ProductHasBase, request.ProductTargetAge, request.ProductSize, request.ProductDescription, request.ProductReleaseDate);
+            product.Update(request.ProductName, request.ManufacturerId, request.FranchiseId, request.SerieId, request.ProductHasBase, request.ProductTargetAge, request.ProductSize, request.ProductDescription, request.ProductReleaseDate);
 
             var productCategoriesOld = await _context.ProductCategories.Where(x => x.ProductId == request.ProductId).ToListAsync(cancellationToken);
 

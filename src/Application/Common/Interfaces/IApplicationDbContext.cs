@@ -4,18 +4,18 @@
     {
         DbSet<Commune> Communes { get; }
         DbSet<Configuration> Configurations { get; }
-        DbSet<Group> Groups { get; }
+        DbSet<Menu> Menus { get; }
         DbSet<Franchise> Franchises { get; }
         DbSet<Product> Products { get; }
         DbSet<ProductCategory> ProductCategories { get; }
         DbSet<ProductImage> ProductImages { get; }
         DbSet<Inventory> Inventories { get; }
         DbSet<Manufacturer> Manufacturers { get; }
-        DbSet<Scale> Scales { get; }
+        DbSet<Category> Categories { get; }
         DbSet<Serie> Series { get; }
         DbSet<Store> Stores { get; }
         DbSet<StoreAddress> StoresAddresses { get; }
-        DbSet<Category> Categories { get; }
+        DbSet<SubMenu> SubMenus { get; }
         DbSet<User> Users { get; }
         DbSet<Region> Regions { get; }
         DbSet<Role> Roles { get; }

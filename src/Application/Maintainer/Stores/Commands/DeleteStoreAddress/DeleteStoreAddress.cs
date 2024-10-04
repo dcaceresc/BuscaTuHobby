@@ -1,5 +1,5 @@
 ﻿namespace Application.Maintainer.Stores.Commands.DeleteStoreAddress;
-public record DeleteStoreAddress (Guid StoreId, Guid StoreAddressId) : IRequest<ApiResponse>;
+public record DeleteStoreAddress(Guid StoreId, Guid StoreAddressId) : IRequest<ApiResponse>;
 
 public class DeleteStoreAddressHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<DeleteStoreAddress, ApiResponse>
 {

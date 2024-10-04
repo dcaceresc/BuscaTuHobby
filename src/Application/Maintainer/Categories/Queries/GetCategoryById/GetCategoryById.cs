@@ -2,7 +2,7 @@
 
 public record GetCategoryById(Guid CategoryId) : IRequest<ApiResponse<CategoryVM>>;
 
-public class GetSubCategoryByIdHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetCategoryById, ApiResponse<CategoryVM>>
+public class GetCategoryByIdHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetCategoryById, ApiResponse<CategoryVM>>
 {
     private readonly IApplicationDbContext _context = context;
     private readonly IMapper _mapper = mapper;
@@ -13,12 +13,11 @@ public class GetSubCategoryByIdHandler(IApplicationDbContext context, IMapper ma
         try
         {
             var category = await _context.Categories
-            .Where(x => x.CategoryId == request.CategoryId)
-            .AsNoTracking()
-            .ProjectTo<CategoryVM>(_mapper.ConfigurationProvider)
-            .FirstOrDefaultAsync(cancellationToken);
+              .AsNoTracking()
+              .ProjectTo<CategoryVM>(_mapper.ConfigurationProvider)
+              .FirstOrDefaultAsync(x => x.CategoryId == request.CategoryId, cancellationToken);
 
-            Guard.Against.NotFound(category, $"No existe categoria con la Id {request.CategoryId}");
+            Guard.Against.NotFound(category, $"No existe una categoria con la Id {request.CategoryId}");
 
             return _responseService.Success(category);
         }
@@ -28,8 +27,7 @@ public class GetSubCategoryByIdHandler(IApplicationDbContext context, IMapper ma
         }
         catch (Exception)
         {
-            return _responseService.Fail<CategoryVM>("Error al obtener la categoria");
+            return _responseService.Fail<CategoryVM>("Ocurrió un error al obtener la categoria");
         }
-
     }
 }

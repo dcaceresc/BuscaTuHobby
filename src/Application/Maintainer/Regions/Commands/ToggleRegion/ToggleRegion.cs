@@ -10,7 +10,7 @@ public class ToggleRegionHandler(IApplicationDbContext context, IApiResponseServ
     {
         try
         {
-            var region = await _context.Regions.FindAsync([request.RegionId],cancellationToken);
+            var region = await _context.Regions.FindAsync([request.RegionId], cancellationToken);
 
             Guard.Against.NotFound(region, $"No existe la región con la Id {request.RegionId}");
 

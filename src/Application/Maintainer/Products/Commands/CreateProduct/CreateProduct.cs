@@ -3,7 +3,6 @@
 public record CreateProduct : IRequest<ApiResponse<Guid>>
 {
     public string ProductName { get; init; } = default!;
-    public Guid ScaleId { get; init; }
     public Guid ManufacturerId { get; init; }
     public Guid FranchiseId { get; init; }
     public Guid? SerieId { get; init; }
@@ -25,7 +24,7 @@ public class CreateProductHandler(IApplicationDbContext context, IApiResponseSer
     {
         try
         {
-            var product = Product.Create(request.ProductName, request.ScaleId, request.ManufacturerId, request.FranchiseId, request.SerieId, request.ProductHasBase, request.ProductTargetAge, request.ProductSize, request.ProductDescription, request.ProductReleaseDate);
+            var product = Product.Create(request.ProductName, request.ManufacturerId, request.FranchiseId, request.SerieId, request.ProductHasBase, request.ProductTargetAge, request.ProductSize, request.ProductDescription, request.ProductReleaseDate);
 
             _context.Products.Add(product);
 

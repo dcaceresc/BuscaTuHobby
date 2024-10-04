@@ -1,10 +1,10 @@
-﻿using Domain.Common;
-using Application.Maintainer.Communes.Queries.GetCommuneById;
-using Application.Maintainer.Communes.Commands.CreateCommune;
-using Application.Maintainer.Communes.Commands.UpdateCommune;
+﻿using Application.Maintainer.Communes.Commands.CreateCommune;
 using Application.Maintainer.Communes.Commands.ToggleCommune;
+using Application.Maintainer.Communes.Commands.UpdateCommune;
+using Application.Maintainer.Communes.Queries.GetCommuneById;
 using Application.Maintainer.Communes.Queries.GetCommunes;
 using Application.Maintainer.Communes.Queries.GetCommunesByRegionId;
+using Domain.Common;
 
 namespace WebAPI.Maintainer;
 

@@ -1,8 +1,8 @@
 ﻿namespace Application.Maintainer.Categories.Commands.CreateCategory;
 
-public record CreateCategory(string CategoryName, Guid GroupId) : IRequest<ApiResponse>;
+public record CreateCategory(string CategoryName) : IRequest<ApiResponse>;
 
-public class CreateSubCategoryHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<CreateCategory, ApiResponse>
+public class CreateCategoryHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<CreateCategory, ApiResponse>
 {
     private readonly IApplicationDbContext _context = context;
     private readonly IApiResponseService _responseService = responseService;
@@ -11,17 +11,17 @@ public class CreateSubCategoryHandler(IApplicationDbContext context, IApiRespons
     {
         try
         {
-            var entity = Category.Create(request.CategoryName, request.GroupId);
+            var category = Category.Create(request.CategoryName);
 
-            _context.Categories.Add(entity);
+            _context.Categories.Add(category);
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return _responseService.Success("Categoría creada exitosamente");
+            return _responseService.Success("Escala creada correctamente");
         }
         catch (Exception)
         {
-            return _responseService.Fail("Error al crear la categoría");
+            return _responseService.Fail("Ocurrió un error al crear la escala");
         }
     }
 }

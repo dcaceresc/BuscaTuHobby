@@ -7,7 +7,6 @@ public class CreateProductCommandValidator : AbstractValidator<CreateProduct>
     public CreateProductCommandValidator()
     {
         RuleFor(v => v.ProductName).NotNull();
-        RuleFor(v => v.ScaleId).NotNull();
         RuleFor(v => v.ManufacturerId).NotNull();
         RuleFor(v => v.FranchiseId).NotNull();
         RuleFor(v => v.ProductHasBase).NotNull();

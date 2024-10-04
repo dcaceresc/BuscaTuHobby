@@ -13,6 +13,7 @@ public class ProductCategory : AuditableEntity
     public Guid CategoryId { get; set; } = default!;
     public Category Category { get; set; } = default!;
 
+
     public static ProductCategory Create(Guid productId, Guid categoryId)
     {
         return new ProductCategory(productId, categoryId);

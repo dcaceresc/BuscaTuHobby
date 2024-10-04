@@ -8,7 +8,6 @@ public class UpdateProductCommandValidator : AbstractValidator<UpdateProduct>
     {
         RuleFor(v => v.ProductId).NotNull();
         RuleFor(v => v.ProductName).NotNull();
-        RuleFor(v => v.ScaleId).NotNull();
         RuleFor(v => v.ManufacturerId).NotNull();
         RuleFor(v => v.FranchiseId).NotNull();
         RuleFor(v => v.ProductHasBase).NotNull();

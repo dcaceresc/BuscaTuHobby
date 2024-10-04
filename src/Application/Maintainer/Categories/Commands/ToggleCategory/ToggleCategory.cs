@@ -1,7 +1,8 @@
 ﻿namespace Application.Maintainer.Categories.Commands.ToggleCategory;
+
 public record ToggleCategory(Guid CategoryId) : IRequest<ApiResponse>;
 
-public class ToggleSubCategoryHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<ToggleCategory, ApiResponse>
+public class ToggleCategoryHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<ToggleCategory, ApiResponse>
 {
     private readonly IApplicationDbContext _context = context;
     private readonly IApiResponseService _responseService = responseService;
@@ -10,15 +11,15 @@ public class ToggleSubCategoryHandler(IApplicationDbContext context, IApiRespons
     {
         try
         {
-            var entity = await _context.Categories.FindAsync([request.CategoryId], cancellationToken);
+            var category = await _context.Categories.FindAsync([request.CategoryId], cancellationToken);
 
-            Guard.Against.NotFound(entity, $"No existe categoria con la Id {request.CategoryId}");
+            Guard.Against.NotFound(category, $"No existe categoria con la Id {request.CategoryId}");
 
-            entity.ToggleActive();
+            category.ToggleActive();
 
             await _context.SaveChangesAsync(cancellationToken);
 
-            return _responseService.Success("El estado de la categoria ha sido actualizado exitosamente");
+            return _responseService.Success("El estado de la categoria actualizada correctamente");
         }
         catch (Common.Exceptions.NotFoundException ex)
         {
@@ -26,7 +27,7 @@ public class ToggleSubCategoryHandler(IApplicationDbContext context, IApiRespons
         }
         catch (Exception)
         {
-            return _responseService.Fail("Error al actualizar el estado de la categoria");
+            return _responseService.Fail("Ocurrió un error al actualizar la categoria");
         }
     }
 }
