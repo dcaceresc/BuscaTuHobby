@@ -12,27 +12,27 @@ export class SerieService {
 
 
   public getSeries() {
-    return this.http.get<ApiResponse<SerieDto[]>>('/api/series');
+    return this.http.get<ApiResponse<SerieDto[]>>('/api/maintainer/series');
   }
 
   public getSerieById(id: string | null) {
-    return this.http.get<ApiResponse<SerieVM>>(`/api/series/${id}`);
+    return this.http.get<ApiResponse<SerieVM>>(`/api/maintainer/series/${id}`);
   }
 
   public getSeriesByFranchiseId(franchiseId: string | null) {
-    return this.http.get<ApiResponse<SerieByFranchiseDto[]>>(`/api/series/franchise/${franchiseId}`);
+    return this.http.get<ApiResponse<SerieByFranchiseDto[]>>(`/api/maintainer/series/franchise/${franchiseId}`);
   }
 
   public createSerie(scale: CreateSerie) {
-    return this.http.post<ApiResponse<any>>('/api/series', scale);
+    return this.http.post<ApiResponse<any>>('/api/maintainer/series', scale);
   }
 
   public updateSerie(id : string | null, scale: UpdateSerie){
-    return this.http.put<ApiResponse<any>>(`/api/series/${id}`, scale);
+    return this.http.put<ApiResponse<any>>(`/api/maintainer/series/${id}`, scale);
   }
 
   public toggleSerie(id: string | null){
-    return this.http.delete<ApiResponse<any>>(`/api/series/${id}`);
+    return this.http.delete<ApiResponse<any>>(`/api/maintainer/series/${id}`);
   }
 
 }

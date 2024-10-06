@@ -29,7 +29,8 @@ export class UpdateGroupComponent implements OnInit{
     this.menuId = this.route.snapshot.paramMap.get('id');
     this.menuForm = this.formBuilder.group({
       menuId: [this.menuId],
-      menuName: ['', Validators.required]
+      menuName: ['', Validators.required],
+      menuOrder: ['', Validators.required],
     });
     this.menuService.getMenuById(this.menuId).subscribe({
       next: (response) => {

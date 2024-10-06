@@ -11,7 +11,7 @@ public class MenusModule : CarterModule
 {
     public override void AddRoutes(IEndpointRouteBuilder app)
     {
-        var groups = app.MapGroup("api/menus")
+        var groups = app.MapGroup("api/maintainer/menus")
             .RequireAuthorization(policy => policy.RequireRole("SuperAdmin", "Administrator"));
 
         groups.MapGet("", GetMenus);

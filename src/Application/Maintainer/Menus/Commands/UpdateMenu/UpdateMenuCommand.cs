@@ -1,6 +1,6 @@
 ﻿namespace Application.Maintainer.Menus.Commands.UpdateMenu;
 
-public record UpdateMenu(Guid MenuId, string MenuName) : IRequest<ApiResponse>;
+public record UpdateMenu(Guid MenuId, string MenuName,int MenuOrder) : IRequest<ApiResponse>;
 
 public class UpdateMenuHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<UpdateMenu, ApiResponse>
 {
@@ -15,7 +15,7 @@ public class UpdateMenuHandler(IApplicationDbContext context, IApiResponseServic
 
             Guard.Against.NotFound(entity, $"No existe menu con la Id {request.MenuId}");
 
-            entity.Update(request.MenuName);
+            entity.Update(request.MenuName,request.MenuOrder);
 
             await _context.SaveChangesAsync(cancellationToken);
 

@@ -12,7 +12,7 @@ public class CommuneModule : CarterModule
 {
     public override void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("api/communes")
+        var group = app.MapGroup("api/maintainer/communes")
             .RequireAuthorization(policy => policy.RequireRole("SuperAdmin", "Administrator"));
 
         group.MapGet("", GetCommunes);

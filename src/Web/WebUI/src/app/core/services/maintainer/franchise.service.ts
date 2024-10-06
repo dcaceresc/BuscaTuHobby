@@ -11,22 +11,22 @@ export class FranchiseService {
   private http = inject(HttpClient);
 
   public getFranchises() {
-    return this.http.get<ApiResponse<FranchiseDto[]>>('api/franchises');
+    return this.http.get<ApiResponse<FranchiseDto[]>>('api/maintainer/franchises');
   }
 
   public getFranchise(id: string | null) {
-    return this.http.get<ApiResponse<FranchiseVM>>(`api/franchises/${id}`);
+    return this.http.get<ApiResponse<FranchiseVM>>(`api/maintainer/franchises/${id}`);
   }
 
   public addFranchise(franchise: CreateFranchise) {
-    return this.http.post<ApiResponse<any>>('api/franchises', franchise);
+    return this.http.post<ApiResponse<any>>('api/maintainer/franchises', franchise);
   }
 
   public updateFranchise(id: string | null, franchise: UpdateFranchise) {
-    return this.http.put<ApiResponse<any>>(`api/franchises/${id}`, franchise);
+    return this.http.put<ApiResponse<any>>(`api/maintainer/franchises/${id}`, franchise);
   }
 
   public toggleFranchise(id: string | null) {
-    return this.http.delete<ApiResponse<any>>(`api/franchises/${id}`);
+    return this.http.delete<ApiResponse<any>>(`api/maintainer/franchises/${id}`);
   }
 }

@@ -11,7 +11,7 @@ public class ConfigurationsModule : CarterModule
 {
     public override void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("api/configurations")
+        var group = app.MapGroup("api/maintainer/configurations")
             .RequireAuthorization(policy => policy.RequireRole("SuperAdmin", "Administrator"));
 
         group.MapGet("", GetConfigurations);

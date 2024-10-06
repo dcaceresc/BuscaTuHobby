@@ -12,23 +12,23 @@ export class CategoryService {
 
 
   public getCategories() {
-    return this.http.get<ApiResponse<CategoryDto[]>>('api/categories');
+    return this.http.get<ApiResponse<CategoryDto[]>>('api/maintainer/categories');
   }
 
   public getCategoryById(categoryId: string | null) {
-    return this.http.get<ApiResponse<CategoryVM>>(`api/categories/${categoryId}`);
+    return this.http.get<ApiResponse<CategoryVM>>(`api/maintainer/categories/${categoryId}`);
   }
 
   public createCategory(category: CreateCategory) {
-    return this.http.post<ApiResponse<any>>('api/categories', category);
+    return this.http.post<ApiResponse<any>>('api/maintainer/categories', category);
   }
 
   public updateCategory(categoryId: string | null, category: UpdateCategory) {
-    return this.http.put<ApiResponse<any>>(`api/categories/${categoryId}`, category);
+    return this.http.put<ApiResponse<any>>(`api/maintainer/categories/${categoryId}`, category);
   }
 
   public toggleCategory(categoryId: string | null) {
-    return this.http.delete<ApiResponse<any>>(`api/categories/${categoryId}`);
+    return this.http.delete<ApiResponse<any>>(`api/maintainer/categories/${categoryId}`);
   }
 
 }

@@ -44,6 +44,12 @@ namespace Infrastructure.Data
 
                 entity.Property(e => e.SubMenuName)
                 .HasMaxLength(50);
+
+                entity.HasIndex(e => e.SubMenuSlug)
+                .IsUnique();
+
+                entity.Property(e => e.SubMenuSlug)
+                .HasMaxLength(50);
             });
 
             builder.Entity<Commune>(entity =>

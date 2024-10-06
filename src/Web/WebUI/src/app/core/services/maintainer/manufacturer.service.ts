@@ -16,19 +16,19 @@ export class ManufacturerService {
   }
 
   public getManufacturerById(id: string | null) {
-    return this.http.get<ApiResponse<ManufacturerVM>>(`/api/manufacturers/${id}`);
+    return this.http.get<ApiResponse<ManufacturerVM>>(`/api/maintainer/manufacturers/${id}`);
   }
 
   public createManufacturer(manufacturer: CreateManufacturer) {
-    return this.http.post<ApiResponse<any>>('/api/manufacturers', manufacturer);
+    return this.http.post<ApiResponse<any>>('/api/maintainer/manufacturers', manufacturer);
   }
 
   public updateManufacturer(id : string | null, manufacturer: UpdateManufacturer){
-    return this.http.put<ApiResponse<any>>(`/api/manufacturers/${id}`, manufacturer);
+    return this.http.put<ApiResponse<any>>(`/api/maintainer/manufacturers/${id}`, manufacturer);
   }
 
   public toggleManufacturer(id: string | null){
-    return this.http.delete<ApiResponse<any>>(`/api/manufacturers/${id}`);
+    return this.http.delete<ApiResponse<any>>(`/api/maintainer/manufacturers/${id}`);
   }
 
 

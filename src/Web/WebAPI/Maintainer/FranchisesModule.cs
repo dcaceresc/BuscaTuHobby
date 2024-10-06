@@ -11,7 +11,7 @@ public class FranchisesModule : CarterModule
 {
     public override void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("api/franchises")
+        var group = app.MapGroup("api/maintainer/franchises")
             .RequireAuthorization(policy => policy.RequireRole("SuperAdmin", "Administrator"));
 
         group.MapGet("", GetFranchises);

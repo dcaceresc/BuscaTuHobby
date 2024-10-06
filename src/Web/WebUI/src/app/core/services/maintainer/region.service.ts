@@ -11,23 +11,23 @@ export class RegionService {
   private http = inject(HttpClient);
 
   public getRegions() {
-    return this.http.get<ApiResponse<RegionDto[]>>('/api/regions');
+    return this.http.get<ApiResponse<RegionDto[]>>('/api/maintainer/regions');
   }
 
   public getRegionById(id: string | null) {
-    return this.http.get<ApiResponse<RegionVM>>(`/api/regions/${id}`);
+    return this.http.get<ApiResponse<RegionVM>>(`/api/maintainer/regions/${id}`);
   }
 
   public createRegion(region: CreateRegion) {
-    return this.http.post<ApiResponse<any>>('/api/regions', region);
+    return this.http.post<ApiResponse<any>>('/api/maintainer/regions', region);
   }
 
   public updateRegion(id : string | null, region: UpdateRegion){
-    return this.http.put<ApiResponse<any>>(`/api/regions/${id}`, region);
+    return this.http.put<ApiResponse<any>>(`/api/maintainer/regions/${id}`, region);
   }
 
   public toggleRegion(id: string | null){
-    return this.http.delete<ApiResponse<any>>(`/api/regions/${id}`);
+    return this.http.delete<ApiResponse<any>>(`/api/maintainer/regions/${id}`);
   }
 
 }

@@ -11,23 +11,23 @@ export class InventoryService {
   private http = inject(HttpClient);
 
   public getInventories() {
-    return this.http.get<ApiResponse<InventoryDto[]>>('/api/inventories');
+    return this.http.get<ApiResponse<InventoryDto[]>>('/api/maintainer/inventories');
   }
 
   public getInventoryById(id: string | null) {
-    return this.http.get<ApiResponse<InventoryVM>>(`/api/inventories/${id}`);
+    return this.http.get<ApiResponse<InventoryVM>>(`/api/maintainer/inventories/${id}`);
   }
 
   public createInventory(inventory: CreateInventory) {
-    return this.http.post<ApiResponse<any>>('/api/inventories', inventory);
+    return this.http.post<ApiResponse<any>>('/api/maintainer/inventories', inventory);
   }
 
   public updateInventory(id: string | null,inventory: InventoryVM) {
-    return this.http.put<ApiResponse<any>>(`/api/inventories/${id}`, inventory);
+    return this.http.put<ApiResponse<any>>(`/api/maintainer/inventories/${id}`, inventory);
   }
 
   public toggleInventory(id: string | null) {
-    return this.http.delete<ApiResponse<any>>(`/api/inventories/${id}`);
+    return this.http.delete<ApiResponse<any>>(`/api/maintainer/inventories/${id}`);
   }
 
 }

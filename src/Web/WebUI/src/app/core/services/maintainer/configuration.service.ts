@@ -11,23 +11,23 @@ export class ConfigurationService {
   private http = inject(HttpClient);
 
   public getConfigurations() {
-    return this.http.get<ApiResponse<ConfigurationDto[]>>('api/configurations');
+    return this.http.get<ApiResponse<ConfigurationDto[]>>('api/maintainer/configurations');
   }
 
   public getConfigurationById(id: string | null) {
-    return this.http.get<ApiResponse<ConfigurationVM>>(`api/configurations/${id}`);
+    return this.http.get<ApiResponse<ConfigurationVM>>(`api/maintainer/configurations/${id}`);
   }
 
   public addConfiguration(configuration: CreateConfiguration) {
-    return this.http.post<ApiResponse<any>>('api/configurations', configuration);
+    return this.http.post<ApiResponse<any>>('api/maintainer/configurations', configuration);
   }
 
   public updateConfiguration(id: string | null, configuration: UpdateConfiguration) {
-    return this.http.put<ApiResponse<any>>(`api/configurations/${id}`, configuration);
+    return this.http.put<ApiResponse<any>>(`api/maintainer/configurations/${id}`, configuration);
   }
 
   public toggleConfiguration(id: string | null) {
-    return this.http.delete<ApiResponse<any>>(`api/configurations/${id}`);
+    return this.http.delete<ApiResponse<any>>(`api/maintainer/configurations/${id}`);
   }
 
 }

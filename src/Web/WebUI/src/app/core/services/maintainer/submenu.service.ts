@@ -12,23 +12,23 @@ export class SubMenuService {
 
 
   public getSubMenus() {
-    return this.http.get<ApiResponse<SubMenuDto[]>>('/api/submenus');
+    return this.http.get<ApiResponse<SubMenuDto[]>>('/api/maintainer/submenus');
   }
 
   public getSubMenuById(id: string | null) {
-    return this.http.get<ApiResponse<SubMenuVM>>(`/api/submenus/${id}`);
+    return this.http.get<ApiResponse<SubMenuVM>>(`/api/maintainer/submenus/${id}`);
   }
 
   public createSubMenu(scale: CreateSubMenu) {
-    return this.http.post<ApiResponse<any>>('/api/submenus', scale);
+    return this.http.post<ApiResponse<any>>('/api/maintainer/submenus', scale);
   }
 
   public updateSubMenu(id : string | null, scale: UpdateSubMenu){
-    return this.http.put<ApiResponse<any>>(`/api/submenus/${id}`, scale);
+    return this.http.put<ApiResponse<any>>(`/api/maintainer/submenus/${id}`, scale);
   }
 
   public toggleSubMenu(id: string | null){
-    return this.http.delete<ApiResponse<any>>(`/api/submenus/${id}`);
+    return this.http.delete<ApiResponse<any>>(`/api/maintainer/submenus/${id}`);
   }
 
 }

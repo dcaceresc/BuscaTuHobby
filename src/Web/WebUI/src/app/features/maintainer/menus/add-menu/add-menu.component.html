@@ -1,6 +1,6 @@
 <div class="card mt-3">
     <div class="card-header bg-primary">
-      Crear Grupo
+      Crear Menu
     </div>
     <div class="card-body">
       <form [formGroup]="menuForm" (ngSubmit)="onSubmit()">
@@ -8,6 +8,11 @@
         <div class="form-floating mb-3">
           <input type="text" class="form-control" id="menuName" formControlName="menuName" placeholder="Nombre" required>
           <label for="menuName" class="form-label">Nombre</label>
+        </div>
+
+        <div class="form-floating mb-3">
+          <input type="number" class="form-control" id="menuOrder" formControlName="menuOrder" placeholder="Orden" required>
+          <label for="menuOrder" class="form-label">Orden</label>
         </div>
 
   

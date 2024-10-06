@@ -12,7 +12,7 @@ public class SeriesModule : CarterModule
 {
     public override void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("api/series")
+        var group = app.MapGroup("api/maintainer/series")
             .RequireAuthorization(policy => policy.RequireRole("SuperAdmin", "Administrator"));
 
         group.MapGet("", GetSeries);

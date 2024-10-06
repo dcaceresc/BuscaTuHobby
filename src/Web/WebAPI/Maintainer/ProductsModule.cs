@@ -12,7 +12,7 @@ public class ProductsModule : CarterModule
 {
     public override void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("api/products")
+        var group = app.MapGroup("api/maintainer/products")
             .RequireAuthorization(policy => policy.RequireRole("SuperAdmin", "Administrator"));
 
         group.MapGet("", GetProducts);

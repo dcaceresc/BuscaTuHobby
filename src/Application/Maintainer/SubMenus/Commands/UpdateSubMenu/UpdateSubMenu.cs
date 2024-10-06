@@ -1,6 +1,6 @@
 ﻿namespace Application.Maintainer.SubMenus.Commands.UpdateCategory;
 
-public record UpdateSubMenu(Guid SubMenuId, string SubMenuName, Guid MenuId) : IRequest<ApiResponse>;
+public record UpdateSubMenu(Guid SubMenuId, string SubMenuName, Guid MenuId, int SubMenuOrder) : IRequest<ApiResponse>;
 
 public class UpdateSubMenuHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<UpdateSubMenu, ApiResponse>
 {
@@ -15,7 +15,7 @@ public class UpdateSubMenuHandler(IApplicationDbContext context, IApiResponseSer
 
             Guard.Against.NotFound(entity, $"No existe sub menu con la Id {request.SubMenuId}");
 
-            entity.Update(request.SubMenuName, request.MenuId);
+            entity.Update(request.SubMenuName, request.MenuId,request.SubMenuOrder);
 
             await _context.SaveChangesAsync(cancellationToken);
 

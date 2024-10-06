@@ -11,23 +11,23 @@ export class MenuService {
   private http = inject(HttpClient);
 
   public getMenus() {
-    return this.http.get<ApiResponse<MenuDto[]>>('api/menus');
+    return this.http.get<ApiResponse<MenuDto[]>>('api/maintainer/menus');
   }
 
   public getMenuById(id: string | null) {
-    return this.http.get<ApiResponse<MenuVM>>(`api/menus/${id}`);
+    return this.http.get<ApiResponse<MenuVM>>(`api/maintainer/menus/${id}`);
   }
 
   public createMenu(group: CreateMenu) {
-    return this.http.post<ApiResponse<any>>('api/menus', group);
+    return this.http.post<ApiResponse<any>>('api/maintainer/menus', group);
   }
 
   public updateMenu(id: string | null,group: UpdateMenu) {
-    return this.http.put<ApiResponse<any>>(`api/menus/${id}`, group);
+    return this.http.put<ApiResponse<any>>(`api/maintainer/menus/${id}`, group);
   }
 
   public toggleMenu(id: string | null) {
-    return this.http.delete<ApiResponse<any>>(`api/menus/${id}`);
+    return this.http.delete<ApiResponse<any>>(`api/maintainer/menus/${id}`);
   }
 
 }

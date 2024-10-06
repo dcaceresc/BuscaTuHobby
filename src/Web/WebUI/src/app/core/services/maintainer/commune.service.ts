@@ -11,27 +11,27 @@ export class CommuneService {
   private http = inject(HttpClient);
 
   public getCommunes() {
-    return this.http.get<ApiResponse<CommuneDto[]>>('/api/communes');
+    return this.http.get<ApiResponse<CommuneDto[]>>('/api/maintainer/communes');
   }
 
   public getCommuneById(id: string | null) {
-    return this.http.get<ApiResponse<CommuneVM>>(`/api/communes/${id}`);
+    return this.http.get<ApiResponse<CommuneVM>>(`/api/maintainer/communes/${id}`);
   }
 
   public getCommunesByRegionId(regionId: string | null) {
-    return this.http.get<ApiResponse<CommuneByRegion[]>>(`/api/communes/region/${regionId}`);
+    return this.http.get<ApiResponse<CommuneByRegion[]>>(`/api/maintainer/communes/region/${regionId}`);
   }
 
   public createCommune(region: CreateCommune) {
-    return this.http.post<ApiResponse<any>>('/api/communes', region);
+    return this.http.post<ApiResponse<any>>('/api/maintainer/communes', region);
   }
 
   public updateCommune(id : string | null, region: UpdateCommune){
-    return this.http.put<ApiResponse<any>>(`/api/communes/${id}`, region);
+    return this.http.put<ApiResponse<any>>(`/api/maintainer/communes/${id}`, region);
   }
 
   public toggleCommune(id: string | null){
-    return this.http.delete<ApiResponse<any>>(`/api/communes/${id}`);
+    return this.http.delete<ApiResponse<any>>(`/api/maintainer/communes/${id}`);
   }
 
 }

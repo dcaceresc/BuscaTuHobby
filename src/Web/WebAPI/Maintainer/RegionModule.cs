@@ -12,7 +12,7 @@ public class RegionModule : CarterModule
 {
     public override void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("api/regions")
+        var group = app.MapGroup("api/maintainer/regions")
             .RequireAuthorization(policy => policy.RequireRole("SuperAdmin", "Administrator"));
 
         group.MapGet("", GetRegions);

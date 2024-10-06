@@ -1,6 +1,6 @@
 ﻿namespace Application.Maintainer.SubMenus.Commands.CreateSubMenu;
 
-public record CreateSubMenu(string SubMenuName, Guid MenuId) : IRequest<ApiResponse>;
+public record CreateSubMenu(string SubMenuName, Guid MenuId, int SubMenuOrder) : IRequest<ApiResponse>;
 
 public class CreateSubMenuHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<CreateSubMenu, ApiResponse>
 {
@@ -11,7 +11,7 @@ public class CreateSubMenuHandler(IApplicationDbContext context, IApiResponseSer
     {
         try
         {
-            var entity = SubMenu.Create(request.SubMenuName, request.MenuId);
+            var entity = SubMenu.Create(request.SubMenuName, request.MenuId, request.SubMenuOrder);
 
             _context.SubMenus.Add(entity);
 

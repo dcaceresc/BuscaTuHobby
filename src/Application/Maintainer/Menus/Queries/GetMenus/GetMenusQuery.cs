@@ -14,6 +14,7 @@ public class GetMenusHandler(IApplicationDbContext context, IMapper mapper, IApi
         {
             var menus = await _context.Menus
             .AsNoTracking()
+            .OrderBy(x => x.MenuOrder)
             .ProjectTo<MenuDto>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
 

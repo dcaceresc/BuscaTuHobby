@@ -11,7 +11,7 @@ public class SubMenuModule : CarterModule
 {
     public override void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("api/submenus")
+        var group = app.MapGroup("api/maintainer/submenus")
             .RequireAuthorization(policy => policy.RequireRole("SuperAdmin", "Administrator"));
 
         group.MapGet("", GetSubMenus);

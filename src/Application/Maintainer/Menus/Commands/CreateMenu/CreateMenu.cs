@@ -1,5 +1,5 @@
 ﻿namespace Application.Maintainer.Menus.Commands.CreateMenu;
-public record CreateMenu(string MenuName) : IRequest<ApiResponse>;
+public record CreateMenu(string MenuName, int MenuOrden) : IRequest<ApiResponse>;
 
 public class CreateMenuHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<CreateMenu, ApiResponse>
 {
@@ -10,7 +10,7 @@ public class CreateMenuHandler(IApplicationDbContext context, IApiResponseServic
     {
         try
         {
-            var entity = Menu.Create(request.MenuName);
+            var entity = Menu.Create(request.MenuName,request.MenuOrden);
 
             _context.Menus.Add(entity);
 

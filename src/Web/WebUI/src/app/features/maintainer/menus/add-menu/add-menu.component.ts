@@ -25,7 +25,8 @@ export class AddMenuComponent implements OnInit {
 
   public ngOnInit(): void {
     this.menuForm = this.formBuilder.group({
-      menuName: ['', Validators.required]
+      menuName: ['', Validators.required],
+      menuOrder: ['', Validators.required],
     });
   }
 
