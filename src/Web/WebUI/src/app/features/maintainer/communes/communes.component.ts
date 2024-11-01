@@ -1,12 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { TableComponent } from '../../../shared/components/table/table.component';
 import { Router, RouterLink } from '@angular/router';
-import { NotificationService } from '../../../core/services/notification.service';
-import { FaIconService } from '../../../core/services/fa-icon.service';
-import { CommuneDto } from '../../../core/models/maintainer/commune.model';
-import { CommuneService } from '../../../core/services/maintainer/commune.service';
+import { CommuneDto } from '@app/core/models';
+import { CommuneService, FaIconService, NotificationService } from '@app/core/services';
+import { ButtonComponent, TableComponent } from '@app/shared';
 
 @Component({
   selector: 'app-communes',

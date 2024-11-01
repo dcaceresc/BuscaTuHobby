@@ -1,13 +1,10 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { ButtonComponent } from '../../../../shared/components/button/button.component';
-import { TableComponent } from '../../../../shared/components/table/table.component';
 import { Router, RouterLink } from '@angular/router';
-import { UserService } from '../../../../core/services/security/user.service';
-import { UserDto } from '../../../../core/models/security/user.model';
-import { NotificationService } from '../../../../core/services/notification.service';
 import { faEdit, faPowerOff, faRotate } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ButtonComponent, TableComponent } from '@app/shared';
+import { NotificationService, UserService } from '@app/core/services';
+import { UserDto } from '@app/core/models';
 
 @Component({
   selector: 'app-users',

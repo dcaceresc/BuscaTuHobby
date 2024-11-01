@@ -1,12 +1,8 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { TableComponent } from '../../../shared/components/table/table.component';
-import { CategoryService } from '../../../core/services/maintainer/category.service';
-import { NotificationService } from '../../../core/services/notification.service';
-import { CategoryDto } from '../../../core/models/maintainer/category.model';
-import { FaIconService } from '../../../core/services/fa-icon.service';
+import { CategoryDto } from '@app/core/models';
+import { CategoryService, FaIconService, NotificationService } from '@app/core/services';
+import { ButtonComponent, TableComponent } from '@app/shared';
 
 @Component({
   selector: 'app-categories',

@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { RoleService } from '../../../../../core/services/security/role.service';
-import { NotificationService } from '../../../../../core/services/notification.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { NotificationService, RoleService } from '@app/core/services';
 
 @Component({
   selector: 'app-add-role',

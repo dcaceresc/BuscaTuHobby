@@ -2,8 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthorizeService } from '../../../../../core/services/security/authorize.service';
-import { NotificationService } from '../../../../../core/services/notification.service';
+import { AuthorizeService, NotificationService } from '@app/core/services';
 
 @Component({
   selector: 'app-user-login',

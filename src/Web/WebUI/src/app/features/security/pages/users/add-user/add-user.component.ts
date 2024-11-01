@@ -1,12 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from '../../../../../core/services/security/user.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { NotificationService } from '../../../../../core/services/notification.service';
-import { RoleService } from '../../../../../core/services/security/role.service';
-import { RoleDto } from '../../../../../core/models/security/role.model';
 import { NgSelectModule } from '@ng-select/ng-select';
+import { NotificationService, RoleService, UserService } from '@app/core/services';
+import { RoleDto } from '@app/core/models';
 
 @Component({
   selector: 'app-add-user',

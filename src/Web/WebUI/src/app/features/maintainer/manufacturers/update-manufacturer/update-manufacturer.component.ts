@@ -2,8 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { ManufacturerService } from '../../../../core/services/maintainer/manufacturer.service';
+import { ManufacturerService, NotificationService } from '@app/core/services';
 
 @Component({
   selector: 'app-update-manufacturer',

@@ -1,12 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { TableComponent } from '../../../shared/components/table/table.component';
 import { Router, RouterLink } from '@angular/router';
-import { NotificationService } from '../../../core/services/notification.service';
-import { FaIconService } from '../../../core/services/fa-icon.service';
-import { ProductDto } from '../../../core/models/maintainer/product.model';
-import { ProductService } from '../../../core/services/maintainer/product.service';
+import { ProductDto } from '@app/core/models';
+import { FaIconService, NotificationService, ProductService } from '@app/core/services';
+import { ButtonComponent, TableComponent } from '@app/shared';
 
 @Component({
   selector: 'app-products',

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AuthorizeService } from '../../../../../core/services/security/authorize.service';
+import { AuthorizeService } from '@app/core/services';
 
 @Component({
   selector: 'app-confirm-email',

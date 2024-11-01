@@ -2,14 +2,10 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { StoreService } from '../../../../core/services/maintainer/store.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { ButtonComponent } from '../../../../shared/components/button/button.component';
-import { RegionDto } from '../../../../core/models/maintainer/region.model';
-import { CommuneByRegion } from '../../../../core/models/maintainer/commune.model';
+import { CommuneByRegion, RegionDto } from '@app/core/models';
+import { CommuneService, NotificationService, RegionService, StoreService } from '@app/core/services';
+import { ButtonComponent } from '@app/shared';
 import { NgSelectModule } from '@ng-select/ng-select';
-import { RegionService } from '../../../../core/services/maintainer/region.service';
-import { CommuneService } from '../../../../core/services/maintainer/commune.service';
 
 @Component({
   selector: 'app-update-store',

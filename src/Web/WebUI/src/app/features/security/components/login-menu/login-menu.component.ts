@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, Input, signal } from '@angular/core';
-import { AuthorizeService } from '../../../../core/services/security/authorize.service';
 import { faSignInAlt, faSignOutAlt, faUser, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Observable } from 'rxjs';
+import { AuthorizeService } from '@app/core/services';
 
 @Component({
   selector: 'app-login-menu',

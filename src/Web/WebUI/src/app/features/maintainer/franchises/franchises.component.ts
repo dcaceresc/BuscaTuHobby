@@ -1,12 +1,8 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { FranchiseService } from '../../../core/services/maintainer/franchise.service';
 import { Router, RouterLink } from '@angular/router';
-import { NotificationService } from '../../../core/services/notification.service';
-import { FranchiseDto } from '../../../core/models/maintainer/franchise.model';
-import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { TableComponent } from '../../../shared/components/table/table.component';
-import { FaIconService } from '../../../core/services/fa-icon.service';
+import { FranchiseDto } from '@app/core/models';
+import { FaIconService, FranchiseService, NotificationService } from '@app/core/services';
+import { ButtonComponent, TableComponent } from '@app/shared';
 
 @Component({
   selector: 'app-franchises',

@@ -1,12 +1,11 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, ElementRef, inject, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, ViewChild } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthorizeService } from '@app/core/services';
+import { AdministrationMenuComponent } from '@app/features/security/components/administration-menu/administration-menu.component';
+import { LoginMenuComponent } from '@app/features/security/components/login-menu/login-menu.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBars, faHeart, faMagnifyingGlass, faSignInAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
-import { LoginMenuComponent } from '../../../../../features/security/components/login-menu/login-menu.component';
-import { AdministrationMenuComponent } from '../../../../../features/security/components/administration-menu/administration-menu.component';
-import { AuthorizeService } from '../../../../../core/services/security/authorize.service';
 
 @Component({
   selector: 'app-header',

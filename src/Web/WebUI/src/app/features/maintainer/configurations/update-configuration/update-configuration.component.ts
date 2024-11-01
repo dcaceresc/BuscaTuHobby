@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ConfigurationService } from '../../../../core/services/maintainer/configuration.service';
-import { NotificationService } from '../../../../core/services/notification.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ConfigurationService, NotificationService } from '@app/core/services';
 
 @Component({
   selector: 'app-update-configuration',

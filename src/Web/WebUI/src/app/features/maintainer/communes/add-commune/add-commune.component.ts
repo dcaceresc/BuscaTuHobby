@@ -2,10 +2,8 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { CommuneService } from '../../../../core/services/maintainer/commune.service';
-import { RegionService } from '../../../../core/services/maintainer/region.service';
-import { RegionDto } from '../../../../core/models/maintainer/region.model';
+import { RegionDto } from '@app/core/models';
+import { CommuneService, NotificationService, RegionService } from '@app/core/services';
 import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({

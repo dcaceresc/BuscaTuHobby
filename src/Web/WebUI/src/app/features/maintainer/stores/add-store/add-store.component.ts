@@ -1,14 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { StoreService } from '../../../../core/services/maintainer/store.service';
-import { ButtonComponent } from '../../../../shared/components/button/button.component';
-import { RegionService } from '../../../../core/services/maintainer/region.service';
-import { CommuneService } from '../../../../core/services/maintainer/commune.service';
-import { RegionDto } from '../../../../core/models/maintainer/region.model';
-import { CommuneByRegion, CommuneDto } from '../../../../core/models/maintainer/commune.model';
+import { Router } from '@angular/router';
+import { CommuneByRegion, RegionDto } from '@app/core/models';
+import { CommuneService, NotificationService, RegionService, StoreService } from '@app/core/services';
+import { ButtonComponent } from '@app/shared';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { forkJoin } from 'rxjs';
 

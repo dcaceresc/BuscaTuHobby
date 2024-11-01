@@ -1,13 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ProductDto } from '../../../../core/models/maintainer/product.model';
-import { StoreDto } from '../../../../core/models/maintainer/store.model';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { StoreService } from '../../../../core/services/maintainer/store.service';
-import { ProductService } from '../../../../core/services/maintainer/product.service';
-import { InventoryService } from '../../../../core/services/maintainer/inventory.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ProductDto, StoreDto } from '@app/core/models';
+import { InventoryService, NotificationService, ProductService, StoreService } from '@app/core/services';
 import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({

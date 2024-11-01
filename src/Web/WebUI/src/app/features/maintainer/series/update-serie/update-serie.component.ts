@@ -2,10 +2,8 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { SerieService } from '../../../../core/services/maintainer/serie.service';
-import { FranchiseService } from '../../../../core/services/maintainer/franchise.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { FranchiseDto } from '../../../../core/models/maintainer/franchise.model';
+import { FranchiseDto } from '@app/core/models';
+import { FranchiseService, NotificationService, SerieService } from '@app/core/services';
 import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({

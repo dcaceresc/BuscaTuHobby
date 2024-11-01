@@ -1,19 +1,14 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
-import { TableComponent } from '../../../../shared/components/table/table.component';
-import { ButtonComponent } from '../../../../shared/components/button/button.component';
 import { Router, RouterLink } from '@angular/router';
-import { RoleService } from '../../../../core/services/security/role.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-import { RoleDto } from '../../../../core/models/security/role.model';
+import { RoleDto } from '@app/core/models';
+import { NotificationService, RoleService } from '@app/core/services';
+import { ButtonComponent, TableComponent } from '@app/shared';
 import { faEdit, faPowerOff } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-roles',
   standalone: true,
-  imports: [
-    RouterLink,TableComponent,ButtonComponent
-  ],
+  imports: [RouterLink,TableComponent,ButtonComponent],
   templateUrl: './roles.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

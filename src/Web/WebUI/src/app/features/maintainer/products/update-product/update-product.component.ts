@@ -2,18 +2,8 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ProductService } from '../../../../core/services/maintainer/product.service';
-import { NotificationService } from '../../../../core/services/notification.service';
-
-import { ManufacturerService } from '../../../../core/services/maintainer/manufacturer.service';
-import { FranchiseService } from '../../../../core/services/maintainer/franchise.service';
-import { SerieService } from '../../../../core/services/maintainer/serie.service';
-import { CategoryService } from '../../../../core/services/maintainer/category.service';
-
-import { ManufacturerDto } from '../../../../core/models/maintainer/manufacturer.model';
-import { FranchiseDto } from '../../../../core/models/maintainer/franchise.model';
-import { SerieByFranchiseDto } from '../../../../core/models/maintainer/serie.model';
-import { CategoryDto } from '../../../../core/models/maintainer/category.model';
+import { CategoryDto, FranchiseDto, ManufacturerDto, SerieByFranchiseDto } from '@app/core/models';
+import { CategoryService, FranchiseService, ManufacturerService, NotificationService, ProductService, SerieService } from '@app/core/services';
 import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({

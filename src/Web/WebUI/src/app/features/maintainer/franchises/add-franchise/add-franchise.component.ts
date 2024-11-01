@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { FranchiseService } from '../../../../core/services/maintainer/franchise.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { NotificationService } from '../../../../core/services/notification.service';
+import { FranchiseService, NotificationService } from '@app/core/services';
 
 @Component({
   selector: 'app-add-franchise',
