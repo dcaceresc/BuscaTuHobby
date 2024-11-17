@@ -1,0 +1,17 @@
+<div class="form-floating mb-3">
+
+    <input
+      [formControl]="control()"
+      [type]="type()"
+      [attr.placeholder]="placeHolder()"
+      class="form-control"
+    />
+
+    <label class="form-label">{{ label() }}</label>
+  
+    
+  
+    @if (control().invalid && control().touched) {
+      <small class="text-danger">{{ errorMessage() }}</small>
+    }
+  </div>

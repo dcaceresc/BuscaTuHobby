@@ -8,9 +8,7 @@ import { ButtonComponent, TableComponent } from '@app/shared';
 @Component({
   selector: 'app-configurations',
   standalone: true,
-  imports: [
-    CommonModule,ButtonComponent,TableComponent,RouterLink
-  ],
+  imports: [CommonModule,ButtonComponent,TableComponent,RouterLink],
   templateUrl: './configurations.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -57,7 +55,7 @@ export class ConfigurationsComponent implements OnInit {
   }
 
   public onEdit(id: string): void {
-    this.router.navigate(['/maintainer/configurations/update', id]);
+    this.router.navigate(['/maintainer/configurations/edit', id]);
   }
 
   public onToggle(id: string): void {

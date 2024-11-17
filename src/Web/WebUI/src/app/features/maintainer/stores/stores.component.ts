@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { StoreDto } from '@app/core/models';
@@ -8,9 +7,7 @@ import { ButtonComponent, TableComponent } from '@app/shared';
 @Component({
   selector: 'app-stores',
   standalone: true,
-  imports: [
-    CommonModule,ButtonComponent,TableComponent,RouterLink
-  ],
+  imports: [ButtonComponent,TableComponent,RouterLink],
   templateUrl: './stores.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -60,7 +57,7 @@ export class StoresComponent implements OnInit {
 
 
   public onEdit(id: string) {
-    this.router.navigate(['/maintainer/stores/update', id]);
+    this.router.navigate(['/maintainer/stores/edit', id]);
   }
 
   public onToggle(id: string) {

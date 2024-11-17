@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommuneDto } from '@app/core/models';
@@ -8,9 +7,7 @@ import { ButtonComponent, TableComponent } from '@app/shared';
 @Component({
   selector: 'app-communes',
   standalone: true,
-  imports: [
-    CommonModule,ButtonComponent,TableComponent,RouterLink
-  ],
+  imports: [ButtonComponent,TableComponent,RouterLink],
   templateUrl: './communes.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -52,7 +49,7 @@ export class CommunesComponent implements OnInit {
   }
 
   public onEdit(id: string) {
-    this.router.navigate(['/maintainer/communes/update', id]);
+    this.router.navigate(['/maintainer/communes/edit', id]);
   }
 
   public onToggle(id: string) {

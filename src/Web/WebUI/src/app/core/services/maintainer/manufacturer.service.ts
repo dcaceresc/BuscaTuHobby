@@ -12,7 +12,7 @@ export class ManufacturerService {
 
 
   public getManufacturers() {
-    return this.http.get<ApiResponse<ManufacturerDto[]>>('/api/manufacturers');
+    return this.http.get<ApiResponse<ManufacturerDto[]>>('/api/maintainer/manufacturers');
   }
 
   public getManufacturerById(id: string | null) {

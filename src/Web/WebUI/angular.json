@@ -10,6 +10,11 @@
           "strict": true,
           "style": "scss",
           "standalone": true
+        },
+        "@schematics/angular:component": {
+          "style": "scss",
+          "skipTests": true,
+          "changeDetection": "OnPush"
         }
       },
       "root": "",
@@ -22,9 +27,7 @@
             "outputPath": "dist/webui",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": [],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",

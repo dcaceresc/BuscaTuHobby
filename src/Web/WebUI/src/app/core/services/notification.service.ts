@@ -37,18 +37,11 @@ export class NotificationService {
   }
 
   showDefaultError() {
-    Swal.fire({
-      title: "Error",
-      text: "Oh a ocurrido un error, por favor notifique al administrador del sistema",
-      showConfirmButton: false,
-      showCloseButton: true,
-      timer: 4000,
-      toast: true,
-      position: 'top-end',
-      customClass: {
-          popup: 'notificacion-error'
-      }
-    });
+    this.showError('Error', 'Oh a ocurrido un error, por favor notifique al administrador del sistema');
+  }
+
+  showInvalidFormError() {
+    this.showError('Error', 'Por favor complete correctamente el formulario');
   }
 
   confirm(title: string, message: string, confirmButtonText: string, cancelButtonText: string) {

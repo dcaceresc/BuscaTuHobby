@@ -1,15 +1,17 @@
-import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from "@angular/common/http";
-import { ApplicationConfig, importProvidersFrom } from "@angular/core";
-import { BrowserModule } from "@angular/platform-browser";
-import { AppRoutingModule } from "./app.routes";
+import { provideHttpClient, withFetch, withInterceptors } from "@angular/common/http";
+import { ApplicationConfig, importProvidersFrom, provideExperimentalZonelessChangeDetection } from "@angular/core";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { AuthorizeInterceptor } from "./core/interceptors/authorize.interceptor";
 import { ErrorInterceptor } from "./core/interceptors/error.interceptor";
+import { routes } from "./app.routes";
+import { provideRouter, withComponentInputBinding } from "@angular/router";
 
 export const appConfig : ApplicationConfig = {
     providers: [
-        importProvidersFrom(BrowserModule, AppRoutingModule, FontAwesomeModule),
-        provideHttpClient(withInterceptorsFromDi(),withInterceptors([AuthorizeInterceptor,ErrorInterceptor]))
+        provideExperimentalZonelessChangeDetection(),
+        provideRouter(routes,withComponentInputBinding()),
+        importProvidersFrom(FontAwesomeModule),
+        provideHttpClient(withFetch(),withInterceptors([AuthorizeInterceptor,ErrorInterceptor]))
     ]
 };
     

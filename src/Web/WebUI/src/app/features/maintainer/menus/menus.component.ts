@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MenuDto } from '@app/core/models';
@@ -9,9 +8,7 @@ import { ButtonComponent, TableComponent } from '@app/shared';
 @Component({
   selector: 'app-groups',
   standalone: true,
-  imports: [
-    CommonModule,ButtonComponent,RouterLink,TableComponent
-  ],
+  imports: [ButtonComponent,RouterLink,TableComponent],
   templateUrl: './menus.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -60,7 +57,7 @@ export class MenusComponent implements OnInit {
   }
 
   public onEdit(id: string) {
-    this.router.navigate(['/maintainer/menus/update', id]);
+    this.router.navigate(['/maintainer/menus/edit', id]);
   }
 
   public onToggle(id: string) {

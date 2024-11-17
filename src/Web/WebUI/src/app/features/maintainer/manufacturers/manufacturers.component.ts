@@ -7,9 +7,7 @@ import { ButtonComponent, TableComponent } from '@app/shared';
 @Component({
   selector: 'app-manufacturers',
   standalone: true,
-  imports: [
-    CommonModule,ButtonComponent,TableComponent,RouterLink
-  ],
+  imports: [ButtonComponent,TableComponent,RouterLink],
   templateUrl: './manufacturers.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -59,7 +57,7 @@ export class ManufacturersComponent implements OnInit {
 
 
   public onEdit(id: string) {
-    this.router.navigate(['/maintainer/manufacturers/update', id]);
+    this.router.navigate(['/maintainer/manufacturers/edit', id]);
   }
 
   public onToggle(id: string) {

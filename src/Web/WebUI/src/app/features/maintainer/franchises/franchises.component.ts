@@ -7,9 +7,7 @@ import { ButtonComponent, TableComponent } from '@app/shared';
 @Component({
   selector: 'app-franchises',
   standalone: true,
-  imports: [
-    RouterLink,ButtonComponent,TableComponent
-  ],
+  imports: [RouterLink,ButtonComponent,TableComponent],
   templateUrl: './franchises.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -56,7 +54,7 @@ export class FranchisesComponent implements OnInit {
   }
 
   public onEdit(id: string) {
-    this.router.navigate(['/maintainer/franchises/update', id]);
+    this.router.navigate(['/maintainer/franchises/edit', id]);
   }
 
   public onToggle(id:string){

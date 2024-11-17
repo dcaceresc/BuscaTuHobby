@@ -7,9 +7,7 @@ import { ButtonComponent, TableComponent } from '@app/shared';
 @Component({
   selector: 'app-categories',
   standalone: true,
-  imports: [
-    RouterLink,ButtonComponent,TableComponent
-  ],
+  imports: [RouterLink,ButtonComponent,TableComponent],
   templateUrl : './categories.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -56,7 +54,7 @@ export class CategoriesComponent implements OnInit{
   }
 
   public onEdit(categoryId: string): void {
-    this.router.navigate(['maintainer/categories/update', categoryId]);
+    this.router.navigate(['maintainer/categories/edit', categoryId]);
   }
 
   public onToggle(categoryId: string): void {

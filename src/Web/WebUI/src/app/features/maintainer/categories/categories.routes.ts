@@ -7,10 +7,10 @@ export const routes : Routes =[
     },
     {
         path : 'add', 
-        loadComponent : () => import('./add-category/add-category.component').then(m => m.AddCategoryComponent)
+        loadComponent : () => import('./add-edit-category/add-edit-category.component').then(m => m.AddEditCategoryComponent)
     },
     {
-        path : 'update/:id', 
-        loadComponent : () => import('./update-category/update-category.component').then(m => m.UpdateCategoryComponent)
+        path : 'edit/:id', 
+        loadComponent : () => import('./add-edit-category/add-edit-category.component').then(m => m.AddEditCategoryComponent)
     }
 ];
