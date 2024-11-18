@@ -2,9 +2,9 @@
 
 namespace Application.Maintainer.Menus.Commands.UpdateMenu;
 
-public class UpdateMenuCommandValidator : AbstractValidator<UpdateMenu>
+public class UpdateMenuValidator : AbstractValidator<UpdateMenu>
 {
-    public UpdateMenuCommandValidator()
+    public UpdateMenuValidator()
     {
         RuleFor(v => v.MenuId).NotNull().NotEmpty();
         RuleFor(v => v.MenuName).NotNull().NotEmpty();

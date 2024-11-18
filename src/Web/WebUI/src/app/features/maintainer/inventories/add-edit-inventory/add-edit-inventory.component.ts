@@ -32,6 +32,21 @@ export class AddEditInventoryComponent implements OnInit {
     this.createForm();
     this.loadProducts();
     this.loadStores();
+
+    if(this.isEditMode){
+      this.inventoryService.getInventoryById(this.inventoryId).subscribe({
+        next: (response) => {
+          if(!response.success){
+            this.notificationService.showError("Error", response.message);
+            return;
+          }
+          this.inventoryForm.patchValue(response.data);
+        },
+        error: () => {
+          this.notificationService.showDefaultError();
+        }
+      });
+    }
   }
 
   public createForm(): void {

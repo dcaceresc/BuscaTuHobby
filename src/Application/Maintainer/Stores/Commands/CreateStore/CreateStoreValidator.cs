@@ -2,9 +2,9 @@
 
 namespace Application.Maintainer.Stores.Commands.CreateStore;
 
-public class CreateStoreCommandValidator : AbstractValidator<CreateStore>
+public class CreateStoreValidator : AbstractValidator<CreateStore>
 {
-    public CreateStoreCommandValidator()
+    public CreateStoreValidator()
     {
         RuleFor(v => v.StoreName).NotNull();
         RuleFor(v => v.StoreWebSite).NotNull();

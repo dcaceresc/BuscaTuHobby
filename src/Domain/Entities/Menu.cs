@@ -12,6 +12,7 @@ public class Menu : AuditableEntity
         MenuId = Guid.NewGuid();
         MenuName = menuName;
         MenuOrder = menuOrden;
+        MenuSlug = menuName.ToLower().Replace(" ", "-");
         IsActive = true;
     }
 
@@ -19,6 +20,7 @@ public class Menu : AuditableEntity
     public Guid MenuId { get; private set; }
     public string MenuName { get; private set; } = default!;
     public int MenuOrder { get; private set; }
+    public string MenuSlug { get; private set; } = default!;
     public bool IsActive { get; private set; }
 
     public virtual ICollection<SubMenu> SubMenus { get; private set; } = default!;
@@ -32,6 +34,12 @@ public class Menu : AuditableEntity
     {
         MenuName = menuName;
         MenuOrder = menuOrden;
+        MenuSlug = menuName.ToLower().Replace(" ", "-");
+    }
+
+    public SubMenu AddSubMenu(string subMenuName, int subMenuOrden)
+    {
+        return SubMenu.Create(subMenuName, MenuId, subMenuOrden);
     }
 
     public void ToggleActive()

@@ -28,6 +28,8 @@ export class MenusComponent implements OnInit {
     this.columns = [
       { name: '#', key: 'menuId' },
       { name: 'Nombre', key: 'menuName' },
+      { name: 'Slug', key: 'menuSlug' },
+      { name: 'SubMenus', key: 'subMenus' },
       { name: 'Acciones', key: 'isActive' },
     ];
 

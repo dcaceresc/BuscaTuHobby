@@ -3,9 +3,9 @@
 namespace Application.Maintainer.Inventories.Commands.UpdateInventory;
 
 
-public class UpdateInventoryCommandValidator : AbstractValidator<UpdateInventory>
+public class UpdateInventoryValidator : AbstractValidator<UpdateInventory>
 {
-    public UpdateInventoryCommandValidator()
+    public UpdateInventoryValidator()
     {
         RuleFor(v => v.InventoryId).NotNull();
         RuleFor(v => v.ProductId).NotNull();

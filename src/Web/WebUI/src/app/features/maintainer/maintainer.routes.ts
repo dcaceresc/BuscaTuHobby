@@ -6,7 +6,6 @@ export const routes : Routes =[
     { path: 'menus', loadChildren: () => import("./menus/menus.routes").then(m => m.routes) },
     { path: 'franchises', loadChildren: () => import("./franchises/franchises.routes").then(m => m.routes) },
     { path: 'manufacturers', loadChildren: () => import('./manufacturers/manufacturers.routes').then(m => m.routes)},
-    { path: 'submenus', loadChildren: () => import('./submenus/submenus.routes').then(m => m.routes) },
     { path: 'series', loadChildren: () => import('./series/series.routes').then(m => m.routes) },
     {path: 'stores', loadChildren: () => import('./stores/stores.routes').then(m => m.routes)},
     {path: 'products', loadChildren: () => import('./products/products.routes').then(m => m.routes)},

@@ -30,4 +30,9 @@ export class MenuService {
     return this.http.delete<ApiResponse<any>>(`api/maintainer/menus/${id}`);
   }
 
+  public toggleSubMenu(id: string | null, subMenuId: string | null) {
+    return this.http.delete<ApiResponse<any>>(`api/maintainer/menus/${id}/submenus/${subMenuId}`);
+
+  }
+
 }

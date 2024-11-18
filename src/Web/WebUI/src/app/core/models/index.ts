@@ -9,11 +9,12 @@ export * from './maintainer/product.model';
 export * from './maintainer/region.model';
 export * from './maintainer/serie.model';
 export * from './maintainer/store.model';
-export * from './maintainer/submenu.model';
 
 export * from './security/account.model';
 export * from './security/user.model';
 export * from './security/role.model';
+
+export * from './dashboard/dashboard.model';
 
 export * from './apiResponse.model';
 export * from './fa-icon.model';

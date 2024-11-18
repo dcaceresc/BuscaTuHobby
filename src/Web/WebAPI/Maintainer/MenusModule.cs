@@ -1,5 +1,6 @@
 ﻿using Application.Maintainer.Menus.Commands.CreateMenu;
 using Application.Maintainer.Menus.Commands.ToggleMenu;
+using Application.Maintainer.Menus.Commands.ToggleSubMenu;
 using Application.Maintainer.Menus.Commands.UpdateMenu;
 using Application.Maintainer.Menus.Queries.GetMenuById;
 using Application.Maintainer.Menus.Queries.GetMenus;
@@ -19,6 +20,7 @@ public class MenusModule : CarterModule
         groups.MapPost("", CreateMenu);
         groups.MapPut("{id:guid}", UpdateMenu);
         groups.MapDelete("{id:guid}", ToggleMenu);
+        groups.MapDelete("{id:guid}/submenus/{subMenuId:guid}", ToggleSubMenu);
 
     }
 
@@ -35,4 +37,5 @@ public class MenusModule : CarterModule
     }
 
     private static async Task<IResult> ToggleMenu(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleMenu(id)));
+    private static async Task<IResult> ToggleSubMenu(ISender sender, Guid id, Guid subMenuId) => Results.Ok(await sender.Send(new ToggleSubMenu(id,subMenuId)));
 }

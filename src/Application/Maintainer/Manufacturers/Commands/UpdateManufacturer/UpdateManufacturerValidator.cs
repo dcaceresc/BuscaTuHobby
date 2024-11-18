@@ -2,9 +2,9 @@
 
 namespace Application.Maintainer.Manufacturers.Commands.UpdateManufacturer;
 
-public class UpdateManufacturerCommandValidator : AbstractValidator<UpdateManufacturer>
+public class UpdateManufacturerValidator : AbstractValidator<UpdateManufacturer>
 {
-    public UpdateManufacturerCommandValidator()
+    public UpdateManufacturerValidator()
     {
         RuleFor(v => v.ManufacturerName).NotNull().NotEmpty();
 

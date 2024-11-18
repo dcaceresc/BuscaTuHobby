@@ -136,6 +136,12 @@ namespace Infrastructure.Data
 
                 entity.Property(e => e.MenuName)
                 .HasMaxLength(50);
+
+                entity.HasIndex(e => e.MenuSlug)
+                .IsUnique();
+
+                entity.Property(e => e.MenuSlug)
+                .HasMaxLength(50);
             });
 
             builder.Entity<Inventory>(entity =>

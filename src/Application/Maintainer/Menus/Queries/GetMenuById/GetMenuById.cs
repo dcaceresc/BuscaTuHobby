@@ -12,9 +12,10 @@ public class GetCategoryByIdHandler(IApplicationDbContext context, IMapper mappe
     {
         try
         {
-            var menu = await _context.Menus.
-            ProjectTo<MenuVM>(_mapper.ConfigurationProvider).
-            FirstOrDefaultAsync(x => x.MenuId == request.MenuId, cancellationToken);
+            var menu = await _context.Menus
+                .Include(x => x.SubMenus)
+                .ProjectTo<MenuVM>(_mapper.ConfigurationProvider)
+                .FirstOrDefaultAsync(x => x.MenuId == request.MenuId, cancellationToken);
 
             Guard.Against.NotFound(menu, $"No existe menu con la Id {request.MenuId}");
 

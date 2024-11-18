@@ -2,9 +2,9 @@
 
 namespace Application.Maintainer.Stores.Commands.UpdateStore;
 
-public class UpdateStoreCommandValidator : AbstractValidator<UpdateStore>
+public class UpdateStoreValidator : AbstractValidator<UpdateStore>
 {
-    public UpdateStoreCommandValidator()
+    public UpdateStoreValidator()
     {
         RuleFor(v => v.StoreId).NotNull();
         RuleFor(v => v.StoreName).NotNull();

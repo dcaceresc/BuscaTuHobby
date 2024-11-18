@@ -1,5 +1,7 @@
-﻿namespace Application.Maintainer.Menus.Commands.CreateMenu;
-public record CreateMenu(string MenuName, int MenuOrden) : IRequest<ApiResponse>;
+﻿using Application.Common.Models;
+
+namespace Application.Maintainer.Menus.Commands.CreateMenu;
+public record CreateMenu(string MenuName, int MenuOrder, List<CreateSubMenu> SubMenus) : IRequest<ApiResponse>;
 
 public class CreateMenuHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<CreateMenu, ApiResponse>
 {
@@ -10,9 +12,18 @@ public class CreateMenuHandler(IApplicationDbContext context, IApiResponseServic
     {
         try
         {
-            var entity = Menu.Create(request.MenuName,request.MenuOrden);
+            var entity = Menu.Create(request.MenuName,request.MenuOrder);
 
             _context.Menus.Add(entity);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            foreach (var subMenu in request.SubMenus)
+            {
+                var subMenuEntity = entity.AddSubMenu(subMenu.SubMenuName, subMenu.SubMenuOrder);
+
+                _context.SubMenus.Add(subMenuEntity);
+            }
 
             await _context.SaveChangesAsync(cancellationToken);
 

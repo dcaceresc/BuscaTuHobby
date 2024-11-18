@@ -18,6 +18,7 @@ public class GetMenusHandler(IApplicationDbContext context, IMapper mapper, IApi
             .ProjectTo<MenuDto>(_mapper.ConfigurationProvider)
             .ToListAsync(cancellationToken);
 
+
             return _responseService.Success(menus);
         }
         catch (Exception)

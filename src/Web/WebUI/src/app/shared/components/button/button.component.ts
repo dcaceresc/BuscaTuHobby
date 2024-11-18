@@ -10,7 +10,7 @@ import { faPencil, faPlus, faPowerOff, faRotate, IconDefinition } from '@fortawe
     CommonModule,FontAwesomeModule
   ],
   template: `
-  <button class="{{this.class}}">
+  <button type="{{this.type}}" class="{{this.class}}">
     <fa-icon [icon]="faIcon"></fa-icon>
     {{this.text}}
   </button>`,
@@ -18,6 +18,7 @@ import { faPencil, faPlus, faPowerOff, faRotate, IconDefinition } from '@fortawe
 })
 export class ButtonComponent implements OnInit{ 
 
+  @Input() type: string = "button";
   @Input() class: string = "";
   @Input() text: string = "";
   @Input() icon: string = ""; 

@@ -2,9 +2,9 @@
 
 namespace Application.Maintainer.Categories.Commands.UpdateCategory;
 
-public class UpdateCategoryCommandValidator : AbstractValidator<UpdateCategory>
+public class UpdateCategoryValidator : AbstractValidator<UpdateCategory>
 {
-    public UpdateCategoryCommandValidator()
+    public UpdateCategoryValidator()
     {
         RuleFor(v => v.CategoryId).NotNull().NotEmpty();
         RuleFor(v => v.CategoryName).NotNull().NotEmpty();

@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
 
 namespace Application.Maintainer.Inventories.Commands.CreateInventory;
-public class CreateInventoryCommandValidator : AbstractValidator<CreateInventory>
+public class CreateInventoryValidator : AbstractValidator<CreateInventory>
 {
-    public CreateInventoryCommandValidator()
+    public CreateInventoryValidator()
     {
         RuleFor(v => v.ProductId).NotNull();
         RuleFor(v => v.StoreId).NotNull();

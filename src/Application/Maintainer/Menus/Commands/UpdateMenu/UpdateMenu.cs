@@ -1,6 +1,8 @@
-﻿namespace Application.Maintainer.Menus.Commands.UpdateMenu;
+﻿using Application.Common.Models;
 
-public record UpdateMenu(Guid MenuId, string MenuName,int MenuOrder) : IRequest<ApiResponse>;
+namespace Application.Maintainer.Menus.Commands.UpdateMenu;
+
+public record UpdateMenu(Guid MenuId, string MenuName,int MenuOrder, List<UpdateSubMenu> SubMenus) : IRequest<ApiResponse>;
 
 public class UpdateMenuHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<UpdateMenu, ApiResponse>
 {
@@ -16,6 +18,24 @@ public class UpdateMenuHandler(IApplicationDbContext context, IApiResponseServic
             Guard.Against.NotFound(entity, $"No existe menu con la Id {request.MenuId}");
 
             entity.Update(request.MenuName,request.MenuOrder);
+
+            await _context.SaveChangesAsync(cancellationToken);
+
+            var oldSubMenus = await _context.SubMenus.Where(x => x.MenuId == request.MenuId).ToListAsync(cancellationToken);
+
+            foreach (var subMenu in request.SubMenus)
+            {
+                var subMenuEntity = oldSubMenus.FirstOrDefault(x => x.SubMenuId == subMenu.SubMenuId);
+                if (subMenuEntity is null)
+                {
+                    subMenuEntity = entity.AddSubMenu(subMenu.SubMenuName, subMenu.SubMenuOrder);
+                    _context.SubMenus.Add(subMenuEntity);
+                }
+                else
+                {
+                    subMenuEntity.Update(subMenu.SubMenuName, request.MenuId, subMenu.SubMenuOrder);
+                }
+            }
 
             await _context.SaveChangesAsync(cancellationToken);
 
