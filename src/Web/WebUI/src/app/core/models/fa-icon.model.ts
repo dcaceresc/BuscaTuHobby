@@ -1,4 +1,4 @@
-import { faBars, faCheck, faEdit, faHeart, faMagnifyingGlass, faPowerOff, faRotate, faSignInAlt, faUserPlus, IconDefinition } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faCaretDown, faCaretLeft, faCaretRight, faCaretUp, faCheck, faEdit, faHeart, faMagnifyingGlass, faPowerOff, faRotate, faSignInAlt, faUserPlus, IconDefinition } from "@fortawesome/free-solid-svg-icons";
 
 export interface FaIcon {
     name: string;
@@ -15,6 +15,10 @@ export const FA_ICONS: FaIcon[] = [
     { name: 'Heart', icon: faHeart },
     { name: 'Logout', icon: faSignInAlt },
     { name: 'Admin', icon: faUserPlus },
+    { name: 'Up', icon: faCaretUp},
+    { name: 'Down', icon: faCaretDown},
+    { name: 'Right', icon: faCaretRight},
+    { name: 'Left', icon: faCaretLeft}
 
 
 ];

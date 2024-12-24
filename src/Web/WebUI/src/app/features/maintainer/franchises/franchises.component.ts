@@ -5,11 +5,10 @@ import { FaIconService, FranchiseService, NotificationService } from '@app/core/
 import { ButtonComponent, TableComponent } from '@app/shared';
 
 @Component({
-  selector: 'app-franchises',
-  standalone: true,
-  imports: [RouterLink,ButtonComponent,TableComponent],
-  templateUrl: './franchises.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-franchises',
+    imports: [RouterLink, ButtonComponent, TableComponent],
+    templateUrl: './franchises.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FranchisesComponent implements OnInit { 
 

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ProductDto, StoreDto } from '@app/core/models';
@@ -6,11 +6,10 @@ import { InventoryService, NotificationService, ProductService, StoreService } f
 import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
-  selector: 'app-add-edit-inventory',
-  standalone: true,
-  imports: [ReactiveFormsModule,NgSelectModule],
-  templateUrl: './add-edit-inventory.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-add-edit-inventory',
+    imports: [ReactiveFormsModule, NgSelectModule],
+    templateUrl: './add-edit-inventory.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditInventoryComponent implements OnInit {
   private router = inject(Router);
@@ -20,7 +19,7 @@ export class AddEditInventoryComponent implements OnInit {
   private storeService = inject(StoreService);
   private notificationService = inject(NotificationService);
 
-  @Input('id') inventoryId!: string | null;
+  readonly inventoryId = input.required<string | null>({ alias: "id" });
   public isEditMode : boolean = false;
   public inventoryForm!: FormGroup;
   public products = signal<ProductDto[]>([]);
@@ -28,13 +27,13 @@ export class AddEditInventoryComponent implements OnInit {
 
 
   public ngOnInit(): void {
-    this.isEditMode = !!this.inventoryId;
+    this.isEditMode = !!this.inventoryId();
     this.createForm();
     this.loadProducts();
     this.loadStores();
 
     if(this.isEditMode){
-      this.inventoryService.getInventoryById(this.inventoryId).subscribe({
+      this.inventoryService.getInventoryById(this.inventoryId()).subscribe({
         next: (response) => {
           if(!response.success){
             this.notificationService.showError("Error", response.message);
@@ -52,7 +51,7 @@ export class AddEditInventoryComponent implements OnInit {
   public createForm(): void {
     if(this.isEditMode){
       this.inventoryForm = this.formBuilder.group({
-        inventoryId : [this.inventoryId, Validators.required],
+        inventoryId : [this.inventoryId(), Validators.required],
         storeId: ['', Validators.required],
         productId: ['',Validators.required],
         price: ['', Validators.required]
@@ -104,7 +103,7 @@ export class AddEditInventoryComponent implements OnInit {
     }
 
     if(this.isEditMode){
-      this.inventoryService.updateInventory(this.inventoryId,this.inventoryForm.value).subscribe({
+      this.inventoryService.updateInventory(this.inventoryId(),this.inventoryForm.value).subscribe({
         next: (response) => {
           if(!response.success){
             this.notificationService.showError("Error", response.message);

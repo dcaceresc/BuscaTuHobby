@@ -6,13 +6,12 @@ import { FaIconService, NotificationService, RegionService } from '@app/core/ser
 import { ButtonComponent, TableComponent } from '@app/shared';
 
 @Component({
-  selector: 'app-regions',
-  standalone: true,
-  imports: [
-    CommonModule,ButtonComponent,TableComponent,RouterLink
-  ],
-  templateUrl: './regions.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-regions',
+    imports: [
+        CommonModule, ButtonComponent, TableComponent, RouterLink
+    ],
+    templateUrl: './regions.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RegionsComponent implements OnInit { 
 

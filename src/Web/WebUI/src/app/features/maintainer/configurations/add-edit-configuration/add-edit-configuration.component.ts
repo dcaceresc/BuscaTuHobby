@@ -1,14 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ConfigurationService, NotificationService } from '@app/core/services';
 
 @Component({
-  selector: 'app-add-edit-configuration',
-  standalone: true,
-  imports: [ReactiveFormsModule],
-  templateUrl: './add-edit-configuration.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-add-edit-configuration',
+    imports: [ReactiveFormsModule],
+    templateUrl: './add-edit-configuration.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditConfigurationComponent implements OnInit {
   private router = inject(Router);
@@ -16,17 +15,17 @@ export class AddEditConfigurationComponent implements OnInit {
   private notificationService = inject(NotificationService);
   private formBuilder = inject(FormBuilder);
 
-  @Input('id') configurationId!: string | null;
+  readonly configurationId = input.required<string | null>({ alias: "id" });
   public isEditMode: boolean = false;
   public configurationForm!: FormGroup;
 
 
   public ngOnInit(): void {
-    this.isEditMode = !!this.configurationId;
+    this.isEditMode = !!this.configurationId();
     this.createForm();
 
     if(this.isEditMode){
-      this.configurationService.getConfigurationById(this.configurationId).subscribe({
+      this.configurationService.getConfigurationById(this.configurationId()).subscribe({
         next: (response) => {
           if(!response.success){
             this.notificationService.showError("Error", response.message);
@@ -44,7 +43,7 @@ export class AddEditConfigurationComponent implements OnInit {
   public createForm(): void {
     if(this.isEditMode){
       this.configurationForm = this.formBuilder.group({
-        configurationId: [this.configurationId, Validators.required],
+        configurationId: [this.configurationId(), Validators.required],
         configurationName: ['', Validators.required],
         configurationValue: ['', Validators.required],
       });
@@ -64,7 +63,7 @@ export class AddEditConfigurationComponent implements OnInit {
     }
 
     if(this.isEditMode){
-      this.configurationService.updateConfiguration(this.configurationId,this.configurationForm.value).subscribe({
+      this.configurationService.updateConfiguration(this.configurationId(),this.configurationForm.value).subscribe({
         next: (response) => {
           if(!response.success){
             this.notificationService.showError("Error", response.message);

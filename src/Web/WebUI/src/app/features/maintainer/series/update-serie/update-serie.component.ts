@@ -7,13 +7,12 @@ import { FranchiseService, NotificationService, SerieService } from '@app/core/s
 import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
-  selector: 'app-update-serie',
-  standalone: true,
-  imports: [
-    CommonModule,ReactiveFormsModule,NgSelectModule
-  ],
-  templateUrl: './update-serie.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-update-serie',
+    imports: [
+        CommonModule, ReactiveFormsModule, NgSelectModule
+    ],
+    templateUrl: './update-serie.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UpdateSerieComponent implements OnInit{ 
 

@@ -1,0 +1,35 @@
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Hola, Registro</h5>
+    <button type="button" #btnCloseOffCanvas class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    @for (item of menu(); track $index) {
+      <ul style="list-style: none;padding:0">
+        <li>
+            <div>
+              <a (click)="toggleSubMenu($index)" class="menu-link" [class.expanded]="expandedMenus[$index]">
+                {{item.menuName}}
+                @if (item.subMenus.length > 0) {
+                  <span class="float-end">
+                    <fa-icon [icon]="this.getIcon(expandedMenus[$index] ? 'Right' : 'Down')"></fa-icon>
+                  </span>
+                }
+                </a>
+              @if (item.subMenus.length > 0 && expandedMenus[$index]) {
+                <ul class="sub-menu" style="margin-left: 20px;">
+                    @for (subMenu of item.subMenus; track $index) {
+                        <li>
+                          <a class="dropdown-item" href="{{item.menuSlug}}/{{subMenu.subMenuSlug}}">{{subMenu.subMenuName}}</a>
+                        </li>
+                      }
+                </ul>
+            }
+            </div>
+        </li>
+      </ul>
+  }
+  </div>
+</div>
+
+

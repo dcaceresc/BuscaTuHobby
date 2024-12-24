@@ -7,13 +7,12 @@ import { FranchiseService, NotificationService, SerieService } from '@app/core/s
 import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
-  selector: 'app-add-serie',
-  standalone: true,
-  imports: [
-    CommonModule,ReactiveFormsModule,NgSelectModule
-  ],
-  templateUrl: './add-serie.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-add-serie',
+    imports: [
+        CommonModule, ReactiveFormsModule, NgSelectModule
+    ],
+    templateUrl: './add-serie.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddSerieComponent implements OnInit { 
   

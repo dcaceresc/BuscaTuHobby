@@ -5,13 +5,12 @@ import { Router } from '@angular/router';
 import { NotificationService, RegionService } from '@app/core/services';
 
 @Component({
-  selector: 'app-add-region',
-  standalone: true,
-  imports: [
-    CommonModule,ReactiveFormsModule
-  ],
-  templateUrl: './add-region.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-add-region',
+    imports: [
+        CommonModule, ReactiveFormsModule
+    ],
+    templateUrl: './add-region.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddRegionComponent implements OnInit { 
 

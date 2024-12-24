@@ -6,11 +6,10 @@ import { ButtonComponent, TableComponent } from '@app/shared';
 
 
 @Component({
-  selector: 'app-groups',
-  standalone: true,
-  imports: [ButtonComponent,RouterLink,TableComponent],
-  templateUrl: './menus.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-groups',
+    imports: [ButtonComponent, RouterLink, TableComponent],
+    templateUrl: './menus.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MenusComponent implements OnInit {
   

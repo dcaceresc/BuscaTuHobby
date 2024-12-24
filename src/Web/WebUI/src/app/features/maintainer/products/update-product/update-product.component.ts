@@ -7,13 +7,12 @@ import { CategoryService, FranchiseService, ManufacturerService, NotificationSer
 import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
-  selector: 'app-update-product',
-  standalone: true,
-  imports: [
-    CommonModule,ReactiveFormsModule,NgSelectModule
-  ],
-  templateUrl: './update-product.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-update-product',
+    imports: [
+        CommonModule, ReactiveFormsModule, NgSelectModule
+    ],
+    templateUrl: './update-product.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UpdateProductComponent implements OnInit {
 

@@ -22,8 +22,8 @@ export class UserService {
     return this.http.post<ApiResponse<any>>('/api/security/users', user);
   }
 
-  public updateUser(user: UserVM) {
-    return this.http.put<ApiResponse<any>>(`/api/security/users/${user.userId}`, user);
+  public updateUser(userId: string | null,user: UserVM) {
+    return this.http.put<ApiResponse<any>>(`/api/security/users/${userId}`, user);
   }
 
   public toggleUser(userId: string) {

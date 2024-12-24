@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { RegionDto } from '@app/core/models';
@@ -6,11 +6,10 @@ import { CommuneService, NotificationService, RegionService } from '@app/core/se
 import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
-  selector: 'app-add-edit-commune',
-  standalone: true,
-  imports: [ReactiveFormsModule, NgSelectModule],
-  templateUrl: './add-edit-commune.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-add-edit-commune',
+    imports: [ReactiveFormsModule, NgSelectModule],
+    templateUrl: './add-edit-commune.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditCommuneComponent implements OnInit {
   private router = inject(Router);
@@ -19,18 +18,18 @@ export class AddEditCommuneComponent implements OnInit {
   private regionService = inject(RegionService);
   private notificationService = inject(NotificationService);
 
-  @Input('id') communeId!: string | null;
+  readonly communeId = input.required<string | null>({ alias: "id" });
   public isEditMode : boolean = false;
   public communeForm!: FormGroup;
   public regions = signal<RegionDto[]>([]);
 
   public ngOnInit() : void {
-    this.isEditMode = !!this.communeId;
+    this.isEditMode = !!this.communeId();
     this.createForm();
     this.loadRegions();
 
     if(this.isEditMode){
-      this.communeService.getCommuneById(this.communeId).subscribe({
+      this.communeService.getCommuneById(this.communeId()).subscribe({
         next: (response) => {
 
           if(!response.success){
@@ -50,7 +49,7 @@ export class AddEditCommuneComponent implements OnInit {
   public createForm() : void{
     if(this.isEditMode){
       this.communeForm = this.formBuilder.group({
-        communeId: [this.communeId,Validators.required],
+        communeId: [this.communeId(),Validators.required],
         communeName: ['',Validators.required],
         regionId: [null,Validators.required]
       });

@@ -7,13 +7,12 @@ import { ButtonComponent, TableComponent } from '@app/shared';
 
 
 @Component({
-  selector: 'app-series',
-  standalone: true,
-  imports: [
-    CommonModule,ButtonComponent,TableComponent,RouterLink
-  ],
-  templateUrl: './series.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-series',
+    imports: [
+        CommonModule, ButtonComponent, TableComponent, RouterLink
+    ],
+    templateUrl: './series.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SeriesComponent implements OnInit { 
 

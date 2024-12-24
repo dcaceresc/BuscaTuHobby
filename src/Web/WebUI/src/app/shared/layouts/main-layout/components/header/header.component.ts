@@ -1,24 +1,23 @@
-import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, ViewChild } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { DashboardMenuDto } from '@app/core/models';
+import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { AuthorizeService, DashboardService, FaIconService, NotificationService } from '@app/core/services';
-import { AdministrationMenuComponent } from '@app/features/security/components/administration-menu/administration-menu.component';
-import { LoginMenuComponent } from '@app/features/security/components/login-menu/login-menu.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
+import { LoginMenuComponent } from './login-menu/login-menu.component';
+import { AdministrationMenuComponent } from './administration-menu/administration-menu.component';
+import { MenuComponent } from './menu/menu.component';
+import { DashboardMenuDto } from '@app/core/models';
 
 @Component({
-  selector: 'app-header',
-  standalone: true,
-  imports: [FontAwesomeModule,LoginMenuComponent,AdministrationMenuComponent],
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-header',
+    imports: [FontAwesomeModule, LoginMenuComponent, AdministrationMenuComponent, MenuComponent],
+    templateUrl: './header.component.html',
+    styleUrl: './header.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent{ 
 
-  @ViewChild('btnCloseOffCanvas') btnCloseOffCanvas!: ElementRef;
+  readonly btnCloseOffCanvas = viewChild.required<ElementRef>('btnCloseOffCanvas');
 
   private authorizeService = inject(AuthorizeService);
   private dashboardService = inject(DashboardService);
@@ -33,6 +32,7 @@ export class HeaderComponent{
   public isAuthenticated!: Observable<boolean>;
   public roles: string[] = [];
   public menu = signal<DashboardMenuDto[]>([]);
+
 
 
   constructor() { 
@@ -65,7 +65,7 @@ export class HeaderComponent{
   }
 
   public onClose(){
-    this.btnCloseOffCanvas.nativeElement.click();
+    this.btnCloseOffCanvas().nativeElement.click();
   }
 
 }

@@ -1,15 +1,14 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CategoryService, NotificationService } from '@app/core/services';
 import { CustomInputComponent } from '@app/shared/components/custom-input/custom-input.component';
 
 @Component({
-  selector: 'app-add-edit-category',
-  standalone: true,
-  imports: [ReactiveFormsModule, CustomInputComponent],
-  templateUrl: './add-edit-category.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-add-edit-category',
+    imports: [ReactiveFormsModule, CustomInputComponent],
+    templateUrl: './add-edit-category.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditCategoryComponent implements OnInit {
   private router = inject(Router);
@@ -17,16 +16,16 @@ export class AddEditCategoryComponent implements OnInit {
   private categoryService = inject(CategoryService);
   private notificationService = inject(NotificationService);
 
-  @Input('id') categoryId!: string | null;
+  readonly categoryId = input.required<string | null>({ alias: "id" });
   public isEditMode : boolean = false;
   public categoryForm! : FormGroup;
 
   public ngOnInit(): void {
-    this.isEditMode = !!this.categoryId;
+    this.isEditMode = !!this.categoryId();
     this.createForm();
 
     if(this.isEditMode){
-      this.categoryService.getCategoryById(this.categoryId).subscribe({
+      this.categoryService.getCategoryById(this.categoryId()).subscribe({
         next: (response) => {
           if (!response.success) {
             this.notificationService.showError('Error', response.message);
@@ -46,7 +45,7 @@ export class AddEditCategoryComponent implements OnInit {
 
     if(this.isEditMode){
       this.categoryForm = this.formBuilder.group({
-        categoryId: [this.categoryId, Validators.required],
+        categoryId: [this.categoryId(), Validators.required],
         categoryName: ['', Validators.required],
       });
     }else{
@@ -64,7 +63,7 @@ export class AddEditCategoryComponent implements OnInit {
     }
 
     if(this.isEditMode){
-      this.categoryService.updateCategory(this.categoryId,this.categoryForm.value).subscribe({
+      this.categoryService.updateCategory(this.categoryId(),this.categoryForm.value).subscribe({
         next: (response) => {
           if (!response.success) {
             this.notificationService.showError('Error', response.message);

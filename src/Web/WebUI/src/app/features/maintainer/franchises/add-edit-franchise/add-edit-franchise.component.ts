@@ -1,14 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FranchiseService, NotificationService } from '@app/core/services';
 
 @Component({
-  selector: 'app-add-edit-franchise',
-  standalone: true,
-  imports: [ReactiveFormsModule],
-  templateUrl: './add-edit-franchise.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-add-edit-franchise',
+    imports: [ReactiveFormsModule],
+    templateUrl: './add-edit-franchise.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditFranchiseComponent implements OnInit {
   private franchiseService = inject(FranchiseService);
@@ -16,16 +15,16 @@ export class AddEditFranchiseComponent implements OnInit {
   private router = inject(Router);
   private notificationService = inject(NotificationService);
 
-  @Input('id') franchiseId!: string | null;
+  readonly franchiseId = input.required<string | null>({ alias: "id" });
   public isEditMode : boolean = false;
   public franchiseForm!: FormGroup;
 
   public ngOnInit(){
-    this.isEditMode = !!this.franchiseId;
+    this.isEditMode = !!this.franchiseId();
     this.createForm();
 
     if(this.isEditMode){
-      this.franchiseService.getFranchise(this.franchiseId).subscribe({
+      this.franchiseService.getFranchise(this.franchiseId()).subscribe({
         next: (response) => {
           if (!response.success) {
             this.notificationService.showError('Error', response.message);
@@ -43,7 +42,7 @@ export class AddEditFranchiseComponent implements OnInit {
   public createForm(){
     if(this.isEditMode){
       this.franchiseForm = this.formBuilder.group({
-        franchiseId: [this.franchiseId,Validators.required],
+        franchiseId: [this.franchiseId(),Validators.required],
         franchiseName: ['',Validators.required],
       });
     }else{
@@ -61,7 +60,7 @@ export class AddEditFranchiseComponent implements OnInit {
     }
 
     if(this.isEditMode){
-      this.franchiseService.updateFranchise(this.franchiseId, this.franchiseForm.value).subscribe({
+      this.franchiseService.updateFranchise(this.franchiseId(), this.franchiseForm.value).subscribe({
         next: (response) => {
           if (!response.success) {
             this.notificationService.showError('Error', response.message);

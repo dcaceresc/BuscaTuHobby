@@ -6,11 +6,10 @@ import { ConfigurationService, FaIconService, NotificationService } from '@app/c
 import { ButtonComponent, TableComponent } from '@app/shared';
 
 @Component({
-  selector: 'app-configurations',
-  standalone: true,
-  imports: [CommonModule,ButtonComponent,TableComponent,RouterLink],
-  templateUrl: './configurations.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-configurations',
+    imports: [CommonModule, ButtonComponent, TableComponent, RouterLink],
+    templateUrl: './configurations.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ConfigurationsComponent implements OnInit {
 

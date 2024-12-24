@@ -5,11 +5,10 @@ import { FaIconService, NotificationService, StoreService } from '@app/core/serv
 import { ButtonComponent, TableComponent } from '@app/shared';
 
 @Component({
-  selector: 'app-stores',
-  standalone: true,
-  imports: [ButtonComponent,TableComponent,RouterLink],
-  templateUrl: './stores.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-stores',
+    imports: [ButtonComponent, TableComponent, RouterLink],
+    templateUrl: './stores.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StoresComponent implements OnInit {
 

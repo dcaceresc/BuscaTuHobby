@@ -5,11 +5,10 @@ import { FaIconService, InventoryService, NotificationService } from '@app/core/
 import { ButtonComponent, TableComponent } from '@app/shared';
 
 @Component({
-  selector: 'app-inventories',
-  standalone: true,
-  imports: [ButtonComponent,TableComponent,RouterLink],
-  templateUrl: './inventories.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-inventories',
+    imports: [ButtonComponent, TableComponent, RouterLink],
+    templateUrl: './inventories.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InventoriesComponent implements OnInit {
 

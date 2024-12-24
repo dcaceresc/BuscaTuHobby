@@ -5,11 +5,10 @@ import { CommuneService, FaIconService, NotificationService } from '@app/core/se
 import { ButtonComponent, TableComponent } from '@app/shared';
 
 @Component({
-  selector: 'app-communes',
-  standalone: true,
-  imports: [ButtonComponent,TableComponent,RouterLink],
-  templateUrl: './communes.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-communes',
+    imports: [ButtonComponent, TableComponent, RouterLink],
+    templateUrl: './communes.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CommunesComponent implements OnInit {
 

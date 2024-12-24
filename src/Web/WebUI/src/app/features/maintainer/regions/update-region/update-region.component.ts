@@ -5,13 +5,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NotificationService, RegionService } from '@app/core/services';
 
 @Component({
-  selector: 'app-update-region',
-  standalone: true,
-  imports: [
-    CommonModule,ReactiveFormsModule
-  ],
-  templateUrl: './update-region.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-update-region',
+    imports: [
+        CommonModule, ReactiveFormsModule
+    ],
+    templateUrl: './update-region.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UpdateRegionComponent implements OnInit{ 
 

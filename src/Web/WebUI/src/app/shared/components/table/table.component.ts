@@ -1,24 +1,29 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, inject, Input, Output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal, input, output } from '@angular/core';
 import { FontAwesomeModule, IconDefinition } from '@fortawesome/angular-fontawesome';
 import { FaIconService } from '../../../core/services/fa-icon.service';
 
 @Component({
-  selector: 'app-table',
-  standalone: true,
-  imports: [
-    CommonModule,FontAwesomeModule
-  ],
-  templateUrl: './table.component.html',
-  styleUrl: './table.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-table',
+    imports: [CommonModule, FontAwesomeModule],
+    templateUrl: './table.component.html',
+    styleUrl: './table.component.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TableComponent {
 
-  @Input() data = signal<any[]>([]);
-  @Input() columns:any[] = []
-  @Input() actions: { icon: IconDefinition, label: string, actionKey: string, cssClass: string }[] = []; // Acciones personalizables
-  @Output() actionEvent: EventEmitter<{ id: string, actionKey: string }> = new EventEmitter<{ id: string, actionKey: string }>();
+  readonly data = input(signal<any[]>([]));
+  readonly columns = input<any[]>([]);
+  readonly actions = input<{
+    icon: IconDefinition;
+    label: string;
+    actionKey: string;
+    cssClass: string;
+}[]>([]); // Acciones personalizables
+  readonly actionEvent = output<{
+    id: string;
+    actionKey: string;
+}>();
 
   public currentPage = signal(1);
   public readonly itemsPerPage = 10;
@@ -35,7 +40,7 @@ export class TableComponent {
   }
 
   public nPage(){
-    return Math.ceil(this.data()?.length / this.itemsPerPage)
+    return Math.ceil(this.data()()?.length / this.itemsPerPage)
   }
 
   public range(start: number) {
@@ -47,7 +52,7 @@ export class TableComponent {
   }
 
   public getFilteredData() {
-  return this.data()?.filter((item) => {
+  return this.data()()?.filter((item) => {
     return Object.entries(item).some(([key, value]) => {
       if (key.toLowerCase() === 'isactive') {
         return false; // Ignorar la columna 'IsActive'

@@ -15,7 +15,7 @@
 
 
 
-@import './variables.scss';
+@use '@src/variables.scss' as *;
 
 
 button:disabled{

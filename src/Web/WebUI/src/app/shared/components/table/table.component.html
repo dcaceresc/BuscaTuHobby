@@ -8,7 +8,7 @@
         <table class="table table-stripped table-bordered">
             <thead>
               <tr>
-                  @for (column of columns; track $index) {
+                  @for (column of columns(); track $index) {
                     <th>{{column.name}}</th>
                   }
               </tr>
@@ -17,7 +17,7 @@
             @for (row of getPaginatedData(); track row; let i = $index) {
                 <tr>
                     <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
-                    @for (column of columns; track column) { 
+                    @for (column of columns(); track column) { 
                         @if($index !== 0 && column.key !== 'isActive') {
                             
                             @if (getTypedValue(row[column.key]) === 'boolean')
@@ -47,15 +47,15 @@
                         }
                     }
                     <td>
-                        @for (action of actions; track $index) {
+                        @for (action of actions(); track $index) {
 
                             @if (action.actionKey !== 'toggle') {
-                                <button class="btn" [ngClass]="action.cssClass" (click)="onAction(row[columns[0].key], action.actionKey)">
+                                <button class="btn" [ngClass]="action.cssClass" (click)="onAction(row[columns()[0].key], action.actionKey)">
                                     <fa-icon [icon]="action.icon"></fa-icon> {{ action.label }}
                                 </button>
                                 <span>&nbsp;</span>
                             }@else {
-                                <button class="btn" [ngClass]="row['isActive'] ? 'btn-warning' : 'btn-success'" (click)="onAction(row[columns[0].key], action.actionKey)">
+                                <button class="btn" [ngClass]="row['isActive'] ? 'btn-warning' : 'btn-success'" (click)="onAction(row[columns()[0].key], action.actionKey)">
                                     <fa-icon [icon]="action.icon"></fa-icon> {{ row['isActive'] ? 'Pausar' : 'Reanudar' }}
                                 </button>
                                 <span>&nbsp;</span>

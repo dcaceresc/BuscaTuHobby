@@ -8,13 +8,12 @@ import { NgSelectModule } from '@ng-select/ng-select';
 
 
 @Component({
-  selector: 'app-add-product',
-  standalone: true,
-  imports: [
-    CommonModule,ReactiveFormsModule,NgSelectModule
-  ],
-  templateUrl: './add-product.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-add-product',
+    imports: [
+        CommonModule, ReactiveFormsModule, NgSelectModule
+    ],
+    templateUrl: './add-product.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddProductComponent implements OnInit {
   

@@ -5,11 +5,10 @@ import { ManufacturerDto } from '@app/core/models';
 import { FaIconService, ManufacturerService, NotificationService } from '@app/core/services';
 import { ButtonComponent, TableComponent } from '@app/shared';
 @Component({
-  selector: 'app-manufacturers',
-  standalone: true,
-  imports: [ButtonComponent,TableComponent,RouterLink],
-  templateUrl: './manufacturers.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-manufacturers',
+    imports: [ButtonComponent, TableComponent, RouterLink],
+    templateUrl: './manufacturers.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ManufacturersComponent implements OnInit {
 

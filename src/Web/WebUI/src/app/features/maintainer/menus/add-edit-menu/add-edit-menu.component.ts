@@ -1,15 +1,14 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit, input } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MenuService, NotificationService } from '@app/core/services';
 import { ButtonComponent } from '@app/shared';
 
 @Component({
-  selector: 'app-add-edit-menu',
-  standalone: true,
-  imports: [ReactiveFormsModule,ButtonComponent],
-  templateUrl: './add-edit-menu.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-add-edit-menu',
+    imports: [ReactiveFormsModule, ButtonComponent],
+    templateUrl: './add-edit-menu.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditMenuComponent implements OnInit {
   private router = inject(Router);
@@ -18,12 +17,12 @@ export class AddEditMenuComponent implements OnInit {
   private notificationService = inject(NotificationService);
   private changeDetectorRef = inject(ChangeDetectorRef);
 
-  @Input('id') menuId!: string | null;
+  readonly menuId = input.required<string | null>({ alias: "id" });
   public isEditMode: boolean = false;
   public menuForm!: FormGroup;
 
   public ngOnInit(): void {
-    this.isEditMode = !!this.menuId;
+    this.isEditMode = !!this.menuId();
     this.createForm();
 
     if(this.isEditMode){
@@ -34,7 +33,7 @@ export class AddEditMenuComponent implements OnInit {
   public createForm(): void {
     if(this.isEditMode){
       this.menuForm = this.formBuilder.group({
-        menuId: [this.menuId, Validators.required],
+        menuId: [this.menuId(), Validators.required],
         menuName: ['', Validators.required],
         menuOrder: ['', Validators.required],
         subMenus: this.formBuilder.array([]),
@@ -49,7 +48,7 @@ export class AddEditMenuComponent implements OnInit {
   }
 
   public getMenu(){
-    this.menuService.getMenuById(this.menuId).subscribe({
+    this.menuService.getMenuById(this.menuId()).subscribe({
       next: (response) => {
         if(!response.success){
           this.notificationService.showError("Error", response.message);
@@ -112,7 +111,7 @@ export class AddEditMenuComponent implements OnInit {
   public toggleSubMenu(index: number): void {
     const subMenu = this.subMenus.at(index);
     
-    this.menuService.toggleSubMenu(this.menuId,subMenu.value.subMenuId).subscribe({
+    this.menuService.toggleSubMenu(this.menuId(),subMenu.value.subMenuId).subscribe({
       next: (response) => {
         if(!response.success){
           this.notificationService.showError("Error", response.message);
@@ -141,7 +140,7 @@ export class AddEditMenuComponent implements OnInit {
     }
 
     if(this.isEditMode){
-      this.menuService.updateMenu(this.menuId,this.menuForm.value).subscribe({
+      this.menuService.updateMenu(this.menuId(),this.menuForm.value).subscribe({
         next: (response) => {
           if(!response.success){
             this.notificationService.showError("Error", response.message);

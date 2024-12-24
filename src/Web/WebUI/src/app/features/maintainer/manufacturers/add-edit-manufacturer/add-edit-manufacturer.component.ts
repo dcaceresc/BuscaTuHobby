@@ -1,14 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ManufacturerService, NotificationService } from '@app/core/services';
 
 @Component({
-  selector: 'app-add-edit-manufacturer',
-  standalone: true,
-  imports: [ReactiveFormsModule],
-  templateUrl: './add-edit-manufacturer.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-add-edit-manufacturer',
+    imports: [ReactiveFormsModule],
+    templateUrl: './add-edit-manufacturer.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditManufacturerComponent implements OnInit {
   private router = inject(Router);
@@ -16,16 +15,16 @@ export class AddEditManufacturerComponent implements OnInit {
   private manufacturerService = inject(ManufacturerService);
   private notificationService = inject(NotificationService);
 
-  @Input('id') manufacturerId!: string | null;
+  readonly manufacturerId = input.required<string | null>({ alias: "id" });
   public isEditMode : boolean = false;
   public manufacturerForm!: FormGroup;
 
   public ngOnInit(): void {
-    this.isEditMode = !!this.manufacturerId;
+    this.isEditMode = !!this.manufacturerId();
     this.createForm();
 
     if(this.isEditMode){
-      this.manufacturerService.getManufacturerById(this.manufacturerId).subscribe({
+      this.manufacturerService.getManufacturerById(this.manufacturerId()).subscribe({
         next: (response) => {
           if(!response.success){
             this.notificationService.showError("Error", response.message);
@@ -45,7 +44,7 @@ export class AddEditManufacturerComponent implements OnInit {
   public createForm(): void {
     if(this.isEditMode){
       this.manufacturerForm = this.formBuilder.group({
-        manufacturerId: [this.manufacturerId, Validators.required],
+        manufacturerId: [this.manufacturerId(), Validators.required],
         manufacturerName: ['', Validators.required]
       });
     }else{
@@ -62,7 +61,7 @@ export class AddEditManufacturerComponent implements OnInit {
     }
 
     if(this.isEditMode){
-      this.manufacturerService.updateManufacturer(this.manufacturerId, this.manufacturerForm.value).subscribe({
+      this.manufacturerService.updateManufacturer(this.manufacturerId(), this.manufacturerForm.value).subscribe({
         next: (response) => {
           if(!response.success){
             this.notificationService.showError("Error", response.message);

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, Input, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal, input } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommuneByRegion, RegionDto } from '@app/core/models';
@@ -8,11 +8,10 @@ import { NgSelectModule } from '@ng-select/ng-select';
 import { forkJoin } from 'rxjs';
 
 @Component({
-  selector: 'app-add-edit-store',
-  standalone: true,
-  imports: [ReactiveFormsModule,NgSelectModule,ButtonComponent],
-  templateUrl: './add-edit-store.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-add-edit-store',
+    imports: [ReactiveFormsModule, NgSelectModule, ButtonComponent],
+    templateUrl: './add-edit-store.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddEditStoreComponent implements OnInit {
   private router = inject(Router);
@@ -22,20 +21,20 @@ export class AddEditStoreComponent implements OnInit {
   private regionService = inject(RegionService);
   private communeService = inject(CommuneService);
 
-  @Input('id') storeId!: string | null;
-  public isEditMode = !!this.storeId;
+  readonly storeId = input.required<string | null>({ alias: "id" });
+  public isEditMode = !!this.storeId();
   public storeForm!: FormGroup;
   public regions = signal<RegionDto[]>([]);
   public communes = signal<CommuneByRegion[]>([]);
 
   public ngOnInit(): void {
-    this.isEditMode = !!this.storeId;
+    this.isEditMode = !!this.storeId();
     this.createForm();
     this.addStoreAddress();
     this.loadRegions();
 
     if(this.isEditMode){
-      this.storeService.getStoreById(this.storeId).subscribe({
+      this.storeService.getStoreById(this.storeId()).subscribe({
         next: (response) => {
   
           if(!response.success){
@@ -71,7 +70,7 @@ export class AddEditStoreComponent implements OnInit {
   public createForm(): void {
     if(this.isEditMode){
       this.storeForm = this.formBuilder.group({
-        storeId: [this.storeId,Validators.required],
+        storeId: [this.storeId(),Validators.required],
         storeName: ['', Validators.required],
         storeWebSite: ['', Validators.required],
         storeAddress: this.formBuilder.array([]),
@@ -152,7 +151,7 @@ export class AddEditStoreComponent implements OnInit {
     }
 
     if(this.isEditMode){
-      this.storeService.updateStore(this.storeId, this.storeForm.value).subscribe({
+      this.storeService.updateStore(this.storeId(), this.storeForm.value).subscribe({
         next: (response) => {
   
           if(!response.success){
@@ -164,10 +163,11 @@ export class AddEditStoreComponent implements OnInit {
   
           storeAddress.controls.forEach(control => {
   
-            control.get('storeId')?.setValue(this.storeId);
+            const storeId = this.storeId();
+            control.get('storeId')?.setValue(storeId);
   
             if(control.get('deleted')?.value){
-              this.storeService.deleteStoreAddress(this.storeId, control.get('storeAddressId')?.value).subscribe({
+              this.storeService.deleteStoreAddress(storeId, control.get('storeAddressId')?.value).subscribe({
                 next: (response) => {
                   if(!response.success){
                     this.notificationService.showError("Error", response.message);
@@ -180,7 +180,7 @@ export class AddEditStoreComponent implements OnInit {
               });
             }else if(control.get('storeAddressId')?.value == null){
   
-              this.storeService.createStoreAddress(this.storeId, control.value).subscribe({
+              this.storeService.createStoreAddress(storeId, control.value).subscribe({
                 next: (response) => {
                   if(!response.success){
                     this.notificationService.showError("Error", response.message);
@@ -193,7 +193,7 @@ export class AddEditStoreComponent implements OnInit {
               });
             }else{
   
-              this.storeService.updateStoreAddress(this.storeId, control.get('storeAddressId')?.value, control.value).subscribe({
+              this.storeService.updateStoreAddress(storeId, control.get('storeAddressId')?.value, control.value).subscribe({
                 next: (response) => {
                   if(!response.success){
                     this.notificationService.showError("Error", response.message);

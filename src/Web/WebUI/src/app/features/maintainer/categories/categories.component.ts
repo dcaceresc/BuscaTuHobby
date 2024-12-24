@@ -5,11 +5,10 @@ import { CategoryService, FaIconService, NotificationService } from '@app/core/s
 import { ButtonComponent, TableComponent } from '@app/shared';
 
 @Component({
-  selector: 'app-categories',
-  standalone: true,
-  imports: [RouterLink,ButtonComponent,TableComponent],
-  templateUrl : './categories.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-categories',
+    imports: [RouterLink, ButtonComponent, TableComponent],
+    templateUrl: './categories.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CategoriesComponent implements OnInit{
   

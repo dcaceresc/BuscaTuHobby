@@ -6,13 +6,12 @@ import { FaIconService, NotificationService, ProductService } from '@app/core/se
 import { ButtonComponent, TableComponent } from '@app/shared';
 
 @Component({
-  selector: 'app-products',
-  standalone: true,
-  imports: [
-    CommonModule,ButtonComponent,TableComponent,RouterLink
-  ],
-  templateUrl: './products.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'app-products',
+    imports: [
+        CommonModule, ButtonComponent, TableComponent, RouterLink
+    ],
+    templateUrl: './products.component.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductsComponent implements OnInit {
 

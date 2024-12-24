@@ -1,0 +1,18 @@
+
+@if ((isAuthenticated() | async) === false) {
+    <a class="btn btn-header-menu me-md-2" [routerLink]="['/security/account/register']">
+      <fa-icon [icon]="faUserPlus"></fa-icon> 
+    </a>
+    <a class="btn btn-header-menu" [routerLink]="['/security/account/login']">
+      <fa-icon [icon]="faSignInAlt"></fa-icon> 
+    </a>
+    }
+    
+    @if ((isAuthenticated() | async) === true) {
+      <a class="btn btn-header-menu me-md-2" >
+        <fa-icon [icon]="faUser"></fa-icon>  Perfil
+      </a>
+      <a class="btn btn-header-menu" (click)="logout()" title="Cerra Sesión">
+        <fa-icon [icon]="faSignOutAlt"></fa-icon> 
+      </a>
+    }
