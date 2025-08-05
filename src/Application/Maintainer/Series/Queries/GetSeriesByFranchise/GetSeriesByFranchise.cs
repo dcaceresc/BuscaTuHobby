@@ -1,10 +1,9 @@
 ﻿namespace Application.Maintainer.Series.Queries.GetSeriesByFranchise;
 public record GetSeriesByFranchise(Guid FranchiseId) : IRequest<ApiResponse<List<SerieByFranchiseDto>>>;
 
-public class GetSeriesByFranchiseHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetSeriesByFranchise, ApiResponse<List<SerieByFranchiseDto>>>
+public class GetSeriesByFranchiseHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetSeriesByFranchise, ApiResponse<List<SerieByFranchiseDto>>>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<List<SerieByFranchiseDto>>> Handle(GetSeriesByFranchise request, CancellationToken cancellationToken)
@@ -14,7 +13,11 @@ public class GetSeriesByFranchiseHandler(IApplicationDbContext context, IMapper 
             var series = await _context.Series
             .Where(x => x.FranchiseId == request.FranchiseId)
             .AsNoTracking()
-            .ProjectTo<SerieByFranchiseDto>(_mapper.ConfigurationProvider)
+            .Select(x => new SerieByFranchiseDto
+            {
+                SerieId = x.SerieId,
+                SerieName = x.SerieName
+            })
             .ToListAsync(cancellationToken);
 
             return _responseService.Success(series);

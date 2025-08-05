@@ -1,10 +1,9 @@
 ﻿namespace Application.Maintainer.Manufacturers.Queries.GetManufacturerById;
 public record GetManufacturerById(Guid ManufacturerId) : IRequest<ApiResponse<ManufacturerVM>>;
 
-public class GetManufacturerByIdHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetManufacturerById, ApiResponse<ManufacturerVM>>
+public class GetManufacturerByIdHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetManufacturerById, ApiResponse<ManufacturerVM>>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<ManufacturerVM>> Handle(GetManufacturerById request, CancellationToken cancellationToken)
@@ -12,7 +11,11 @@ public class GetManufacturerByIdHandler(IApplicationDbContext context, IMapper m
         try
         {
             var manufacturer = await _context.Manufacturers
-           .ProjectTo<ManufacturerVM>(_mapper.ConfigurationProvider)
+                .Select(x => new ManufacturerVM
+                {
+                    ManufacturerId = x.ManufacturerId,
+                    ManufacturerName = x.ManufacturerName,
+                })
            .FirstOrDefaultAsync(x => x.ManufacturerId == request.ManufacturerId, cancellationToken);
 
             Guard.Against.NotFound(manufacturer, $"No existe fabricante con la Id {request.ManufacturerId}");

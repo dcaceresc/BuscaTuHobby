@@ -10,7 +10,7 @@ export * from './maintainer/region.model';
 export * from './maintainer/serie.model';
 export * from './maintainer/store.model';
 
-export * from './security/account.model';
+export * from './security/auth.model';
 export * from './security/user.model';
 export * from './security/role.model';
 

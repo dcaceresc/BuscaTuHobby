@@ -23,13 +23,13 @@ public class RegionModule : CarterModule
     }
 
 
-    private static async Task<IResult> GetRegions(ISender sender) => Results.Ok(await sender.Send(new GetRegions()));
+    private static async Task<IResult> GetRegions(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetRegions()));
 
-    private static async Task<IResult> GetRegionById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetRegionById(id)));
+    private static async Task<IResult> GetRegionById(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new GetRegionById(id)));
 
-    private static async Task<IResult> CreateRegion(ISender sender, CreateRegion command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> CreateRegion(IRequestDispatcher sender, CreateRegion command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateRegion(ISender sender, Guid id, UpdateRegion command)
+    private static async Task<IResult> UpdateRegion(IRequestDispatcher sender, Guid id, UpdateRegion command)
     {
         if (id != command.RegionId)
             return Results.Ok(new ApiResponse { Success = false, Message = $"La id de la ruta {id} no coincide con la de la región {command.RegionId}" });
@@ -37,6 +37,6 @@ public class RegionModule : CarterModule
         return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleRegion(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleRegion(id)));
+    private static async Task<IResult> ToggleRegion(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new ToggleRegion(id)));
 
 }

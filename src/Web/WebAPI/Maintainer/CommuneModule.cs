@@ -23,15 +23,15 @@ public class CommuneModule : CarterModule
         group.MapDelete("{id:guid}", ToggleCommune);
     }
 
-    private static async Task<IResult> GetCommunes(ISender sender) => Results.Ok(await sender.Send(new GetCommunes()));
+    private static async Task<IResult> GetCommunes(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetCommunes()));
 
-    private static async Task<IResult> GetCommuneById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetCommuneById(id)));
+    private static async Task<IResult> GetCommuneById(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new GetCommuneById(id)));
 
-    private static async Task<IResult> GetCommuneByRegion(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetCommunesByRegionId(id)));
+    private static async Task<IResult> GetCommuneByRegion(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new GetCommunesByRegionId(id)));
 
-    private static async Task<IResult> CreateCommune(ISender sender, CreateCommune command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> CreateCommune(IRequestDispatcher sender, CreateCommune command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateCommune(ISender sender, Guid id, UpdateCommune command)
+    private static async Task<IResult> UpdateCommune(IRequestDispatcher sender, Guid id, UpdateCommune command)
     {
         if (id != command.CommuneId)
             return Results.Ok(new ApiResponse { Success = false, Message = $"La id de la ruta {id} no coincide con la communa con Id {command.CommuneId}" });
@@ -39,7 +39,7 @@ public class CommuneModule : CarterModule
         return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleCommune(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleCommune(id)));
+    private static async Task<IResult> ToggleCommune(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new ToggleCommune(id)));
 
 
 }

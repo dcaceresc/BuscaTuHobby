@@ -6,15 +6,6 @@ public class MenuDto
     public int MenuOrder { get; set; }
     public string MenuSlug { get; set; } = default!;
     public List<SubMenuDto> SubMenus { get; set; } = default!;
-
-    public class Mapping : Profile
-    {
-        public Mapping()
-        {
-            CreateMap<Menu, MenuDto>()
-                .ForMember(d => d.SubMenus, opt => opt.MapFrom(s => s.SubMenus));
-        }
-    }
 }
 
 public class SubMenuDto
@@ -22,12 +13,4 @@ public class SubMenuDto
     public string SubMenuName { get; set; } = default!;
     public int SubMenuOrder { get; set; }
     public string SubMenuSlug { get; set; } = default!;
-
-    public class Mapping : Profile
-    {
-        public Mapping()
-        {
-            CreateMap<SubMenu, SubMenuDto>();
-        }
-    }
 }

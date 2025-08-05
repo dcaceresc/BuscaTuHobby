@@ -10,7 +10,7 @@ export * from './maintainer/region.service';
 export * from './maintainer/serie.service';
 export * from './maintainer/store.service';
 
-export * from './security/authorize.service';
+export * from './security/auth.service';
 export * from './security/user.service';
 export * from './security/role.service';
 

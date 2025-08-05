@@ -7,13 +7,4 @@ public class MenuDto
     public string MenuSlug { get; set; } = default!;
     public IList<string> SubMenus { get; set; } = default!;
     public bool IsActive { get; set; }
-
-    public class Mapping : Profile
-    {
-        public Mapping()
-        {
-            CreateMap<Menu, MenuDto>()
-                .ForMember(d => d.SubMenus, opt => opt.MapFrom(s => s.SubMenus.OrderBy(x => x.SubMenuOrder).Select(x => x.SubMenuName)));
-        }
-    }
 }

@@ -2,10 +2,9 @@
 
 public record GetSeries : IRequest<ApiResponse<List<SerieDto>>>;
 
-public class GetSeriesHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetSeries, ApiResponse<List<SerieDto>>>
+public class GetSeriesHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetSeries, ApiResponse<List<SerieDto>>>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<List<SerieDto>>> Handle(GetSeries request, CancellationToken cancellationToken)
@@ -14,7 +13,13 @@ public class GetSeriesHandler(IApplicationDbContext context, IMapper mapper, IAp
         {
             var series = await _context.Series
             .AsNoTracking()
-            .ProjectTo<SerieDto>(_mapper.ConfigurationProvider)
+            .Select(x => new SerieDto
+            {
+                SerieId = x.SerieId,
+                SerieName = x.SerieName,
+                FranchiseName = x.Franchise.FranchiseName,
+                IsActive = x.IsActive
+            })
             .ToListAsync(cancellationToken);
 
             return _responseService.Success(series);

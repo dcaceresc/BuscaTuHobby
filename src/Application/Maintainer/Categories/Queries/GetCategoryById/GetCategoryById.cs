@@ -2,10 +2,9 @@
 
 public record GetCategoryById(Guid CategoryId) : IRequest<ApiResponse<CategoryVM>>;
 
-public class GetCategoryByIdHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetCategoryById, ApiResponse<CategoryVM>>
+public class GetCategoryByIdHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetCategoryById, ApiResponse<CategoryVM>>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<CategoryVM>> Handle(GetCategoryById request, CancellationToken cancellationToken)
@@ -14,7 +13,13 @@ public class GetCategoryByIdHandler(IApplicationDbContext context, IMapper mappe
         {
             var category = await _context.Categories
               .AsNoTracking()
-              .ProjectTo<CategoryVM>(_mapper.ConfigurationProvider)
+              .Select(x => new CategoryVM
+              {
+                  CategoryId = x.CategoryId,
+                  CategoryName = x.CategoryName
+
+
+              })
               .FirstOrDefaultAsync(x => x.CategoryId == request.CategoryId, cancellationToken);
 
             Guard.Against.NotFound(category, $"No existe una categoria con la Id {request.CategoryId}");

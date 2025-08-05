@@ -2,10 +2,9 @@
 
 public record GetMenuById(Guid MenuId) : IRequest<ApiResponse<MenuVM>>;
 
-public class GetCategoryByIdHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetMenuById, ApiResponse<MenuVM>>
+public class GetCategoryByIdHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetMenuById, ApiResponse<MenuVM>>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<MenuVM>> Handle(GetMenuById request, CancellationToken cancellationToken)
@@ -14,7 +13,21 @@ public class GetCategoryByIdHandler(IApplicationDbContext context, IMapper mappe
         {
             var menu = await _context.Menus
                 .Include(x => x.SubMenus)
-                .ProjectTo<MenuVM>(_mapper.ConfigurationProvider)
+                .Select(x => new MenuVM
+                {
+                    MenuId = x.MenuId,
+                    MenuName = x.MenuName,
+                    MenuOrder = x.MenuOrder,
+                    SubMenus = x.SubMenus
+                        .Select(sm => new SubMenuDto()
+                        {
+                            SubMenuId = sm.SubMenuId,
+                            SubMenuName = sm.SubMenuName,
+                            SubMenuOrder = sm.SubMenuOrder,
+                            IsActive = sm.IsActive
+                        }).ToList()
+                    
+                })
                 .FirstOrDefaultAsync(x => x.MenuId == request.MenuId, cancellationToken);
 
             Guard.Against.NotFound(menu, $"No existe menu con la Id {request.MenuId}");

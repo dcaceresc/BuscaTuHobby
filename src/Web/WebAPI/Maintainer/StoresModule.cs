@@ -28,13 +28,13 @@ public class StoresModule : CarterModule
 
     }
 
-    private static async Task<IResult> GetStores(ISender sender) => Results.Ok(await sender.Send(new GetStoresQuery()));
+    private static async Task<IResult> GetStores(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetStoresQuery()));
 
-    private static async Task<IResult> GetStoreById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetStoreByIdQuery(id)));
+    private static async Task<IResult> GetStoreById(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new GetStoreByIdQuery(id)));
 
-    private static async Task<IResult> CreateStore(ISender sender, CreateStore command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> CreateStore(IRequestDispatcher sender, CreateStore command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> CreateStoreAddress(ISender sender, Guid id, CreateStoreAddress command)
+    private static async Task<IResult> CreateStoreAddress(IRequestDispatcher sender, Guid id, CreateStoreAddress command)
     {
         if (id != command.StoreId)
             return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {id} no coincide con la Id de la tienda {command.StoreId}" });
@@ -42,7 +42,7 @@ public class StoresModule : CarterModule
         return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> UpdateStore(ISender sender, Guid id, UpdateStore command)
+    private static async Task<IResult> UpdateStore(IRequestDispatcher sender, Guid id, UpdateStore command)
     {
         if (id != command.StoreId)
             return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {id} no coincide con la Id de la tienda {command.StoreId}" });
@@ -50,7 +50,7 @@ public class StoresModule : CarterModule
         return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> UpdateStoreAddress(ISender sender, Guid id, Guid storeAddressId, UpdateStoreAddress command)
+    private static async Task<IResult> UpdateStoreAddress(IRequestDispatcher sender, Guid id, Guid storeAddressId, UpdateStoreAddress command)
     {
         if (id != command.StoreId)
             return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {id} no coincide con la Id de la tienda {command.StoreId}" });
@@ -61,8 +61,8 @@ public class StoresModule : CarterModule
         return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleStore(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleStore(id)));
+    private static async Task<IResult> ToggleStore(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new ToggleStore(id)));
 
-    private static async Task<IResult> DeleteStoreAddress(ISender sender, Guid id, Guid storeAddressId) => Results.Ok(await sender.Send(new DeleteStoreAddress(id, storeAddressId)));
+    private static async Task<IResult> DeleteStoreAddress(IRequestDispatcher sender, Guid id, Guid storeAddressId) => Results.Ok(await sender.Send(new DeleteStoreAddress(id, storeAddressId)));
 
 }

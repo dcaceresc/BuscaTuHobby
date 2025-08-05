@@ -2,10 +2,9 @@
 
 public record GetStoresQuery : IRequest<ApiResponse<List<StoreDto>>>;
 
-public class GetStoresQueryHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetStoresQuery, ApiResponse<List<StoreDto>>>
+public class GetStoresQueryHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetStoresQuery, ApiResponse<List<StoreDto>>>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<List<StoreDto>>> Handle(GetStoresQuery request, CancellationToken cancellationToken)
@@ -14,7 +13,14 @@ public class GetStoresQueryHandler(IApplicationDbContext context, IMapper mapper
         {
             var stores = await _context.Stores
                 .AsNoTracking()
-                .ProjectTo<StoreDto>(_mapper.ConfigurationProvider)
+                .Select(x => new StoreDto
+                {
+                    StoreId = x.StoreId,
+                    StoreName = x.StoreName,
+                    StoreWebSite = x.StoreWebSite,
+                    StoreAddress = x.StoreAddresses.Select(sa => $"{sa.Street} {sa.Commune.CommuneName}").ToList(),
+                    IsActive = x.IsActive
+                })
                 .ToListAsync(cancellationToken);
 
             return _responseService.Success(stores);

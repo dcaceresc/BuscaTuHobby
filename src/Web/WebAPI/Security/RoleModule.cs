@@ -22,13 +22,13 @@ public class RoleModule : CarterModule
     }
 
 
-    private static async Task<IResult> GetRoles(ISender sender) => Results.Ok(await sender.Send(new GetRoles()));
+    private static async Task<IResult> GetRoles(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetRoles()));
 
-    private static async Task<IResult> GetRoleById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetRoleById(id)));
+    private static async Task<IResult> GetRoleById(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new GetRoleById(id)));
 
-    private static async Task<IResult> CreateUser(ISender sender, CreateRole command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> CreateUser(IRequestDispatcher sender, CreateRole command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateRole(ISender sender, Guid id, UpdateRole command)
+    private static async Task<IResult> UpdateRole(IRequestDispatcher sender, Guid id, UpdateRole command)
     {
         if (id != command.RoleId)
             return Results.Ok(new ApiResponse { Success = false, Message = $"La id de la ruta {id} no coincide con la del permiso {command.RoleId}" });
@@ -36,7 +36,7 @@ public class RoleModule : CarterModule
         return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleRole(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleRole(id)));
+    private static async Task<IResult> ToggleRole(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new ToggleRole(id)));
 
 
 }

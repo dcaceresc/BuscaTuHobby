@@ -1,10 +1,9 @@
 ﻿namespace Application.Maintainer.Inventories.Queries.GetInventoryById;
 public record GetInventoryById(Guid InventoryId) : IRequest<ApiResponse<InventoryVM>>;
 
-public class GetInventoryByIdHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetInventoryById, ApiResponse<InventoryVM>>
+public class GetInventoryByIdHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetInventoryById, ApiResponse<InventoryVM>>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<InventoryVM>> Handle(GetInventoryById request, CancellationToken cancellationToken)
@@ -13,7 +12,13 @@ public class GetInventoryByIdHandler(IApplicationDbContext context, IMapper mapp
         {
             var inventory = await _context.Inventories
                .AsNoTracking()
-               .ProjectTo<InventoryVM>(_mapper.ConfigurationProvider)
+               .Select(x => new InventoryVM
+               {
+                   InventoryId = x.InventoryId,
+                   ProductId = x.ProductId,
+                   StoreId = x.StoreId,
+                   Price = x.Price,
+               })
                .FirstOrDefaultAsync(x => x.InventoryId == request.InventoryId, cancellationToken);
 
             Guard.Against.NotFound(inventory, $"No existe inventario con Id {request.InventoryId}");

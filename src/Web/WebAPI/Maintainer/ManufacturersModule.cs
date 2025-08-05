@@ -22,12 +22,12 @@ public class ManufacturersModule : CarterModule
 
     }
 
-    private static async Task<IResult> GetManufacturers(ISender sender) => Results.Ok(await sender.Send(new GetManufacturers()));
+    private static async Task<IResult> GetManufacturers(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetManufacturers()));
 
-    private static async Task<IResult> GetManufacturerById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetManufacturerById(id)));
-    private static async Task<IResult> CreateManufacturer(ISender sender, CreateManufacturer command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> GetManufacturerById(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new GetManufacturerById(id)));
+    private static async Task<IResult> CreateManufacturer(IRequestDispatcher sender, CreateManufacturer command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateManufacturer(ISender sender, Guid id, UpdateManufacturer command)
+    private static async Task<IResult> UpdateManufacturer(IRequestDispatcher sender, Guid id, UpdateManufacturer command)
     {
         if (id != command.ManufacturerId)
             return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {id} no coincide con la del fabricante {command.ManufacturerId}" });
@@ -35,5 +35,5 @@ public class ManufacturersModule : CarterModule
         return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleManufacturer(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleManufacturer(id)));
+    private static async Task<IResult> ToggleManufacturer(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new ToggleManufacturer(id)));
 }

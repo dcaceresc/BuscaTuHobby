@@ -1,4 +1,5 @@
-﻿using Application.Dashboard.Queries.GetMenus;
+﻿using Application.Common.Mediator;
+using Application.Dashboard.Queries.GetMenus;
 
 namespace WebAPI.Dashboard;
 
@@ -11,5 +12,5 @@ public class DashboardModule : CarterModule
         group.MapGet("getmenu", GetMenus);
     }
 
-    private static async Task<IResult> GetMenus(ISender sender) => Results.Ok(await sender.Send(new GetMenus()));
+    private static async Task<IResult> GetMenus(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetMenus()));
 }

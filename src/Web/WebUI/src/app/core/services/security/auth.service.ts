@@ -3,12 +3,12 @@ import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { BehaviorSubject, catchError, map, Observable, of } from 'rxjs';
 import { ApiResponse } from '../../models/apiResponse.model';
-import { AdminLoginRequestCommand, ConfirmEmail, UserLogin, UserRegister, UserTokenResponse } from '../../models/security/account.model';
+import { AdminLoginRequestCommand, ConfirmEmail, UserLogin, UserRegister, UserTokenResponse } from '../../models/security/auth.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthorizeService {
+export class AuthService {
 
   private router = inject(Router);
   private http = inject(HttpClient);
@@ -39,7 +39,7 @@ export class AuthorizeService {
 
 
   public login(user : UserLogin) {
-    return this.http.post<ApiResponse<UserTokenResponse>>('/api/security/account/userLogin',user )
+    return this.http.post<ApiResponse<UserTokenResponse>>('/api/security/auth/userLogin',user )
         .pipe(map(response => {
             if (response.success) {
               this.userValue = response.data;
@@ -49,7 +49,7 @@ export class AuthorizeService {
   }
 
   public adminLogin(admin : AdminLoginRequestCommand) {
-    return this.http.post<ApiResponse<UserTokenResponse>>('/api/Security/Account/AdminLogin',admin)
+    return this.http.post<ApiResponse<UserTokenResponse>>('/api/Security/auth/AdminLogin',admin)
         .pipe(map(response => {
           if (response.success) {
             this.userValue = response.data;
@@ -59,11 +59,11 @@ export class AuthorizeService {
   }
 
   public register(user : UserRegister) {
-    return this.http.post<ApiResponse<any>>('/api/security/account/UserRegister',user);
+    return this.http.post<ApiResponse<any>>('/api/security/auth/UserRegister',user);
   }
 
   public confirmEmail(user: ConfirmEmail) {
-    return this.http.post<ApiResponse<any>>('/api/security/account/ConfirmEmail', user);
+    return this.http.post<ApiResponse<any>>('/api/security/auth/ConfirmEmail', user);
   }
 
   public logout(): void{
@@ -77,7 +77,7 @@ export class AuthorizeService {
 
     if (user) {
       const refreshToken = JSON.parse(user).refreshToken;
-      return this.http.post<ApiResponse<UserTokenResponse>>('/api/Security/Account/RefreshToken', { refreshToken })
+      return this.http.post<ApiResponse<UserTokenResponse>>('/api/security/auth/RefreshToken', { refreshToken })
         .pipe(map((response) => {
 
           if (response.success) {

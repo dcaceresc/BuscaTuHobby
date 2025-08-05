@@ -1,10 +1,9 @@
 ﻿namespace Application.Maintainer.Series.Queries.GetSerieById;
 
 public record GetSerieById(Guid SerieId) : IRequest<ApiResponse<SerieVM>>;
-public class GetSerieByIdHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetSerieById, ApiResponse<SerieVM>>
+public class GetSerieByIdHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetSerieById, ApiResponse<SerieVM>>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<SerieVM>> Handle(GetSerieById request, CancellationToken cancellationToken)
@@ -13,7 +12,11 @@ public class GetSerieByIdHandler(IApplicationDbContext context, IMapper mapper, 
         {
             var serie = await _context.Series
             .AsNoTracking()
-            .ProjectTo<SerieVM>(_mapper.ConfigurationProvider)
+            .Select(x => new SerieVM
+            {
+                SerieId = x.SerieId,
+                FranchiseId = x.FranchiseId
+            })
             .FirstOrDefaultAsync(x => x.SerieId == request.SerieId, cancellationToken);
 
             Guard.Against.NotFound(serie, $"No existe serie con la Id {request.SerieId}");

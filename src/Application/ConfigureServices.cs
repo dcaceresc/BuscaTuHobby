@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Application.Common.Mediator;
+using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -7,16 +8,14 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddAutoMapper(Assembly.GetExecutingAssembly());
-        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
-        services.AddMediatR(cfg =>
-        {
-            cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
-        });
-        //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
-        //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehaviour<,>));
-        //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
-        //services.AddTransient(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
+        services.AddScoped<IRequestDispatcher, RequestDispatcher>();
+
+        // Registro automático de todos los IRequestHandler<,> del proyecto
+        services.Scan(scan => scan
+            .FromAssemblies(AppDomain.CurrentDomain.GetAssemblies())
+            .AddClasses(classes => classes.AssignableTo(typeof(IRequestHandler<,>)))
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
 
         return services;
     }

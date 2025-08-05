@@ -1,6 +1,6 @@
 ﻿namespace Application.Favorites.Commands.CreateFavorite;
 
-public class CreateFavorite : IRequest
+public class CreateFavorite : IRequest<ApiResponse>
 {
 
 }

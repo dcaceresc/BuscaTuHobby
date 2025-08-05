@@ -25,13 +25,13 @@ public class ProductsModule : CarterModule
     }
 
 
-    private static async Task<IResult> GetProducts(ISender sender) => Results.Ok(await sender.Send(new GetProducts()));
+    private static async Task<IResult> GetProducts(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetProducts()));
 
-    private static async Task<IResult> GetProductById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetProductById(id)));
+    private static async Task<IResult> GetProductById(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new GetProductById(id)));
 
-    private static async Task<IResult> CreateProduct(ISender sender, CreateProduct command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> CreateProduct(IRequestDispatcher sender, CreateProduct command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> CreateProductImages(ISender sender, Guid id, HttpRequest request)
+    private static async Task<IResult> CreateProductImages(IRequestDispatcher sender, Guid id, HttpRequest request)
     {
         if (request.Form.Files == null || request.Form.Files.Count == 0)
             return Results.BadRequest(new ApiResponse { Success = false, Message = "No se proporcionaron imágenes." });
@@ -50,7 +50,7 @@ public class ProductsModule : CarterModule
         return Results.Ok(await sender.Send(new CreateProductImages(id, images)));
     }
 
-    private static async Task<IResult> UpdateProduct(ISender sender, Guid id, UpdateProduct command)
+    private static async Task<IResult> UpdateProduct(IRequestDispatcher sender, Guid id, UpdateProduct command)
     {
         if (id != command.ProductId)
             return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {id} no coincide con la Id del producto {command.ProductId}" });
@@ -58,6 +58,6 @@ public class ProductsModule : CarterModule
         return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleProduct(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleProduct(id)));
+    private static async Task<IResult> ToggleProduct(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new ToggleProduct(id)));
 }
 

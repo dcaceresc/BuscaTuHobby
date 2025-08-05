@@ -1,10 +1,9 @@
 ﻿namespace Application.Dashboard.Queries.GetMenus;
 public record GetMenus : IRequest<ApiResponse<List<MenuDto>>>;
 
-public class GetMenusHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetMenus, ApiResponse<List<MenuDto>>>
+public class GetMenusHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetMenus, ApiResponse<List<MenuDto>>>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<List<MenuDto>>> Handle(GetMenus request, CancellationToken cancellationToken)
@@ -15,7 +14,12 @@ public class GetMenusHandler(IApplicationDbContext context, IMapper mapper, IApi
                 .AsNoTracking()
                 .Where(x => x.IsActive)
                 .OrderBy(x => x.MenuOrder)
-                .ProjectTo<MenuDto>(_mapper.ConfigurationProvider)
+                .Select(x => new MenuDto
+                {
+                    MenuName = x.MenuName,
+                    MenuOrder = x.MenuOrder,
+                    MenuSlug = x.MenuSlug
+                })
                 .ToListAsync(cancellationToken);
 
             foreach (var menu in menus)
@@ -23,7 +27,12 @@ public class GetMenusHandler(IApplicationDbContext context, IMapper mapper, IApi
                 menu.SubMenus = _context.SubMenus
                     .AsNoTracking()
                     .Where(x => x.Menu.MenuName == menu.MenuName && x.IsActive)
-                    .ProjectTo<SubMenuDto>(_mapper.ConfigurationProvider)
+                    .Select(x => new SubMenuDto
+                    {
+                        SubMenuName = x.SubMenuName,
+                        SubMenuOrder = x.SubMenuOrder,
+                        SubMenuSlug = x.SubMenuSlug
+                    })
                     .ToList();
             }
 

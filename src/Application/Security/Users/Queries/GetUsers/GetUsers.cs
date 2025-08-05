@@ -1,10 +1,9 @@
 ﻿namespace Application.Security.Users.Queries.GetUsers;
 public record GetUsers : IRequest<ApiResponse<List<UserDto>>>;
 
-public class GetUsersHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetUsers, ApiResponse<List<UserDto>>>
+public class GetUsersHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetUsers, ApiResponse<List<UserDto>>>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<List<UserDto>>> Handle(GetUsers request, CancellationToken cancellationToken)
@@ -12,7 +11,16 @@ public class GetUsersHandler(IApplicationDbContext context, IMapper mapper, IApi
         try
         {
             var users = await _context.Users
-            .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
+            .Select(x => new UserDto
+            {
+                UserId = x.UserId,
+                Email = x.Email,
+                EmailConfirmed = x.EmailConfirmed,
+                LockoutEnabled = x.LockoutEnabled,
+                LockoutEnd = x.LockoutEnd.HasValue ? x.LockoutEnd.Value.ToString("dd-MM-yyyy HH:mm") : string.Empty,
+                RoleNames = x.UserRoles.Select(r => r.Role.RoleName).ToList(),
+                IsActive = x.IsActive
+            })
             .ToListAsync(cancellationToken);
 
             return _responseService.Success(users);

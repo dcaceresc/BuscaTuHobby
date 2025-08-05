@@ -1,11 +1,10 @@
 ﻿namespace Application.Maintainer.Configurations.Queries.GetConfigurationById;
 public record GetConfigurationById(Guid ConfigurationId) : IRequest<ApiResponse<ConfigurationVM>>;
 
-public class GetConfigurationByIdHandler(IApplicationDbContext context, IApiResponseService responseService, IMapper mapper) : IRequestHandler<GetConfigurationById, ApiResponse<ConfigurationVM>>
+public class GetConfigurationByIdHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetConfigurationById, ApiResponse<ConfigurationVM>>
 {
     private readonly IApplicationDbContext _context = context;
     private readonly IApiResponseService _responseService = responseService;
-    private readonly IMapper _mapper = mapper;
 
     public async Task<ApiResponse<ConfigurationVM>> Handle(GetConfigurationById request, CancellationToken cancellationToken)
     {
@@ -13,7 +12,12 @@ public class GetConfigurationByIdHandler(IApplicationDbContext context, IApiResp
         {
             var configuration = await _context.Configurations
                 .Where(x => x.ConfigurationId == request.ConfigurationId)
-                .ProjectTo<ConfigurationVM>(_mapper.ConfigurationProvider)
+                .Select(x => new ConfigurationVM
+                {
+                    ConfigurationId = x.ConfigurationId,
+                    ConfigurationName = x.ConfigurationName,
+                    ConfigurationValue = x.ConfigurationValue
+                })
                 .FirstOrDefaultAsync(cancellationToken);
 
             Guard.Against.NotFound(configuration, $"No existe configuración con la Id {request.ConfigurationId}");

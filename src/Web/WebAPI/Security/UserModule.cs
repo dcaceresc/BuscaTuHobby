@@ -20,18 +20,18 @@ public class UserModule : CarterModule
         group.MapDelete("{id:guid}", ToggleUser);
     }
 
-    private static async Task<IResult> GetUsers(ISender sender) => Results.Ok(await sender.Send(new GetUsers()));
+    private static async Task<IResult> GetUsers(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetUsers()));
 
-    private static async Task<IResult> GetUserById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetUserById(id)));
+    private static async Task<IResult> GetUserById(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new GetUserById(id)));
 
-    private static async Task<IResult> CreateUser(ISender sender, CreateUser command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> CreateUser(IRequestDispatcher sender, CreateUser command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateUser(ISender sender, Guid id, UpdateUser command)
+    private static async Task<IResult> UpdateUser(IRequestDispatcher sender, Guid id, UpdateUser command)
     {
         var result = await sender.Send(command);
 
         return Results.Ok(result);
     }
 
-    private static async Task<IResult> ToggleUser(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleUser(id)));
+    private static async Task<IResult> ToggleUser(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new ToggleUser(id)));
 }

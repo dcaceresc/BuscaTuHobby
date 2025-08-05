@@ -2,10 +2,9 @@
 
 public record GetProducts : IRequest<ApiResponse<List<ProductDto>>>;
 
-public class GetProductsHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetProducts, ApiResponse<List<ProductDto>>>
+public class GetProductsHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetProducts, ApiResponse<List<ProductDto>>>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<List<ProductDto>>> Handle(GetProducts request, CancellationToken cancellationToken)
@@ -17,9 +16,17 @@ public class GetProductsHandler(IApplicationDbContext context, IMapper mapper, I
                 Include(x => x.ProductCategories).
                 Include(x => x.Franchise).
                 ThenInclude(x => x.Series).
-                AsNoTracking().
-                ProjectTo<ProductDto>(_mapper.ConfigurationProvider).
-                ToListAsync(cancellationToken);
+                AsNoTracking()
+                .Select(x => new ProductDto
+                {
+                    ProductId = x.ProductId,
+                    ProductName = x.ProductName,
+                    ManufacturerName = x.Manufacturer.ManufacturerName,
+                    FranchiseName = x.Franchise.FranchiseName,
+                    SerieName = x.Serie != null ? x.Serie.SerieName : "Toda la Franquicia",
+                    Categories = x.ProductCategories.Select(cp => cp.Category.CategoryName).ToList(),
+                    IsActive = x.IsActive
+                }).ToListAsync(cancellationToken);
 
             return _responseService.Success(products);
         }

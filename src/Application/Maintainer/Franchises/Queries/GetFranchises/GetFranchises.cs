@@ -1,10 +1,9 @@
 ﻿namespace Application.Maintainer.Franchises.Queries.GetFranchises;
 public record GetFranchises : IRequest<ApiResponse<List<FranchiseDto>>>;
 
-public class GetFranchisesHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetFranchises, ApiResponse<List<FranchiseDto>>>
+public class GetFranchisesHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetFranchises, ApiResponse<List<FranchiseDto>>>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<List<FranchiseDto>>> Handle(GetFranchises request, CancellationToken cancellationToken)
@@ -13,7 +12,12 @@ public class GetFranchisesHandler(IApplicationDbContext context, IMapper mapper,
         {
             var franchises = await _context.Franchises
             .AsNoTracking()
-            .ProjectTo<FranchiseDto>(_mapper.ConfigurationProvider)
+            .Select(x => new FranchiseDto
+            {
+                FranchiseId = x.FranchiseId,
+                FranchiseName = x.FranchiseName,
+                IsActive = x.IsActive
+            })
             .ToListAsync(cancellationToken);
 
             return _responseService.Success(franchises);

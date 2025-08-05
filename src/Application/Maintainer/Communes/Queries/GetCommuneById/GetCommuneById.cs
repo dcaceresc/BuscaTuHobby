@@ -1,10 +1,9 @@
 ﻿namespace Application.Maintainer.Communes.Queries.GetCommuneById;
 public record GetCommuneById(Guid CommuneId) : IRequest<ApiResponse<CommuneVM>>;
 
-public class GetCommuneByIdHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetCommuneById, ApiResponse<CommuneVM>>
+public class GetCommuneByIdHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetCommuneById, ApiResponse<CommuneVM>>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<CommuneVM>> Handle(GetCommuneById request, CancellationToken cancellationToken)
@@ -13,7 +12,12 @@ public class GetCommuneByIdHandler(IApplicationDbContext context, IMapper mapper
         {
             var commune = await _context.Communes
                 .Include(x => x.Region)
-                .ProjectTo<CommuneVM>(_mapper.ConfigurationProvider)
+                .Select(x => new CommuneVM
+                {
+                    CommuneId = x.CommuneId,
+                    CommuneName = x.CommuneName,
+                    RegionId = x.RegionId,
+                })
                 .FirstOrDefaultAsync(x => x.CommuneId == request.CommuneId, cancellationToken);
 
             Guard.Against.NotFound(commune, $"No existe cuidad con la Id {request.CommuneId}");

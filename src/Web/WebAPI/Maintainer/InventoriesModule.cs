@@ -23,13 +23,13 @@ public class InventoriesModule : CarterModule
 
     }
 
-    private static async Task<IResult> GetInventories(ISender sender) => Results.Ok(await sender.Send(new GetInventories()));
+    private static async Task<IResult> GetInventories(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetInventories()));
 
-    private static async Task<IResult> GetInventoryById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetInventoryById(id)));
+    private static async Task<IResult> GetInventoryById(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new GetInventoryById(id)));
 
-    private static async Task<IResult> CreateInventory(ISender sender, CreateInventory command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> CreateInventory(IRequestDispatcher sender, CreateInventory command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateInventory(ISender sender, Guid id, UpdateInventory command)
+    private static async Task<IResult> UpdateInventory(IRequestDispatcher sender, Guid id, UpdateInventory command)
     {
         if (id != command.InventoryId)
             return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {id} no coincide con la Id del inventario {command.InventoryId}" });
@@ -37,5 +37,5 @@ public class InventoriesModule : CarterModule
         return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleInventory(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleInventory(id)));
+    private static async Task<IResult> ToggleInventory(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new ToggleInventory(id)));
 }

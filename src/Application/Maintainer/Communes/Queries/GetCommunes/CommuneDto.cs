@@ -6,14 +6,4 @@ public class CommuneDto
     public string CommuneName { get; set; } = default!;
     public string RegionName { get; set; } = default!;
     public bool IsActive { get; set; }
-
-
-    public class Mapping : Profile
-    {
-        public Mapping()
-        {
-            CreateMap<Commune, CommuneDto>()
-                .ForMember(d => d.RegionName, opt => opt.MapFrom(s => s.Region.RegionName));
-        }
-    }
 }

@@ -6,15 +6,7 @@ public class StoreVM
     public string StoreName { get; set; } = default!;
     public IList<StoreAddressDto> StoreAddress { get; set; } = default!;
     public string StoreWebSite { get; set; } = default!;
-
-    public class Mapping : Profile
-    {
-        public Mapping()
-        {
-            CreateMap<Store, StoreVM>()
-                .ForMember(d => d.StoreAddress, opt => opt.MapFrom(s => s.StoreAddresses));
-        }
-    }
+    
 }
 
 public class StoreAddressDto
@@ -24,13 +16,5 @@ public class StoreAddressDto
     public Guid CommuneId { get; set; }
     public Guid RegionId { get; set; }
     public string? ZipCode { get; set; }
-
-    public class Mapping : Profile
-    {
-        public Mapping()
-        {
-            CreateMap<StoreAddress, StoreAddressDto>()
-                .ForMember(d => d.RegionId, opt => opt.MapFrom(s => s.Commune.RegionId));
-        }
-    }
+    
 }

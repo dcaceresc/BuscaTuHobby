@@ -7,11 +7,11 @@ using Application.Security.Account.Commands.UserRegister;
 
 namespace WebAPI.Security;
 
-public class AccountModule : CarterModule
+public class AuthModule : CarterModule
 {
     public override void AddRoutes(IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("api/security/account");
+        var group = app.MapGroup("api/security/auth");
 
         group.MapPost("userLogin", UserLogin);
         group.MapPost("adminLogin", AdminLogin);
@@ -20,7 +20,7 @@ public class AccountModule : CarterModule
         group.MapPost("confirmEmail", ConfirmEmail);
     }
 
-    private static async Task<IResult> UserLogin(ISender sender, UserLogin command)
+    private static async Task<IResult> UserLogin(IRequestDispatcher sender, UserLogin command)
     {
         var result = await sender.Send(command);
 
@@ -32,7 +32,7 @@ public class AccountModule : CarterModule
         return Results.Ok(response);
     }
 
-    private static async Task<IResult> AdminLogin(ISender sender, AdminLogin command)
+    private static async Task<IResult> AdminLogin(IRequestDispatcher sender, AdminLogin command)
     {
         var result = await sender.Send(command);
 
@@ -44,9 +44,9 @@ public class AccountModule : CarterModule
         return Results.Ok(response);
     }
 
-    private static async Task<IResult> Register(ISender sender, UserRegister command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> Register(IRequestDispatcher sender, UserRegister command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateRefreshToken(ISender sender, UpdateRefreshToken command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> UpdateRefreshToken(IRequestDispatcher sender, UpdateRefreshToken command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> ConfirmEmail(ISender sender, ConfirmEmail command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> ConfirmEmail(IRequestDispatcher sender, ConfirmEmail command) => Results.Ok(await sender.Send(command));
 }

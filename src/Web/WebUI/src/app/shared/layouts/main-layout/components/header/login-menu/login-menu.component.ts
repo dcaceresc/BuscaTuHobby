@@ -4,7 +4,7 @@ import { faSignInAlt, faSignOutAlt, faUser, faUserPlus } from '@fortawesome/free
 import { RouterLink } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { Observable } from 'rxjs';
-import { AuthorizeService } from '@app/core/services';
+import { AuthService } from '@app/core/services';
 
 @Component({
     selector: 'app-login-menu',
@@ -17,7 +17,7 @@ export class LoginMenuComponent {
 
   readonly isAuthenticated = input.required<Observable<boolean>>();
 
-  private authorizeService = inject(AuthorizeService);
+  private authService = inject(AuthService);
 
 
   public userName = signal<string | null | undefined>(null);
@@ -27,7 +27,7 @@ export class LoginMenuComponent {
   public faUser = faUser;
 
   public logout() {
-    this.authorizeService.logout();
+    this.authService.logout();
   }
 
 

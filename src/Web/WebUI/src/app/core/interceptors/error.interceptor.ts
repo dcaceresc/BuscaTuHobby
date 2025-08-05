@@ -2,11 +2,11 @@ import type { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, throwError } from 'rxjs';
 import { Router } from '@angular/router';
-import { AuthorizeService } from '../services/security/authorize.service';
+import { AuthService } from '../services/security/auth.service';
 
 export const ErrorInterceptor: HttpInterceptorFn = (req, next) => {
 
-  const authorizeService = inject(AuthorizeService);
+  const authService = inject(AuthService);
   const router = inject(Router);
 
   return next(req).pipe(catchError(err => {

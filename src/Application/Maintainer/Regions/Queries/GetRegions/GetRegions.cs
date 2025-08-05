@@ -1,10 +1,9 @@
 ﻿namespace Application.Maintainer.Regions.Queries.GetRegions;
 public record GetRegions : IRequest<ApiResponse<List<RegionDto>>>;
 
-public class GetRegionsHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetRegions, ApiResponse<List<RegionDto>>>
+public class GetRegionsHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetRegions, ApiResponse<List<RegionDto>>>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<List<RegionDto>>> Handle(GetRegions request, CancellationToken cancellationToken)
@@ -13,7 +12,13 @@ public class GetRegionsHandler(IApplicationDbContext context, IMapper mapper, IA
         {
             var regions = await _context.Regions
             .AsNoTracking()
-            .ProjectTo<RegionDto>(_mapper.ConfigurationProvider)
+            .Select(x => new RegionDto
+            {
+                RegionId = x.RegionId,
+                RegionName = x.RegionName,
+                RegionOrder = x.RegionOrder,
+                IsActive = x.IsActive
+            })
             .OrderBy(x => x.RegionOrder)
             .ToListAsync(cancellationToken);
 

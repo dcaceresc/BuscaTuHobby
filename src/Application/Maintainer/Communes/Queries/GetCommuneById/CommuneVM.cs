@@ -6,12 +6,4 @@ public class CommuneVM
     public string CommuneName { get; set; } = default!;
     public Guid RegionId { get; set; }
 
-
-    public class Mapping : Profile
-    {
-        public Mapping()
-        {
-            CreateMap<Commune, CommuneVM>();
-        }
-    }
 }

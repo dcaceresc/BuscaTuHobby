@@ -1,10 +1,9 @@
 ﻿namespace Application.Security.Users.Queries.GetUserById;
 public record GetUserById(Guid UserId) : IRequest<ApiResponse<UserVM>>;
 
-public class GetUserByIdHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetUserById, ApiResponse<UserVM>>
+public class GetUserByIdHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetUserById, ApiResponse<UserVM>>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<UserVM>> Handle(GetUserById request, CancellationToken cancellationToken)
@@ -12,7 +11,15 @@ public class GetUserByIdHandler(IApplicationDbContext context, IMapper mapper, I
         try
         {
             var user = await _context.Users
-                .ProjectTo<UserVM>(_mapper.ConfigurationProvider)
+                .Select(x =>  new UserVM
+                {
+                    UserId = x.UserId,
+                    Email = x.Email,
+                    EmailConfirmed = x.EmailConfirmed,
+                    LockoutEnabled = x.LockoutEnabled,
+                    LockoutEnd = x.LockoutEnd,
+                    RoleIds = x.UserRoles.Select(r => r.RoleId).ToList()
+                })
                 .FirstOrDefaultAsync(x => x.UserId == request.UserId, cancellationToken);
 
 

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AuthorizeService } from '@app/core/services';
+import { AuthService } from '@app/core/services';
 
 @Component({
     selector: 'app-confirm-email',
@@ -14,7 +14,7 @@ import { AuthorizeService } from '@app/core/services';
 export class ConfirmEmailComponent implements OnInit {
 
   private route = inject(ActivatedRoute);
-  private authorizedService = inject(AuthorizeService);
+  private authService = inject(AuthService);
 
   public userId! : string | null;
   public token!: string | null;
@@ -29,7 +29,7 @@ export class ConfirmEmailComponent implements OnInit {
     this.token = this.route.snapshot.paramMap.get('token');
     
     if(this.userId && this.token){
-      this.authorizedService.confirmEmail({userId: this.userId, token: this.token}).subscribe({
+      this.authService.confirmEmail({userId: this.userId, token: this.token}).subscribe({
         next : (response) => {
 
           this.header.set(response.success ? "Confirmación de Correo Exitosa" : "Confirmación de Correo Fallida");

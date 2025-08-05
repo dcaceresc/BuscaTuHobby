@@ -24,11 +24,11 @@ public class MenusModule : CarterModule
 
     }
 
-    private static async Task<IResult> GetMenus(ISender sender) => Results.Ok(await sender.Send(new GetMenus()));
-    private static async Task<IResult> GetMenuById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetMenuById(id)));
-    private static async Task<IResult> CreateMenu(ISender sender, CreateMenu command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> GetMenus(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetMenus()));
+    private static async Task<IResult> GetMenuById(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new GetMenuById(id)));
+    private static async Task<IResult> CreateMenu(IRequestDispatcher sender, CreateMenu command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateMenu(ISender sender, Guid id, UpdateMenu command)
+    private static async Task<IResult> UpdateMenu(IRequestDispatcher sender, Guid id, UpdateMenu command)
     {
         if (id != command.MenuId)
             return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {id} no coincide con la del menu {command.MenuId}" });
@@ -36,6 +36,6 @@ public class MenusModule : CarterModule
         return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleMenu(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleMenu(id)));
-    private static async Task<IResult> ToggleSubMenu(ISender sender, Guid id, Guid subMenuId) => Results.Ok(await sender.Send(new ToggleSubMenu(id,subMenuId)));
+    private static async Task<IResult> ToggleMenu(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new ToggleMenu(id)));
+    private static async Task<IResult> ToggleSubMenu(IRequestDispatcher sender, Guid id, Guid subMenuId) => Results.Ok(await sender.Send(new ToggleSubMenu(id,subMenuId)));
 }

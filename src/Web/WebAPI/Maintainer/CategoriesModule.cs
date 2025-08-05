@@ -1,4 +1,5 @@
-﻿using Application.Maintainer.Categories.Commands.CreateCategory;
+﻿using Application.Common.Mediator;
+using Application.Maintainer.Categories.Commands.CreateCategory;
 using Application.Maintainer.Categories.Commands.ToggleCategory;
 using Application.Maintainer.Categories.Commands.UpdateCategory;
 using Application.Maintainer.Categories.Queries.GetCategories;
@@ -23,13 +24,13 @@ public class CategoriesModule : CarterModule
 
     }
 
-    private static async Task<IResult> GetCategories(ISender sender) => Results.Ok(await sender.Send(new GetCategories()));
+    private static async Task<IResult> GetCategories(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetCategories()));
 
-    private static async Task<IResult> GetCategoryById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetCategoryById(id)));
+    private static async Task<IResult> GetCategoryById(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new GetCategoryById(id)));
 
-    private static async Task<IResult> CreateCategory(ISender sender, CreateCategory command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> CreateCategory(IRequestDispatcher sender, CreateCategory command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateCategory(ISender sender, Guid id, UpdateCategory command)
+    private static async Task<IResult> UpdateCategory(IRequestDispatcher sender, Guid id, UpdateCategory command)
     {
         if (id != command.CategoryId)
             return Results.Ok(new ApiResponse { Success = false, Message = $"La id de la ruta {id} no coincide con la de la categoría {command.CategoryId}" });
@@ -37,5 +38,5 @@ public class CategoriesModule : CarterModule
         return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleCategory(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleCategory(id)));
+    private static async Task<IResult> ToggleCategory(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new ToggleCategory(id)));
 }

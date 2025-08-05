@@ -1,5 +1,5 @@
 import { HttpRequest, type HttpInterceptorFn, HttpHandlerFn } from '@angular/common/http';
-import { AuthorizeService } from '../services/security/authorize.service';
+import { AuthService } from '../services/security/auth.service';
 import { inject } from '@angular/core';
 import { catchError, switchMap, throwError } from 'rxjs';
 
@@ -12,7 +12,7 @@ const addToken = (req: HttpRequest<any>, token: string) =>{
   });
 }
 
-const handleUnauthorizedError = (req: HttpRequest<any>, next: HttpHandlerFn, authorizeService : AuthorizeService) =>{
+const handleUnauthorizedError = (req: HttpRequest<any>, next: HttpHandlerFn, authorizeService : AuthService) =>{
 
   return authorizeService.refreshToken().pipe(
     switchMap((response) => {
@@ -38,8 +38,8 @@ const handleUnauthorizedError = (req: HttpRequest<any>, next: HttpHandlerFn, aut
 
 export const AuthorizeInterceptor: HttpInterceptorFn = (req, next) => {
 
-  const authorizeService = inject(AuthorizeService);
-  const accessToken = authorizeService.userValue?.accessToken;
+  const authService = inject(AuthService);
+  const accessToken = authService.userValue?.accessToken;
 
 
   if (accessToken) {
@@ -51,7 +51,7 @@ export const AuthorizeInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error) => {
       if (error.status === 401) {
         // Token de acceso expirado, intentar renovar
-        return handleUnauthorizedError(req, next,authorizeService);
+        return handleUnauthorizedError(req, next,authService);
       }
       return throwError(() => error);
     })

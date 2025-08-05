@@ -10,15 +10,4 @@ public class ProductDto
     public IList<string> Categories { get; set; } = default!;
     public bool IsActive { get; set; }
 
-    public class Mapping : Profile
-    {
-        public Mapping()
-        {
-            CreateMap<Product, ProductDto>().
-                ForMember(d => d.ManufacturerName, opt => opt.MapFrom(s => s.Manufacturer.ManufacturerName)).
-                ForMember(d => d.FranchiseName, opt => opt.MapFrom(s => s.Franchise.FranchiseName)).
-                ForMember(d => d.SerieName, opt => opt.MapFrom(s => s.Serie != null ? s.Serie.SerieName : "Toda la Franquicia")).
-                ForMember(d => d.Categories, opt => opt.MapFrom(s => s.ProductCategories.Select(cp => cp.Category.CategoryName).ToList()));
-        }
-    }
 }

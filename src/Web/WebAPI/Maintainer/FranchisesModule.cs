@@ -21,13 +21,13 @@ public class FranchisesModule : CarterModule
         group.MapDelete("{id:guid}", ToggleFranchise);
     }
 
-    private static async Task<IResult> GetFranchises(ISender sender) => Results.Ok(await sender.Send(new GetFranchises()));
+    private static async Task<IResult> GetFranchises(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetFranchises()));
 
-    private static async Task<IResult> GetFranchiseById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetFranchiseById(id)));
+    private static async Task<IResult> GetFranchiseById(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new GetFranchiseById(id)));
 
-    private static async Task<IResult> CreateFranchise(ISender sender, CreateFranchise command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> CreateFranchise(IRequestDispatcher sender, CreateFranchise command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateFranchise(ISender sender, Guid id, UpdateFranchise command)
+    private static async Task<IResult> UpdateFranchise(IRequestDispatcher sender, Guid id, UpdateFranchise command)
     {
         if (id != command.FranchiseId)
             return Results.Ok(new ApiResponse { Success = false, Message = $"La id de la ruta {id} no coincide con la de la franquicia {command.FranchiseId}" });
@@ -35,5 +35,5 @@ public class FranchisesModule : CarterModule
         return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleFranchise(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleFranchise(id)));
+    private static async Task<IResult> ToggleFranchise(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new ToggleFranchise(id)));
 }

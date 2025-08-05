@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { AuthorizeService, NotificationService } from '@app/core/services';
+import { AuthService, NotificationService } from '@app/core/services';
 
 @Component({
     selector: 'app-register',
@@ -12,7 +12,7 @@ import { AuthorizeService, NotificationService } from '@app/core/services';
 export class RegisterComponent { 
 
   private formBuilder = inject(FormBuilder);
-  private authorizeService = inject(AuthorizeService);
+  private authService = inject(AuthService);
   private notificationService = inject(NotificationService);
 
 
@@ -34,7 +34,7 @@ export class RegisterComponent {
       return;
     }
 
-    this.authorizeService.register(this.registerForm.value).subscribe({
+    this.authService.register(this.registerForm.value).subscribe({
       next: (response) => {
         if (response.success) {
           this.notificationService.showSuccess('Exito',response.message);

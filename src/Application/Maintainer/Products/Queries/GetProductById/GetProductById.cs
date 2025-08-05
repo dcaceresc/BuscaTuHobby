@@ -1,10 +1,9 @@
 ﻿namespace Application.Maintainer.Products.Queries.GetProductById;
 public record GetProductById(Guid ProductId) : IRequest<ApiResponse<ProductVM>>;
 
-public class GetProductByIdHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetProductById, ApiResponse<ProductVM>>
+public class GetProductByIdHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetProductById, ApiResponse<ProductVM>>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<ProductVM>> Handle(GetProductById request, CancellationToken cancellationToken)
@@ -18,7 +17,21 @@ public class GetProductByIdHandler(IApplicationDbContext context, IMapper mapper
                            .ThenInclude(x => x.Series)
                            .Include(x => x.ProductImages)
                            .AsNoTracking()
-                           .ProjectTo<ProductVM>(_mapper.ConfigurationProvider)
+                           .Select(x => new ProductVM()
+                           {
+                               ProductId = x.ProductId,
+                               ProductName = x.ProductName,
+                               CategoryIds = x.ProductCategories.Select(pc => pc.CategoryId).ToList(),
+                               ProductImages = x.ProductImages.OrderBy(pi => pi.ProductImageOrder).Select(pi => $"{SiteConfig.FolderImage}/{pi.ProductImageId}.jpg").ToList(),
+                               FranchiseId = x.FranchiseId,
+                               ManufacturerId = x.ManufacturerId,
+                               SerieId = x.SerieId,
+                               ProductDescription = x.ProductDescription,
+                               ProductHasBase = x.ProductHasBase,
+                               ProductReleaseDate = x.ProductReleaseDate.ToString("yyyy-MM-dd"),
+                               ProductTargetAge = x.ProductTargetAge,
+                               ProductSize = x.ProductSize
+                           })
                            .FirstOrDefaultAsync(x => x.ProductId == request.ProductId, cancellationToken);
 
             Guard.Against.NotFound(product, $"No existe producto con la Id {request.ProductId}");

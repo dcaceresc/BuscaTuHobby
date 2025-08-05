@@ -2,10 +2,9 @@
 
 public record GetStoreByIdQuery(Guid StoreId) : IRequest<ApiResponse<StoreVM>>;
 
-public class GetStoreByIdQueryHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetStoreByIdQuery, ApiResponse<StoreVM>>
+public class GetStoreByIdQueryHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetStoreByIdQuery, ApiResponse<StoreVM>>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<StoreVM>> Handle(GetStoreByIdQuery request, CancellationToken cancellationToken)
@@ -15,7 +14,21 @@ public class GetStoreByIdQueryHandler(IApplicationDbContext context, IMapper map
             var store = await _context.Stores
               .Include(x => x.StoreAddresses)
               .AsNoTracking()
-              .ProjectTo<StoreVM>(_mapper.ConfigurationProvider)
+              .Select(x => new StoreVM
+              {
+                  StoreId = x.StoreId,
+                  StoreName = x.StoreName,
+                  StoreWebSite = x.StoreWebSite,
+                  StoreAddress = x.StoreAddresses
+                      .Select(sa => new StoreAddressDto()
+                      {
+                          StoreAddressId = sa.StoreAddressId,
+                          CommuneId = sa.CommuneId,
+                          RegionId = sa.Commune.RegionId,
+                          ZipCode = sa.ZipCode,
+                          Street = sa.Street,
+                      }).ToList()
+              })
               .FirstOrDefaultAsync(x => x.StoreId == request.StoreId, cancellationToken);
 
             Guard.Against.NotFound(store, $"No existe tienda con la Id {request.StoreId}");

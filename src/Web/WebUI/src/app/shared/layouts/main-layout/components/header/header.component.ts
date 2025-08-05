@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, ElementRef, inject, signal, viewChild } from '@angular/core';
-import { AuthorizeService, DashboardService, FaIconService, NotificationService } from '@app/core/services';
+import { AuthService, DashboardService, FaIconService, NotificationService } from '@app/core/services';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { Observable } from 'rxjs';
@@ -19,7 +19,7 @@ export class HeaderComponent{
 
   readonly btnCloseOffCanvas = viewChild.required<ElementRef>('btnCloseOffCanvas');
 
-  private authorizeService = inject(AuthorizeService);
+  private authService = inject(AuthService);
   private dashboardService = inject(DashboardService);
   private faIconService = inject(FaIconService);
   private notificationService = inject(NotificationService);
@@ -36,11 +36,11 @@ export class HeaderComponent{
 
 
   constructor() { 
-    this.isAuthenticated = this.authorizeService.isAuthenticated();
+    this.isAuthenticated = this.authService.isAuthenticated();
 
     this.isAuthenticated.subscribe((isAuthenticated: boolean) => {
       if (isAuthenticated === true) {
-        this.roles = this.authorizeService.getRoles();
+        this.roles = this.authService.getRoles();
       }
     });
 

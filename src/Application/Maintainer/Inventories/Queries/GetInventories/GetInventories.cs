@@ -2,10 +2,9 @@
 
 public record GetInventories : IRequest<ApiResponse<List<InventoryDto>>>;
 
-public class GetInventoriesHandler(IApplicationDbContext context, IMapper mapper, IApiResponseService responseService) : IRequestHandler<GetInventories, ApiResponse<List<InventoryDto>>>
+public class GetInventoriesHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<GetInventories, ApiResponse<List<InventoryDto>>>
 {
     private readonly IApplicationDbContext _context = context;
-    private readonly IMapper _mapper = mapper;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<List<InventoryDto>>> Handle(GetInventories request, CancellationToken cancellationToken)
@@ -16,7 +15,14 @@ public class GetInventoriesHandler(IApplicationDbContext context, IMapper mapper
             .Include(x => x.Product)
             .Include(x => x.Store)
             .AsNoTracking()
-            .ProjectTo<InventoryDto>(_mapper.ConfigurationProvider)
+            .Select(x => new InventoryDto
+            {
+                InventoryId = x.InventoryId,
+                ProductName = x.Product.ProductName,
+                StoreName = x.Store.StoreName,
+                Price = x.Price.ToString("C0"),
+                IsActive = x.IsActive
+            })
             .ToListAsync(cancellationToken);
 
             return _responseService.Success(inventories);

@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { AuthorizeService, NotificationService } from '@app/core/services';
+import { AuthService, NotificationService } from '@app/core/services';
 
 @Component({
     selector: 'app-user-login',
@@ -14,7 +14,7 @@ import { AuthorizeService, NotificationService } from '@app/core/services';
 })
 export class UserLoginComponent implements OnInit { 
 
-  private authorizeService = inject(AuthorizeService);
+  private authService = inject(AuthService);
   private formBuilder = inject(FormBuilder);
   private notificationService = inject(NotificationService);
   private router = inject(Router);
@@ -37,7 +37,7 @@ export class UserLoginComponent implements OnInit {
       return;
     }
 
-    this.authorizeService.login(this.loginForm.value).subscribe({
+    this.authService.login(this.loginForm.value).subscribe({
       next: (response) => {
 
         if (!response.success){

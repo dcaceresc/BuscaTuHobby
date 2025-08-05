@@ -24,15 +24,15 @@ public class SeriesModule : CarterModule
 
     }
 
-    private static async Task<IResult> GetSeries(ISender sender) => Results.Ok(await sender.Send(new GetSeries()));
+    private static async Task<IResult> GetSeries(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetSeries()));
 
-    private static async Task<IResult> GetSeriesById(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetSerieById(id)));
+    private static async Task<IResult> GetSeriesById(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new GetSerieById(id)));
 
-    private static async Task<IResult> GetSeriesByFranchise(ISender sender, Guid id) => Results.Ok(await sender.Send(new GetSeriesByFranchise(id)));
+    private static async Task<IResult> GetSeriesByFranchise(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new GetSeriesByFranchise(id)));
 
-    private static async Task<IResult> CreateSeries(ISender sender, CreateSerie command) => Results.Ok(await sender.Send(command));
+    private static async Task<IResult> CreateSeries(IRequestDispatcher sender, CreateSerie command) => Results.Ok(await sender.Send(command));
 
-    private static async Task<IResult> UpdateSeries(ISender sender, Guid id, UpdateSerie command)
+    private static async Task<IResult> UpdateSeries(IRequestDispatcher sender, Guid id, UpdateSerie command)
     {
         if (id != command.SerieId)
             return Results.Ok(new ApiResponse { Success = false, Message = $"La Id de la ruta {id} no coincide con la Id de la serie {command.SerieId}" });
@@ -40,5 +40,5 @@ public class SeriesModule : CarterModule
         return Results.Ok(await sender.Send(command));
     }
 
-    private static async Task<IResult> ToggleSeries(ISender sender, Guid id) => Results.Ok(await sender.Send(new ToggleSerie(id)));
+    private static async Task<IResult> ToggleSeries(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new ToggleSerie(id)));
 }
