@@ -1,5 +1,5 @@
 using Application.Common.Interfaces;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using WebAPI.Services;
 
 namespace WebAPI;
@@ -26,22 +26,11 @@ public static class ConfigureServices
                 Name = "Authorization",
                 Type = SecuritySchemeType.ApiKey
             });
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement {
-           {
-             new OpenApiSecurityScheme
-             {
-               Reference = new OpenApiReference
-               {
-                 Type = ReferenceType.SecurityScheme,
-                 Id = "Bearer"
-               }
-              },
-              Array.Empty<string>()
-            }
-          });
+            c.AddSecurityRequirement(document => new OpenApiSecurityRequirement
+            {
+                [new OpenApiSecuritySchemeReference("bearer", document)] = []
+            });
         });
-
-
 
         services.AddSingleton<IAuthenticationService, AuthenticationService>();
 
