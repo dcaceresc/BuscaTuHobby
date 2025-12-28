@@ -6,9 +6,9 @@ using Application.Security.Users.Queries.GetUsers;
 
 namespace WebAPI.Security;
 
-public class UserModule : CarterModule
+public class UserModule : ICarterModule
 {
-    public override void AddRoutes(IEndpointRouteBuilder app)
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("api/security/users")
             .RequireAuthorization(policy => policy.RequireRole("SuperAdmin", "Administrator"));

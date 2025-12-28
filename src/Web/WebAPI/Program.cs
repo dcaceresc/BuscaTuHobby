@@ -20,8 +20,6 @@ var app = builder.Build();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-await app.InitialiseConfigurationAsync();
-
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -33,6 +31,8 @@ else
 {
     app.UseHsts();
 }
+
+await app.InitialiseConfigurationAsync();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -1,5 +1,4 @@
 ﻿using Application.Common.Mediator;
-using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 

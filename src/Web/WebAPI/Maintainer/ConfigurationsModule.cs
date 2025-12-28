@@ -7,9 +7,9 @@ using Domain.Common;
 
 namespace WebAPI.Maintainer;
 
-public class ConfigurationsModule : CarterModule
+public class ConfigurationsModule : ICarterModule
 {
-    public override void AddRoutes(IEndpointRouteBuilder app)
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("api/maintainer/configurations")
             .RequireAuthorization(policy => policy.RequireRole("SuperAdmin", "Administrator"));
