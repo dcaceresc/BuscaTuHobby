@@ -7,9 +7,9 @@ using Domain.Common;
 
 namespace WebAPI.Security;
 
-public class RoleModule : CarterModule
+public class RoleModule : ICarterModule
 {
-    public override void AddRoutes(IEndpointRouteBuilder app)
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("api/security/roles").RequireAuthorization(policy => policy.RequireRole("SuperAdmin"));
 

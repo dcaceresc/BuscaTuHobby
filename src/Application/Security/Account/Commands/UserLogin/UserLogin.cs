@@ -13,7 +13,7 @@ public class UserLoginHandler(IApplicationDbContext context, IApiResponseService
         {
             var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == request.Email, cancellationToken);
 
-            Guard.Against.NotFound(user, $"No existe en el sistema usuario con el correo ${request.Email}");
+            Guard.Against.NotFound(user, $"No existe en el sistema usuario con el correo {request.Email}");
 
             bool userIsActive(User user) => user.IsActive;
 

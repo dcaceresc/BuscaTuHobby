@@ -7,9 +7,9 @@ using Application.Security.Account.Commands.UserRegister;
 
 namespace WebAPI.Security;
 
-public class AuthModule : CarterModule
+public class AuthModule : ICarterModule
 {
-    public override void AddRoutes(IEndpointRouteBuilder app)
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("api/security/auth");
 

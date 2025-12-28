@@ -8,9 +8,9 @@ using Domain.Common;
 
 namespace WebAPI.Maintainer;
 
-public class CategoriesModule : CarterModule
+public class CategoriesModule : ICarterModule
 {
-    public override void AddRoutes(IEndpointRouteBuilder app)
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
 
         var group = app.MapGroup("api/maintainer/categories")

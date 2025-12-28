@@ -8,9 +8,9 @@ using Domain.Common;
 
 namespace WebAPI.Maintainer;
 
-public class SeriesModule : CarterModule
+public class SeriesModule : ICarterModule
 {
-    public override void AddRoutes(IEndpointRouteBuilder app)
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
         var group = app.MapGroup("api/maintainer/series")
             .RequireAuthorization(policy => policy.RequireRole("SuperAdmin", "Administrator"));

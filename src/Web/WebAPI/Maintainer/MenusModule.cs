@@ -8,9 +8,9 @@ using Domain.Common;
 
 namespace WebAPI.Maintainer;
 
-public class MenusModule : CarterModule
+public class MenusModule : ICarterModule
 {
-    public override void AddRoutes(IEndpointRouteBuilder app)
+    public void AddRoutes(IEndpointRouteBuilder app)
     {
         var groups = app.MapGroup("api/maintainer/menus")
             .RequireAuthorization(policy => policy.RequireRole("SuperAdmin", "Administrator"));
