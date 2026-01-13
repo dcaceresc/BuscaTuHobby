@@ -1,8 +1,8 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { ManufacturerDto } from '@app/core/models';
-import { FaIconService, ManufacturerService, NotificationService } from '@app/core/services';
+import { ManufacturerService, NotificationService } from '@app/core/services';
 import { ButtonComponent, TableComponent } from '@app/shared';
 @Component({
     selector: 'app-manufacturers',
@@ -15,7 +15,6 @@ export class ManufacturersComponent implements OnInit {
   private manufacturerService = inject(ManufacturerService);
   private notificationService = inject(NotificationService);
   private router = inject(Router);
-  private faIconService = inject(FaIconService);
 
   public columns :any[] = [];
   public data = signal<ManufacturerDto[]>([]);
@@ -29,8 +28,8 @@ export class ManufacturersComponent implements OnInit {
     ];
 
     this.actions = [
-      { icon: this.faIconService.getIcon('Edit'), label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
-      { icon: this.faIconService.getIcon('Toggle'), actionKey: 'toggle'},
+      { icon: 'bi bi-pencil', label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
+      { icon: 'bi bi-toggle-on', actionKey: 'toggle'},
     ]
 
     this.loadManufacturers();

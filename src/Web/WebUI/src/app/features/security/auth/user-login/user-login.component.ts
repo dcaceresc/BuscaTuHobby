@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -7,9 +7,11 @@ import { AuthService, NotificationService } from '@app/core/services';
 @Component({
     selector: 'app-user-login',
     imports: [
-        CommonModule, ReactiveFormsModule, RouterLink
+      ReactiveFormsModule,
+      RouterLink
     ],
     templateUrl: './user-login.component.html',
+    styleUrl: './user-login.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserLoginComponent implements OnInit { 

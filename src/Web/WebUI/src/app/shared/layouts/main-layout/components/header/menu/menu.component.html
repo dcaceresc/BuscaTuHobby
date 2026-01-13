@@ -1,6 +1,6 @@
-<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
+<div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
   <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="offcanvasExampleLabel">Hola, Registro</h5>
+    <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">Hola, Registro</h5>
     <button type="button" #btnCloseOffCanvas class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
   <div class="offcanvas-body">
@@ -12,7 +12,7 @@
                 {{item.menuName}}
                 @if (item.subMenus.length > 0) {
                   <span class="float-end">
-                    <fa-icon [icon]="this.getIcon(expandedMenus[$index] ? 'Right' : 'Down')"></fa-icon>
+                    <i class="bi" [ngClass]="expandedMenus[$index] ? 'bi-caret-right-fill' : 'bi-caret-down-fill'"></i>
                   </span>
                 }
                 </a>

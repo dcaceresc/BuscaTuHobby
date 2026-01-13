@@ -1,0 +1,10 @@
+@use '@src/variables.scss' as *;
+
+.article-card {
+    background: white;
+    border-left: 4px solid $green;
+}
+        
+.article-card:hover {
+    border-left-color: $yellow;
+}

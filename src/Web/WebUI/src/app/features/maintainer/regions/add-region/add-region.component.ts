@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -7,8 +7,8 @@ import { NotificationService, RegionService } from '@app/core/services';
 @Component({
     selector: 'app-add-region',
     imports: [
-        CommonModule, ReactiveFormsModule
-    ],
+    ReactiveFormsModule
+],
     templateUrl: './add-region.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })

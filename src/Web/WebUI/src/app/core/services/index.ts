@@ -17,4 +17,3 @@ export * from './security/role.service';
 export * from './dashboard/dashboard.service';
 
 export * from './notification.service';
-export * from './fa-icon.service';

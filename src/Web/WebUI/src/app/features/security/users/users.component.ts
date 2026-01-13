@@ -1,7 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { faEdit, faPowerOff, faRotate } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ButtonComponent, TableComponent } from '@app/shared';
 import { NotificationService, UserService } from '@app/core/services';
 import { UserDto } from '@app/core/models';
@@ -9,7 +7,7 @@ import { UserDto } from '@app/core/models';
 @Component({
     selector: 'app-users',
     imports: [
-        RouterLink, ButtonComponent, TableComponent, FontAwesomeModule
+        RouterLink, ButtonComponent, TableComponent
     ],
     templateUrl: './users.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -39,9 +37,9 @@ export class UsersComponent implements OnInit {
 
 
     this.actions = [
-      { icon: faEdit, label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
-      { icon: faPowerOff, label: '', actionKey: 'toggle', cssClass: '' },
-      { icon: faRotate, label: 'Reiniciar Contraseña', actionKey: 'reset', cssClass: 'bg-info' },
+      { icon: 'bi-pencil', label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
+      { icon: 'bi-power-off', label: '', actionKey: 'toggle', cssClass: '' },
+      { icon: 'bi-arrow-repeat', label: 'Reiniciar Contraseña', actionKey: 'reset', cssClass: 'bg-info' },
     ]
 
     this.loadUsers();

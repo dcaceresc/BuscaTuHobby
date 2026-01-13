@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -9,8 +9,9 @@ import { NgSelectModule } from '@ng-select/ng-select';
 @Component({
     selector: 'app-update-serie',
     imports: [
-        CommonModule, ReactiveFormsModule, NgSelectModule
-    ],
+    ReactiveFormsModule,
+    NgSelectModule
+],
     templateUrl: './update-serie.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })

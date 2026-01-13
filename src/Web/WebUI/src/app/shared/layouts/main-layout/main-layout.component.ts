@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { HeaderComponent } from './components/header/header.component';
 import { RouterOutlet } from '@angular/router';

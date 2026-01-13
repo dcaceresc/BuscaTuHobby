@@ -1,0 +1,27 @@
+ @use '@src/variables.scss' as *;
+ 
+.badge-trending {
+    background-color: $red;
+}
+        
+.badge-popular {
+    background-color: $yellow;
+    color: #000;
+}
+
+.badge-stores {
+    background-color: $green;
+    color: white;
+}
+
+.store-badge {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    margin: 0.1rem;
+}
+
+.product-img {
+    height: 200px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+}

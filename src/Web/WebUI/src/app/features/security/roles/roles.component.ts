@@ -3,7 +3,6 @@ import { Router, RouterLink } from '@angular/router';
 import { RoleDto } from '@app/core/models';
 import { NotificationService, RoleService } from '@app/core/services';
 import { ButtonComponent, TableComponent } from '@app/shared';
-import { faEdit, faPowerOff } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-roles',
@@ -30,8 +29,8 @@ export class RolesComponent implements OnInit {
     ];
 
     this.actions = [
-      { icon: faEdit, label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
-      { icon: faPowerOff, label: '', actionKey: 'toggle', cssClass: '' },
+      { icon: 'bi-pencil', label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
+      { icon: 'bi-power-off', label: '', actionKey: 'toggle', cssClass: '' },
     ]
 
     this.loadRoles();

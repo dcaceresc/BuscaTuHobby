@@ -1,16 +1,18 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { SerieDto } from '@app/core/models';
-import { FaIconService, NotificationService, SerieService } from '@app/core/services';
+import { NotificationService, SerieService } from '@app/core/services';
 import { ButtonComponent, TableComponent } from '@app/shared';
 
 
 @Component({
     selector: 'app-series',
     imports: [
-        CommonModule, ButtonComponent, TableComponent, RouterLink
-    ],
+    ButtonComponent,
+    TableComponent,
+    RouterLink
+],
     templateUrl: './series.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -19,7 +21,6 @@ export class SeriesComponent implements OnInit {
   private serieService = inject(SerieService);
   private notificationService = inject(NotificationService);
   private router = inject(Router);
-  private faIconService = inject(FaIconService);
 
   public columns :any[] = [];
   public data = signal<SerieDto[]>([]);
@@ -35,8 +36,8 @@ export class SeriesComponent implements OnInit {
     ];
 
     this.actions = [
-      { icon: this.faIconService.getIcon('Edit'), label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
-      { icon: this.faIconService.getIcon('Toggle'), actionKey: 'toggle'},
+      { icon: 'bi bi-pencil', label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
+      { icon: 'bi bi-toggle-on', actionKey: 'toggle'},
     ]
 
     this.loadSeries();

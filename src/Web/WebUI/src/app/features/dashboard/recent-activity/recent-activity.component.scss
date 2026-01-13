@@ -1,0 +1,7 @@
+@use '@src/variables.scss' as *;
+
+.activity-item {
+    border-left: 3px solid $green;
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+}

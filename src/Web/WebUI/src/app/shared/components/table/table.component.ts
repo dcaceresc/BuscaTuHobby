@@ -1,11 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal, input, output } from '@angular/core';
-import { FontAwesomeModule, IconDefinition } from '@fortawesome/angular-fontawesome';
-import { FaIconService } from '../../../core/services/fa-icon.service';
 
 @Component({
     selector: 'app-table',
-    imports: [CommonModule, FontAwesomeModule],
+    imports: [CommonModule],
     templateUrl: './table.component.html',
     styleUrl: './table.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
@@ -15,7 +13,7 @@ export class TableComponent {
   readonly data = input(signal<any[]>([]));
   readonly columns = input<any[]>([]);
   readonly actions = input<{
-    icon: IconDefinition;
+    icon: string;
     label: string;
     actionKey: string;
     cssClass: string;
@@ -28,7 +26,6 @@ export class TableComponent {
   public currentPage = signal(1);
   public readonly itemsPerPage = 10;
   public searchTerm :string = '';
-  public faIconService = inject(FaIconService);
 
   public onSearch(event: Event){
     this.searchTerm = (event.target as HTMLInputElement).value;

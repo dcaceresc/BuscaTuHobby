@@ -22,7 +22,7 @@ export class AddEditStoreComponent implements OnInit {
   private communeService = inject(CommuneService);
 
   readonly storeId = input.required<string | null>({ alias: "id" });
-  public isEditMode = !!this.storeId();
+  public isEditMode: boolean = false;
   public storeForm!: FormGroup;
   public regions = signal<RegionDto[]>([]);
   public communes = signal<CommuneByRegion[]>([]);

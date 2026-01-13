@@ -1,0 +1,27 @@
+@use '@src/variables.scss' as *;
+
+.btn-search {
+    background-color: $green;
+    border: none;
+    color: white;
+    font-weight: bold;
+    transition: all 0.3s ease;
+
+    &:hover {
+        background-color: #45a049;
+        transform: scale(1.05);
+    }
+}
+
+
+.search-bar {
+    border: 2px solid $green;
+    border-radius: 2rem;
+    padding: 0.75rem 1.5rem;
+
+    &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
+        border-color: $green;
+    }
+}
+

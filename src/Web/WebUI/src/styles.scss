@@ -84,13 +84,28 @@ button:disabled{
 
 
 .offcanvas{
-  background-color: $darkBlue;
-  color:$white;
+  background-color: $white;
 
   .offcanvas-header{
-    border-bottom: 1px solid white
+    background-color: $darkBlue;
+    color: $green;
   }
 }
+
+
+.card {
+    border: none;
+    border-radius: 1rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+    }
+}
+
+
 
 .ng-select-container-custom {
   position: relative;

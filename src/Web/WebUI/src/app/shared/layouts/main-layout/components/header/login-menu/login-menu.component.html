@@ -1,18 +1,43 @@
 
 @if ((isAuthenticated() | async) === false) {
-    <a class="btn btn-header-menu me-md-2" [routerLink]="['/security/account/register']">
-      <fa-icon [icon]="faUserPlus"></fa-icon> 
-    </a>
-    <a class="btn btn-header-menu" [routerLink]="['/security/account/login']">
-      <fa-icon [icon]="faSignInAlt"></fa-icon> 
-    </a>
-    }
+  <ul class="dropdown-menu dropdown-menu-end">
+      <li>
+        <a class="dropdown-item" [routerLink]="['/login']">
+          <i class="bi bi-box-arrow-in-right"></i> 
+          Iniciar Sesión
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item" [routerLink]="['/register']">
+          <i class="bi bi-person-plus"></i> 
+          Registrarse
+        </a>
+      </li>
+      <li>
+        <hr class="dropdown-divider">
+      </li>
+      <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Configuración</a></li>
+  </ul>
+}
     
-    @if ((isAuthenticated() | async) === true) {
-      <a class="btn btn-header-menu me-md-2" >
-        <fa-icon [icon]="faUser"></fa-icon>  Perfil
-      </a>
-      <a class="btn btn-header-menu" (click)="logout()" title="Cerra Sesión">
-        <fa-icon [icon]="faSignOutAlt"></fa-icon> 
-      </a>
-    }
+@if ((isAuthenticated() | async) === true) {
+  <ul class="dropdown-menu dropdown-menu-end">
+      <li>
+        <a class="dropdown-item" [routerLink]="['/profile']">
+          <i class="bi bi-person"></i> 
+          Perfil
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item" (click)="logout()" title="Cerrar Sesión" style="cursor: pointer;">
+          <i class="bi bi-box-arrow-right"></i> 
+          Cerrar Sesión
+        </a>
+      </li>
+      <li>
+        <hr class="dropdown-divider">
+      </li>
+      <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Configuración</a></li>
+  </ul>
+    
+}

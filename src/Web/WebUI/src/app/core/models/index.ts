@@ -17,4 +17,3 @@ export * from './security/role.model';
 export * from './dashboard/dashboard.model';
 
 export * from './apiResponse.model';
-export * from './fa-icon.model';

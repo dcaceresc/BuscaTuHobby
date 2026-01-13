@@ -1,4 +1,4 @@
-<!-- Login 7 - Bootstrap Brain Component -->
+<!-- 
 <section class="bg-light p-3 p-md-4 p-xl-5">
     <div class="container">
       <div class="row justify-content-center">
@@ -75,4 +75,63 @@
         </div>
       </div>
     </div>
-  </section>
+  </section> -->
+
+<div class="login-container">
+        <div class="login-card">
+            <div class="brand-logo">
+                <h1>Busca<span class="highlight">TuHobby</span></h1>
+                <p>Encuentra los mejores productos para tu hobby</p>
+            </div>
+            
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <div class="mb-3">
+                    <label for="email" class="form-label">Correo Electrónico</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input type="email" class="form-control" id="email" formControlName="email" placeholder="tu@email.com" required>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input type="password" class="form-control" id="password" formControlName="password" placeholder="••••••••" required>
+                    </div>
+                </div>
+                
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="remember">
+                    <label class="form-check-label" for="remember">
+                        Recordarme
+                    </label>
+                    <a href="#" class="float-end text-decoration-none" style="color: var(--green);">¿Olvidaste tu contraseña?</a>
+                </div>
+                
+                <button type="submit" class="btn btn-login">
+                    <i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión
+                </button>
+            </form>
+            
+            <div class="divider">
+                <span>o continúa con</span>
+            </div>
+            
+            <div class="d-grid gap-2">
+                <button class="btn btn-outline-secondary">
+                    <i class="bi bi-google"></i> Google
+                </button>
+            </div>
+            
+            <div class="register-link">
+                ¿No tienes una cuenta? <a [routerLink]="['/register']" >Regístrate aquí</a>
+            </div>
+        </div>
+        
+        <div class="back-home">
+            <a href="/">
+                <i class="bi bi-arrow-left"></i> Volver al inicio
+            </a>
+        </div>
+    </div>

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { CommuneDto } from '@app/core/models';
-import { CommuneService, FaIconService, NotificationService } from '@app/core/services';
+import { CommuneService, NotificationService } from '@app/core/services';
 import { ButtonComponent, TableComponent } from '@app/shared';
 
 @Component({
@@ -15,7 +15,6 @@ export class CommunesComponent implements OnInit {
   private communeService = inject(CommuneService);
   private notificationService = inject(NotificationService);
   private router = inject(Router);
-  private faIconService = inject(FaIconService);
 
   public columns :any[] = [];
   public data = signal<CommuneDto[]>([]);
@@ -30,8 +29,8 @@ export class CommunesComponent implements OnInit {
       { name: 'Acciones', key: 'isActive' }
     ];
     this.actions = [
-      { icon: this.faIconService.getIcon('Edit'), label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
-      { icon: this.faIconService.getIcon('Toggle'), actionKey: 'toggle'},
+      { icon: 'bi bi-pencil', label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
+      { icon: 'bi bi-toggle-on', actionKey: 'toggle'},
     ];
     this.loadCommunes();
   }

@@ -1,4 +1,4 @@
-<!-- Registration 7 - Bootstrap Brain Component -->
+<!-- 
 <section class="bg-light p-3 p-md-4 p-xl-5">
     <div class="container">
       <div class="row justify-content-center">
@@ -88,4 +88,80 @@
         </div>
       </div>
     </div>
-  </section>
+  </section> -->
+
+
+  <div class="register-container">
+        <div class="register-card">
+            <div class="brand-logo">
+                <h1>Busca<span class="highlight">TuHobby</span></h1>
+                <p>Crea tu cuenta y descubre tu próximo hobby</p>
+            </div>
+            
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Nombre Completo</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input type="text" class="form-control" id="name" placeholder="Juan Pérez" required>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="email" class="form-label">Correo Electrónico</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input type="email" class="form-control" id="email" placeholder="tu@email.com" required>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input type="password" class="form-control" id="password" placeholder="Mínimo 8 caracteres" required>
+                    </div>
+                    <div class="password-strength" id="passwordStrength"></div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="confirmPassword" class="form-label">Confirmar Contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                        <input type="password" class="form-control" id="confirmPassword" placeholder="Repite tu contraseña" required>
+                    </div>
+                </div>
+                
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="terms" required>
+                    <label class="form-check-label" for="terms">
+                        Acepto los <a href="#" style="color: var(--green);">términos y condiciones</a>
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-register">
+                    <i class="bi bi-person-plus"></i> Crear Cuenta
+                </button>
+            </form>
+            
+            <div class="divider">
+                <span>o regístrate con</span>
+            </div>
+            
+            <div class="d-grid gap-2">
+                <button class="btn btn-outline-secondary">
+                    <i class="bi bi-google"></i> Google
+                </button>
+            </div>
+            
+            <div class="login-link">
+                ¿Ya tienes una cuenta? <a [routerLink]='["/login"]'>Inicia sesión aquí</a>
+            </div>
+        </div>
+        
+        <div class="back-home">
+            <a href="/">
+                <i class="bi bi-arrow-left"></i> Volver al inicio
+            </a>
+        </div>
+    </div>

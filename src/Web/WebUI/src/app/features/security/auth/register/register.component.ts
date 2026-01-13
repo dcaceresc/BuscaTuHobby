@@ -7,6 +7,7 @@ import { AuthService, NotificationService } from '@app/core/services';
     selector: 'app-register',
     imports: [RouterLink, ReactiveFormsModule],
     templateUrl: './register.component.html',
+    styleUrl: './register.component.scss',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RegisterComponent { 

@@ -1,0 +1,9 @@
+@use '@src/variables.scss' as *;
+
+.discount-badge {
+    background-color: $red;
+    color: white;
+    font-weight: bold;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}

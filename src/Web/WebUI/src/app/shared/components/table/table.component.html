@@ -24,7 +24,7 @@
                             {
                                 <td class="text-center">
                                     @if (row[column.key]) {
-                                        <fa-icon [icon]="this.faIconService.getIcon('Check')"></fa-icon>
+                                        <i class="bi bi-check-lg"></i>
                                     }
                                 </td>
                                 
@@ -51,12 +51,12 @@
 
                             @if (action.actionKey !== 'toggle') {
                                 <button class="btn" [ngClass]="action.cssClass" (click)="onAction(row[columns()[0].key], action.actionKey)">
-                                    <fa-icon [icon]="action.icon"></fa-icon> {{ action.label }}
+                                    <i class="{{action.icon}}"></i> {{ action.label }}
                                 </button>
                                 <span>&nbsp;</span>
                             }@else {
                                 <button class="btn" [ngClass]="row['isActive'] ? 'btn-warning' : 'btn-success'" (click)="onAction(row[columns()[0].key], action.actionKey)">
-                                    <fa-icon [icon]="action.icon"></fa-icon> {{ row['isActive'] ? 'Pausar' : 'Reanudar' }}
+                                    <i class="{{action.icon}}"></i> {{ row['isActive'] ? 'Pausar' : 'Reanudar' }}
                                 </button>
                                 <span>&nbsp;</span>
                             }

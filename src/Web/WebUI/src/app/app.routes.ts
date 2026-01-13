@@ -24,5 +24,12 @@ export const routes: Routes = [
         loadComponent: () => import('./shared/components/forbidden/forbidden.component').then(m => m.ForbiddenComponent)
       }
     ]
+  },
+  { path: 'login', 
+    loadComponent: () => import('./features/security/auth/user-login/user-login.component').then(m => m.UserLoginComponent),
+  },
+  {
+    path: 'register',
+    loadComponent: () => import('./features/security/auth/register/register.component').then(m => m.RegisterComponent),
   }
 ];

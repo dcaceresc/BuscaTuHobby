@@ -1,13 +1,11 @@
-import { CommonModule } from '@angular/common';
+
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '@app/core/services';
 
 @Component({
     selector: 'app-confirm-email',
-    imports: [
-        CommonModule,
-    ],
+    imports: [],
     templateUrl: './confirm-email.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })

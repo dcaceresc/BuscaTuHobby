@@ -1,0 +1,10 @@
+@use '@src/variables.scss' as *;
+ 
+.progress {
+    height: 1.5rem;
+    border-radius: 0.5rem;
+}
+        
+.progress-bar {
+    background-color: $green;
+}
