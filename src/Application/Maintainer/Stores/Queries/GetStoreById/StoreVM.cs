@@ -4,9 +4,9 @@ public class StoreVM
 {
     public Guid StoreId { get; set; }
     public string StoreName { get; set; } = default!;
-    public IList<StoreAddressDto> StoreAddress { get; set; } = default!;
     public string StoreWebSite { get; set; } = default!;
-    
+    public string StoreIcon { get; set; } = default!;
+    public List<StoreAddressDto> StoreAddress { get; set; } = default!;
 }
 
 public class StoreAddressDto

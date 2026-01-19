@@ -1,96 +1,100 @@
 <div class="table-container">
 
-    <div class="search-container">
-        <input class="form-control" placeholder="Buscar .." (input)="onSearch($event)"/>
-    </div>
-
-    <div class="table-responsive">
-        <table class="table table-stripped table-bordered">
-            <thead>
+  <div class="table-responsive">
+      <table class="table table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+                @for (column of columns(); track $index) {
+                  <th>{{column.name}}</th>
+                }
+            </tr>
+          </thead>
+          <tbody>
+          @for (row of getPaginatedData(); track row; let i = $index) {
               <tr>
-                  @for (column of columns(); track $index) {
-                    <th>{{column.name}}</th>
+                  <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
+                  @for (column of columns(); track column) { 
+                      @if($index !== 0 && column.key !== 'isActive') {
+                          
+                          @if (getTypedValue(row[column.key]) === 'boolean')
+                          {
+                              <td class="text-center">
+                                  @if (row[column.key]) {
+                                      <i class="bi bi-check-lg"></i>
+                                  }
+                              </td>
+                              
+                          }@else if (getTypedValue(row[column.key]) === 'array') {
+                              <td>
+                                  <ul>
+                                      @for (item of row[column.key]; track item) {
+                                          <li>{{ item }}</li>
+                                      }
+                                  </ul>
+                              </td>
+                          }
+                          @else
+                          {
+                              <td>
+                                  {{ row[column.key] }}
+                              </td>
+                              
+                          }
+                      }
+                  }
+
+                  @if (actions().length > 0) {
+                      <td>
+                          @for (action of actions(); track $index) {
+  
+                              @if (action.actionKey !== 'toggle') {
+                                  <button class="btn" [ngClass]="action.cssClass" (click)="onAction(row[columns()[0].key], action.actionKey)">
+                                      <i class="bi" [ngClass]="action.icon"></i> {{ action.label }}
+                                  </button>
+                                  <span>&nbsp;</span>
+                              }@else {
+                                  <button class="btn" [ngClass]="row['isActive'] ? 'btn-warning' : 'bg-success'" (click)="onAction(row[columns()[0].key], action.actionKey)">
+                                      <i class="bi" [ngClass]="action.icon"></i> {{ row['isActive'] ? 'Pausar' : 'Reanudar' }}
+                                  </button>
+                                  <span>&nbsp;</span>
+                              }
+  
+                              
+                          }
+                      </td>
                   }
               </tr>
-            </thead>
-            <tbody>
-            @for (row of getPaginatedData(); track row; let i = $index) {
-                <tr>
-                    <td>{{ (currentPage() - 1) * itemsPerPage + i + 1 }}</td>
-                    @for (column of columns(); track column) { 
-                        @if($index !== 0 && column.key !== 'isActive') {
-                            
-                            @if (getTypedValue(row[column.key]) === 'boolean')
-                            {
-                                <td class="text-center">
-                                    @if (row[column.key]) {
-                                        <i class="bi bi-check-lg"></i>
-                                    }
-                                </td>
-                                
-                            }@else if (getTypedValue(row[column.key]) === 'array') {
-                                <td>
-                                    <ul>
-                                        @for (item of row[column.key]; track item) {
-                                            <li>{{ item }}</li>
-                                        }
-                                    </ul>
-                                </td>
-                            }
-                            @else
-                            {
-                                <td>
-                                    {{ row[column.key] }}
-                                </td>
-                                
-                            }
-                        }
-                    }
-                    <td>
-                        @for (action of actions(); track $index) {
+          } 
+          </tbody>
+        </table>
+  </div>
+  
+  
+  
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-end">
+      <li class="page-item" [ngClass]="{ 'disabled': currentPage() === 1 }">
+          <a class="page-link" (click)="setPage(currentPage() - 1)">
+              Anterior
+          </a>
+      </li>
+      @for (page of range(); track page) {
 
-                            @if (action.actionKey !== 'toggle') {
-                                <button class="btn" [ngClass]="action.cssClass" (click)="onAction(row[columns()[0].key], action.actionKey)">
-                                    <i class="{{action.icon}}"></i> {{ action.label }}
-                                </button>
-                                <span>&nbsp;</span>
-                            }@else {
-                                <button class="btn" [ngClass]="row['isActive'] ? 'btn-warning' : 'btn-success'" (click)="onAction(row[columns()[0].key], action.actionKey)">
-                                    <i class="{{action.icon}}"></i> {{ row['isActive'] ? 'Pausar' : 'Reanudar' }}
-                                </button>
-                                <span>&nbsp;</span>
-                            }
-
-                            
-                        }
-                    </td>
-                   
-                </tr>
-            } 
-            </tbody>
-          </table>
-    </div>
-    
-    
-    
-    <nav aria-label="Page navigation example">
-      <ul class="pagination justify-content-end">
-        <li class="page-item" [ngClass]="{ 'disabled': currentPage() === 1 }">
-            <a class="page-link" (click)="setPage(currentPage() - 1)">
-                Anterior
-            </a>
-        </li>
-        @for (page of range(1); track page) {
-            <li class="page-item" [ngClass]="{ 'active': currentPage() === page }">
-                <a class="page-link" (click)="setPage(page)">{{ page }}</a>
-            </li>
-        }
-        <li class="page-item" [ngClass]="{ 'disabled': currentPage() === nPage() }">
-            <a class="page-link" (click)="setPage(currentPage() + 1)">
-                Siguiente
-            </a>
-        </li>
-      </ul>
-    </nav>
+          @if (page === '...') {
+              <li class="page-item disabled">
+                  <span class="page-link">{{page}}</span>
+              </li>
+          }@else {
+              <li class="page-item" [ngClass]="{ 'active': currentPage() === page }">
+                  <a class="page-link" (click)="setPage(page)">{{ page }}</a>
+              </li>
+          }
+      }
+      <li class="page-item" [ngClass]="{ 'disabled': currentPage() === nPage() }">
+          <a class="page-link" (click)="setPage(currentPage() + 1)">
+              Siguiente
+          </a>
+      </li>
+    </ul>
+  </nav>
 </div>
-

@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@ang
 import { Router, RouterLink } from '@angular/router';
 import { StoreDto } from '@app/core/models';
 import { NotificationService, StoreService } from '@app/core/services';
-import { ButtonComponent, TableComponent } from '@app/shared';
+import { SearchComponent, TableComponent } from '@app/shared';
 
 @Component({
     selector: 'app-stores',
-    imports: [ButtonComponent, TableComponent, RouterLink],
+    imports: [TableComponent, RouterLink, SearchComponent],
     templateUrl: './stores.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -19,6 +19,7 @@ export class StoresComponent implements OnInit {
   public columns :any[] = [];
   public data = signal<StoreDto[]>([]);
   public actions: any[] = [];
+  public searchTerm = signal('');
 
   public ngOnInit(): void {
     this.columns = [
@@ -26,12 +27,14 @@ export class StoresComponent implements OnInit {
       { name: 'Nombre', key: 'storeName' },
       { name: 'Dirección', key: 'storeAddress' },
       { name: 'Sitio Web', key: 'storeWebSite' },
+      { name: 'Orden', key: 'storeOrder' },
+      { name: 'Slug', key: 'storeSlug' },
       { name: 'Acciones', key: 'isActive' },
     ];
 
     this.actions = [
-      { icon: 'bi bi-pencil', label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
-      { icon: 'bi bi-toggle-on', actionKey: 'toggle'},
+      { icon: 'bi-pencil', label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
+      { icon: 'bi-toggle-on', actionKey: 'toggle'},
     ]
 
     this.loadStores();
@@ -85,6 +88,10 @@ export class StoresComponent implements OnInit {
         this.onToggle(event.id);
         break;
     }
+  }
+
+  public onSearch(term: string) {
+    this.searchTerm.set(term);
   }
 
 }

@@ -1,14 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { ButtonComponent, TableComponent } from '@app/shared';
+import { SearchComponent, TableComponent } from '@app/shared';
 import { NotificationService, UserService } from '@app/core/services';
 import { UserDto } from '@app/core/models';
 
 @Component({
     selector: 'app-users',
-    imports: [
-        RouterLink, ButtonComponent, TableComponent
-    ],
+    imports: [RouterLink, TableComponent, SearchComponent],
     templateUrl: './users.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -21,6 +19,7 @@ export class UsersComponent implements OnInit {
   public columns : any[] = [];
   public data = signal<UserDto[]>([]);
   public actions : any[] = [];
+  public searchTerm = signal('');
 
   public ngOnInit() {
 
@@ -38,7 +37,7 @@ export class UsersComponent implements OnInit {
 
     this.actions = [
       { icon: 'bi-pencil', label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
-      { icon: 'bi-power-off', label: '', actionKey: 'toggle', cssClass: '' },
+      { icon: 'bi-toggle-on', actionKey: 'toggle' },
       { icon: 'bi-arrow-repeat', label: 'Reiniciar Contraseña', actionKey: 'reset', cssClass: 'bg-info' },
     ]
 
@@ -91,5 +90,8 @@ export class UsersComponent implements OnInit {
         this.onToggle(event.id);
         break;
     }
+  }
+  public onSearch(term: string) {
+    this.searchTerm.set(term);
   }
 }

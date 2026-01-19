@@ -1,3 +1,4 @@
+import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -7,7 +8,7 @@ import { NgSelectModule } from '@ng-select/ng-select';
 
 @Component({
   selector: 'app-add-edit-user',
-  imports: [ReactiveFormsModule, NgSelectModule],
+  imports: [ReactiveFormsModule, NgSelectModule, NgClass],
   templateUrl: './add-edit-user.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -48,13 +49,11 @@ export class AddEditUserComponent {
     if(this.isEditMode){
       this.userForm = this.formBuilder.group({
         userId: [this.userId(), Validators.required],
-        userName: ['', Validators.required],
         email: ['', Validators.required],
         roleIds: ['', Validators.required],
       });
     }else{
       this.userForm = this.formBuilder.group({
-        userName: ['', Validators.required],
         email: ['', Validators.required],
         roleIds: ['', Validators.required],
       });

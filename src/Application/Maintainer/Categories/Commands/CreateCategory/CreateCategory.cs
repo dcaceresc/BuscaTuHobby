@@ -1,6 +1,6 @@
 ﻿namespace Application.Maintainer.Categories.Commands.CreateCategory;
 
-public record CreateCategory(string CategoryName) : IRequest<ApiResponse>;
+public record CreateCategory(string CategoryName, string CategoryIcon, int CategoryOrder, string CategorySlug) : IRequest<ApiResponse>;
 
 public class CreateCategoryHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<CreateCategory, ApiResponse>
 {
@@ -11,7 +11,7 @@ public class CreateCategoryHandler(IApplicationDbContext context, IApiResponseSe
     {
         try
         {
-            var category = Category.Create(request.CategoryName);
+            var category = Category.Create(request.CategoryName, request.CategoryIcon, request.CategoryOrder, request.CategorySlug);
 
             _context.Categories.Add(category);
 

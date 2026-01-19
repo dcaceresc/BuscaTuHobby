@@ -4,7 +4,6 @@ export * from './maintainer/configuration.service';
 export * from './maintainer/franchise.service';
 export * from './maintainer/inventory.service';
 export * from './maintainer/manufacturer.service';
-export * from './maintainer/menu.service';
 export * from './maintainer/product.service';
 export * from './maintainer/region.service';
 export * from './maintainer/serie.service';

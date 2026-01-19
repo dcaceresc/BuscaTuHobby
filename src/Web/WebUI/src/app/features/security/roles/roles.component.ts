@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@ang
 import { Router, RouterLink } from '@angular/router';
 import { RoleDto } from '@app/core/models';
 import { NotificationService, RoleService } from '@app/core/services';
-import { ButtonComponent, TableComponent } from '@app/shared';
+import { SearchComponent, TableComponent } from '@app/shared';
 
 @Component({
     selector: 'app-roles',
-    imports: [RouterLink, TableComponent, ButtonComponent],
+    imports: [RouterLink, TableComponent, SearchComponent],
     templateUrl: './roles.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -19,6 +19,7 @@ export class RolesComponent implements OnInit {
   public columns : any[] = [];
   public data = signal<RoleDto[]>([]);
   public actions : any[] = [];
+  public searchTerm = signal('');
 
 
   public ngOnInit(): void {
@@ -30,7 +31,7 @@ export class RolesComponent implements OnInit {
 
     this.actions = [
       { icon: 'bi-pencil', label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
-      { icon: 'bi-power-off', label: '', actionKey: 'toggle', cssClass: '' },
+      { icon: 'bi-toggle-on', actionKey: 'toggle' },
     ]
 
     this.loadRoles();
@@ -81,6 +82,10 @@ export class RolesComponent implements OnInit {
         this.notificationService.showDefaultError();
       },
     });
+  }
+
+  public onSearch(term: string) {
+    this.searchTerm.set(term);
   }
 
 }

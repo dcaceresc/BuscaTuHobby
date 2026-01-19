@@ -1,16 +1,6 @@
 @use '@src/variables.scss' as *;
 
-
-
 .dropdown-item:hover {
-  background-color: $yellow; /* Azul similar al Nu Gundam */
-  color: black;
-}
-
-.dropdown-menu{
-  background-color: $darkBlue;
-}
-
-.dropdown-item{
-  color: white;
+  background-color: $darkBlue; 
+  color: $green;
 }

@@ -1,43 +1,38 @@
 
-@if ((isAuthenticated() | async) === false) {
-  <ul class="dropdown-menu dropdown-menu-end">
-      <li>
-        <a class="dropdown-item" [routerLink]="['/login']">
-          <i class="bi bi-box-arrow-in-right"></i> 
-          Iniciar Sesión
-        </a>
-      </li>
-      <li>
-        <a class="dropdown-item" [routerLink]="['/register']">
-          <i class="bi bi-person-plus"></i> 
-          Registrarse
-        </a>
-      </li>
-      <li>
-        <hr class="dropdown-divider">
-      </li>
-      <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Configuración</a></li>
-  </ul>
+@if (!(isAuthenticated())) {
+<div ngbDropdown class="d-inline-block">
+  <button class="btn btn-link text-light p-0" id="loginDropdown" ngbDropdownToggle>
+     <i class="bi bi-person-circle fs-4"></i>
+  </button>
+
+  <div ngbDropdownMenu [attr.aria-labelledby]="'loginDropdown'" class="dropdown-menu dropdown-menu-end">
+    <button ngbDropdownItem [routerLink]="['/login']">
+      <i class="bi bi-box-arrow-in-right"></i>
+      Iniciar Sesión
+    </button>
+    <button ngbDropdownItem [routerLink]="['/register']">
+      <i class="bi bi-person-plus"></i>
+      Registrarse
+    </button>
+  </div>
+</div>
 }
     
-@if ((isAuthenticated() | async) === true) {
-  <ul class="dropdown-menu dropdown-menu-end">
-      <li>
-        <a class="dropdown-item" [routerLink]="['/profile']">
-          <i class="bi bi-person"></i> 
-          Perfil
-        </a>
-      </li>
-      <li>
-        <a class="dropdown-item" (click)="logout()" title="Cerrar Sesión" style="cursor: pointer;">
-          <i class="bi bi-box-arrow-right"></i> 
-          Cerrar Sesión
-        </a>
-      </li>
-      <li>
-        <hr class="dropdown-divider">
-      </li>
-      <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Configuración</a></li>
-  </ul>
-    
+@if (isAuthenticated()) {
+<div ngbDropdown class="d-inline-block">
+  <button class="btn btn-link text-light p-0" id="authenticatedDropdown" ngbDropdownToggle>
+     <i class="bi bi-person-circle fs-4"></i>
+  </button>
+
+  <div ngbDropdownMenu [attr.aria-labelledby]="'authenticatedDropdown'" class="dropdown-menu dropdown-menu-end">
+    <button ngbDropdownItem [routerLink]="['/profile']">
+      <i class="bi bi-person"></i> 
+      Perfil
+    </button>
+    <button ngbDropdownItem (click)="logout()">
+      <i class="bi bi-box-arrow-right"></i> 
+      Cerrar Sesión
+    </button>
+  </div>
+</div>
 }

@@ -7,10 +7,11 @@
       class="form-control"
     />
 
-    <label class="form-label">{{ label() }}</label>
-  
-    
-  
+    <label class="form-label">
+      <i class="bi {{ prefixIcon() }} me-2"></i>{{ label() }}
+    </label>
+
+
     @if (control().invalid && control().touched) {
       <small class="text-danger">{{ errorMessage() }}</small>
     }

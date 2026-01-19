@@ -38,8 +38,8 @@ export class ProductsComponent implements OnInit {
     ];
 
     this.actions = [
-      { icon: 'bi bi-pencil', label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
-      { icon: 'bi bi-toggle-on', actionKey: 'toggle'},
+      { icon: 'bi-pencil', label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
+      { icon: 'bi-toggle-on', actionKey: 'toggle'},
     ]
 
     this.loadProducts();

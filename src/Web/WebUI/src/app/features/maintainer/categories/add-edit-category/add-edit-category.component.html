@@ -1,4 +1,4 @@
-<div class="card mt-3">
+<!-- <div class="card mt-3">
     <div class="card-header bg-primary">
       {{isEditMode ? "Editar" : "Crear"}} Categoria
     </div>
@@ -22,4 +22,64 @@
   
   
     </div>
+  </div> -->
+
+
+<div class="row justify-content-center py-2">
+  <div class="col-lg-10">
+      <div class="card shadow-sm border-0 mb-4">
+          <div class="card-body bg-primary text-white">
+              <h2 class="mb-0">
+                <i class="bi" [ngClass]="isEditMode ? 'bi-pencil-square' : 'bi-plus-circle'" class="me-2"></i>{{isEditMode ? 'Editar' : 'Crear'}} Categoria
+              </h2>
+          </div>
+      </div>
+      <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+
+        <app-custom-input
+          label="Nombre"
+          [control]="$any(categoryForm.get('categoryName'))"
+          placeHolder="Nombre"
+          prefixIcon="bi-tag"
+          type="text"
+          errorMessage="El nombre es requerido"
+        />
+
+        <app-custom-input
+          label="Icono"
+          [control]="$any(categoryForm.get('categoryIcon'))"
+          placeHolder="Icono"
+          prefixIcon="bi-image"
+          type="text"
+          errorMessage="El icono es requerido"
+        />
+
+        <app-custom-input
+          label="Orden"
+          [control]="$any(categoryForm.get('categoryOrder'))"
+          placeHolder="Orden"
+          prefixIcon="bi-list-ol"
+          type="number"
+          errorMessage="El orden es requerido"
+        />
+
+        <app-custom-input
+          label="Slug"
+          [control]="$any(categoryForm.get('categorySlug'))"
+          placeHolder="Slug"
+          prefixIcon="bi-link-45deg"
+          type="text"
+          errorMessage="El slug es requerido"
+        />
+  
+        <div class="d-flex justify-content-end gap-2">
+            <button type="button" class="btn bg-secondary px-4" (click)="onCancel()">
+                <i class="bi bi-x-circle me-2"></i>Cancelar
+            </button>
+            <button type="submit" class="btn bg-primary px-4" [disabled]="categoryForm.invalid">
+                <i class="bi bi bi-save me-2 me-2"></i>Guardar
+            </button>
+        </div>
+      </form>
   </div>
+</div>

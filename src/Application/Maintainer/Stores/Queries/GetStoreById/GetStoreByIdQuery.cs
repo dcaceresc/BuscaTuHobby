@@ -19,6 +19,7 @@ public class GetStoreByIdQueryHandler(IApplicationDbContext context, IApiRespons
                   StoreId = x.StoreId,
                   StoreName = x.StoreName,
                   StoreWebSite = x.StoreWebSite,
+                  StoreIcon = x.StoreIcon,
                   StoreAddress = x.StoreAddresses
                       .Select(sa => new StoreAddressDto()
                       {

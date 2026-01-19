@@ -16,9 +16,10 @@ public class GetCategoryByIdHandler(IApplicationDbContext context, IApiResponseS
               .Select(x => new CategoryVM
               {
                   CategoryId = x.CategoryId,
-                  CategoryName = x.CategoryName
-
-
+                  CategoryName = x.CategoryName,
+                  CategoryIcon = x.CategoryIcon,
+                  CategoryOrder = x.CategoryOrder,
+                  CategorySlug  = x.CategorySlug
               })
               .FirstOrDefaultAsync(x => x.CategoryId == request.CategoryId, cancellationToken);
 

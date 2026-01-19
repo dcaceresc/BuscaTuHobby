@@ -1,5 +1,4 @@
-﻿using Application.Common.Mediator;
-using Application.Maintainer.Categories.Commands.CreateCategory;
+﻿using Application.Maintainer.Categories.Commands.CreateCategory;
 using Application.Maintainer.Categories.Commands.ToggleCategory;
 using Application.Maintainer.Categories.Commands.UpdateCategory;
 using Application.Maintainer.Categories.Queries.GetCategories;

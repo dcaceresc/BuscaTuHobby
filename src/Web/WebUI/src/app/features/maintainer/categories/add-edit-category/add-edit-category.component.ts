@@ -1,3 +1,4 @@
+import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -6,7 +7,7 @@ import { CustomInputComponent } from '@app/shared/components/custom-input/custom
 
 @Component({
     selector: 'app-add-edit-category',
-    imports: [ReactiveFormsModule, CustomInputComponent],
+    imports: [ReactiveFormsModule, CustomInputComponent, NgClass],
     templateUrl: './add-edit-category.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -47,10 +48,16 @@ export class AddEditCategoryComponent implements OnInit {
       this.categoryForm = this.formBuilder.group({
         categoryId: [this.categoryId(), Validators.required],
         categoryName: ['', Validators.required],
+        categoryIcon: ['', Validators.required],
+        categoryOrder: ['', Validators.required],
+        categorySlug: ['', Validators.required],
       });
     }else{
       this.categoryForm = this.formBuilder.group({
         categoryName: ['', Validators.required],
+        categoryIcon: ['', Validators.required],
+        categoryOrder: ['', Validators.required],
+        categorySlug: ['', Validators.required],
       });
     }
 

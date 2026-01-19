@@ -1,0 +1,22 @@
+<div class="input-group">
+  <span class="input-group-text bg-white">
+    <i class="bi bi-search"></i>
+  </span>
+
+  <input
+    type="text"
+    class="form-control"
+    placeholder="Buscar..."
+    [value]="value()"
+    (input)="onInput($event)"
+  />
+
+  @if (value()) {
+    <button
+      class="btn btn-outline-secondary"
+      type="button"
+      (click)="clear()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  }
+</div>

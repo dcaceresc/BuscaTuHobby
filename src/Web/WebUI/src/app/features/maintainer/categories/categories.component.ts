@@ -2,11 +2,11 @@ import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@ang
 import { Router, RouterLink } from '@angular/router';
 import { CategoryDto } from '@app/core/models';
 import { CategoryService, NotificationService } from '@app/core/services';
-import { ButtonComponent, TableComponent } from '@app/shared';
+import { ButtonComponent, SearchComponent, TableComponent } from '@app/shared';
 
 @Component({
     selector: 'app-categories',
-    imports: [RouterLink, ButtonComponent, TableComponent],
+    imports: [RouterLink, TableComponent, SearchComponent],
     templateUrl: './categories.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -19,17 +19,21 @@ export class CategoriesComponent implements OnInit{
   public columns :any[] = [];
   public data = signal<CategoryDto[]>([]);
   public actions : any[] = [];
+  public searchTerm = signal('');
   
   public ngOnInit(): void {
     this.columns = [
       { name: '#', key: 'categoryId' },
       { name: 'Nombre', key: 'categoryName' },
+      { name: 'Icono', key: 'categoryIcon' },
+      { name: 'Orden', key: 'categoryOrder' },
+      { name: 'Slug', key: 'categorySlug' },
       { name: 'Acciones', key: 'isActive' },
     ];
 
     this.actions = [
-      { icon: 'bi bi-pencil', label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
-      { icon: 'bi bi-toggle-on', actionKey: 'toggle'},
+      { icon: 'bi-pencil', label: 'Editar', actionKey: 'edit', cssClass: 'bg-primary' },
+      { icon: 'bi-toggle-on', actionKey: 'toggle'},
     ]
     
     this.loadCategories();
@@ -82,6 +86,7 @@ export class CategoriesComponent implements OnInit{
     }
   }
 
-
-
+  public onSearch(term: string): void {
+    this.searchTerm.set(term);
+  }
 }

@@ -17,6 +17,9 @@ public class GetCategoriesHandler(IApplicationDbContext context, IApiResponseSer
                 {
                     CategoryId = x.CategoryId,
                     CategoryName = x.CategoryName,
+                    CategoryIcon = x.CategoryIcon,
+                    CategoryOrder = x.CategoryOrder,
+                    CategorySlug = x.CategorySlug,
                     IsActive = x.IsActive,
                 })
                 .ToListAsync(cancellationToken);

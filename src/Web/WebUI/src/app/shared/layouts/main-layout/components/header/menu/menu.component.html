@@ -1,35 +1,65 @@
-<div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">Hola, Registro</h5>
-    <button type="button" #btnCloseOffCanvas class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-  </div>
-  <div class="offcanvas-body">
-    @for (item of menu(); track $index) {
-      <ul style="list-style: none;padding:0">
-        <li>
-            <div>
-              <a (click)="toggleSubMenu($index)" class="menu-link" [class.expanded]="expandedMenus[$index]">
-                {{item.menuName}}
-                @if (item.subMenus.length > 0) {
-                  <span class="float-end">
-                    <i class="bi" [ngClass]="expandedMenus[$index] ? 'bi-caret-right-fill' : 'bi-caret-down-fill'"></i>
-                  </span>
-                }
-                </a>
-              @if (item.subMenus.length > 0 && expandedMenus[$index]) {
-                <ul class="sub-menu" style="margin-left: 20px;">
-                    @for (subMenu of item.subMenus; track $index) {
-                        <li>
-                          <a class="dropdown-item" href="{{item.menuSlug}}/{{subMenu.subMenuSlug}}">{{subMenu.subMenuName}}</a>
-                        </li>
-                      }
-                </ul>
-            }
-            </div>
-        </li>
-      </ul>
-  }
-  </div>
+<div class="offcanvas-header">
+  <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">Bienvenido</h5>
+  <button type="button" class="btn-close btn-close-white" aria-label="Close"(click)="activeOffcanvas.dismiss()"></button>
 </div>
+<div class="offcanvas-body">
 
+  @if(!showCategories && !showStores){
+      <nav class="nav flex-column">
+          <a class="nav-link" routerLink="/" routerLinkActive="active" (click)="activeOffcanvas.dismiss()">
+            <i class="bi bi-house-door"></i> Inicio
+          </a>
+            <a class="nav-link" (click)="showCategoriesMenu()" style="cursor: pointer;"><i class="bi bi-grid-3x3-gap"></i> Categorías</a>
+            <a class="nav-link" (click)="showStoresMenu()" style="cursor: pointer;"><i class="bi bi-shop"></i> Tiendas</a>
+          <a class="nav-link" routerLink="/ofertas" routerLinkActive="active"><i class="bi bi-tag"></i> Ofertas</a>
+          <a class="nav-link" routerLink="/favoritos" routerLinkActive="active"><i class="bi bi-heart"></i> Mis Favoritos</a>
+          <a class="nav-link" href="#"><i class="bi bi-clock-history"></i> Historial</a>
+          <hr>
+          <!-- Enlaces a login y register en navegación lateral -->
+          <a class="nav-link" routerLink="/login"><i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión</a>
+          <a class="nav-link" routerLink="/register"><i class="bi bi-person-plus"></i> Registrarse</a>
+      </nav>
+  }@else if (showCategories){
+      <nav class="nav flex-column">
+        <a class="nav-link text-success fw-bold" style="cursor: pointer;" (click)="showCategoriesMenu()"><i class="bi bi-arrow-left"></i> Volver</a>
+        <hr class="my-2">
+        <h6 class="px-3 text-muted text-uppercase small">Categorías</h6>
+        <!-- <a class="nav-link" href="#"><i class="bi bi-robot"></i> Figuras de Acción</a>
+        <a class="nav-link" href="#"><i class="bi bi-box"></i> Maquetas y Modelismo</a>
+        <a class="nav-link" href="#"><i class="bi bi-bricks"></i> LEGO y Construcción</a>
+        <a class="nav-link" href="#"><i class="bi bi-gem"></i> Funko Pop</a>
+        <a class="nav-link" href="#"><i class="bi bi-star"></i> Anime y Manga</a>
+        <a class="nav-link" href="#"><i class="bi bi-controller"></i> Videojuegos</a>
+        <a class="nav-link" href="#"><i class="bi bi-film"></i> Cine y Series</a>
+        <a class="nav-link" href="#"><i class="bi bi-book"></i> Comics</a>
+        <a class="nav-link" href="#"><i class="bi bi-car-front"></i> Vehículos a Escala</a>
+        <a class="nav-link" href="#"><i class="bi bi-airplane"></i> Aviación</a>
+        <a class="nav-link" href="#"><i class="bi bi-palette"></i> Pintura y Herramientas</a>
+        <a class="nav-link" href="#"><i class="bi bi-three-dots"></i> Ver todas...</a> -->
+        @for (category of categories(); track $index) {
+          <a class="nav-link" href="{{category.categorySlug}}"><i class="bi" [ngClass]="category.categoryIcon"></i> {{category.categoryName}}</a>
+        }
+        <a class="nav-link" href="#"><i class="bi bi-three-dots"></i> Ver todas...</a>
+    </nav>
+  }@else if (showStores){
+
+   <nav class="nav flex-column">
+        <a class="nav-link text-success fw-bold" style="cursor: pointer;" (click)="showStoresMenu()"><i class="bi bi-arrow-left"></i> Volver</a>
+        <hr class="my-2">
+        <h6 class="px-3 text-muted text-uppercase small">Tiendas</h6>
+        <a class="nav-link" href="#"><i class="bi bi-cart"></i> Amazon</a>
+        <a class="nav-link" href="#"><i class="bi bi-bag"></i> MercadoLibre</a>
+        <a class="nav-link" href="#"><i class="bi bi-shop-window"></i> eBay</a>
+        <a class="nav-link" href="#"><i class="bi bi-basket"></i> AliExpress</a>
+        <a class="nav-link" href="#"><i class="bi bi-box-seam"></i> HobbyLink Japan</a>
+        <a class="nav-link" href="#"><i class="bi bi-globe"></i> AmiAmi</a>
+        <a class="nav-link" href="#"><i class="bi bi-building"></i> BigBadToyStore</a>
+        <a class="nav-link" href="#"><i class="bi bi-lightning"></i> Plaza Japan</a>
+        <a class="nav-link" href="#"><i class="bi bi-star-fill"></i> Sideshow</a>
+        <a class="nav-link" href="#"><i class="bi bi-gem"></i> Entertainment Earth</a>
+        <a class="nav-link" href="#"><i class="bi bi-three-dots"></i> Ver todas...</a>
+    </nav>
+  }
+
+</div>
 

@@ -5,15 +5,16 @@ namespace Infrastructure.Data
     public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options), IApplicationDbContext
     {
 
-        public DbSet<SubMenu> SubMenus => Set<SubMenu>();
         public DbSet<Commune> Communes => Set<Commune>();
         public DbSet<Domain.Entities.Configuration> Configurations => Set<Domain.Entities.Configuration>();
         public DbSet<Favorite> Favorites => Set<Favorite>();
         public DbSet<FavoriteProduct> FavoriteProducts => Set<FavoriteProduct>();
         public DbSet<Franchise> Franchises => Set<Franchise>();
-        public DbSet<Menu> Menus => Set<Menu>();
         public DbSet<Inventory> Inventories => Set<Inventory>();
         public DbSet<Manufacturer> Manufacturers => Set<Manufacturer>();
+        public DbSet<Post> Posts => Set<Post>();
+        public DbSet<PostCategory> PostCategories => Set<PostCategory>();
+        public DbSet<PostType> PostTypes => Set<PostType>();
         public DbSet<Product> Products => Set<Product>();
         public DbSet<ProductCategory> ProductCategories => Set<ProductCategory>();
         public DbSet<ProductImage> ProductImages => Set<ProductImage>();
@@ -31,27 +32,6 @@ namespace Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-
-            builder.Entity<SubMenu>(entity =>
-            {
-                entity.HasKey(e => e.SubMenuId);
-
-                entity.Property(e => e.SubMenuId)
-                .HasDefaultValueSql("(newid())");
-
-                entity.HasIndex(e => e.SubMenuName)
-                .IsUnique();
-
-                entity.Property(e => e.SubMenuName)
-                .HasMaxLength(50);
-
-                entity.HasIndex(e => e.SubMenuSlug)
-                .IsUnique();
-
-                entity.Property(e => e.SubMenuSlug)
-                .HasMaxLength(50);
-            });
-
             builder.Entity<Commune>(entity =>
             {
                 entity.HasKey(e => e.CommuneId);
@@ -124,25 +104,6 @@ namespace Infrastructure.Data
                 .HasMaxLength(50);
             });
 
-            builder.Entity<Menu>(entity =>
-            {
-                entity.HasKey(e => e.MenuId);
-
-                entity.Property(e => e.MenuId)
-                .HasDefaultValueSql("(newid())");
-
-                entity.HasIndex(e => e.MenuName)
-                .IsUnique();
-
-                entity.Property(e => e.MenuName)
-                .HasMaxLength(50);
-
-                entity.HasIndex(e => e.MenuSlug)
-                .IsUnique();
-
-                entity.Property(e => e.MenuSlug)
-                .HasMaxLength(50);
-            });
 
             builder.Entity<Inventory>(entity =>
             {
@@ -166,6 +127,55 @@ namespace Infrastructure.Data
                 entity.Property(e => e.ManufacturerName)
                 .HasMaxLength(50);
             });
+
+            builder.Entity<Post>(entity => {
+                entity.HasKey(e => e.PostId);
+
+                entity.Property(e => e.PostId)
+                .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.PostTitle)
+                .HasMaxLength(200);
+
+                entity.Property(e => e.PostContent)
+                .HasColumnType("nvarchar(max)");
+
+                entity.HasOne(p => p.PostType)
+                .WithMany(pt => pt.Posts)
+                .HasForeignKey(p => p.PostTypeId);
+
+            });
+
+            builder.Entity<PostCategory>(entity =>
+            {
+                entity.HasKey(pc => new { pc.PostId, pc.CategoryId });
+
+                entity.HasOne(pc => pc.Post)
+                    .WithMany(p => p.PostCategories)
+                    .HasForeignKey(pc => pc.PostId);
+
+                entity.HasOne(pc => pc.Category)
+                    .WithMany(c => c.PostCategories)
+                    .HasForeignKey(pc => pc.CategoryId);
+            });
+
+            builder.Entity<PostType>(entity =>
+            {
+                entity.HasKey(pt => pt.PostTypeId);
+
+                entity.Property(pt => pt.PostTypeName)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(pt => pt.IsActive)
+                    .IsRequired();
+
+                entity.HasMany(pt => pt.Posts)
+                    .WithOne(p => p.PostType)
+                    .HasForeignKey(p => p.PostTypeId);
+            });
+
+
 
             builder.Entity<Product>(entity =>
             {
@@ -277,6 +287,20 @@ namespace Infrastructure.Data
 
                 entity.Property(e => e.CategoryName)
                 .HasMaxLength(50);
+
+                entity.Property(e => e.CategoryIcon)
+                .HasMaxLength(100);
+                
+                entity.Property(e => e.CategoryOrder)
+                    .IsRequired()
+                    .HasDefaultValue(0)
+                    .HasAnnotation("SqlServer:CheckConstraint", "[CategoryOrder] >= 0");
+                entity.HasIndex(e => e.CategoryOrder).IsUnique();
+
+                entity.Property(e => e.CategorySlug)
+                    .IsRequired()
+                    .HasMaxLength(100);
+                entity.HasIndex(e => e.CategorySlug).IsUnique();
             });
 
             builder.Entity<Serie>(entity =>
@@ -306,8 +330,23 @@ namespace Infrastructure.Data
                 entity.Property(e => e.StoreName)
                 .HasMaxLength(50);
 
+                entity.Property(e => e.StoreIcon)
+                .HasMaxLength(100);
+
                 entity.Property(e => e.StoreWebSite)
                 .HasMaxLength(100);
+                
+                entity.Property(e => e.StoreOrder)
+                    .IsRequired()
+                    .HasDefaultValue(0)
+                    .HasAnnotation("SqlServer:CheckConstraint", "[StoreOrder] >= 0");
+                entity.HasIndex(e => e.StoreOrder).IsUnique();
+
+                entity.Property(e => e.StoreSlug)
+                    .IsRequired()
+                    .HasMaxLength(100);
+                entity.HasIndex(e => e.StoreSlug).IsUnique();
+                    
             });
 
             builder.Entity<StoreAddress>(entity =>
@@ -356,14 +395,15 @@ namespace Infrastructure.Data
                 .HasForeignKey(d => d.UserId);
             });
 
-            ConfigureAuditableEntity<SubMenu>(builder);
             ConfigureAuditableEntity<Domain.Entities.Configuration>(builder);
             ConfigureAuditableEntity<Favorite>(builder);
             ConfigureAuditableEntity<FavoriteProduct>(builder);
             ConfigureAuditableEntity<Franchise>(builder);
-            ConfigureAuditableEntity<Menu>(builder);
             ConfigureAuditableEntity<Inventory>(builder);
             ConfigureAuditableEntity<Manufacturer>(builder);
+            ConfigureAuditableEntity<Post>(builder);
+            ConfigureAuditableEntity<PostCategory>(builder);
+            ConfigureAuditableEntity<PostType>(builder);
             ConfigureAuditableEntity<Product>(builder);
             ConfigureAuditableEntity<ProductCategory>(builder);
             ConfigureAuditableEntity<ProductImage>(builder);

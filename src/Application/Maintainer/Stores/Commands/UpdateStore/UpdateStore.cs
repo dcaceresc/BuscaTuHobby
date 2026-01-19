@@ -1,12 +1,6 @@
 ﻿namespace Application.Maintainer.Stores.Commands.UpdateStore;
 
-public record UpdateStore : IRequest<ApiResponse>
-{
-    public Guid StoreId { get; init; }
-    public string StoreName { get; init; } = default!;
-    public string StoreWebSite { get; init; } = default!;
-
-}
+public record UpdateStore(Guid StoreId, string StoreName, string StoreWebSite, string StoreIcon, int StoreOrder, string StoreSlug) : IRequest<ApiResponse>;
 
 public class UpdateStoreHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<UpdateStore, ApiResponse>
 {
@@ -21,7 +15,7 @@ public class UpdateStoreHandler(IApplicationDbContext context, IApiResponseServi
 
             Guard.Against.NotFound(store, $"No existe tienda con la Id {request.StoreId}");
 
-            store.Update(request.StoreName, request.StoreWebSite);
+            store.Update(request.StoreName, request.StoreWebSite, request.StoreIcon, request.StoreOrder, request.StoreSlug);
 
             await _context.SaveChangesAsync(cancellationToken);
 

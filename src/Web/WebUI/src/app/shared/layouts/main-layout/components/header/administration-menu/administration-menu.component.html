@@ -1,143 +1,33 @@
-
-
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="offcanvasRightLabel">Administrador</h5>
-    <button type="button" #btnCloseOffCanvas class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-  </div>
-  <div class="offcanvas-body">
-    <div class="mb-3">
-          <h5 class="mb-3">Gestion de Usuarios y Permisos</h5>
-
-          <ul class="list-group">
-              <li class="list-group-item" routerLinkActive="active">
-                  <a class="nav-link" routerLink="/security/users" (click)="onClose()">
-                      Usuarios del Sistema
-                  </a>
-              </li>
-
-              @if(isSuperAdmin()){
-                  <li class="list-group-item" routerLinkActive="active">
-                      <a class="nav-link" routerLink="/security/roles" (click)="onClose()">
-                          Permisos del Sistema
-                      </a>
-                  </li>
-              }
-            
-          </ul>
-      </div>
-      <div class="mb-3">
-        <h5>Mantenedor</h5>
-  
-        <ul class="list-group">
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/categories']" (click)="onClose()">Categorias</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/communes']" (click)="onClose()">Comunas</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/configurations']" (click)="onClose()">Configuraciones</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/menus']" (click)="onClose()">Menus</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/franchises']" (click)="onClose()">Franquicias</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/products']" (click)="onClose()">Productos</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/manufacturers']" (click)="onClose()">Fabricantes</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/inventories']" (click)="onClose()">Inventario</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/regions']" (click)="onClose()">Regiones</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/series']" (click)="onClose()">Series</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/stores']" (click)="onClose()">Tiendas</a>
-          </li>
-        </ul>
-      </div>
-  </div>
+<div class="offcanvas-header">
+  <h5 class="offcanvas-title" id="offcanvasRightLabel">
+    <i class="bi bi-person-gear"></i> Administración
+  </h5>
+  <button type="button" class="btn-close btn-close-white" aria-label="Close"(click)="activeOffcanvas.dismiss()"></button>
 </div>
-
-
-
-<!-- 
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="offcanvasRightLabel">Administrador</h5>
-    <button type="button" class="btn-close" #btnCloseOffCanvas data-bs-dismiss="offcanvas" aria-label="Close"></button>
-  </div>
-  <div class="offcanvas-body">
-
-    <div class="mb-3">
-      <h5 class="mb-3">Gestion de Usuarios y Permisos</h5>
-
-      <ul class="list-group">
-          <li class="list-group-item" routerLinkActive="active">
-              <a class="nav-link" routerLink="/security/users" (click)="onClose()">
-                  Usuarios del Sistema
-              </a>
-          </li>
-
-          @if(isSuperAdmin()){
-              <li class="list-group-item" routerLinkActive="active">
-                  <a class="nav-link" routerLink="/security/roles" (click)="onClose()">
-                      Permisos del Sistema
-                  </a>
-              </li>
-          }
-         
-      </ul>
-  </div>
-
-    <div class="mb-3">
-        <h5>Mantenedor</h5>
-  
-        <ul class="list-group">
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/categories']" (click)="onClose()">Categorias</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/communes']" (click)="onClose()">Comunas</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/configurations']" (click)="onClose()">Configuraciones</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/menus']" (click)="onClose()">Menus</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/franchises']" (click)="onClose()">Franquicias</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/products']" (click)="onClose()">Productos</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/manufacturers']" (click)="onClose()">Fabricantes</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/inventories']" (click)="onClose()">Inventario</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/regions']" (click)="onClose()">Regiones</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/series']" (click)="onClose()">Series</a>
-          </li>
-          <li class="list-group-item" routerLinkActive="active">
-            <a class="nav-link" [routerLink]="['/maintainer/stores']" (click)="onClose()">Tiendas</a>
-          </li>
-        </ul>
-      </div>
+<div class="offcanvas-body">
+  <div class="mb-3">
         
-  </div>
-</div> -->
+        <h5>
+            <i class="bi bi-shield-lock-fill"></i> Seguridad
+        </h5>
+
+        <a class="nav-link" routerLink="/security/users" routerLinkActive="active" (click)="activeOffcanvas.dismiss()">
+            <i class="bi bi-people-fill"></i> Usuarios
+        </a>
+        <a class="nav-link" routerLink="/security/roles" routerLinkActive="active" (click)="activeOffcanvas.dismiss()">
+            <i class="bi bi-shield-lock-fill"></i> Permisos
+        </a>
+    </div>
+    <div class="mb-3">
+
+        <h5>
+            <i class="bi bi-tools"></i> Mantenimiento
+        </h5>
+
+        @for (item of maintanerLinks; track $index) {
+            <a class="nav-link" [routerLink]="item.link" routerLinkActive="active" (click)="activeOffcanvas.dismiss()">
+                <i class="{{item.icon}}"></i> {{item.label}}
+            </a>
+        }
+    </div>
+</div>

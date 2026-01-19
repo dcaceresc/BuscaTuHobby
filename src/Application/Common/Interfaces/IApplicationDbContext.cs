@@ -4,7 +4,6 @@
     {
         DbSet<Commune> Communes { get; }
         DbSet<Configuration> Configurations { get; }
-        DbSet<Menu> Menus { get; }
         DbSet<Franchise> Franchises { get; }
         DbSet<Product> Products { get; }
         DbSet<ProductCategory> ProductCategories { get; }
@@ -15,7 +14,7 @@
         DbSet<Serie> Series { get; }
         DbSet<Store> Stores { get; }
         DbSet<StoreAddress> StoresAddresses { get; }
-        DbSet<SubMenu> SubMenus { get; }
+
         DbSet<User> Users { get; }
         DbSet<Region> Regions { get; }
         DbSet<Role> Roles { get; }

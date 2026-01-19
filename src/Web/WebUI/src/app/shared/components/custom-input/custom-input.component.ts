@@ -12,6 +12,7 @@ export class CustomInputComponent {
   control = input.required<FormControl>();
   label = input.required<string>();
   type = input.required<string>();
+  prefixIcon = input.required<string>();
   placeHolder = input.required<string>();
   errorMessage = input.required<string>();
 }

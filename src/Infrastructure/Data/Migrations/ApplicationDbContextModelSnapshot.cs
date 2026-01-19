@@ -17,7 +17,7 @@ namespace Infrastructure.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.11")
+                .HasAnnotation("ProductVersion", "10.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -29,10 +29,26 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("(newid())");
 
+                    b.Property<string>("CategoryIcon")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("CategoryName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("CategoryOrder")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0)
+                        .HasAnnotation("SqlServer:CheckConstraint", "[CategoryOrder] >= 0");
+
+                    b.Property<string>("CategorySlug")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
@@ -52,6 +68,12 @@ namespace Infrastructure.Data.Migrations
                     b.HasKey("CategoryId");
 
                     b.HasIndex("CategoryName")
+                        .IsUnique();
+
+                    b.HasIndex("CategoryOrder")
+                        .IsUnique();
+
+                    b.HasIndex("CategorySlug")
                         .IsUnique();
 
                     b.ToTable("Categories");
@@ -305,9 +327,9 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Manufacturers");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Menu", b =>
+            modelBuilder.Entity("Domain.Entities.Post", b =>
                 {
-                    b.Property<Guid>("MenuId")
+                    b.Property<Guid>("PostId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier")
                         .HasDefaultValueSql("(newid())");
@@ -327,28 +349,81 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("varchar(30)");
 
-                    b.Property<string>("MenuName")
+                    b.Property<string>("PostContent")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("MenuOrder")
-                        .HasColumnType("int");
-
-                    b.Property<string>("MenuSlug")
+                    b.Property<string>("PostTitle")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
-                    b.HasKey("MenuId");
+                    b.Property<Guid>("PostTypeId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasIndex("MenuName")
-                        .IsUnique();
+                    b.HasKey("PostId");
 
-                    b.HasIndex("MenuSlug")
-                        .IsUnique();
+                    b.HasIndex("PostTypeId");
 
-                    b.ToTable("Menus");
+                    b.ToTable("Posts");
+                });
+
+            modelBuilder.Entity("Domain.Entities.PostCategory", b =>
+                {
+                    b.Property<Guid>("PostId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("varchar(30)");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("varchar(30)");
+
+                    b.HasKey("PostId", "CategoryId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("PostCategories");
+                });
+
+            modelBuilder.Entity("Domain.Entities.PostType", b =>
+                {
+                    b.Property<Guid>("PostTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("varchar(30)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("LastModifiedBy")
+                        .HasColumnType("varchar(30)");
+
+                    b.Property<string>("PostTypeName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("PostTypeId");
+
+                    b.ToTable("PostTypes");
                 });
 
             modelBuilder.Entity("Domain.Entities.Product", b =>
@@ -696,10 +771,26 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("varchar(30)");
 
+                    b.Property<string>("StoreIcon")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<string>("StoreName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("StoreOrder")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0)
+                        .HasAnnotation("SqlServer:CheckConstraint", "[StoreOrder] >= 0");
+
+                    b.Property<string>("StoreSlug")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("StoreWebSite")
                         .IsRequired()
@@ -709,6 +800,12 @@ namespace Infrastructure.Data.Migrations
                     b.HasKey("StoreId");
 
                     b.HasIndex("StoreName")
+                        .IsUnique();
+
+                    b.HasIndex("StoreOrder")
+                        .IsUnique();
+
+                    b.HasIndex("StoreSlug")
                         .IsUnique();
 
                     b.ToTable("Stores");
@@ -758,57 +855,6 @@ namespace Infrastructure.Data.Migrations
                     b.HasIndex("StoreId");
 
                     b.ToTable("StoresAddresses");
-                });
-
-            modelBuilder.Entity("Domain.Entities.SubMenu", b =>
-                {
-                    b.Property<Guid>("SubMenuId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier")
-                        .HasDefaultValueSql("(newid())");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("varchar(30)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("LastModified")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("LastModifiedBy")
-                        .HasColumnType("varchar(30)");
-
-                    b.Property<Guid>("MenuId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("SubMenuName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<int>("SubMenuOrder")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SubMenuSlug")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("SubMenuId");
-
-                    b.HasIndex("MenuId");
-
-                    b.HasIndex("SubMenuName")
-                        .IsUnique();
-
-                    b.HasIndex("SubMenuSlug")
-                        .IsUnique();
-
-                    b.ToTable("SubMenus");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -956,6 +1002,36 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Store");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Post", b =>
+                {
+                    b.HasOne("Domain.Entities.PostType", "PostType")
+                        .WithMany("Posts")
+                        .HasForeignKey("PostTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PostType");
+                });
+
+            modelBuilder.Entity("Domain.Entities.PostCategory", b =>
+                {
+                    b.HasOne("Domain.Entities.Category", "Category")
+                        .WithMany("PostCategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Post", "Post")
+                        .WithMany("PostCategories")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Post");
+                });
+
             modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
                     b.HasOne("Domain.Entities.Franchise", "Franchise")
@@ -1071,17 +1147,6 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Store");
                 });
 
-            modelBuilder.Entity("Domain.Entities.SubMenu", b =>
-                {
-                    b.HasOne("Domain.Entities.Menu", "Menu")
-                        .WithMany("SubMenus")
-                        .HasForeignKey("MenuId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Menu");
-                });
-
             modelBuilder.Entity("Domain.Entities.UserRole", b =>
                 {
                     b.HasOne("Domain.Entities.Role", "Role")
@@ -1103,6 +1168,8 @@ namespace Infrastructure.Data.Migrations
 
             modelBuilder.Entity("Domain.Entities.Category", b =>
                 {
+                    b.Navigation("PostCategories");
+
                     b.Navigation("ProductCategories");
                 });
 
@@ -1128,9 +1195,14 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Menu", b =>
+            modelBuilder.Entity("Domain.Entities.Post", b =>
                 {
-                    b.Navigation("SubMenus");
+                    b.Navigation("PostCategories");
+                });
+
+            modelBuilder.Entity("Domain.Entities.PostType", b =>
+                {
+                    b.Navigation("Posts");
                 });
 
             modelBuilder.Entity("Domain.Entities.Product", b =>
