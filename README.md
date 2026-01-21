@@ -15,7 +15,7 @@
 
 Asegúrate de tener instaladas las siguientes herramientas antes de comenzar:
 
-- .NET Core 7: https://dotnet.microsoft.com/download
+- .NET Core 10: https://dotnet.microsoft.com/download
 - Node.js y npm: https://nodejs.org/
 - Angular CLI: https://angular.io/cli
 
@@ -24,7 +24,7 @@ Asegúrate de tener instaladas las siguientes herramientas antes de comenzar:
 1. Clona este repositorio: `git clone https://github.com/dcaceresc/BuscaTuHobby.git` 
 2. Navega al directorio del proyecto y abre una terminal.
 3. Ejecuta `dotnet restore` para restaurar las dependencias del proyecto.
-4. Diriguete al directorio `/src/Web/ClientApp`
+4. Diriguete al directorio `/src/Web/WebUI`
 5. Ejecuta `npm install` para instalar los paquetes de node
 6. Regresa al directorio `/src/Web` y ejecuta `dotnet run`
 

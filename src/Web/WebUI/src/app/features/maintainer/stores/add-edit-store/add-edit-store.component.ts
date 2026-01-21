@@ -1,15 +1,16 @@
+import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, input } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CommuneByRegion, RegionDto } from '@app/core/models';
 import { CommuneService, NotificationService, RegionService, StoreService } from '@app/core/services';
-import { ButtonComponent } from '@app/shared';
+import { CustomInputComponent } from '@app/shared/components/custom-input/custom-input.component';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'app-add-edit-store',
-    imports: [ReactiveFormsModule, NgSelectModule, ButtonComponent],
+    imports: [ReactiveFormsModule, NgSelectModule, NgClass, CustomInputComponent],
     templateUrl: './add-edit-store.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -72,12 +73,18 @@ export class AddEditStoreComponent implements OnInit {
       this.storeForm = this.formBuilder.group({
         storeId: [this.storeId(),Validators.required],
         storeName: ['', Validators.required],
+        storeIcon : ['', Validators.required],
+        storeOrder: ['', Validators.required],
+        storeSlug: ['', Validators.required],
         storeWebSite: ['', Validators.required],
         storeAddress: this.formBuilder.array([]),
       });
     }else{
       this.storeForm = this.formBuilder.group({
         storeName: ['', Validators.required],
+        storeIcon : ['', Validators.required],
+        storeOrder: ['', Validators.required],
+        storeSlug: ['', Validators.required],
         storeWebSite: ['', Validators.required],
         storeAddress: this.formBuilder.array([]),
       });

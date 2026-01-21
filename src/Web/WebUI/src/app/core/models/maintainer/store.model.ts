@@ -24,6 +24,9 @@ export interface StoreAddressDto{
 
 export interface CreateStore{
     storeName:string;
+    storeIcon:string;
+    storeOrder:number;
+    storeSlug:string;
     storeWebSite:string;
 }
 
@@ -37,8 +40,10 @@ export interface CreateStoreAddress{
 export interface UpdateStore{
     storeId:string;
     storeName:string;
-    storeAddress:string;
     storeWebSite:string;
+    storeIcon:string;
+    storeOrder:number;
+    storeSlug:string;
 }
 
 export interface UpdateStoreAddress{

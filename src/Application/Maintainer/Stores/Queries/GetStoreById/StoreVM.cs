@@ -6,6 +6,8 @@ public class StoreVM
     public string StoreName { get; set; } = default!;
     public string StoreWebSite { get; set; } = default!;
     public string StoreIcon { get; set; } = default!;
+    public int StoreOrder { get; set; }
+    public string StoreSlug { get; set; } = default!;
     public List<StoreAddressDto> StoreAddress { get; set; } = default!;
 }
 

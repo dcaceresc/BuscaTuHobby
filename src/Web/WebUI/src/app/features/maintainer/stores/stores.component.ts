@@ -27,6 +27,7 @@ export class StoresComponent implements OnInit {
       { name: 'Nombre', key: 'storeName' },
       { name: 'Dirección', key: 'storeAddress' },
       { name: 'Sitio Web', key: 'storeWebSite' },
+      { name: 'Icono', key: 'storeIcon' },
       { name: 'Orden', key: 'storeOrder' },
       { name: 'Slug', key: 'storeSlug' },
       { name: 'Acciones', key: 'isActive' },

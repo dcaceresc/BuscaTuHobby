@@ -19,6 +19,8 @@ public class GetStoresQueryHandler(IApplicationDbContext context, IApiResponseSe
                     StoreName = x.StoreName,
                     StoreWebSite = x.StoreWebSite,
                     StoreIcon = x.StoreIcon,
+                    StoreOrder = x.StoreOrder,
+                    StoreSlug = x.StoreSlug,
                     StoreAddress = x.StoreAddresses.Select(sa => $"{sa.Street} {sa.Commune.CommuneName}").ToList(),
                     IsActive = x.IsActive
                 })

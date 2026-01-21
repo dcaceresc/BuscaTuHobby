@@ -47,7 +47,7 @@
         <a class="nav-link text-success fw-bold" style="cursor: pointer;" (click)="showStoresMenu()"><i class="bi bi-arrow-left"></i> Volver</a>
         <hr class="my-2">
         <h6 class="px-3 text-muted text-uppercase small">Tiendas</h6>
-        <a class="nav-link" href="#"><i class="bi bi-cart"></i> Amazon</a>
+        <!-- <a class="nav-link" href="#"><i class="bi bi-cart"></i> Amazon</a>
         <a class="nav-link" href="#"><i class="bi bi-bag"></i> MercadoLibre</a>
         <a class="nav-link" href="#"><i class="bi bi-shop-window"></i> eBay</a>
         <a class="nav-link" href="#"><i class="bi bi-basket"></i> AliExpress</a>
@@ -56,7 +56,10 @@
         <a class="nav-link" href="#"><i class="bi bi-building"></i> BigBadToyStore</a>
         <a class="nav-link" href="#"><i class="bi bi-lightning"></i> Plaza Japan</a>
         <a class="nav-link" href="#"><i class="bi bi-star-fill"></i> Sideshow</a>
-        <a class="nav-link" href="#"><i class="bi bi-gem"></i> Entertainment Earth</a>
+        <a class="nav-link" href="#"><i class="bi bi-gem"></i> Entertainment Earth</a> -->
+        @for(store of stores(); track $index) {
+          <a class="nav-link" href="{{store.storeSlug}}"><i class="bi" [ngClass]="store.storeIcon"></i> {{store.storeName}}</a>
+        }
         <a class="nav-link" href="#"><i class="bi bi-three-dots"></i> Ver todas...</a>
     </nav>
   }

@@ -1,4 +1,4 @@
-<div class="card mt-3">
+<!-- <div class="card mt-3">
     <div class="card-header bg-primary">
       Crear Tienda
     </div>
@@ -56,4 +56,143 @@
   
   
     </div>
+  </div> -->
+
+<div class="row justify-content-center py-2">
+  <div class="col-lg-10">
+      <div class="card shadow-sm border-0 mb-4">
+          <div class="card-body bg-primary text-white">
+              <h2 class="mb-0">
+                <i class="bi" [ngClass]="isEditMode ? 'bi-pencil-square' : 'bi-plus-circle'" class="me-2"></i>{{isEditMode ? 'Editar' : 'Crear'}} Tienda
+              </h2>
+          </div>
+      </div>
+      <form [formGroup]="storeForm" (ngSubmit)="onSubmit()">
+
+        <app-custom-input
+          label="Nombre"
+          [control]="$any(storeForm.get('storeName'))"
+          placeHolder="Nombre"
+          prefixIcon="bi-tag"
+          type="text"
+          errorMessage="El nombre es requerido"
+        />
+
+        <app-custom-input
+          label="Icono"
+          [control]="$any(storeForm.get('storeIcon'))"
+          placeHolder="Icono"
+          prefixIcon="bi-image"
+          type="text"
+          errorMessage="El icono es requerido"
+        />
+
+        <app-custom-input
+          label="Orden"
+          [control]="$any(storeForm.get('storeOrder'))"
+          placeHolder="Orden"
+          prefixIcon="bi-list-ol"
+          type="number"
+          errorMessage="El orden es requerido"
+        />
+
+        <app-custom-input
+          label="Slug"
+          [control]="$any(storeForm.get('storeSlug'))"
+          placeHolder="Slug"
+          prefixIcon="bi-link-45deg"
+          type="text"
+          errorMessage="El slug es requerido"
+        />
+
+         <app-custom-input
+          label="WebSite"
+          [control]="$any(storeForm.get('storeWebSite'))"
+          placeHolder="WebSite"
+          prefixIcon="bi-globe"
+          type="text"
+          errorMessage="El WebSite es requerido"
+        />
+
+        <div class="row mb-4">
+                <div class="col-lg-12">
+                    <div class="card shadow-sm border-0">
+                        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="bi bi-shield-lock me-2"></i>Direcciones</h5>
+                            <button type="button" class="btn btn-success" (click)="addStoreAddress()">
+                                <i class="bi bi-plus-circle me-1"></i>Agregar Dirección
+                            </button>
+                        </div>
+                        <div class="card-body">
+                          <div formArrayName="storeAddress">
+                            @for (item of storeAddress.controls; track $index) {
+                              <div class="row g-2 mb-3" [formGroupName]="$index">
+                                <div class="col-md-3">
+                                  <div class="ng-select-container-custom mb-3">
+                                    <label for="roleIds" class="floating-label">
+                                      <i class="bi bi-geo-alt me-2"></i>Región
+                                    </label>
+                                    <ng-select [items]="regions()" bindValue="regionId" placeholder="Seleccione una opción"
+                                    (click)="onChangeRegion($index)" required  bindLabel="regionName" id="regionId" 
+                                    formControlName="regionId" class="form-select ng-select-custom">
+                                    </ng-select>
+                                  </div>
+                                </div>
+                                <div class="col-md-3">
+                                  <div class="ng-select-container-custom mb-3">
+                                    <label for="roleIds" class="floating-label">
+                                      <i class="bi bi-geo-alt me-2"></i>Comuna
+                                    </label>
+                                    <ng-select formControlName="communeId" id="communeId" placeholder="Seleccione una opción"
+                                    [items]="communes()" bindLabel="communeName" bindValue="communeId"
+                                      class="form-select ng-select-custom" required>
+                                    </ng-select>
+                                  </div>
+                                </div>
+                                <div class="col-md-3">
+                                  <!-- <input type="text" class="form-control" formControlName="street" placeholder="Calle" (keydown.enter)="$event.preventDefault()" required> -->
+                                  <app-custom-input
+                                    label="Calle"
+                                    [control]="$any(storeForm.get('storeAddress')?.get($index.toString())?.get('street'))"
+                                    placeHolder="Calle"
+                                    prefixIcon="bi-geo-alt"
+                                    type="text"
+                                    errorMessage="La calle es requerida"
+                                  />
+                                </div>
+                                <div class="col-md-2">
+                                  <!-- <input type="text" class="form-control" formControlName="zipCode" placeholder="Código Postal" (keydown.enter)="$event.preventDefault()" required> -->
+                                  <app-custom-input
+                                    label="Código Postal"
+                                    [control]="$any(storeForm.get('storeAddress')?.get($index.toString())?.get('zipCode'))"
+                                    placeHolder="Código Postal"
+                                    prefixIcon="bi-geo-alt"
+                                    type="text"
+                                    errorMessage="El código postal es requerido"
+                                  />
+                                </div>
+                                <div class="col-md-1">
+                                  <button type="button" class="btn btn-danger mt-2" (click)="removeStoreAddress($index)">
+                                      <i class="bi bi-trash me-1"></i>Eliminar
+                                  </button>
+                                </div>
+                              </div>
+                            }
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+  
+        <div class="d-flex justify-content-end gap-2">
+            <button type="button" class="btn bg-secondary px-4" (click)="onCancel()">
+                <i class="bi bi-x-circle me-2"></i>Cancelar
+            </button>
+            <button type="submit" class="btn bg-primary px-4" [disabled]="storeForm.invalid">
+                <i class="bi bi bi-save me-2 me-2"></i>Guardar
+            </button>
+        </div>
+      </form>
   </div>
+</div>

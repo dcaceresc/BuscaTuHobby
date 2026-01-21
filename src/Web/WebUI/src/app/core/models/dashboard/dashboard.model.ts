@@ -3,3 +3,9 @@ export interface MenuCategoryDto{
     categoryIcon: string;
     categorySlug: string;
 }
+
+export interface MenuStoreDto{
+    storeName:string;
+    storeIcon:string;
+    storeSlug:string;
+}
