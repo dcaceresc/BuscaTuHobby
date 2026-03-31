@@ -56,3 +56,17 @@ export interface RecentActivityDto{
     description: string;
     createdAt: string;
 }
+
+export interface SearchProductDto{
+    productId: string;
+    productName: string;
+    productDescription: string;
+    manufacturerName: string;
+    franchiseName: string;
+    productViewCount: number;
+    storeCount: number;
+    minPrice: number;
+    maxPrice: number;
+    bestDiscount: number;
+    categories: string[];
+}

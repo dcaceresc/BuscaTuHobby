@@ -1,27 +1,72 @@
 @use '@src/variables.scss' as *;
 
 .btn-search {
-    background-color: $green;
-    border: none;
-    color: white;
-    font-weight: bold;
-    transition: all 0.3s ease;
+  background-color: $green;
+  border: none;
+  color: white;
+  font-weight: bold;
+  transition: all 0.3s ease;
 
-    &:hover {
-        background-color: #45a049;
-        transform: scale(1.05);
-    }
+  &:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+  }
 }
 
+.btn-clear {
+  background-color: white;
+  border: 2px solid $green;
+  border-left: none;
+  color: #999;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: #333;
+  }
+}
 
 .search-bar {
-    border: 2px solid $green;
-    border-radius: 2rem;
-    padding: 0.75rem 1.5rem;
+  border: 2px solid $green;
+  border-radius: 2rem 0 0 2rem;
+  padding: 0.75rem 1.5rem;
 
-    &:focus {
-        box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
-        border-color: $green;
-    }
+  &:focus {
+    box-shadow: 0 0 0 0.2rem rgba(76, 175, 80, 0.25);
+    border-color: $green;
+  }
 }
 
+.search-results {
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.result-card {
+  background: white;
+  border-radius: 0.5rem;
+  border-left: 4px solid $green;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+    transform: translateX(4px);
+  }
+}
+
+.product-name {
+  color: #333;
+  font-weight: 600;
+}
+
+.product-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.no-results {
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+}

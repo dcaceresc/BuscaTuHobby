@@ -8,6 +8,7 @@ using Application.Dashboard.Queries.GetPopularCategories;
 using Application.Dashboard.Queries.GetRecentPosts;
 using Application.Dashboard.Queries.GetFeaturedStores;
 using Application.Dashboard.Queries.GetRecentActivity;
+using Application.Dashboard.Queries.SearchProducts;
 
 namespace WebAPI.Dashboard;
 
@@ -27,6 +28,7 @@ public class DashboardModule : ICarterModule
         group.MapGet("popular-categories", GetPopularCategories);
         group.MapGet("featured-stores", GetFeaturedStores);
         group.MapGet("recent-activity", GetRecentActivity);
+        group.MapGet("search-products", SearchProductsQuery);
 
     }
     
@@ -40,4 +42,5 @@ public class DashboardModule : ICarterModule
     private static async Task<IResult> GetPopularCategories(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetPopularCategories()));
     private static async Task<IResult> GetFeaturedStores(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetFeaturedStores()));
     private static async Task<IResult> GetRecentActivity(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetRecentActivity()));
+    private static async Task<IResult> SearchProductsQuery(string? term, IRequestDispatcher sender) => Results.Ok(await sender.Send(new SearchProducts(term ?? string.Empty)));
 }
