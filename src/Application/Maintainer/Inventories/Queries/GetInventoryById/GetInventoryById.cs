@@ -18,6 +18,8 @@ public class GetInventoryByIdHandler(IApplicationDbContext context, IApiResponse
                    ProductId = x.ProductId,
                    StoreId = x.StoreId,
                    Price = x.Price,
+                   OriginalPrice = x.OriginalPrice,
+                   DiscountPercentage = x.DiscountPercentage,
                })
                .FirstOrDefaultAsync(x => x.InventoryId == request.InventoryId, cancellationToken);
 

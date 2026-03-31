@@ -112,6 +112,14 @@ namespace Infrastructure.Data
                 entity.Property(e => e.InventoryId)
                 .HasDefaultValueSql("(newid())");
 
+                entity.Property(e => e.OriginalPrice)
+                .IsRequired()
+                .HasDefaultValue(0);
+
+                entity.Property(e => e.DiscountPercentage)
+                .IsRequired()
+                .HasDefaultValue(0);
+
             });
 
             builder.Entity<Manufacturer>(entity =>
@@ -139,6 +147,10 @@ namespace Infrastructure.Data
 
                 entity.Property(e => e.PostContent)
                 .HasColumnType("nvarchar(max)");
+
+                entity.Property(e => e.PostViewCount)
+                .IsRequired()
+                .HasDefaultValue(0);
 
                 entity.HasOne(p => p.PostType)
                 .WithMany(pt => pt.Posts)
@@ -197,6 +209,10 @@ namespace Infrastructure.Data
                 .HasMaxLength(100);
 
                 entity.Property(e => e.ProductDescription);
+
+                entity.Property(e => e.ProductViewCount)
+                .IsRequired()
+                .HasDefaultValue(0);
 
             });
 

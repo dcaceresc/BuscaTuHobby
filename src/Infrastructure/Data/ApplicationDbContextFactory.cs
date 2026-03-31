@@ -10,11 +10,20 @@ public class ApplicationDbContextFactory
 {
     public ApplicationDbContext CreateDbContext(string[] args)
     {
-        // 👉 apuntamos explícitamente al WebAPI
-        var basePath = Path.Combine(
-            Directory.GetCurrentDirectory(),
-            "..", "Web", "WebAPI"
-        );
+        // Resolve the WebAPI project directory (contains appsettings.json)
+        var currentDir = Directory.GetCurrentDirectory();
+        string basePath;
+
+        // If CWD is already the WebAPI directory, use it directly
+        if (File.Exists(Path.Combine(currentDir, "appsettings.json")))
+        {
+            basePath = currentDir;
+        }
+        else
+        {
+            // Fallback: navigate from Infrastructure to WebAPI
+            basePath = Path.Combine(currentDir, "..", "Web", "WebAPI");
+        }
 
         var configuration = new ConfigurationBuilder()
             .SetBasePath(basePath)

@@ -21,8 +21,9 @@
         DbSet<RefreshToken> RefreshTokens { get; }
         DbSet<UserRole> UserRoles { get; }
 
-
-
+        DbSet<Post> Posts { get; }
+        DbSet<PostCategory> PostCategories { get; }
+        DbSet<PostType> PostTypes { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }

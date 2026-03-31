@@ -14,6 +14,7 @@ public class Product : AuditableEntity
         ProductSize = productSize;
         ProductDescription = productDescription;
         ProductReleaseDate = productReleaseDate;
+        ProductViewCount = 0;
         IsActive = true;
     }
 
@@ -28,6 +29,7 @@ public class Product : AuditableEntity
     public string ProductSize { get; private set; } = default!;
     public string ProductDescription { get; private set; } = default!;
     public DateOnly ProductReleaseDate { get; private set; }
+    public int ProductViewCount { get; private set; }
     public bool IsActive { get; private set; }
 
     public virtual Manufacturer Manufacturer { get; private set; } = default!;
@@ -37,6 +39,7 @@ public class Product : AuditableEntity
     public virtual ICollection<ProductImage> ProductImages { get; private set; } = default!;
     public virtual ICollection<FavoriteProduct> FavoriteProducts { get; private set; } = default!;
     public virtual ICollection<ProductCategory> ProductCategories { get; private set; } = default!;
+    public virtual ICollection<Inventory> Inventories { get; private set; } = default!;
 
 
     public static Product Create(string productName, Guid manufacturerId, Guid franchiseId, Guid? serieId, bool productHasBase, string productTargetAge, string productSize, string productDescription, DateOnly productReleaseDate)
@@ -69,6 +72,16 @@ public class Product : AuditableEntity
         var productImage = ProductImage.Create(productImageOrder, ProductId);
 
         return productImage;
+    }
+
+    public void IncrementViewCount()
+    {
+        ProductViewCount++;
+    }
+
+    public void SetViewCount(int count)
+    {
+        ProductViewCount = count;
     }
 
     public void ToggleActive()

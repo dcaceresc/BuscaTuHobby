@@ -8,6 +8,10 @@ export * from './maintainer/product.model';
 export * from './maintainer/region.model';
 export * from './maintainer/serie.model';
 export * from './maintainer/store.model';
+export * from './maintainer/post-type.model';
+export * from './maintainer/post.model';
+
+export * from './dashboard/dashboard.model';
 
 export * from './security/auth.model';
 export * from './security/user.model';

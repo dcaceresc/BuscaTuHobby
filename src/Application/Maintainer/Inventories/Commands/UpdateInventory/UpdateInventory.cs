@@ -6,6 +6,8 @@ public record UpdateInventory : IRequest<ApiResponse>
     public Guid ProductId { get; init; }
     public Guid StoreId { get; init; }
     public int Price { get; init; }
+    public int OriginalPrice { get; init; }
+    public int DiscountPercentage { get; init; }
 }
 
 public class UpdateInventoryHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<UpdateInventory, ApiResponse>
@@ -21,7 +23,7 @@ public class UpdateInventoryHandler(IApplicationDbContext context, IApiResponseS
 
             Guard.Against.NotFound(inventory, $"No existe inventario con Id {request.InventoryId}");
 
-            inventory.Update(request.ProductId, request.StoreId, request.Price);
+            inventory.Update(request.ProductId, request.StoreId, request.Price, request.OriginalPrice, request.DiscountPercentage);
 
             await _context.SaveChangesAsync(cancellationToken);
 

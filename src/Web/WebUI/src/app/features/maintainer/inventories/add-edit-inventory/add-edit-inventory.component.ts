@@ -54,13 +54,17 @@ export class AddEditInventoryComponent implements OnInit {
         inventoryId : [this.inventoryId(), Validators.required],
         storeId: ['', Validators.required],
         productId: ['',Validators.required],
-        price: ['', Validators.required]
+        price: ['', Validators.required],
+        originalPrice: ['', Validators.required],
+        discountPercentage: ['', [Validators.required, Validators.min(0), Validators.max(100)]]
       });
     }else{
       this.inventoryForm = this.formBuilder.group({
         storeId: ['', Validators.required],
         productId: ['',Validators.required],
-        price: ['', Validators.required]
+        price: ['', Validators.required],
+        originalPrice: ['', Validators.required],
+        discountPercentage: ['', [Validators.required, Validators.min(0), Validators.max(100)]]
       });
     }
   }

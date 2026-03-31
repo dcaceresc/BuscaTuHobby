@@ -8,6 +8,8 @@ export * from './maintainer/product.service';
 export * from './maintainer/region.service';
 export * from './maintainer/serie.service';
 export * from './maintainer/store.service';
+export * from './maintainer/post-type.service';
+export * from './maintainer/post.service';
 
 export * from './security/auth.service';
 export * from './security/user.service';

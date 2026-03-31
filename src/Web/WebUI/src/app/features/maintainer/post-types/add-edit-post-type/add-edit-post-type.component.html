@@ -1,0 +1,31 @@
+<div class="row justify-content-center py-2">
+  <div class="col-lg-10">
+      <div class="card shadow-sm border-0 mb-4">
+          <div class="card-body bg-primary text-white">
+              <h2 class="mb-0">
+                <i class="bi" [ngClass]="isEditMode ? 'bi-pencil-square' : 'bi-plus-circle'" class="me-2"></i>{{isEditMode ? 'Editar' : 'Crear'}} Tipo de Post
+              </h2>
+          </div>
+      </div>
+      <form [formGroup]="postTypeForm" (ngSubmit)="onSubmit()">
+
+        <app-custom-input
+          label="Nombre"
+          [control]="$any(postTypeForm.get('postTypeName'))"
+          placeHolder="Nombre del tipo de post"
+          prefixIcon="bi-bookmark-star"
+          type="text"
+          errorMessage="El nombre es requerido"
+        />
+
+        <div class="d-flex justify-content-end gap-2">
+            <button type="button" class="btn bg-secondary px-4" (click)="onCancel()">
+                <i class="bi bi-x-circle me-2"></i>Cancelar
+            </button>
+            <button type="submit" class="btn bg-primary px-4" [disabled]="postTypeForm.invalid">
+                <i class="bi bi-save me-2"></i>Guardar
+            </button>
+        </div>
+      </form>
+  </div>
+</div>

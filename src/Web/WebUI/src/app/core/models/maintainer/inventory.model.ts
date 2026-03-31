@@ -11,12 +11,16 @@ export interface InventoryVM {
     storeId: string;
     productId: string;
     price: number;
+    originalPrice: number;
+    discountPercentage: number;
 }
 
 export interface CreateInventory{
     storeId: string;
     productId: string;
     price: number;
+    originalPrice: number;
+    discountPercentage: number;
 }
 
 export interface UpdateInventory{
@@ -24,4 +28,6 @@ export interface UpdateInventory{
     storeId: string;
     productId: string;
     price: number;
+    originalPrice: number;
+    discountPercentage: number;
 }

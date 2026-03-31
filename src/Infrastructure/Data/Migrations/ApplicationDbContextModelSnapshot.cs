@@ -265,6 +265,11 @@ namespace Infrastructure.Data.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("varchar(30)");
 
+                    b.Property<int>("DiscountPercentage")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -273,6 +278,11 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<string>("LastModifiedBy")
                         .HasColumnType("varchar(30)");
+
+                    b.Property<int>("OriginalPrice")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<int>("Price")
                         .HasColumnType("int");
@@ -360,6 +370,11 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid>("PostTypeId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("PostViewCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.HasKey("PostId");
 
@@ -478,6 +493,11 @@ namespace Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("ProductViewCount")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
 
                     b.Property<Guid?>("SerieId")
                         .HasColumnType("uniqueidentifier");
@@ -986,7 +1006,7 @@ namespace Infrastructure.Data.Migrations
             modelBuilder.Entity("Domain.Entities.Inventory", b =>
                 {
                     b.HasOne("Domain.Entities.Product", "Product")
-                        .WithMany()
+                        .WithMany("Inventories")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1208,6 +1228,8 @@ namespace Infrastructure.Data.Migrations
             modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
                     b.Navigation("FavoriteProducts");
+
+                    b.Navigation("Inventories");
 
                     b.Navigation("ProductCategories");
 

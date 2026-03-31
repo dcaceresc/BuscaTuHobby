@@ -30,6 +30,8 @@ export class AdministrationMenuComponent {
     { label: 'Regiones', link: '/maintainer/regions', icon : 'bi bi-geo-alt' },
     { label: 'Series', link: '/maintainer/series', icon : 'bi bi-tags' },
     { label: 'Tiendas', link: '/maintainer/stores', icon : 'bi bi-building' },
+    { label: 'Tipos de Post', link: '/maintainer/post-types', icon : 'bi bi-bookmark-star' },
+    { label: 'Posts', link: '/maintainer/posts', icon : 'bi bi-file-earmark-text' },
   ]
 
   isSuperAdmin() {

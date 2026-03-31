@@ -18,8 +18,18 @@
         </div>
 
         <div class="form-floating mb-3">
-            <input type="number" class="form-control" id="price" formControlName="price" placeholder="Nombre" required>
+            <input type="number" class="form-control" id="price" formControlName="price" placeholder="Precio" required>
             <label for="price" class="form-label">Precio</label>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input type="number" class="form-control" id="originalPrice" formControlName="originalPrice" placeholder="Precio Original" required>
+            <label for="originalPrice" class="form-label">Precio Original</label>
+        </div>
+
+        <div class="form-floating mb-3">
+            <input type="number" class="form-control" id="discountPercentage" formControlName="discountPercentage" placeholder="Descuento (%)" required min="0" max="100">
+            <label for="discountPercentage" class="form-label">Descuento (%)</label>
         </div>
 
   

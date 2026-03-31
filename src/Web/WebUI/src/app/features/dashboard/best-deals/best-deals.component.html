@@ -12,36 +12,14 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @for (deal of deals(); track deal.inventoryId) {
                     <tr>
-                        <td>Bandai Model Kit Evangelion</td>
-                        <td><span class="badge bg-primary">Amazon</span></td>
-                        <td><span class="discount-badge">-35%</span></td>
-                        <td>2,341</td>
+                        <td>{{ deal.productName }}</td>
+                        <td><span class="badge bg-primary">{{ deal.storeName }}</span></td>
+                        <td><span class="discount-badge">-{{ deal.discountPercentage }}%</span></td>
+                        <td>{{ deal.productViewCount | number }}</td>
                     </tr>
-                    <tr>
-                        <td>Hot Toys Iron Man Mark 50</td>
-                        <td><span class="badge bg-success">MercadoLibre</span></td>
-                        <td><span class="discount-badge">-25%</span></td>
-                        <td>1,987</td>
-                    </tr>
-                    <tr>
-                        <td>Tamiya 1/35 Tiger Tank</td>
-                        <td><span class="badge bg-warning text-dark">Linio</span></td>
-                        <td><span class="discount-badge">-40%</span></td>
-                        <td>1,654</td>
-                    </tr>
-                    <tr>
-                        <td>Nendoroid Demon Slayer</td>
-                        <td><span class="badge bg-danger">Falabella</span></td>
-                        <td><span class="discount-badge">-30%</span></td>
-                        <td>1,432</td>
-                    </tr>
-                    <tr>
-                        <td>Revell USS Enterprise</td>
-                        <td><span class="badge bg-info text-dark">Ripley</span></td>
-                        <td><span class="discount-badge">-20%</span></td>
-                        <td>1,298</td>
-                    </tr>
+                    }
                 </tbody>
             </table>
         </div>

@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { PopularCategoryDto } from '@app/core/models';
+import { DashboardService, NotificationService } from '@app/core/services';
 
 @Component({
   selector: 'app-popular-categories',
@@ -7,6 +9,29 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   styleUrl: './popular-categories.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PopularCategoriesComponent {
+export class PopularCategoriesComponent implements OnInit {
 
+  private dashboardService = inject(DashboardService);
+  private notificationService = inject(NotificationService);
+
+  public categories = signal<PopularCategoryDto[]>([]);
+
+  ngOnInit(): void {
+    this.loadCategories();
+  }
+
+  private loadCategories(): void {
+    this.dashboardService.getPopularCategories().subscribe({
+      next: (response) => {
+        if (!response.success) {
+          this.notificationService.showError('Error', response.message);
+          return;
+        }
+        this.categories.set(response.data);
+      },
+      error: () => {
+        this.notificationService.showDefaultError();
+      }
+    });
+  }
 }
