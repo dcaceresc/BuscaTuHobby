@@ -153,7 +153,7 @@
                                   <!-- <input type="text" class="form-control" formControlName="street" placeholder="Calle" (keydown.enter)="$event.preventDefault()" required> -->
                                   <app-custom-input
                                     label="Calle"
-                                    [control]="$any(storeForm.get('storeAddress')?.get($index.toString())?.get('street'))"
+                                    [control]="$any($safeNavigationMigration(storeForm.get('storeAddress')?.get($index.toString())?.get('street')))"
                                     placeHolder="Calle"
                                     prefixIcon="bi-geo-alt"
                                     type="text"
@@ -164,7 +164,7 @@
                                   <!-- <input type="text" class="form-control" formControlName="zipCode" placeholder="Código Postal" (keydown.enter)="$event.preventDefault()" required> -->
                                   <app-custom-input
                                     label="Código Postal"
-                                    [control]="$any(storeForm.get('storeAddress')?.get($index.toString())?.get('zipCode'))"
+                                    [control]="$any($safeNavigationMigration(storeForm.get('storeAddress')?.get($index.toString())?.get('zipCode')))"
                                     placeHolder="Código Postal"
                                     prefixIcon="bi-geo-alt"
                                     type="text"

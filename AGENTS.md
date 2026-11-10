@@ -4,7 +4,7 @@
 
 Full-stack web application for searching/comparing prices of Gunpla and scale models across online stores.
 - **Backend:** C# / .NET 10 / ASP.NET Core Minimal API with Carter
-- **Frontend:** TypeScript / Angular 21 (standalone components, zoneless)
+- **Frontend:** TypeScript 6 / Angular 22 (standalone components, zoneless)
 - **Database:** SQL Server via Entity Framework Core 10
 - **Architecture:** Clean Architecture (Domain -> Application -> Infrastructure -> WebAPI)
 
@@ -34,8 +34,8 @@ dotnet ef database update --project src/Infrastructure --startup-project src/Web
 All Angular commands run from `src/Web/WebUI/`:
 
 ```bash
-# Install dependencies
-npm install
+# Install dependencies (pnpm 12.18.0; preserve pnpm-lock.yaml)
+pnpm install --frozen-lockfile --strict-peer-dependencies
 
 # Serve with dev server (proxies /api to ASP.NET on https://localhost:7091)
 npx ng serve
@@ -43,11 +43,14 @@ npx ng serve
 # Production build
 npx ng build
 
-# Run unit tests (Karma + Jasmine)
-npx ng test
+# Run unit tests (Angular native Vitest + jsdom)
+pnpm test
+
+# Run unit tests once
+pnpm test:run
 
 # Run a single test file
-npx ng test --include=**/products.component.spec.ts
+pnpm exec ng test --watch=false --include='**/app.component.spec.ts'
 
 # Generate a component (defaults: OnPush, SCSS, standalone, no tests)
 npx ng generate component features/maintainer/example
@@ -65,7 +68,7 @@ src/
   Infrastructure/    # EF Core DbContext, migrations, service implementations, JWT config.
   Web/
     WebAPI/          # Minimal API endpoints via Carter modules, auth, Swagger.
-    WebUI/           # Angular 21 SPA (standalone components, zoneless change detection).
+    WebUI/           # Angular 22 SPA (standalone components, zoneless change detection).
 ```
 
 ## Architecture & Patterns

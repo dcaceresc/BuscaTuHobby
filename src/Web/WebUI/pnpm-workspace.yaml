@@ -1,3 +1,11 @@
+# Angular 22.2.6 uses Oxc's WASM binding with emnapi 2.0.0-alpha.6.
+# wasm-runtime 1.2.6/1.2.7 switched peers to beta.2/beta.3; 1.2.5 supports
+# the binding's exact alpha dependencies. Keep strict peer checks enabled.
+# Remove this scoped compatibility pin when the upstream binding is aligned.
+overrides:
+  '@oxc-parser/binding-wasm32-wasi@0.156.0>@napi-rs/wasm-runtime': 1.2.5
+
+# Preserve the project's existing build approvals and explicit core-js denial.
 allowBuilds:
   '@parcel/watcher': true
   core-js: false
