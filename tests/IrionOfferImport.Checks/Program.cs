@@ -98,6 +98,7 @@ if (createImported is not null && updateImported is not null)
 await ManualChecks.Run(Check, product, store);
 await InspectionChecks.Run(Check);
 await ConfirmationChecks.Run(Check);
+await DashboardChecks.Run(Check);
 using var context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
     .UseSqlServer("Server=unused;Database=StructuralOnly;Integrated Security=true;TrustServerCertificate=true").Options);
 var model = context.GetService<IDesignTimeModel>().Model;

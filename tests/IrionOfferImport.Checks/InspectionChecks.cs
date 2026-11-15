@@ -180,10 +180,30 @@ internal sealed class InspectionSet<T>(List<T> rows, Action<CancellationToken> o
     IEnumerator IEnumerable.GetEnumerator() => rows.GetEnumerator();
 }
 
+internal sealed class InspectionQuery<T>(IQueryable<T> query, Action<CancellationToken> onQuery)
+    : IOrderedQueryable<T>, IAsyncEnumerable<T>
+{
+    public Type ElementType => typeof(T);
+    public Expression Expression => query.Expression;
+    public IQueryProvider Provider => new InspectionProvider(query.Provider, onQuery);
+    public IEnumerator<T> GetEnumerator() => query.GetEnumerator();
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    public async IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+    {
+        onQuery(cancellationToken);
+        foreach (var item in query)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            yield return item;
+        }
+        await Task.CompletedTask;
+    }
+}
+
 internal sealed class InspectionProvider(IQueryProvider inner, Action<CancellationToken> onQuery) : IAsyncQueryProvider
 {
     public IQueryable CreateQuery(Expression expression) => inner.CreateQuery(expression);
-    public IQueryable<T> CreateQuery<T>(Expression expression) => inner.CreateQuery<T>(expression);
+    public IQueryable<T> CreateQuery<T>(Expression expression) => new InspectionQuery<T>(inner.CreateQuery<T>(expression), onQuery);
     public object? Execute(Expression expression) => inner.Execute(expression);
     public T Execute<T>(Expression expression) => inner.Execute<T>(expression);
     public T ExecuteAsync<T>(Expression expression, CancellationToken cancellationToken = default)

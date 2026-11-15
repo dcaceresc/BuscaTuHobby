@@ -36,16 +36,19 @@ public class SearchProductsHandler(IApplicationDbContext context, IApiResponseSe
                     ManufacturerName = p.Manufacturer.ManufacturerName,
                     FranchiseName = p.Franchise.FranchiseName,
                     ProductViewCount = p.ProductViewCount,
-                    StoreCount = p.Inventories.Count(i => i.IsActive),
-                    MinPrice = p.Inventories.Where(i => i.IsActive).Any()
-                        ? p.Inventories.Where(i => i.IsActive).Min(i => i.Price)
-                        : 0,
-                    MaxPrice = p.Inventories.Where(i => i.IsActive).Any()
-                        ? p.Inventories.Where(i => i.IsActive).Max(i => i.Price)
-                        : 0,
-                    BestDiscount = p.Inventories.Where(i => i.IsActive && i.DiscountPercentage > 0).Any()
-                        ? p.Inventories.Where(i => i.IsActive && i.DiscountPercentage > 0).Max(i => i.DiscountPercentage)
-                        : 0,
+                    StoreCount = p.Inventories
+                        .Where(i => i.IsActive && i.Store.IsActive && i.Product.IsActive && i.Availability != false)
+                        .Select(i => i.StoreId).Distinct().Count(),
+                    MinPrice = p.Inventories
+                        .Where(i => i.IsActive && i.Store.IsActive && i.Product.IsActive && i.Availability != false)
+                        .Select(i => (int?)i.Price).Min() ?? 0,
+                    MaxPrice = p.Inventories
+                        .Where(i => i.IsActive && i.Store.IsActive && i.Product.IsActive && i.Availability != false)
+                        .Select(i => (int?)i.Price).Max() ?? 0,
+                    BestDiscount = p.Inventories
+                        .Where(i => i.IsActive && i.Store.IsActive && i.Product.IsActive && i.Availability != false &&
+                            i.DiscountPercentage > 0)
+                        .Select(i => (int?)i.DiscountPercentage).Max() ?? 0,
                     Categories = p.ProductCategories
                         .Where(pc => pc.Category.IsActive)
                         .Select(pc => pc.Category.CategoryName)

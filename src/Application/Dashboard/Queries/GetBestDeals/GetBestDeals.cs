@@ -13,7 +13,8 @@ public class GetBestDealsHandler(IApplicationDbContext context, IApiResponseServ
         try
         {
             var deals = await _context.Inventories
-                .Where(i => i.IsActive && i.DiscountPercentage > 0 && i.Product.IsActive)
+                .Where(i => i.IsActive && i.Store.IsActive && i.Product.IsActive && i.Availability != false &&
+                    i.DiscountPercentage > 0)
                 .OrderByDescending(i => i.DiscountPercentage)
                 .Take(5)
                 .Select(i => new BestDealDto
