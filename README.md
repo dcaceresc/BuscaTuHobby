@@ -70,6 +70,39 @@ Pruebas deterministas del backend, sin red ni base de datos (ejecutable de compr
 dotnet run --project tests/IrionProductExtractor.Checks/IrionProductExtractor.Checks.csproj
 ```
 
+## Inspección de una oferta de Irion (solo lectura)
+
+`POST /api/maintainer/inventories/irion/inspect`, disponible para `Administrator` y `SuperAdmin`, comprueba el producto, la tienda y la vinculación seleccionados. **No guarda datos ni consulta Irion. La confirmación todavía no está expuesta.**
+
+Cuerpo JSON (sustituye los UUID por un producto y una tienda activos existentes):
+
+```json
+{
+  "productId": "11111111-1111-1111-1111-111111111111",
+  "storeId": "22222222-2222-2222-2222-222222222222",
+  "sourceUrl": "https://irion.cl/products/model-1",
+  "externalVariantId": "123"
+}
+```
+
+Usa la URL canónica devuelta por la vista previa y elige explícitamente una variante; no envíes precios. La URL debe ser HTTPS, host exacto `irion.cl`, ruta `/products/{handle}` ASCII con guiones simples, sin parámetros, fragmentos, puerto explícito ni codificación. El identificador de variante es una cadena decimal positiva dentro de Int64. La tienda se valida por su sitio web (URL raíz HTTPS de `irion.cl`, puerto predeterminado), no por su nombre.
+
+La respuesta mantiene HTTP 200 y `ApiResponse`: valida `success` antes de leer `data`. Los errores devuelven `data: null` y un mensaje seguro en español. En una inspección válida, `data.outcome` tiene un valor estable:
+
+| Resultado | Significado |
+|-----------|-------------|
+| `Create` | No existe la pareja producto/tienda; `inventoryId`, `rowVersion` e `isActive` son `null`. |
+| `Update` | Coinciden URL y variante; incluye `inventoryId`, `rowVersion` en base64 e `isActive`. Si está deshabilitado, seguirá deshabilitado. |
+| `Conflict` | Existe una oferta antigua sin vinculación o una vinculación diferente; incluye ID, versión y estado actuales. No adopta ni reemplaza la oferta. |
+
+El DTO también devuelve `productId`, `storeId`, `sourceUrl`, `externalVariantId` y un `message` explicativo opcional; no interpretes ese mensaje para decidir el resultado. Inspeccionar o cancelar no escribe; la futura confirmación deberá volver a consultar y validar la oferta antes de guardar. No hay importación automática ni cambios de catálogo.
+
+Comprobaciones deterministas (sin SQL Server ni HTTP):
+
+```sh
+dotnet run --project tests/IrionOfferImport.Checks/IrionOfferImport.Checks.csproj --no-restore
+```
+
 ## Contribución
 
 ¡Estamos abiertos a contribuciones! Si deseas colaborar en el proyecto, sigue estos pasos:

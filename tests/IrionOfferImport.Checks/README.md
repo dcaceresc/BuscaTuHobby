@@ -1,4 +1,4 @@
-# Irion inventory foundation checks (T1)
+# Irion inventory foundation and read-only inspection checks (T1/T2)
 
 Run from the repository root:
 
@@ -24,4 +24,6 @@ That explicit maintenance mode only writes `src/Infrastructure/Data/Migrations/2
 
 `Inventory.CreateImportedOffer` and `UpdateImportedOffer` accept already server-validated whole integer prices and a canonical HTTPS source identity. Import updates require an existing matching source and variant; unlinked legacy offers cannot be adopted. Availability is independent of administrative activation. Strict numeric validation applies only to import methods; manual create/update preserve baseline numeric semantics, including zero prices and inconsistent reference/discount tuples. Public-handler preservation checks cover both accepted responses and exact row/save effects. Legacy/manual metadata remains null; manual same-pair price edits preserve import metadata and activation, while imported association changes are rejected atomically.
 
-T2 must validate active product, selected Irion store/domain and variant, re-fetch and compare the confirmed external snapshot, reject non-whole/out-of-range prices before integer conversion, compare the expected `RowVersion` before mutation and handle `DbUpdateConcurrencyException`/unique constraint errors as recoverable typed conflicts. EF uses the originally loaded rowversion automatically for SaveChanges concurrency checks; the manual DTO contracts are unchanged. The unique pair index covers every row, including disabled rows.
+T2 inspection public-handler checks cover active/missing product and store, exact root Irion store URLs, canonical source and positive Int64 variant metadata, typed Create/Update/Conflict results, legacy and external identity conflicts, disabled inventory preservation, base64 rowversion, safe errors and cancellation propagation. Every path asserts unchanged stored fields and save counts; accepted inspections perform exactly one pair lookup. The handler has no extractor/HTTP dependency. Existing manual successful behavior checks remain unchanged.
+
+Confirmation is not exposed yet. The remaining T2 boundary must re-fetch and compare the confirmed external snapshot, reject non-whole/out-of-range prices before integer conversion, compare the expected `RowVersion` before mutation and handle `DbUpdateConcurrencyException`/unique constraint errors as recoverable typed conflicts. EF uses the originally loaded rowversion automatically for SaveChanges concurrency checks; the manual DTO contracts are unchanged. The unique pair index covers every row, including disabled rows.
