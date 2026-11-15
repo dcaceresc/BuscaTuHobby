@@ -1,5 +1,6 @@
 ﻿
 using Application.Maintainer.Inventories.Commands.CreateInventory;
+using Application.Maintainer.Inventories.Commands.ConfirmIrionOffer;
 using Application.Maintainer.Inventories.Commands.ToggleInventory;
 using Application.Maintainer.Inventories.Commands.UpdateInventory;
 using Application.Maintainer.Inventories.Queries.GetInventories;
@@ -20,6 +21,7 @@ public class InventoriesModule : ICarterModule
         groups.MapGet("{id:guid}", GetInventoryById);
         groups.MapPost("", CreateInventory);
         groups.MapPost("irion/inspect", InspectIrionOffer);
+        groups.MapPost("irion/confirm", ConfirmIrionOffer);
         groups.MapPut("{id:guid}", UpdateInventory);
         groups.MapDelete("{id:guid}", ToggleInventory);
 
@@ -33,6 +35,9 @@ public class InventoriesModule : ICarterModule
 
     private static async Task<IResult> InspectIrionOffer(IRequestDispatcher sender, InspectIrionOffer query, CancellationToken cancellationToken) =>
         Results.Ok(await sender.Send(query, cancellationToken));
+
+    private static async Task<IResult> ConfirmIrionOffer(IRequestDispatcher sender, ConfirmIrionOffer command, CancellationToken cancellationToken) =>
+        Results.Ok(await sender.Send(command, cancellationToken));
 
     private static async Task<IResult> UpdateInventory(IRequestDispatcher sender, Guid id, UpdateInventory command)
     {

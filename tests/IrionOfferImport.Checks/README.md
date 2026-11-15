@@ -1,4 +1,4 @@
-# Irion inventory foundation and read-only inspection checks (T1/T2)
+# Irion inventory foundation, inspection and confirmation checks (T1/T2)
 
 Run from the repository root:
 
@@ -26,4 +26,6 @@ That explicit maintenance mode only writes `src/Infrastructure/Data/Migrations/2
 
 T2 inspection public-handler checks cover active/missing product and store, exact root Irion store URLs, canonical source and positive Int64 variant metadata, typed Create/Update/Conflict results, legacy and external identity conflicts, disabled inventory preservation, base64 rowversion, safe errors and cancellation propagation. Every path asserts unchanged stored fields and save counts; accepted inspections perform exactly one pair lookup. The handler has no extractor/HTTP dependency. Existing manual successful behavior checks remain unchanged.
 
-Confirmation is not exposed yet. The remaining T2 boundary must re-fetch and compare the confirmed external snapshot, reject non-whole/out-of-range prices before integer conversion, compare the expected `RowVersion` before mutation and handle `DbUpdateConcurrencyException`/unique constraint errors as recoverable typed conflicts. EF uses the originally loaded rowversion automatically for SaveChanges concurrency checks; the manual DTO contracts are unchanged. The unique pair index covers every row, including disabled rows.
+T2 confirmation public-handler checks cover create/update, disabled preservation, selected-not-first variant values, server UTC metadata, whole CLP boundaries and discount rounding, exact snapshot refreshes, missing variants, active selections and identity/version changes around external I/O, repeated confirmations, invalid selection/identity/version/price, 429/URL/timeout/cancellation, token forwarding and simulated concurrency/database save failures. Every rejection checks the response and extraction/save counters; the fake captures a separate serialized persisted snapshot only on successful SaveChanges. A failing save may leave tracked objects changed: the unchanged fake persisted snapshot proves orchestration only, not SQL atomicity. There are no HTTP or database connections.
+
+The confirmation DTO exposes Saved/AlreadySaved with outer success true and RefreshRequired/Conflict with outer success false and non-null typed data. Validation/extraction errors have data null. EF uses the originally loaded rowversion automatically for SaveChanges concurrency checks; the manual DTO contracts are unchanged. The unique pair index covers every row, including disabled rows. Real SQL race, migration and authorization-runtime proof remain outside this runner.

@@ -134,6 +134,10 @@ public class InspectionContext : DispatchProxy
     public List<Inventory> Rows { get; } = [];
     public int PairLookups { get; private set; }
     public int Saves { get; private set; }
+    public Exception? SaveError { get; set; }
+    public Action<CancellationToken>? SaveHook { get; set; }
+    public string Persisted { get; private set; } = "[]";
+    public void CapturePersisted() => Persisted = JsonSerializer.Serialize(Rows);
     public Exception? QueryError { get; set; }
     public Action<CancellationToken>? QueryHook { get; set; }
     protected override object? Invoke(MethodInfo? method, object?[]? args) => method!.Name switch
@@ -141,7 +145,7 @@ public class InspectionContext : DispatchProxy
         "get_Products" => new InspectionSet<Product>(Products, OnQuery),
         "get_Stores" => new InspectionSet<Store>(Stores, OnQuery),
         "get_Inventories" => new InspectionSet<Inventory>(Rows, token => { PairLookups++; OnQuery(token); }),
-        "SaveChangesAsync" => Save(),
+        "SaveChangesAsync" => Save((CancellationToken)args![0]!),
         _ => throw new NotSupportedException(method.Name)
     };
     private void OnQuery(CancellationToken token)
@@ -150,12 +154,25 @@ public class InspectionContext : DispatchProxy
         token.ThrowIfCancellationRequested();
         if (QueryError is not null) throw QueryError;
     }
-    private Task<int> Save() { Saves++; return Task.FromResult(1); }
+    private Task<int> Save(CancellationToken token)
+    {
+        Saves++;
+        SaveHook?.Invoke(token);
+        token.ThrowIfCancellationRequested();
+        if (SaveError is not null) return Task.FromException<int>(SaveError);
+        CapturePersisted();
+        return Task.FromResult(1);
+    }
 }
 
 internal sealed class InspectionSet<T>(List<T> rows, Action<CancellationToken> onQuery) : DbSet<T>, IQueryable<T> where T : class
 {
     public override Microsoft.EntityFrameworkCore.Metadata.IEntityType EntityType => throw new NotSupportedException();
+    public override Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<T> Add(T entity)
+    {
+        rows.Add(entity);
+        return null!;
+    }
     Type IQueryable.ElementType => typeof(T);
     Expression IQueryable.Expression => rows.AsQueryable().Expression;
     IQueryProvider IQueryable.Provider => new InspectionProvider(rows.AsQueryable().Provider, onQuery);

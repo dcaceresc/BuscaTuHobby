@@ -72,7 +72,7 @@ dotnet run --project tests/IrionProductExtractor.Checks/IrionProductExtractor.Ch
 
 ## Inspección de una oferta de Irion (solo lectura)
 
-`POST /api/maintainer/inventories/irion/inspect`, disponible para `Administrator` y `SuperAdmin`, comprueba el producto, la tienda y la vinculación seleccionados. **No guarda datos ni consulta Irion. La confirmación todavía no está expuesta.**
+`POST /api/maintainer/inventories/irion/inspect`, disponible para `Administrator` y `SuperAdmin`, comprueba el producto, la tienda y la vinculación seleccionados. **No guarda datos ni consulta Irion.**
 
 Cuerpo JSON (sustituye los UUID por un producto y una tienda activos existentes):
 
@@ -95,13 +95,54 @@ La respuesta mantiene HTTP 200 y `ApiResponse`: valida `success` antes de leer `
 | `Update` | Coinciden URL y variante; incluye `inventoryId`, `rowVersion` en base64 e `isActive`. Si está deshabilitado, seguirá deshabilitado. |
 | `Conflict` | Existe una oferta antigua sin vinculación o una vinculación diferente; incluye ID, versión y estado actuales. No adopta ni reemplaza la oferta. |
 
-El DTO también devuelve `productId`, `storeId`, `sourceUrl`, `externalVariantId` y un `message` explicativo opcional; no interpretes ese mensaje para decidir el resultado. Inspeccionar o cancelar no escribe; la futura confirmación deberá volver a consultar y validar la oferta antes de guardar. No hay importación automática ni cambios de catálogo.
+El DTO también devuelve `productId`, `storeId`, `sourceUrl`, `externalVariantId` y un `message` explicativo opcional; no interpretes ese mensaje para decidir el resultado. Inspeccionar o cancelar no escribe; la confirmación vuelve a consultar y validar la oferta antes de guardar. No hay importación automática ni cambios de catálogo.
 
 Comprobaciones deterministas (sin SQL Server ni HTTP):
 
 ```sh
 dotnet run --project tests/IrionOfferImport.Checks/IrionOfferImport.Checks.csproj --no-restore
 ```
+
+## Confirmar una oferta de Irion
+
+`POST /api/maintainer/inventories/irion/confirm` requiere el mismo rol administrativo. Primero visualiza el producto, selecciona explícitamente una variante e inspecciona la pareja producto/tienda. Confirma únicamente el resumen que acabas de revisar:
+
+```bash
+curl -X POST 'https://localhost:7091/api/maintainer/inventories/irion/confirm' \
+  -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' \
+  --data '{
+    "productId":"11111111-1111-1111-1111-111111111111",
+    "storeId":"22222222-2222-2222-2222-222222222222",
+    "sourceUrl":"https://irion.cl/products/model-1",
+    "externalVariantId":"123",
+    "expectedInventoryId":null,
+    "expectedRowVersion":null,
+    "expectedOffer":{"currency":"CLP","price":199,"originalPrice":200,"available":false}
+  }'
+```
+
+Para crear, ambos campos `expectedInventoryId` y `expectedRowVersion` son `null`. Para actualizar, copia el ID y la versión de la inspección `Update`; la versión debe ser base64 canónico de **8 bytes**. No confirmes una inspección `Conflict`. `expectedOffer` es la instantánea de la variante seleccionada, no el precio global ni la primera variante; conserva `originalPrice: null` cuando falte.
+
+Las respuestas de aplicación mantienen HTTP 200. **Lee `data.outcome` también cuando `success` sea `false`**; nunca interpretes mensajes para decidir el flujo:
+
+| `data.outcome` | `success` | Acción |
+|----------------|-----------|--------|
+| `Saved` | `true` | Guardado; `inventoryId` identifica la oferta. |
+| `AlreadySaved` | `true` | La misma identidad y valores actuales del servidor ya están guardados; devuelve el ID sin otra escritura ni modificar la fecha. También admite repetir una creación ya guardada. |
+| `RefreshRequired` | `false` | La variante desapareció o cambió la instantánea; muestra `freshPreview` y la nueva `inspection`, vuelve a seleccionar/revisar y pide **otra confirmación explícita**. No se guardó. |
+| `Conflict` | `false` | Cambió el inventario, su versión o vinculación, o falló la persistencia por concurrencia/duplicado; vuelve a inspeccionar. No reintentes automáticamente. |
+
+Los errores de selección, extracción o precio devuelven `success: false`, `data: null` y un mensaje seguro en español. Los errores de selección conservan los mensajes de inspección; los errores de URL y HTTP 429 del extractor conservan los mensajes específicos documentados arriba. Los demás fallos devuelven `No se pudo confirmar la oferta de Irion.` La cancelación del cliente se propaga; la autorización conserva sus respuestas HTTP habituales.
+
+Seguridad del guardado:
+
+- El servidor valida producto y tienda activos e identidad antes y después de **una sola extracción segura**. No hay reintentos, consultas alternativas ni escrituras con precios del navegador. Compara URL canónica, variante, moneda, precio, precio original y disponibilidad exactos contra la consulta actual.
+- Solo acepta CLP enteros positivos hasta Int32; el original debe ser entero en ese rango, cero/ausente o al menos el precio. Original ausente se guarda como `0`; el descuento se calcula en servidor, redondeando mitades hacia fuera de cero. La fecha de observación es UTC del servidor.
+- Actualiza solo la misma vinculación y conserva ID y activación administrativa, incluso deshabilitada. No adopta inventarios manuales ni reasocia ofertas. La disponibilidad pertenece a la variante seleccionada, independientemente del stock global.
+- EF conserva la versión leída para la actualización optimista y el índice único protege la pareja. Un conflicto no se resuelve sobrescribiendo ni reintentando. Las comprobaciones deterministas simulan fallos y distinguen estado seguido de estado guardado; **no prueban atomicidad ni carreras reales de SQL Server** (pendiente T6). No se aplican migraciones con este flujo de comprobación.
+
+Todavía no hay interfaz de guardado en la pantalla de vista previa, importación programada ni creación automática de productos.
 
 ## Contribución
 
