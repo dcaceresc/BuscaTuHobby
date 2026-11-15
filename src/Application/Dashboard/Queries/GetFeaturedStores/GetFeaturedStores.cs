@@ -21,8 +21,10 @@ public class GetFeaturedStoresHandler(IApplicationDbContext context, IApiRespons
                     StoreName = s.StoreName,
                     StoreIcon = s.StoreIcon,
                     StoreWebSite = s.StoreWebSite,
-                    ProductCount = s.Inventories.Count(i => i.IsActive && i.Product.IsActive),
-                    OfferCount = s.Inventories.Count(i => i.IsActive && i.Product.IsActive && i.DiscountPercentage > 0)
+                    ProductCount = s.Inventories.Count(i => i.IsActive && i.Store.IsActive &&
+                        i.Product.IsActive && i.Availability != false),
+                    OfferCount = s.Inventories.Count(i => i.IsActive && i.Store.IsActive &&
+                        i.Product.IsActive && i.Availability != false && i.DiscountPercentage > 0)
                 })
                 .ToListAsync(cancellationToken);
 

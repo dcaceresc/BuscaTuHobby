@@ -2,10 +2,10 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
-import { Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { IrionPreviewComponent } from './irion-preview.component';
-import { IrionProductPreviewService, NotificationService } from '@app/core/services';
+import { IrionProductPreviewService, NotificationService, ProductService, StoreService } from '@app/core/services';
 import { ApiResponse, IrionProductPreviewDto } from '@app/core/models';
 import { routes } from '../maintainer.routes';
 import { AdministrationMenuComponent } from '@app/shared/layouts/main-layout/components/header/administration-menu/administration-menu.component';
@@ -35,7 +35,10 @@ describe('IrionPreviewComponent', () => {
       imports: [IrionPreviewComponent],
       providers: [
         { provide: IrionProductPreviewService, useValue: { preview } },
-        { provide: NotificationService, useValue: { showError } }
+        { provide: NotificationService, useValue: { showError } },
+        provideHttpClient(),
+        { provide: ProductService, useValue: { getProducts: () => of({ success: true, data: [] }) } },
+        { provide: StoreService, useValue: { getStores: () => of({ success: true, data: [] }) } }
       ]
     }).compileComponents();
   });

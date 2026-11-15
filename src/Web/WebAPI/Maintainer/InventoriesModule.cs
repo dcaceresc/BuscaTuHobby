@@ -1,9 +1,14 @@
 ﻿
 using Application.Maintainer.Inventories.Commands.CreateInventory;
+using Application.Maintainer.Inventories.Commands.ConfirmIrionOffer;
+using Application.Maintainer.Inventories.Commands.ConfirmNewIrionProductOffer;
 using Application.Maintainer.Inventories.Commands.ToggleInventory;
 using Application.Maintainer.Inventories.Commands.UpdateInventory;
 using Application.Maintainer.Inventories.Queries.GetInventories;
 using Application.Maintainer.Inventories.Queries.GetInventoryById;
+using Application.Maintainer.Inventories.Queries.InspectIrionOffer;
+using Application.Maintainer.Inventories.Queries.GetIrionNewProductOptions;
+using Application.Maintainer.Inventories.Queries.InspectNewIrionProductOffer;
 using Domain.Common;
 
 namespace WebAPI.Maintainer;
@@ -18,6 +23,11 @@ public class InventoriesModule : ICarterModule
         groups.MapGet("", GetInventories);
         groups.MapGet("{id:guid}", GetInventoryById);
         groups.MapPost("", CreateInventory);
+        groups.MapGet("irion/new-product/options", GetIrionNewProductOptions);
+        groups.MapPost("irion/new-product/inspect", InspectNewIrionProductOffer);
+        groups.MapPost("irion/new-product/confirm", ConfirmNewIrionProductOffer);
+        groups.MapPost("irion/inspect", InspectIrionOffer);
+        groups.MapPost("irion/confirm", ConfirmIrionOffer);
         groups.MapPut("{id:guid}", UpdateInventory);
         groups.MapDelete("{id:guid}", ToggleInventory);
 
@@ -28,6 +38,21 @@ public class InventoriesModule : ICarterModule
     private static async Task<IResult> GetInventoryById(IRequestDispatcher sender, Guid id) => Results.Ok(await sender.Send(new GetInventoryById(id)));
 
     private static async Task<IResult> CreateInventory(IRequestDispatcher sender, CreateInventory command) => Results.Ok(await sender.Send(command));
+
+    private static async Task<IResult> InspectIrionOffer(IRequestDispatcher sender, InspectIrionOffer query, CancellationToken cancellationToken) =>
+        Results.Ok(await sender.Send(query, cancellationToken));
+
+    private static async Task<IResult> GetIrionNewProductOptions(IRequestDispatcher sender, CancellationToken cancellationToken) =>
+        Results.Ok(await sender.Send(new GetIrionNewProductOptions(), cancellationToken));
+
+    private static async Task<IResult> InspectNewIrionProductOffer(IRequestDispatcher sender, InspectNewIrionProductOffer query, CancellationToken cancellationToken) =>
+        Results.Ok(await sender.Send(query, cancellationToken));
+
+    private static async Task<IResult> ConfirmNewIrionProductOffer(IRequestDispatcher sender, ConfirmNewIrionProductOffer command, CancellationToken cancellationToken) =>
+        Results.Ok(await sender.Send(command, cancellationToken));
+
+    private static async Task<IResult> ConfirmIrionOffer(IRequestDispatcher sender, ConfirmIrionOffer command, CancellationToken cancellationToken) =>
+        Results.Ok(await sender.Send(command, cancellationToken));
 
     private static async Task<IResult> UpdateInventory(IRequestDispatcher sender, Guid id, UpdateInventory command)
     {

@@ -22,9 +22,11 @@ public class GetMostSearchedProductsHandler(IApplicationDbContext context, IApiR
                     ProductName = p.ProductName,
                     ProductDescription = p.ProductDescription,
                     ProductViewCount = p.ProductViewCount,
-                    StoreCount = p.Inventories.Count(i => i.IsActive),
+                    StoreCount = p.Inventories
+                        .Where(i => i.IsActive && i.Store.IsActive && i.Product.IsActive && i.Availability != false)
+                        .Select(i => i.StoreId).Distinct().Count(),
                     StoreNames = p.Inventories
-                        .Where(i => i.IsActive)
+                        .Where(i => i.IsActive && i.Store.IsActive && i.Product.IsActive && i.Availability != false)
                         .Select(i => i.Store.StoreName)
                         .Distinct()
                         .ToList()

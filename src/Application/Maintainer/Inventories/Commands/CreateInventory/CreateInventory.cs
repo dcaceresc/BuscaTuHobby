@@ -11,6 +11,9 @@ public class CreateInventoryHandler(IApplicationDbContext context, IApiResponseS
     {
         try
         {
+            if (await _context.Inventories.AnyAsync(i => i.StoreId == request.StoreId && i.ProductId == request.ProductId, cancellationToken))
+                return _responseService.Fail("No se pudo crear el inventario");
+
             var inventory = Inventory.Create(request.ProductId, request.StoreId, request.Price, request.OriginalPrice, request.DiscountPercentage);
 
             _context.Inventories.Add(inventory);

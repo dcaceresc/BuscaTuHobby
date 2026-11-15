@@ -120,6 +120,10 @@ namespace Infrastructure.Data
                 .IsRequired()
                 .HasDefaultValue(0);
 
+                entity.Property(e => e.SourceUrl).HasMaxLength(2048);
+                entity.Property(e => e.ExternalVariantId).HasMaxLength(128);
+                entity.Property(e => e.RowVersion).IsRowVersion();
+                entity.HasIndex(e => new { e.StoreId, e.ProductId }).IsUnique();
             });
 
             builder.Entity<Manufacturer>(entity =>

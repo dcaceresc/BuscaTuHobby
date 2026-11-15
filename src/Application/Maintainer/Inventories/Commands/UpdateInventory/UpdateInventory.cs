@@ -23,6 +23,10 @@ public class UpdateInventoryHandler(IApplicationDbContext context, IApiResponseS
 
             Guard.Against.NotFound(inventory, $"No existe inventario con Id {request.InventoryId}");
 
+            if (await _context.Inventories.AnyAsync(i => i.InventoryId != request.InventoryId &&
+                i.StoreId == request.StoreId && i.ProductId == request.ProductId, cancellationToken))
+                return _responseService.Fail("No se pudo actualizar el inventario");
+
             inventory.Update(request.ProductId, request.StoreId, request.Price, request.OriginalPrice, request.DiscountPercentage);
 
             await _context.SaveChangesAsync(cancellationToken);

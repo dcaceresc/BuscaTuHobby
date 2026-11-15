@@ -13,6 +13,8 @@
 
 ## Configuración del Proyecto
 
+> **Antes de arrancar la API:** en Development, [Program.cs](src/Web/WebAPI/Program.cs) llama a `InitialiseDatabaseAsync`; [ApplicationDbContextInitialiser.cs](src/Infrastructure/Data/ApplicationDbContextInitialiser.cs) ejecuta `Database.MigrateAsync()` y después semillas con escrituras. Arrancar puede aplicar automáticamente migraciones pendientes, incluida `20260720000000_IrionOffer`, aunque solo quieras visualizar. Esa migración está preparada, no aplicada en esta entrega. No arranques contra una base real: primero una persona debe revisar y autorizar un destino SQL Server aislado, su respaldo, los pares duplicados y la migración. No hay deduplicación automática. Consulta la [guía operativa y comprobaciones sin API ni base de datos](docs/irion-offer-import.md).
+
 Asegúrate de tener instaladas las siguientes herramientas antes de comenzar:
 
 - .NET Core 10: https://dotnet.microsoft.com/download
@@ -31,11 +33,13 @@ Asegúrate de tener instaladas las siguientes herramientas antes de comenzar:
 
 ## Vista previa de productos de Irion
 
+[Guía de importación manual de ofertas](docs/irion-offer-import.md): flujo existente/nuevo, seguridad de arranque y comprobaciones deterministas. T1–T4 aceptados dentro de su alcance local; la extensión de producto nuevo de T2 y T4 tiene revisión independiente de código aprobada, sin repetir pruebas en esas revisiones. La integración actual T5 pasa: **980** aserciones de ofertas, **112** del extractor, **62** pruebas frontend en **5** archivos y ambos builds. El resultado enfocado previo de UI fue **56** pruebas; no se repitió por separado en T5. T6 SQL Server sigue bloqueado: no es una entrega completamente verificada ni lista para producción.
+
 Desde **Administración → Vista previa de Irion** (`/maintainer/irion-preview`), pega la URL de un producto de Irion y selecciona **Visualizar producto**. Disponible para `Administrator` y `SuperAdmin`.
 
 La pantalla muestra nombre, marca, imágenes, etiquetas, disponibilidad y precios por variante. La descripción original se muestra como texto, sin ejecutar HTML. Los datos ausentes se indican explícitamente y los errores permiten volver a consultar sin perder la URL.
 
-La consulta extrae **un producto por URL**, sin crear productos ni modificar la base de datos. El navegador muestra las imágenes desde sus direcciones públicas; el backend no las descarga ni almacena. No incluye rastreo del catálogo ni importación.
+La consulta extrae **un producto por URL**, sin crear productos ni modificar la base de datos. El navegador muestra las imágenes desde sus direcciones públicas; el backend no las descarga ni almacena. Guardar una oferta es una acción separada y explícita; no incluye rastreo del catálogo.
 
 Con la API en ejecución y un token de `Administrator` o `SuperAdmin`:
 
@@ -59,7 +63,7 @@ La respuesta usa `ApiResponse`: comprueba `success` antes de leer `data`. Incluy
 Pruebas del frontend (desde `src/Web/WebUI/`):
 
 ```bash
-pnpm exec ng test --watch=false --include='**/irion-preview.component.spec.ts'
+pnpm exec ng test --watch=false --include='**/irion-preview/*.spec.ts'
 pnpm test:run
 pnpm build
 ```
@@ -67,8 +71,134 @@ pnpm build
 Pruebas deterministas del backend, sin red ni base de datos (ejecutable de comprobación, no suite de `dotnet test`):
 
 ```bash
-dotnet run --project tests/IrionProductExtractor.Checks/IrionProductExtractor.Checks.csproj
+dotnet run --project tests/IrionProductExtractor.Checks/IrionProductExtractor.Checks.csproj --no-restore
 ```
+
+## Inspección de una oferta de Irion (solo lectura)
+
+`POST /api/maintainer/inventories/irion/inspect`, disponible para `Administrator` y `SuperAdmin`, comprueba el producto, la tienda y la vinculación seleccionados. **No guarda datos ni consulta Irion.**
+
+Cuerpo JSON (sustituye los UUID por un producto y una tienda activos existentes):
+
+```json
+{
+  "productId": "11111111-1111-1111-1111-111111111111",
+  "storeId": "22222222-2222-2222-2222-222222222222",
+  "sourceUrl": "https://irion.cl/products/model-1",
+  "externalVariantId": "123"
+}
+```
+
+Usa la URL canónica devuelta por la vista previa y elige explícitamente una variante; no envíes precios. La URL debe ser HTTPS, host exacto `irion.cl`, ruta `/products/{handle}` ASCII con guiones simples, sin parámetros, fragmentos, puerto explícito ni codificación. El identificador de variante es una cadena decimal positiva dentro de Int64. La tienda se valida por su sitio web (URL raíz HTTPS de `irion.cl`, puerto predeterminado), no por su nombre.
+
+La respuesta mantiene HTTP 200 y `ApiResponse`: valida `success` antes de leer `data`. Los errores devuelven `data: null` y un mensaje seguro en español. En una inspección válida, `data.outcome` tiene un valor estable:
+
+| Resultado | Significado |
+|-----------|-------------|
+| `Create` | No existe la pareja producto/tienda; `inventoryId`, `rowVersion` e `isActive` son `null`. |
+| `Update` | Coinciden URL y variante; incluye `inventoryId`, `rowVersion` en base64 e `isActive`. Si está deshabilitado, seguirá deshabilitado. |
+| `Conflict` | Existe una oferta antigua sin vinculación o una vinculación diferente; incluye ID, versión y estado actuales. No adopta ni reemplaza la oferta. |
+
+El DTO también devuelve `productId`, `storeId`, `sourceUrl`, `externalVariantId` y un `message` explicativo opcional; no interpretes ese mensaje para decidir el resultado. Inspeccionar o cancelar no escribe; la confirmación vuelve a consultar y validar la oferta antes de guardar. No hay importación automática ni cambios de catálogo.
+
+Comprobaciones deterministas (sin SQL Server ni HTTP):
+
+```sh
+dotnet run --project tests/IrionOfferImport.Checks/IrionOfferImport.Checks.csproj --no-restore
+```
+
+## Crear un producto nuevo y guardar su oferta de Irion
+
+La pantalla permite elegir **Usar producto existente** (modo inicial, sin cambios) o **Crear producto nuevo**. Solo el título se propone como texto editable, no como criterio para adoptar otro producto. Completa fabricante y franquicia activos, serie opcional activa de esa franquicia, categorías activas, fecha de lanzamiento, base **Sí/No**, edad, tamaño y descripción. No se inventan fecha de hoy, base ni IDs de referencia. Selecciona tienda y variante, pulsa **Revisar vinculación** y luego **Crear producto y guardar oferta**: una sola llamada de confirmación conjunta. Las imágenes son opcionales, sin descarga automática ni cambios al formulario manual anterior. El UUID del borrador lógico se conserva durante ediciones, cambios de modo, respuestas inciertas y revisión/reintentos manuales; solo cancelar descarta el borrador. Para reconocer una repetición deben coincidir todos los metadatos, categorías e identidad de oferta. El nombre único `ProductName` sigue siendo autoridad: si está ocupado, usa un producto existente o revisa el nombre, nunca se adopta por título. Consulta la [guía de pantalla y recuperación](docs/irion-offer-import.md#flujo-en-la-pantalla).
+
+- `GET /api/maintainer/inventories/irion/new-product/options`: mismos roles administrativos; devuelve `manufacturers`, `franchises`, `categories` como `{id,label}` y `series` como `{id,label,franchiseId}`. Solo referencias activas; excluye series de franquicias inactivas.
+- `POST /api/maintainer/inventories/irion/new-product/inspect`: cuerpo `{product,storeId,sourceUrl,externalVariantId}`. `product` contiene `newProductId` (UUID estable generado por el cliente para el borrador), `productName`, `manufacturerId`, `franchiseId`, `serieId` opcional, `productHasBase` explícito (`false` es válido), `productTargetAge`, `productSize`, `productDescription`, `productReleaseDate` (fecha ISO obligatoria, no mínima) y `categoryIds` (lista no vacía, sin UUID vacíos ni duplicados). Nombre máximo 200; edad y tamaño máximo 100. No se inventan fecha, base ni referencias.
+
+No exige ni descarga imágenes; el formulario manual existente no cambia. Valida referencias activas, serie/franquicia, tienda raíz Irion, URL canónica y variante positiva Int64. Devuelve el mismo DTO de inspección `Create`/`Update`/`Conflict`, siempre sin guardar ni consultar Irion. `Update` exige que el ID estable ya tenga exactamente los mismos campos y conjunto de categorías y la misma oferta tienda/URL/variante; imágenes posteriores no se comparan. Un ID ocupado, producto inactivo o nombre de otro ID produce `Conflict`, sin adopción ni sobrescritura. La igualdad de nombre usa la regla existente; la colación y unicidad reales de SQL Server siguen pendientes de T6. Cancelar o inspeccionar nunca crea un producto huérfano.
+
+### Confirmar producto nuevo y oferta (API administrativa)
+
+`POST /api/maintainer/inventories/irion/new-product/confirm` requiere `Administrator` o `SuperAdmin`. Envía los datos humanos completos, la variante elegida explícitamente y los tokens de la inspección nueva; conserva `newProductId` durante el borrador y sus reintentos:
+
+```json
+{
+  "product": {
+    "newProductId":"11111111-1111-1111-1111-111111111111",
+    "productName":"Nombre manual",
+    "manufacturerId":"33333333-3333-3333-3333-333333333333",
+    "franchiseId":"44444444-4444-4444-4444-444444444444",
+    "serieId":null,
+    "productHasBase":false,
+    "productTargetAge":"15+",
+    "productSize":"20 cm",
+    "productDescription":"Descripción completada por la persona",
+    "productReleaseDate":"2020-01-02",
+    "categoryIds":["55555555-5555-5555-5555-555555555555"]
+  },
+  "storeId":"22222222-2222-2222-2222-222222222222",
+  "sourceUrl":"https://irion.cl/products/model-1",
+  "externalVariantId":"123",
+  "expectedInventoryId":null,
+  "expectedRowVersion":null,
+  "expectedOffer":{"currency":"CLP","price":199,"originalPrice":200,"available":false}
+}
+```
+
+La respuesta HTTP 200 usa `ApiResponse` y el mismo DTO de confirmación documentado abajo: `Saved`/`AlreadySaved` con `success:true`; `RefreshRequired`/`Conflict` con `success:false` y datos tipados. `data.inventoryId` identifica la oferta; `data.inspection.productId` identifica el producto estable. Los errores genéricos tienen `data:null` y `No se pudo confirmar la oferta de Irion.`; validaciones y 429 conservan sus mensajes específicos. La cancelación se propaga. No interpretes mensajes para decidir el resultado.
+
+Revalida catálogo, campos y vinculación antes y después de una única extracción segura. Una instantánea/URL/variante cambiada exige nueva confirmación sin entidades preparadas ni guardado. Solo acepta CLP entero positivo dentro de Int32; referencia ausente se guarda como cero, y descuento/UTC/disponibilidad de la variante se calculan en servidor. Un ID ocupado exige todos los campos, categorías y la misma vinculación; nunca adopta productos por título ni modifica sus metadatos/categorías. Una repetición idéntica devuelve `AlreadySaved` sin escribir; una actualización requiere ID y versión actual de ocho bytes en base64 canónico y nunca reactiva inventario.
+
+La creación usa `Product.CreateWithProvidedId`, `AssignCategory` e `Inventory.CreateImportedOffer`, prepara los tres grupos y llama **una sola vez** a `SaveChangesAsync`. La transacción relacional normal de EF es la frontera atómica prevista, sin encadenar `CreateProduct` ni guardados parciales. Fallos de persistencia devuelven `Conflict` sin reintento automático. No exige imágenes ni descarga archivos/HTML; el flujo manual no cambia. Las pruebas falsas distinguen estado seguido de estado persistido: **no prueban atomicidad ni carreras SQL Server**; T6 sigue bloqueado.
+
+## Confirmar una oferta de Irion
+
+`POST /api/maintainer/inventories/irion/confirm` requiere el mismo rol administrativo. Primero visualiza el producto, selecciona explícitamente una variante e inspecciona la pareja producto/tienda. Confirma únicamente el resumen que acabas de revisar:
+
+```bash
+curl -X POST 'https://localhost:7091/api/maintainer/inventories/irion/confirm' \
+  -H "Authorization: Bearer $TOKEN" \
+  -H 'Content-Type: application/json' \
+  --data '{
+    "productId":"11111111-1111-1111-1111-111111111111",
+    "storeId":"22222222-2222-2222-2222-222222222222",
+    "sourceUrl":"https://irion.cl/products/model-1",
+    "externalVariantId":"123",
+    "expectedInventoryId":null,
+    "expectedRowVersion":null,
+    "expectedOffer":{"currency":"CLP","price":199,"originalPrice":200,"available":false}
+  }'
+```
+
+Para crear, ambos campos `expectedInventoryId` y `expectedRowVersion` son `null`. Para actualizar, copia el ID y la versión de la inspección `Update`; la versión debe ser base64 canónico de **8 bytes**. No confirmes una inspección `Conflict`. `expectedOffer` es la instantánea de la variante seleccionada, no el precio global ni la primera variante; conserva `originalPrice: null` cuando falte.
+
+Las respuestas de aplicación mantienen HTTP 200. **Lee `data.outcome` también cuando `success` sea `false`**; nunca interpretes mensajes para decidir el flujo:
+
+| `data.outcome` | `success` | Acción |
+|----------------|-----------|--------|
+| `Saved` | `true` | Guardado; `inventoryId` identifica la oferta. |
+| `AlreadySaved` | `true` | La misma identidad y valores actuales del servidor ya están guardados; devuelve el ID sin otra escritura ni modificar la fecha. También admite repetir una creación ya guardada. |
+| `RefreshRequired` | `false` | La variante desapareció o cambió la instantánea; muestra `freshPreview` y la nueva `inspection`, vuelve a seleccionar/revisar y pide **otra confirmación explícita**. No se guardó. |
+| `Conflict` | `false` | Cambió el inventario, su versión o vinculación, o falló la persistencia por concurrencia/duplicado; vuelve a inspeccionar. No reintentes automáticamente. |
+
+Los errores de selección, extracción o precio devuelven `success: false`, `data: null` y un mensaje seguro en español. Los errores de selección conservan los mensajes de inspección; los errores de URL y HTTP 429 del extractor conservan los mensajes específicos documentados arriba. Los demás fallos devuelven `No se pudo confirmar la oferta de Irion.` La cancelación del cliente se propaga; la autorización conserva sus respuestas HTTP habituales.
+
+Seguridad del guardado:
+
+- El servidor valida producto y tienda activos e identidad antes y después de **una sola extracción segura**. No hay reintentos, consultas alternativas ni escrituras con precios del navegador. Compara URL canónica, variante, moneda, precio, precio original y disponibilidad exactos contra la consulta actual.
+- Solo acepta CLP enteros positivos hasta Int32; el original debe ser entero en ese rango, cero/ausente o al menos el precio. Original ausente se guarda como `0`; el descuento se calcula en servidor, redondeando mitades hacia fuera de cero. La fecha de observación es UTC del servidor.
+- Actualiza solo la misma vinculación y conserva ID y activación administrativa, incluso deshabilitada. No adopta inventarios manuales ni reasocia ofertas. La disponibilidad pertenece a la variante seleccionada, independientemente del stock global.
+- EF conserva la versión leída para la actualización optimista y el índice único protege la pareja. Un conflicto no se resuelve sobrescribiendo ni reintentando. Las comprobaciones deterministas simulan fallos y distinguen estado seguido de estado guardado; **no prueban atomicidad ni carreras reales de SQL Server** (pendiente T6). No se aplican migraciones con este flujo de comprobación.
+
+### Guardar desde la pantalla de administración
+
+1. Pulsa **Visualizar producto**. Esta acción sigue siendo de solo lectura.
+2. Selecciona un producto activo existente o elige **Crear producto nuevo** y completa los datos obligatorios. Selecciona una tienda activa con URL raíz de Irion y una variante explícita, incluso si solo hay una. No se crean tiendas ni referencias automáticamente.
+3. Pulsa **Revisar vinculación**: verás si se creará o actualizará la oferta, o un conflicto que impide guardarla. Un inventario deshabilitado permanecerá deshabilitado.
+4. Revisa los precios y disponibilidad de la variante y pulsa **Guardar oferta de Irion**, o **Crear producto y guardar oferta** para el producto nuevo. No se guardan precios editados manualmente ni se repiten envíos automáticamente.
+
+Cambiar la selección o visualizar otra vez invalida la revisión. **Cancelar borrador** limpia la selección sin guardar; no revierte operaciones ya confirmadas. Durante una consulta, revisión o guardado los controles incompatibles quedan bloqueados. Si Irion cambia los datos, se muestra la vista previa actualizada y debes seleccionar, revisar y confirmar de nuevo. Ante errores o conflictos se conserva la URL y la selección válida para revisión manual, sin reintentos automáticos.
+
+**Requisito operativo:** antes de cualquier aplicación de la migración, una persona debe revisar y autorizar un SQL Server aislado, respaldo y revisión de duplicados. La interfaz no aplica migraciones, pero **el arranque de la API en Development sí puede hacerlo automáticamente**, como se advierte arriba. La prueba real de migración/rollback, conservación de datos y duplicados, unicidad de ID/nombre, rowversion, concurrencia de producto nuevo y persistencia sin huérfanos sigue bloqueada (T6). Las revisiones independientes actuales de T2/T4 están aprobadas para el alcance local de código, pero ni esas revisiones ni las pruebas de pantalla sustituyen la validación relacional. No hay importación programada ni creación automática de productos.
 
 ## Contribución
 

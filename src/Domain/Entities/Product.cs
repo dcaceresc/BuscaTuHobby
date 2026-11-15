@@ -47,6 +47,14 @@ public class Product : AuditableEntity
         return new Product(productName, manufacturerId, franchiseId, serieId, productHasBase, productTargetAge, productSize, productDescription, productReleaseDate);
     }
 
+    public static Product CreateWithProvidedId(Guid productId, string productName, Guid manufacturerId, Guid franchiseId, Guid? serieId, bool productHasBase, string productTargetAge, string productSize, string productDescription, DateOnly productReleaseDate)
+    {
+        if (productId == Guid.Empty) throw new ArgumentException("El identificador del producto es obligatorio.", nameof(productId));
+        var product = Create(productName, manufacturerId, franchiseId, serieId, productHasBase, productTargetAge, productSize, productDescription, productReleaseDate);
+        product.ProductId = productId;
+        return product;
+    }
+
     public void Update(string productName, Guid manufacturerId, Guid franchiseId, Guid? serieId, bool productHasBase, string productTargetAge, string productSize, string productDescription, DateOnly productReleaseDate)
     {
         ProductName = productName;
