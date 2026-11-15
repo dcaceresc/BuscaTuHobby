@@ -25,6 +25,7 @@ export class AdministrationMenuComponent {
     { label: 'Menus', link: '/maintainer/menus', icon : 'bi bi-list' },
     { label: 'Franquicias', link: '/maintainer/franchises', icon : 'bi bi-building' },
     { label: 'Productos', link: '/maintainer/products', icon : 'bi bi-box-seam' },
+    { label: 'Vista previa de Irion', link: '/maintainer/irion-preview', icon: 'bi bi-eye' },
     { label: 'Fabricantes', link: '/maintainer/manufacturers', icon : 'bi bi-tools' },
     { label: 'Inventario', link: '/maintainer/inventories', icon : 'bi bi-box-seam' },
     { label: 'Regiones', link: '/maintainer/regions', icon : 'bi bi-geo-alt' },

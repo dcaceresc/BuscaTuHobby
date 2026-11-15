@@ -5,6 +5,7 @@ export * from './maintainer/franchise.model';
 export * from './maintainer/inventory.model';
 export * from './maintainer/manufacturer.model';
 export * from './maintainer/product.model';
+export * from './maintainer/irion-product-preview.model';
 export * from './maintainer/region.model';
 export * from './maintainer/serie.model';
 export * from './maintainer/store.model';

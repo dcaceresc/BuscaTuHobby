@@ -4,6 +4,7 @@ using Application.Maintainer.Products.Commands.ToggleProduct;
 using Application.Maintainer.Products.Commands.UpdateProduct;
 using Application.Maintainer.Products.Queries.GetProductById;
 using Application.Maintainer.Products.Queries.GetProducts;
+using Application.Maintainer.Products.Queries.PreviewIrionProduct;
 using Domain.Common;
 
 namespace WebAPI.Maintainer;
@@ -18,12 +19,17 @@ public class ProductsModule : ICarterModule
         group.MapGet("", GetProducts);
         group.MapGet("{id:guid}", GetProductById);
         group.MapPost("", CreateProduct);
+        group.MapPost("preview/irion", PreviewIrionProduct);
         group.MapPost("{id:guid}/images", CreateProductImages);
         group.MapPut("{id:guid}", UpdateProduct);
         group.MapDelete("{id:guid}", ToggleProduct);
 
     }
 
+
+    private static async Task<IResult> PreviewIrionProduct(
+        IRequestDispatcher sender, PreviewIrionProduct query, CancellationToken cancellationToken) =>
+        Results.Ok(await sender.Send(query, cancellationToken));
 
     private static async Task<IResult> GetProducts(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetProducts()));
 

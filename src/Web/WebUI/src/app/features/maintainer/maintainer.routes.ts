@@ -8,6 +8,7 @@ export const routes : Routes =[
     { path: 'series', loadChildren: () => import('./series/series.routes').then(m => m.routes) },
     {path: 'stores', loadChildren: () => import('./stores/stores.routes').then(m => m.routes)},
     {path: 'products', loadChildren: () => import('./products/products.routes').then(m => m.routes)},
+    {path: 'irion-preview', loadComponent: () => import('./irion-preview/irion-preview.component').then(m => m.IrionPreviewComponent)},
     {path: 'configurations', loadChildren: () => import('./configurations/configurations.routes').then(m => m.routes)},
     {path: 'inventories', loadChildren: () => import('./inventories/inventories.routes').then(m => m.routes)},
     {path: 'regions', loadChildren: () => import('./regions/regions.routes').then(m => m.routes)},

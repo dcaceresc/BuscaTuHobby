@@ -32,6 +32,13 @@ public static class ConfigureServices
         services.AddScoped<IApiResponseService, ApiResponseService>();
         services.AddScoped<IUtilityService, UtilityService>();
         services.AddScoped<IEmailService, EmailService>();
+        services.AddHttpClient<IIrionProductExtractor, IrionProductExtractor>(client =>
+            client.Timeout = TimeSpan.FromSeconds(15))
+            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+            {
+                AllowAutoRedirect = false,
+                UseCookies = false
+            });
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>

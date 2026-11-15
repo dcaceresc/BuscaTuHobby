@@ -1,0 +1,19 @@
+:host {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.product-image {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+
+.description {
+  white-space: pre-wrap;
+  font: inherit;
+}
+
+input, button {
+  min-height: 44px;
+}
