@@ -13,6 +13,8 @@
 
 ## Configuración del Proyecto
 
+> **Antes de arrancar la API:** en Development, [Program.cs](src/Web/WebAPI/Program.cs) llama a `InitialiseDatabaseAsync`; [ApplicationDbContextInitialiser.cs](src/Infrastructure/Data/ApplicationDbContextInitialiser.cs) ejecuta `Database.MigrateAsync()` y después semillas con escrituras. Arrancar puede aplicar automáticamente migraciones pendientes, incluida `20260720000000_IrionOffer`, aunque solo quieras visualizar. Esa migración está preparada, no aplicada en esta entrega. No arranques contra una base real: primero una persona debe revisar y autorizar un destino SQL Server aislado, su respaldo, los pares duplicados y la migración. No hay deduplicación automática. Consulta la [guía operativa y comprobaciones sin API ni base de datos](docs/irion-offer-import.md).
+
 Asegúrate de tener instaladas las siguientes herramientas antes de comenzar:
 
 - .NET Core 10: https://dotnet.microsoft.com/download
@@ -31,11 +33,13 @@ Asegúrate de tener instaladas las siguientes herramientas antes de comenzar:
 
 ## Vista previa de productos de Irion
 
+[Guía de importación manual de ofertas](docs/irion-offer-import.md): flujo de pantalla, seguridad de arranque y comprobaciones deterministas. T1–T3 aceptados localmente; T4 tiene pruebas locales aprobadas, pero revisión independiente pendiente por cuota; T6 SQL Server bloqueado. No es una entrega completamente verificada ni lista para producción.
+
 Desde **Administración → Vista previa de Irion** (`/maintainer/irion-preview`), pega la URL de un producto de Irion y selecciona **Visualizar producto**. Disponible para `Administrator` y `SuperAdmin`.
 
 La pantalla muestra nombre, marca, imágenes, etiquetas, disponibilidad y precios por variante. La descripción original se muestra como texto, sin ejecutar HTML. Los datos ausentes se indican explícitamente y los errores permiten volver a consultar sin perder la URL.
 
-La consulta extrae **un producto por URL**, sin crear productos ni modificar la base de datos. El navegador muestra las imágenes desde sus direcciones públicas; el backend no las descarga ni almacena. No incluye rastreo del catálogo ni importación.
+La consulta extrae **un producto por URL**, sin crear productos ni modificar la base de datos. El navegador muestra las imágenes desde sus direcciones públicas; el backend no las descarga ni almacena. Guardar una oferta es una acción separada y explícita; no incluye rastreo del catálogo.
 
 Con la API en ejecución y un token de `Administrator` o `SuperAdmin`:
 
@@ -59,7 +63,7 @@ La respuesta usa `ApiResponse`: comprueba `success` antes de leer `data`. Incluy
 Pruebas del frontend (desde `src/Web/WebUI/`):
 
 ```bash
-pnpm exec ng test --watch=false --include='**/irion-preview.component.spec.ts'
+pnpm exec ng test --watch=false --include='**/irion-preview/*.spec.ts'
 pnpm test:run
 pnpm build
 ```
@@ -67,7 +71,7 @@ pnpm build
 Pruebas deterministas del backend, sin red ni base de datos (ejecutable de comprobación, no suite de `dotnet test`):
 
 ```bash
-dotnet run --project tests/IrionProductExtractor.Checks/IrionProductExtractor.Checks.csproj
+dotnet run --project tests/IrionProductExtractor.Checks/IrionProductExtractor.Checks.csproj --no-restore
 ```
 
 ## Inspección de una oferta de Irion (solo lectura)
@@ -142,7 +146,16 @@ Seguridad del guardado:
 - Actualiza solo la misma vinculación y conserva ID y activación administrativa, incluso deshabilitada. No adopta inventarios manuales ni reasocia ofertas. La disponibilidad pertenece a la variante seleccionada, independientemente del stock global.
 - EF conserva la versión leída para la actualización optimista y el índice único protege la pareja. Un conflicto no se resuelve sobrescribiendo ni reintentando. Las comprobaciones deterministas simulan fallos y distinguen estado seguido de estado guardado; **no prueban atomicidad ni carreras reales de SQL Server** (pendiente T6). No se aplican migraciones con este flujo de comprobación.
 
-Todavía no hay interfaz de guardado en la pantalla de vista previa, importación programada ni creación automática de productos.
+### Guardar desde la pantalla de administración
+
+1. Pulsa **Visualizar producto**. Esta acción sigue siendo de solo lectura.
+2. Selecciona un producto activo existente, una tienda activa con URL raíz de Irion y una variante explícita, incluso si solo hay una. No se crean productos ni tiendas.
+3. Pulsa **Revisar vinculación**: verás si se creará o actualizará la oferta, o un conflicto que impide guardarla. Un inventario deshabilitado permanecerá deshabilitado.
+4. Revisa los precios y disponibilidad de la variante y pulsa **Guardar oferta de Irion**. No se guardan precios editados manualmente ni se repiten envíos automáticamente.
+
+Cambiar la selección o visualizar otra vez invalida la revisión. **Cancelar borrador** limpia la selección sin guardar; no revierte operaciones ya confirmadas. Durante una consulta, revisión o guardado los controles incompatibles quedan bloqueados. Si Irion cambia los datos, se muestra la vista previa actualizada y debes seleccionar, revisar y confirmar de nuevo. Ante errores o conflictos se conserva la URL y la selección válida para revisión manual, sin reintentos automáticos.
+
+**Requisito operativo:** antes de cualquier aplicación de la migración, una persona debe revisar y autorizar un SQL Server aislado, respaldo y revisión de duplicados. La interfaz no aplica migraciones, pero **el arranque de la API en Development sí puede hacerlo automáticamente**, como se advierte arriba. La prueba real de migración y concurrencia SQL Server sigue bloqueada (T6); las pruebas de pantalla no sustituyen la revisión independiente pendiente de T4. No hay importación programada ni creación automática de productos.
 
 ## Contribución
 
