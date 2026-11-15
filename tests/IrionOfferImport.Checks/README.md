@@ -1,18 +1,18 @@
-# Irion inventory and dashboard checks (T1/T2/T3)
+# Irion existing/new-product import, inventory and dashboard checks
 
-Run from the repository root:
-
-```sh
-dotnet run --project tests/IrionOfferImport.Checks/IrionOfferImport.Checks.csproj --no-restore
-```
-
-For a new runner assets file, use the existing package cache without configured package sources:
+Run from the repository root with installed dependencies and the normal HOME; do not provision a clean HOME or install/restore missing dependencies for T5:
 
 ```sh
-dotnet run --project tests/IrionOfferImport.Checks/IrionOfferImport.Checks.csproj -p:RestoreSources= -p:NuGetAudit=false
+timeout 180s dotnet run --project tests/IrionOfferImport.Checks/IrionOfferImport.Checks.csproj --no-restore
 ```
 
-This dependency-free console suite checks public inventory behavior, manual create/update handlers using async query fakes, EF SQL Server model metadata, migration operations, generated Up/Down SQL and snapshot/target consistency. It never opens a connection or performs HTTP requests. Fake save counters are not persistence or concurrency proof. SQL Server migration application, rollback, duplicate preservation and simultaneous writes still require T6's isolated relational fixture.
+If assets or dependencies are unavailable, stop and report the limitation. T5 runs this command once, not a production/test correction cycle or permission to retry failures.
+
+This dependency-free console suite checks public inventory behavior, manual create/update handlers using async query fakes, EF SQL Server model metadata, migration operations, generated Up/Down SQL and snapshot/target consistency. It never opens a connection or performs HTTP requests. Fake save counters are not persistence or concurrency proof. SQL Server migration application/rollback, data and duplicate preservation, real ID/name uniqueness, rowversion, concurrent new-product imports and product/category/inventory persistence without orphans still require T6's accessible, authorized isolated relational fixture. No API startup, migration application, live HTTP or database connection is part of these checks; Development API startup automatically migrates and seeds (see the [operational warning](../../docs/irion-offer-import.md#antes-de-arrancar-el-bootstrap-escribe-en-la-base)).
+
+Current T5 integration evidence: **980** offer assertions, **112** extractor assertions, **62** frontend tests in **5** files and both builds exit 0. Earlier T4 focused evidence is **56** tests in **3** files, not separately rerun in T5. API build: 0 warnings/errors; frontend build: initial bundle 625.68 kB and register SCSS 2.26 kB budget warnings. Full commands and five ignored `t5-new-product-*.log` paths are in the [integration guide](../../docs/irion-offer-import.md#comprobaciones-deterministas-sin-api-ni-sql-server). This passive documentation update changes no source or tests. T2/T4 new-product independent source reviews are accepted without runtime reruns; T5's local milestone does not close T6 or establish production readiness.
+
+The supported UI keeps the existing-product flow and adds explicit **Crear producto nuevo** → **Revisar vinculación** → **Crear producto y guardar oferta**. Only the editable title is prefilled. Active manufacturer/franchise, matching optional series, categories, release date, explicit base choice, age, size and description come from human input, never invented defaults or reference IDs. Images are optional, never automatically downloaded; the old manual image workflow is unchanged. A stable GUID survives uncertain responses and manual reinspection; retries require full metadata/category/offer identity equality, never adoption by name. Existing unique `ProductName` remains authoritative: choose an existing product or review the name on conflict. Confirmation stages Product, ProductCategories and Inventory with one save; fake checks do not prove actual SQL atomicity. There is no automatic save/retry, crawl, new catalog-reference creation or price history.
 
 The migration and snapshot were prepared manually because dotnet-ef was unavailable. Its conventional frozen designer was produced offline from the prepared snapshot:
 
