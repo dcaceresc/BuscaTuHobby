@@ -107,6 +107,17 @@ Comprobaciones deterministas (sin SQL Server ni HTTP):
 dotnet run --project tests/IrionOfferImport.Checks/IrionOfferImport.Checks.csproj --no-restore
 ```
 
+## Preparar un producto nuevo de Irion (solo lectura)
+
+Esta frontera API aún no crea productos: la confirmación atómica producto + oferta y la pantalla nueva quedan pendientes. El flujo de producto existente sigue disponible.
+
+- `GET /api/maintainer/inventories/irion/new-product/options`: mismos roles administrativos; devuelve `manufacturers`, `franchises`, `categories` como `{id,label}` y `series` como `{id,label,franchiseId}`. Solo referencias activas; excluye series de franquicias inactivas.
+- `POST /api/maintainer/inventories/irion/new-product/inspect`: cuerpo `{product,storeId,sourceUrl,externalVariantId}`. `product` contiene `newProductId` (UUID estable generado por el cliente para el borrador), `productName`, `manufacturerId`, `franchiseId`, `serieId` opcional, `productHasBase` explícito (`false` es válido), `productTargetAge`, `productSize`, `productDescription`, `productReleaseDate` (fecha ISO obligatoria, no mínima) y `categoryIds` (lista no vacía, sin UUID vacíos ni duplicados). Nombre máximo 200; edad y tamaño máximo 100. No se inventan fecha, base ni referencias.
+
+No exige ni descarga imágenes; el formulario manual existente no cambia. Valida referencias activas, serie/franquicia, tienda raíz Irion, URL canónica y variante positiva Int64. Devuelve el mismo DTO de inspección `Create`/`Update`/`Conflict`, siempre sin guardar ni consultar Irion. `Update` exige que el ID estable ya tenga exactamente los mismos campos y conjunto de categorías y la misma oferta tienda/URL/variante; imágenes posteriores no se comparan. Un ID ocupado, producto inactivo o nombre de otro ID produce `Conflict`, sin adopción ni sobrescritura. La igualdad de nombre usa la regla existente; la colación y unicidad reales de SQL Server siguen pendientes de T6. Cancelar o inspeccionar nunca crea un producto huérfano.
+
+La futura confirmación debe reutilizar `NewIrionProductValidation.InspectAsync` antes y después de consultar Irion, comprobar instantánea y versión, construir mediante `Product.CreateWithProvidedId` y `AssignCategory`, y guardar producto/categorías/oferta una sola vez. Nunca debe encadenar el handler manual `CreateProduct` (dos guardados).
+
 ## Confirmar una oferta de Irion
 
 `POST /api/maintainer/inventories/irion/confirm` requiere el mismo rol administrativo. Primero visualiza el producto, selecciona explícitamente una variante e inspecciona la pareja producto/tienda. Confirma únicamente el resumen que acabas de revisar:

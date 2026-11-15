@@ -6,6 +6,8 @@ using Application.Maintainer.Inventories.Commands.UpdateInventory;
 using Application.Maintainer.Inventories.Queries.GetInventories;
 using Application.Maintainer.Inventories.Queries.GetInventoryById;
 using Application.Maintainer.Inventories.Queries.InspectIrionOffer;
+using Application.Maintainer.Inventories.Queries.GetIrionNewProductOptions;
+using Application.Maintainer.Inventories.Queries.InspectNewIrionProductOffer;
 using Domain.Common;
 
 namespace WebAPI.Maintainer;
@@ -20,6 +22,8 @@ public class InventoriesModule : ICarterModule
         groups.MapGet("", GetInventories);
         groups.MapGet("{id:guid}", GetInventoryById);
         groups.MapPost("", CreateInventory);
+        groups.MapGet("irion/new-product/options", GetIrionNewProductOptions);
+        groups.MapPost("irion/new-product/inspect", InspectNewIrionProductOffer);
         groups.MapPost("irion/inspect", InspectIrionOffer);
         groups.MapPost("irion/confirm", ConfirmIrionOffer);
         groups.MapPut("{id:guid}", UpdateInventory);
@@ -34,6 +38,12 @@ public class InventoriesModule : ICarterModule
     private static async Task<IResult> CreateInventory(IRequestDispatcher sender, CreateInventory command) => Results.Ok(await sender.Send(command));
 
     private static async Task<IResult> InspectIrionOffer(IRequestDispatcher sender, InspectIrionOffer query, CancellationToken cancellationToken) =>
+        Results.Ok(await sender.Send(query, cancellationToken));
+
+    private static async Task<IResult> GetIrionNewProductOptions(IRequestDispatcher sender, CancellationToken cancellationToken) =>
+        Results.Ok(await sender.Send(new GetIrionNewProductOptions(), cancellationToken));
+
+    private static async Task<IResult> InspectNewIrionProductOffer(IRequestDispatcher sender, InspectNewIrionProductOffer query, CancellationToken cancellationToken) =>
         Results.Ok(await sender.Send(query, cancellationToken));
 
     private static async Task<IResult> ConfirmIrionOffer(IRequestDispatcher sender, ConfirmIrionOffer command, CancellationToken cancellationToken) =>
