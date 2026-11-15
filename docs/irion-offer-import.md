@@ -68,7 +68,7 @@ Resultados locales de referencia: **602** aserciones de ofertas, **112** del ext
 ## Evidencia pendiente: no es aprobación de producción
 
 - **T1–T3:** aceptados localmente para su alcance determinista/estructural.
-- **T4:** implementación y pruebas locales aprobadas; revisión independiente **no disponible por cuota**, sin veredicto ni aceptación. Las comprobaciones integradas normales no la sustituyen.
+- **T4:** implementación y pruebas locales correctas; revisión independiente de código **aprobada**, sin defectos accionables. El intento inicial quedó sin veredicto por cuota; tras confirmar su restablecimiento, se completó el único intento adicional autorizado, sin repetir las pruebas aprobadas ni cambiar de proveedor. No es una prueba de navegador, autenticación real ni SQL Server.
 - **T6:** bloqueado hasta disponer de SQL Server aislado autorizado. Falta ejecutar migración y rollback, comprobar conservación de filas y rechazo de duplicados, persistencia real de unicidad/rowversion y carreras de importación. La generación de SQL y los dobles de prueba no demuestran esas propiedades relacionales.
 
-No hay prueba real de base de datos, aprobación de toda la funcionalidad, autorización de migración ni declaración de preparación para producción. La revisión independiente pendiente y las pruebas relacionales deben resolverse antes de cerrar la entrega.
+No hay prueba real de base de datos, aprobación de toda la funcionalidad, autorización de migración ni declaración de preparación para producción. La revisión independiente pendiente ya concluyó para el alcance local de código; las pruebas relacionales siguen siendo obligatorias antes de cerrar la entrega completa.

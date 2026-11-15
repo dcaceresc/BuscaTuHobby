@@ -6,6 +6,7 @@ export * from './maintainer/inventory.service';
 export * from './maintainer/manufacturer.service';
 export * from './maintainer/product.service';
 export * from './maintainer/irion-product-preview.service';
+export * from './maintainer/irion-offer-import.service';
 export * from './maintainer/region.service';
 export * from './maintainer/serie.service';
 export * from './maintainer/store.service';

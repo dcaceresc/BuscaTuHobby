@@ -33,7 +33,7 @@ Asegúrate de tener instaladas las siguientes herramientas antes de comenzar:
 
 ## Vista previa de productos de Irion
 
-[Guía de importación manual de ofertas](docs/irion-offer-import.md): flujo de pantalla, seguridad de arranque y comprobaciones deterministas. T1–T3 aceptados localmente; T4 tiene pruebas locales aprobadas, pero revisión independiente pendiente por cuota; T6 SQL Server bloqueado. No es una entrega completamente verificada ni lista para producción.
+[Guía de importación manual de ofertas](docs/irion-offer-import.md): flujo de pantalla, seguridad de arranque y comprobaciones deterministas. T1–T4 aceptados dentro de su alcance local y de revisión independiente de código; las comprobaciones integradas pasan. La revisión de T4 concluyó tras la recuperación de cuota autorizada. T6 SQL Server sigue bloqueado: no es una entrega completamente verificada ni lista para producción.
 
 Desde **Administración → Vista previa de Irion** (`/maintainer/irion-preview`), pega la URL de un producto de Irion y selecciona **Visualizar producto**. Disponible para `Administrator` y `SuperAdmin`.
 
@@ -155,7 +155,7 @@ Seguridad del guardado:
 
 Cambiar la selección o visualizar otra vez invalida la revisión. **Cancelar borrador** limpia la selección sin guardar; no revierte operaciones ya confirmadas. Durante una consulta, revisión o guardado los controles incompatibles quedan bloqueados. Si Irion cambia los datos, se muestra la vista previa actualizada y debes seleccionar, revisar y confirmar de nuevo. Ante errores o conflictos se conserva la URL y la selección válida para revisión manual, sin reintentos automáticos.
 
-**Requisito operativo:** antes de cualquier aplicación de la migración, una persona debe revisar y autorizar un SQL Server aislado, respaldo y revisión de duplicados. La interfaz no aplica migraciones, pero **el arranque de la API en Development sí puede hacerlo automáticamente**, como se advierte arriba. La prueba real de migración y concurrencia SQL Server sigue bloqueada (T6); las pruebas de pantalla no sustituyen la revisión independiente pendiente de T4. No hay importación programada ni creación automática de productos.
+**Requisito operativo:** antes de cualquier aplicación de la migración, una persona debe revisar y autorizar un SQL Server aislado, respaldo y revisión de duplicados. La interfaz no aplica migraciones, pero **el arranque de la API en Development sí puede hacerlo automáticamente**, como se advierte arriba. La prueba real de migración y concurrencia SQL Server sigue bloqueada (T6); la revisión independiente de T4 está aprobada para su alcance de código, pero ni esa revisión ni las pruebas de pantalla sustituyen la validación relacional. No hay importación programada ni creación automática de productos.
 
 ## Contribución
 
