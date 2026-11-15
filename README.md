@@ -109,7 +109,7 @@ dotnet run --project tests/IrionOfferImport.Checks/IrionOfferImport.Checks.cspro
 
 ## Preparar un producto nuevo de Irion (solo lectura)
 
-La API permite confirmar producto nuevo + oferta juntos; la pantalla nueva sigue pendiente. El flujo de producto existente sigue disponible.
+La pantalla permite elegir **Usar producto existente** (modo inicial) o **Crear producto nuevo**. En el modo nuevo completa los datos humanos obligatorios con opciones activas, pulsa **Revisar vinculación** y luego **Crear producto y guardar oferta**: una sola confirmación conjunta. Las imágenes son opcionales, sin importación externa ni cambios al formulario manual. El UUID del borrador se conserva durante ediciones, cambios de modo y reintentos manuales; solo cancelar descarta el borrador. Consulta la [guía de pantalla y recuperación](docs/irion-offer-import.md#flujo-en-la-pantalla).
 
 - `GET /api/maintainer/inventories/irion/new-product/options`: mismos roles administrativos; devuelve `manufacturers`, `franchises`, `categories` como `{id,label}` y `series` como `{id,label,franchiseId}`. Solo referencias activas; excluye series de franquicias inactivas.
 - `POST /api/maintainer/inventories/irion/new-product/inspect`: cuerpo `{product,storeId,sourceUrl,externalVariantId}`. `product` contiene `newProductId` (UUID estable generado por el cliente para el borrador), `productName`, `manufacturerId`, `franchiseId`, `serieId` opcional, `productHasBase` explícito (`false` es válido), `productTargetAge`, `productSize`, `productDescription`, `productReleaseDate` (fecha ISO obligatoria, no mínima) y `categoryIds` (lista no vacía, sin UUID vacíos ni duplicados). Nombre máximo 200; edad y tamaño máximo 100. No se inventan fecha, base ni referencias.
@@ -192,9 +192,9 @@ Seguridad del guardado:
 ### Guardar desde la pantalla de administración
 
 1. Pulsa **Visualizar producto**. Esta acción sigue siendo de solo lectura.
-2. Selecciona un producto activo existente, una tienda activa con URL raíz de Irion y una variante explícita, incluso si solo hay una. No se crean productos ni tiendas.
+2. Selecciona un producto activo existente o elige **Crear producto nuevo** y completa los datos obligatorios. Selecciona una tienda activa con URL raíz de Irion y una variante explícita, incluso si solo hay una. No se crean tiendas ni referencias automáticamente.
 3. Pulsa **Revisar vinculación**: verás si se creará o actualizará la oferta, o un conflicto que impide guardarla. Un inventario deshabilitado permanecerá deshabilitado.
-4. Revisa los precios y disponibilidad de la variante y pulsa **Guardar oferta de Irion**. No se guardan precios editados manualmente ni se repiten envíos automáticamente.
+4. Revisa los precios y disponibilidad de la variante y pulsa **Guardar oferta de Irion**, o **Crear producto y guardar oferta** para el producto nuevo. No se guardan precios editados manualmente ni se repiten envíos automáticamente.
 
 Cambiar la selección o visualizar otra vez invalida la revisión. **Cancelar borrador** limpia la selección sin guardar; no revierte operaciones ya confirmadas. Durante una consulta, revisión o guardado los controles incompatibles quedan bloqueados. Si Irion cambia los datos, se muestra la vista previa actualizada y debes seleccionar, revisar y confirmar de nuevo. Ante errores o conflictos se conserva la URL y la selección válida para revisión manual, sin reintentos automáticos.
 

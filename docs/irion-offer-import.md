@@ -1,6 +1,6 @@
-# Guardar una oferta de Irion en un producto existente
+# Guardar una oferta de Irion con producto existente o nuevo
 
-Guía para `Administrator` y `SuperAdmin`. La importación es manual: visualizar y revisar no guardan; **Guardar oferta de Irion** es una acción separada. No crea productos ni tiendas, rastrea catálogos, programa consultas, mantiene historial de precios ni descarga imágenes en el backend.
+Guía para `Administrator` y `SuperAdmin`. La importación es manual: visualizar y revisar no guardan; **Guardar oferta de Irion** es una acción separada. Permite crear un producto nuevo únicamente por confirmación explícita junto con su oferta. No crea tiendas, rastrea catálogos, programa consultas, mantiene historial de precios ni descarga imágenes en el backend.
 
 ## Antes de arrancar: el bootstrap escribe en la base
 
@@ -16,6 +16,7 @@ Solo después de la preparación operativa autorizada, abre **Administración �
 
 1. Pega una URL de producto de Irion y pulsa **Visualizar producto**. Revisa variantes, precios y disponibilidad; la descripción HTML se muestra como texto. Visualizar no escribe ofertas.
 2. Selecciona un **producto activo existente**, una **tienda activa de Irion** y una **variante explícita**, incluso si hay una sola. Ninguno se elige por defecto. La tienda se valida por su URL raíz HTTPS de `irion.cl` (puerto predeterminado), no por su nombre. Si faltan registros o falla la carga, revisa el catálogo o pulsa **Recargar listas**; no se crean automáticamente.
+   Si el producto no existe, elige **Crear producto nuevo**. Solo se propone el título como texto editable: completa fabricante, franquicia, serie opcional de esa franquicia, base **Sí/No**, edad, tamaño, descripción como texto, fecha de lanzamiento y al menos una categoría activa. No hay fecha, base ni referencias predeterminadas. Las opciones activas se cargan al elegir este modo; **Recargar opciones** permite recuperarse de fallos sin bloquear la consulta o el modo existente. Las imágenes son opcionales y se pueden agregar después; no se importan imágenes externas ni cambia el formulario manual.
 3. Pulsa **Revisar vinculación**. Esta inspección no consulta Irion ni escribe:
 
    | Resultado | Qué revisar |
@@ -24,7 +25,7 @@ Solo después de la preparación operativa autorizada, abre **Administración �
    | `Update` | Coinciden URL canónica y variante con la vinculación existente; se conserva ID y activación administrativa. |
    | `Conflict` | Hay una oferta manual sin vinculación o una identidad diferente; el guardado queda bloqueado, sin adopción ni sobrescritura. |
 
-4. Revisa el resumen de la variante, no el precio ni la disponibilidad global del producto. Pulsa **Guardar oferta de Irion** por separado. El servidor vuelve a consultar Irion una vez y valida identidad, selección, precios, disponibilidad y versión antes de guardar. No acepta precios editados en el navegador; solo CLP enteros positivos dentro de Int32. Original ausente se guarda como `0` y el descuento se calcula en servidor.
+4. Revisa el resumen de la variante, no el precio ni la disponibilidad global del producto. Pulsa **Guardar oferta de Irion** por separado, o **Crear producto y guardar oferta** en modo nuevo. Ese botón envía una sola confirmación conjunta, no dos guardados independientes. El servidor vuelve a consultar Irion una vez y valida identidad, selección, precios, disponibilidad y versión antes de guardar. No acepta precios editados en el navegador; solo CLP enteros positivos dentro de Int32. Original ausente se guarda como `0` y el descuento se calcula en servidor.
 
 Cambiar selección o URL, recargar listas o volver a visualizar invalida la revisión. Durante las operaciones se bloquean controles incompatibles y envíos repetidos. **Cancelar borrador** limpia la selección sin escribir; no revierte una oferta ya guardada.
 
@@ -37,7 +38,7 @@ Cambiar selección o URL, recargar listas o volver a visualizar invalida la revi
 | `RefreshRequired` | No se guardó: cambió la instantánea o desapareció la variante. La pantalla usa la vista actualizada si está disponible y borra la variante seleccionada; selecciona explícitamente de nuevo, revisa la vinculación y confirma otra vez. |
 | `Conflict` | Cambió la vinculación o versión, o hubo un conflicto de persistencia: vuelve a revisar; nunca se sobrescribe ni se reintenta automáticamente. |
 
-Ante 429, timeout u otro fallo de extracción no se guarda. Respeta la espera indicada para 429; no hay reintentos automáticos. Si se pierde la respuesta al guardado, no supongas éxito ni fallo: conserva la selección, vuelve a revisar y confirma manualmente. La confirmación idéntica puede responder `AlreadySaved`.
+Ante 429, timeout u otro fallo de extracción no se guarda. Respeta la espera indicada para 429; no hay reintentos automáticos. Si se pierde la respuesta al guardado, no supongas éxito ni fallo: conserva la selección, vuelve a revisar y confirma manualmente. La confirmación idéntica puede responder `AlreadySaved`. En modo nuevo se conserva el UUID del borrador y todos los datos humanos durante errores, cambios de modo y revisión/reintento manual; no se genera otro UUID por edición o reintento. **Cancelar borrador** descarta esos datos y permite comenzar otro UUID, sin revertir guardados confirmados. Un nombre ocupado exige **usar existente o revisar nombre**; nunca se adopta automáticamente otro producto.
 
 ## Datos e identidad
 

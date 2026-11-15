@@ -81,6 +81,12 @@ describe('Importación explícita de Irion', () => {
     return { fixture, dom, change, click, choose, review };
   }
 
+  it('offers explicit new-product creation even when the existing catalog is empty', async () => {
+    getProducts.mockReturnValue(of(envelope([])));
+    const { dom } = await setup();
+    expect(dom.textContent).toContain('Crear producto nuevo');
+  });
+
   it('filters active existing options by exact Irion root and requires an explicit variant, even when unique', async () => {
     const { dom, change, click } = await setup();
     expect([...dom.querySelectorAll('#irion-product option')].map(o => o.getAttribute('value'))).toEqual(['', 'p1', 'p2']);
