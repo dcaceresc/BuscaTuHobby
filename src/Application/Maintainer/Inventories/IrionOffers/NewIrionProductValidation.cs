@@ -12,7 +12,7 @@ public static class NewIrionProductValidation
         RegexOptions.CultureInvariant | RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
 
     public static async Task<(string? Error, IrionOfferInspectionDto? Inspection)> InspectAsync(
-        IApplicationDbContext context, NewIrionProductDetails? p, Guid storeId, string sourceUrl, string variantId, CancellationToken token)
+        IApplicationDbContext context, NewIrionProductDetails? p, Guid storeId, string sourceUrl, string variantId, CancellationToken token, bool trackProduct = false)
     {
         token.ThrowIfCancellationRequested();
         if (p is null || p.NewProductId == Guid.Empty || string.IsNullOrWhiteSpace(p.ProductName) || p.ProductName.Length > 200 ||
@@ -37,7 +37,8 @@ public static class NewIrionProductValidation
             !uri.IsDefaultPort || uri.UserInfo.Length != 0 || !Root.IsMatch(website))
             return ("Selecciona una tienda activa de Irion con una URL válida.", null);
 
-        var product = await context.Products.AsNoTracking().SingleOrDefaultAsync(x => x.ProductId == p.NewProductId, token);
+        var products = trackProduct ? context.Products : context.Products.AsNoTracking();
+        var product = await products.SingleOrDefaultAsync(x => x.ProductId == p.NewProductId, token);
         // Use the existing name equality rule; SQL Server collation remains the authority at save time.
         var nameOccupied = await context.Products.AsNoTracking().AnyAsync(x => x.ProductName == p.ProductName && x.ProductId != p.NewProductId, token);
         var inventory = await context.Inventories.AsNoTracking().SingleOrDefaultAsync(x => x.ProductId == p.NewProductId && x.StoreId == storeId, token);

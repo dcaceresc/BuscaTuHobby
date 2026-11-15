@@ -1,6 +1,7 @@
 ﻿
 using Application.Maintainer.Inventories.Commands.CreateInventory;
 using Application.Maintainer.Inventories.Commands.ConfirmIrionOffer;
+using Application.Maintainer.Inventories.Commands.ConfirmNewIrionProductOffer;
 using Application.Maintainer.Inventories.Commands.ToggleInventory;
 using Application.Maintainer.Inventories.Commands.UpdateInventory;
 using Application.Maintainer.Inventories.Queries.GetInventories;
@@ -24,6 +25,7 @@ public class InventoriesModule : ICarterModule
         groups.MapPost("", CreateInventory);
         groups.MapGet("irion/new-product/options", GetIrionNewProductOptions);
         groups.MapPost("irion/new-product/inspect", InspectNewIrionProductOffer);
+        groups.MapPost("irion/new-product/confirm", ConfirmNewIrionProductOffer);
         groups.MapPost("irion/inspect", InspectIrionOffer);
         groups.MapPost("irion/confirm", ConfirmIrionOffer);
         groups.MapPut("{id:guid}", UpdateInventory);
@@ -45,6 +47,9 @@ public class InventoriesModule : ICarterModule
 
     private static async Task<IResult> InspectNewIrionProductOffer(IRequestDispatcher sender, InspectNewIrionProductOffer query, CancellationToken cancellationToken) =>
         Results.Ok(await sender.Send(query, cancellationToken));
+
+    private static async Task<IResult> ConfirmNewIrionProductOffer(IRequestDispatcher sender, ConfirmNewIrionProductOffer command, CancellationToken cancellationToken) =>
+        Results.Ok(await sender.Send(command, cancellationToken));
 
     private static async Task<IResult> ConfirmIrionOffer(IRequestDispatcher sender, ConfirmIrionOffer command, CancellationToken cancellationToken) =>
         Results.Ok(await sender.Send(command, cancellationToken));

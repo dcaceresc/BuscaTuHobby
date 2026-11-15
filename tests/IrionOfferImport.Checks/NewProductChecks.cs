@@ -174,6 +174,12 @@ public class NewProductContext : InspectionContext
     public string NewPersisted { get; private set; } = "";
     public string State() => JsonSerializer.Serialize(new { Products, ProductCategories, Rows, Stores, Manufacturers, Franchises, Categories, Series });
     public void CaptureNewPersisted() => NewPersisted = State();
+    private async Task<int> SaveGraph(MethodInfo method, object?[]? args)
+    {
+        var result = await (Task<int>)base.Invoke(method, args)!;
+        CaptureNewPersisted();
+        return result;
+    }
     protected override object? Invoke(MethodInfo? method, object?[]? args)
     {
         void Query(CancellationToken token) { QueryHook?.Invoke(token); token.ThrowIfCancellationRequested(); if (QueryError is not null) throw QueryError; }
@@ -184,6 +190,7 @@ public class NewProductContext : InspectionContext
             "get_Categories" => new InspectionSet<Category>(Categories, Query),
             "get_Series" => new InspectionSet<Serie>(Series, Query),
             "get_ProductCategories" => new InspectionSet<ProductCategory>(ProductCategories, Query),
+            "SaveChangesAsync" => SaveGraph(method, args),
             _ => base.Invoke(method, args)
         };
     }

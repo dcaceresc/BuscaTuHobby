@@ -109,14 +109,46 @@ dotnet run --project tests/IrionOfferImport.Checks/IrionOfferImport.Checks.cspro
 
 ## Preparar un producto nuevo de Irion (solo lectura)
 
-Esta frontera API aún no crea productos: la confirmación atómica producto + oferta y la pantalla nueva quedan pendientes. El flujo de producto existente sigue disponible.
+La API permite confirmar producto nuevo + oferta juntos; la pantalla nueva sigue pendiente. El flujo de producto existente sigue disponible.
 
 - `GET /api/maintainer/inventories/irion/new-product/options`: mismos roles administrativos; devuelve `manufacturers`, `franchises`, `categories` como `{id,label}` y `series` como `{id,label,franchiseId}`. Solo referencias activas; excluye series de franquicias inactivas.
 - `POST /api/maintainer/inventories/irion/new-product/inspect`: cuerpo `{product,storeId,sourceUrl,externalVariantId}`. `product` contiene `newProductId` (UUID estable generado por el cliente para el borrador), `productName`, `manufacturerId`, `franchiseId`, `serieId` opcional, `productHasBase` explícito (`false` es válido), `productTargetAge`, `productSize`, `productDescription`, `productReleaseDate` (fecha ISO obligatoria, no mínima) y `categoryIds` (lista no vacía, sin UUID vacíos ni duplicados). Nombre máximo 200; edad y tamaño máximo 100. No se inventan fecha, base ni referencias.
 
 No exige ni descarga imágenes; el formulario manual existente no cambia. Valida referencias activas, serie/franquicia, tienda raíz Irion, URL canónica y variante positiva Int64. Devuelve el mismo DTO de inspección `Create`/`Update`/`Conflict`, siempre sin guardar ni consultar Irion. `Update` exige que el ID estable ya tenga exactamente los mismos campos y conjunto de categorías y la misma oferta tienda/URL/variante; imágenes posteriores no se comparan. Un ID ocupado, producto inactivo o nombre de otro ID produce `Conflict`, sin adopción ni sobrescritura. La igualdad de nombre usa la regla existente; la colación y unicidad reales de SQL Server siguen pendientes de T6. Cancelar o inspeccionar nunca crea un producto huérfano.
 
-La futura confirmación debe reutilizar `NewIrionProductValidation.InspectAsync` antes y después de consultar Irion, comprobar instantánea y versión, construir mediante `Product.CreateWithProvidedId` y `AssignCategory`, y guardar producto/categorías/oferta una sola vez. Nunca debe encadenar el handler manual `CreateProduct` (dos guardados).
+### Confirmar producto nuevo y oferta (API administrativa)
+
+`POST /api/maintainer/inventories/irion/new-product/confirm` requiere `Administrator` o `SuperAdmin`. Envía los datos humanos completos, la variante elegida explícitamente y los tokens de la inspección nueva; conserva `newProductId` durante el borrador y sus reintentos:
+
+```json
+{
+  "product": {
+    "newProductId":"11111111-1111-1111-1111-111111111111",
+    "productName":"Nombre manual",
+    "manufacturerId":"33333333-3333-3333-3333-333333333333",
+    "franchiseId":"44444444-4444-4444-4444-444444444444",
+    "serieId":null,
+    "productHasBase":false,
+    "productTargetAge":"15+",
+    "productSize":"20 cm",
+    "productDescription":"Descripción completada por la persona",
+    "productReleaseDate":"2020-01-02",
+    "categoryIds":["55555555-5555-5555-5555-555555555555"]
+  },
+  "storeId":"22222222-2222-2222-2222-222222222222",
+  "sourceUrl":"https://irion.cl/products/model-1",
+  "externalVariantId":"123",
+  "expectedInventoryId":null,
+  "expectedRowVersion":null,
+  "expectedOffer":{"currency":"CLP","price":199,"originalPrice":200,"available":false}
+}
+```
+
+La respuesta HTTP 200 usa `ApiResponse` y el mismo DTO de confirmación documentado abajo: `Saved`/`AlreadySaved` con `success:true`; `RefreshRequired`/`Conflict` con `success:false` y datos tipados. `data.inventoryId` identifica la oferta; `data.inspection.productId` identifica el producto estable. Los errores genéricos tienen `data:null` y `No se pudo confirmar la oferta de Irion.`; validaciones y 429 conservan sus mensajes específicos. La cancelación se propaga. No interpretes mensajes para decidir el resultado.
+
+Revalida catálogo, campos y vinculación antes y después de una única extracción segura. Una instantánea/URL/variante cambiada exige nueva confirmación sin entidades preparadas ni guardado. Solo acepta CLP entero positivo dentro de Int32; referencia ausente se guarda como cero, y descuento/UTC/disponibilidad de la variante se calculan en servidor. Un ID ocupado exige todos los campos, categorías y la misma vinculación; nunca adopta productos por título ni modifica sus metadatos/categorías. Una repetición idéntica devuelve `AlreadySaved` sin escribir; una actualización requiere ID y versión actual de ocho bytes en base64 canónico y nunca reactiva inventario.
+
+La creación usa `Product.CreateWithProvidedId`, `AssignCategory` e `Inventory.CreateImportedOffer`, prepara los tres grupos y llama **una sola vez** a `SaveChangesAsync`. La transacción relacional normal de EF es la frontera atómica prevista, sin encadenar `CreateProduct` ni guardados parciales. Fallos de persistencia devuelven `Conflict` sin reintento automático. No exige imágenes ni descarga archivos/HTML; el flujo manual no cambia. Las pruebas falsas distinguen estado seguido de estado persistido: **no prueban atomicidad ni carreras SQL Server**; T6 sigue bloqueado.
 
 ## Confirmar una oferta de Irion
 
