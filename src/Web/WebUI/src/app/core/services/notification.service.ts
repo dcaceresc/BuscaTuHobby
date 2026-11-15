@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import Swal from 'sweetalert2';
+// Load dialog code and its built-in CSS only when a notification is needed.
+const loadSwal = () => import('sweetalert2/dist/sweetalert2.esm.all.js')
+  .then(module => module.default);
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +9,7 @@ import Swal from 'sweetalert2';
 export class NotificationService {
 
   showSuccess(title: string, message: string) {
-    Swal.fire({
+    void loadSwal().then(Swal => Swal.fire({
       title: title,
       text: message,
       showConfirmButton: false,
@@ -18,11 +20,11 @@ export class NotificationService {
       customClass: {
           popup: 'notificacion-success',
       }
-    });
+    }));
   }
 
   showError(title: string, message: string) {
-    Swal.fire({
+    void loadSwal().then(Swal => Swal.fire({
       title: title,
       text: message,
       showConfirmButton: false,
@@ -33,7 +35,7 @@ export class NotificationService {
       customClass: {
           popup: 'notificacion-error'
       }
-    });
+    }));
   }
 
   showDefaultError() {
@@ -45,7 +47,7 @@ export class NotificationService {
   }
 
   confirm(title: string, message: string, confirmButtonText: string, cancelButtonText: string) {
-    return Swal.fire({
+    return loadSwal().then(Swal => Swal.fire({
       title: title,
       text: message,
       icon: 'warning',
@@ -57,6 +59,6 @@ export class NotificationService {
       customClass: {
         popup: 'notificacion-confirm'
       }
-    });
+    }));
   }
 }

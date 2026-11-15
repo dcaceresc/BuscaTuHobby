@@ -1,48 +1,41 @@
-@use '@src/variables.scss' as *;
-
-@import "bootstrap/scss/bootstrap";
-@import "bootstrap/scss/functions";
-@import "bootstrap/scss/variables";
-@import "bootstrap/scss/variables-dark";
-@import "bootstrap/scss/maps";
-@import "bootstrap/scss/mixins";
+@use '@src/variables.scss' as theme;
 
 
 
 
 button:disabled{
-  color:$white !important;
+  color:theme.$white !important;
 }
 
 
 .bg-primary{
-  background-color: $darkBlue !important;
-  color:$white;
+  background-color: theme.$darkBlue !important;
+  color:theme.$white;
 }
 
 .bg-danger{
-  background-color: $red !important;
-  color: $white;
+  background-color: theme.$red !important;
+  color: theme.$white;
 }
 
 .bg-success{
-  background-color: $green !important;
-  color: $white;
+  background-color: theme.$green !important;
+  color: theme.$white;
 }
 
 .bg-secundary{
-  background-color: $secundary !important;
-  color:$white;
+  background-color: theme.$secundary !important;
+  color:theme.$white;
 }
 
 .page-item{
   .page-link{
-    color:$darkBlue;
+    color:theme.$darkBlue;
   }
   &.active{
     .page-link{
-      background-color: $darkBlue;
-      color:$white;
+      background-color: theme.$darkBlue;
+      color:theme.$white;
     }
   }
 }
@@ -61,14 +54,14 @@ button:disabled{
 }
 
 .btn-header-menu{
-  background-color: $darkBlue;
-  color: $green;
-  border: 1px solid $green;
+  background-color: theme.$darkBlue;
+  color: theme.$green;
+  border: 1px solid theme.$green;
   margin-right: 10px;
 
   &:hover {
-		background-color: $green;
-		color: $darkBlue;
+		background-color: theme.$green;
+		color: theme.$darkBlue;
 	}
   
 }
@@ -76,15 +69,15 @@ button:disabled{
 
 
 .offcanvas{
-  background-color: $white;
+  background-color: theme.$white;
 
   .offcanvas-header{
-    background-color: $darkBlue;
-    color: $green;
+    background-color: theme.$darkBlue;
+    color: theme.$green;
   }
 
   .offcanvas-body .nav-link {
-    color: $secundary;
+    color: theme.$secundary;
     padding: 0.75rem 1rem;
     border-radius: 0.5rem;
     margin-bottom: 0.25rem;
@@ -93,8 +86,8 @@ button:disabled{
 
   .offcanvas-body .nav-link:hover, 
   .offcanvas-body .nav-link.active {
-    background-color: $darkBlue;
-    color: $green;
+    background-color: theme.$darkBlue;
+    color: theme.$green;
   }
 
   .offcanvas-body .nav-link i {
@@ -125,7 +118,7 @@ button:disabled{
   position: absolute;
   top: 0.1rem;
   left: 0.75rem;
-  background-color: $white;
+  background-color: theme.$white;
   font-size: 0.9rem;
   color: #6c757d;
   transition: all 0.2s ease-in-out;
@@ -139,7 +132,7 @@ button:disabled{
   height: calc(2.5rem + 2px); /* Altura ajustada para coincidir con el estilo Bootstrap */
   padding-top: 0.3rem;
   margin-top: 1.2rem;
-  background-color: $white;
+  background-color: theme.$white;
 }
 
 .ng-select-custom {
@@ -161,5 +154,5 @@ button:disabled{
 
 
 .ng-select-custom.ng-select-opened > .ng-select-container {
-  background-color: $white; /* Fondo blanco cuando está abierto */
+  background-color: theme.$white; /* Fondo blanco cuando está abierto */
 }

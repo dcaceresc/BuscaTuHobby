@@ -1,5 +1,61 @@
 @use '@src/variables.scss' as *;
 
+.brand-logo,
+.divider,
+.login-link,
+.back-home {
+    text-align: center;
+}
+
+.brand-logo p,
+.divider span,
+.login-link,
+.input-group-text {
+    color: $secundary;
+}
+
+.brand-logo p,
+.divider span,
+.back-home a {
+    font-size: 0.9rem;
+}
+
+.brand-logo h1,
+.btn-register,
+.login-link a {
+    font-weight: bold;
+}
+
+.brand-logo h1,
+.form-label {
+    margin-bottom: 0.5rem;
+}
+
+.form-control,
+.btn-register {
+    transition: all 0.3s ease;
+}
+
+.form-control,
+.btn-register {
+    border-radius: 0.5rem;
+}
+
+.form-control,
+.input-group-text {
+    border: 2px solid #e0e0e0;
+}
+
+.btn-register,
+.back-home a {
+    color: white;
+}
+
+.login-link a,
+.back-home a {
+    text-decoration: none;
+}
+
 :host {
     background: linear-gradient(135deg, $darkBlue 0%, #1a2336 100%);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -24,14 +80,11 @@
 }
 
 .brand-logo {
-    text-align: center;
     margin-bottom: 2rem;
 }
 
 .brand-logo h1 {
     color: $darkBlue;
-    font-weight: bold;
-    margin-bottom: 0.5rem;
 }
 
 .brand-logo .highlight {
@@ -39,21 +92,15 @@
 }
 
 .brand-logo p {
-    color: $secundary;
-    font-size: 0.9rem;
 }
 
 .form-label {
     color: $darkBlue;
     font-weight: 500;
-    margin-bottom: 0.5rem;
 }
 
 .form-control {
-    border: 2px solid #e0e0e0;
-    border-radius: 0.5rem;
     padding: 0.75rem 1rem;
-    transition: all 0.3s ease;
 }
 
 .form-control:focus {
@@ -64,11 +111,7 @@
 .btn-register {
     background-color: $green;
     border: none;
-    color: white;
-    font-weight: bold;
     padding: 0.75rem;
-    border-radius: 0.5rem;
-    transition: all 0.3s ease;
     width: 100%;
 }
 
@@ -79,46 +122,37 @@
 }
 
 .divider {
-    text-align: center;
     margin: 1.5rem 0;
     position: relative;
 }
 
-.divider::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    width: 45%;
-    height: 1px;
-    background: #e0e0e0;
-}
-
+.divider::before,
 .divider::after {
     content: '';
     position: absolute;
-    right: 0;
     top: 50%;
     width: 45%;
     height: 1px;
     background: #e0e0e0;
 }
 
+.divider::before {
+    left: 0;
+}
+
+.divider::after {
+    right: 0;
+}
+
 .divider span {
-    color: $secundary;
-    font-size: 0.9rem;
 }
 
 .login-link {
-    text-align: center;
     margin-top: 1.5rem;
-    color: $secundary;
 }
 
 .login-link a {
     color: $green;
-    text-decoration: none;
-    font-weight: bold;
 }
 
 .login-link a:hover {
@@ -127,14 +161,10 @@
 }
 
 .back-home {
-    text-align: center;
     margin-top: 1rem;
 }
 
 .back-home a {
-    color: white;
-    text-decoration: none;
-    font-size: 0.9rem;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
@@ -146,9 +176,7 @@
 
 .input-group-text {
     background-color: transparent;
-    border: 2px solid #e0e0e0;
     border-right: none;
-    color: $secundary;
 }
 
 .input-group .form-control {
