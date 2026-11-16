@@ -40,7 +40,7 @@ public class InspectIrionOfferHandler(IApplicationDbContext context, IApiRespons
             if (store is null || !store.IsActive || !IsIrionStore(store.StoreWebSite))
                 return _responseService.Fail<IrionOfferInspectionDto>("Selecciona una tienda activa de Irion con una URL válida.");
 
-            // One lookup includes legacy and disabled rows; inspection never adopts or reactivates them.
+            // Una sola consulta incluye las filas heredadas y desactivadas; la inspección nunca las adopta ni las reactiva.
             var inventory = await _context.Inventories.AsNoTracking().SingleOrDefaultAsync(
                 i => i.ProductId == request.ProductId && i.StoreId == request.StoreId, cancellationToken);
             var outcome = inventory is null ? "Create" :

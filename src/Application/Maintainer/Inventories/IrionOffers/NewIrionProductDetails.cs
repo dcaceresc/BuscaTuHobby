@@ -1,6 +1,6 @@
 namespace Application.Maintainer.Inventories.IrionOffers;
 
-// New branch only: absence must not silently become false or a fabricated release date.
+// Solo en la rama de producto nuevo: la ausencia no debe volverse false ni una fecha de lanzamiento inventada.
 public record NewIrionProductDetails(
     Guid NewProductId, string ProductName, Guid ManufacturerId, Guid FranchiseId, Guid? SerieId,
     bool? ProductHasBase, string ProductTargetAge, string ProductSize, string ProductDescription,

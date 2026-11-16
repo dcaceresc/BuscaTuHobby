@@ -31,7 +31,7 @@ public class ConfirmIrionOfferHandler(
         {
             var data = new IrionOfferConfirmationDto(outcome, id, preview, inspection);
             if (outcome is "Saved" or "AlreadySaved") return _responseService.Success(data);
-            // A typed non-success is intentionally distinct from validation/extraction errors (data:null).
+            // Un no-éxito tipado es distinto a propósito de los errores de validación o extracción (data:null).
             return new ApiResponse<IrionOfferConfirmationDto> { Success = false, Data = data };
         }
         try
@@ -46,7 +46,7 @@ public class ConfirmIrionOfferHandler(
                 return Outcome("Conflict", inspection.InventoryId);
             if (request.ExpectedOffer is null) return _responseService.Fail<IrionOfferConfirmationDto>("No se pudo confirmar la oferta de Irion.");
 
-            // Exactly one safe extraction, never a retry, fallback, or browser-supplied write.
+            // Una sola extracción segura, nunca un reintento, un respaldo ni una escritura enviada por el navegador.
             var preview = await _extractor.ExtractAsync(request.SourceUrl, cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
             var current = await _inspector.Handle(selection, cancellationToken);
@@ -63,7 +63,7 @@ public class ConfirmIrionOfferHandler(
             if (request.ExpectedOffer != new IrionOfferSnapshot(preview.Currency, variant.Price, variant.OriginalPrice, variant.Available))
                 return Outcome("RefreshRequired", inspection.InventoryId, preview);
 
-            // Tracking starts after external I/O. EF retains this rowversion as the UPDATE predicate.
+            // El seguimiento empieza después de la E/S externa. EF conserva este rowversion como predicado del UPDATE.
             var row = await _context.Inventories.SingleOrDefaultAsync(
                 i => i.ProductId == request.ProductId && i.StoreId == request.StoreId, cancellationToken);
             var price = (int)variant.Price;

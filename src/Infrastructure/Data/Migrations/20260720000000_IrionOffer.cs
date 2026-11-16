@@ -4,12 +4,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Data.Migrations;
 
-// Prepared manually without dotnet-ef. Review generated SQL before applying to an isolated SQL Server.
+// Preparada a mano sin dotnet-ef. Revisa el SQL generado antes de aplicarla en un SQL Server aislado.
 public partial class IrionOffer : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
     {
-        // Fail before any schema changes; administrators must resolve duplicates explicitly.
+        // Falla antes de cualquier cambio de esquema; los administradores deben resolver los duplicados a mano.
         migrationBuilder.Sql("""
             IF EXISTS (
                 SELECT [StoreId], [ProductId]

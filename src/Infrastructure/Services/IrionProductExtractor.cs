@@ -17,7 +17,7 @@ public class IrionProductExtractor(HttpClient client) : IIrionProductExtractor
 
     public async Task<IrionProductPreviewDto> ExtractAsync(string url, CancellationToken cancellationToken)
     {
-        // Check the original path as well: Uri normalizes dot segments and backslashes.
+        // Revisa también la ruta original: Uri normaliza los segmentos con punto y las barras invertidas.
         if (string.IsNullOrWhiteSpace(url) || url.Length > 8192 ||
             !Uri.TryCreate(url, UriKind.Absolute, out var uri) ||
             uri.Scheme != Uri.UriSchemeHttps || uri.Host != "irion.cl" ||
@@ -39,7 +39,7 @@ public class IrionProductExtractor(HttpClient client) : IIrionProductExtractor
         request.Headers.Accept.ParseAdd("application/json");
         request.Headers.UserAgent.ParseAdd("BuscaTuHobby-ProductPreview/1.0");
         using var response = await _client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, token);
-        // The registered transport disables redirects. Also reject redirects in custom transports.
+        // El transporte registrado desactiva las redirecciones. También se rechazan en los transportes personalizados.
         if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
             throw new IrionRateLimitException(RetryGuidance(response));
         response.EnsureSuccessStatusCode();

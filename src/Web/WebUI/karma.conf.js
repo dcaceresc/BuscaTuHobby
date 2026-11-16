@@ -11,15 +11,15 @@ module.exports = function (config) {
     ],
     client: {
       jasmine: {
-        // you can add configuration options for Jasmine here
-        // the possible options are listed at https://jasmine.github.io/api/edge/Configuration.html
-        // for example, you can disable the random execution with `random: false`
-        // or set a specific seed with `seed: 4321`
+        // aquí puedes añadir opciones de configuración de Jasmine
+        // las opciones posibles están en https://jasmine.github.io/api/edge/Configuration.html
+        // por ejemplo, puedes desactivar la ejecución aleatoria con `random: false`
+        // o fijar una semilla concreta con `seed: 4321`
       },
-      clearContext: false // leave Jasmine Spec Runner output visible in browser
+      clearContext: false // deja visible en el navegador la salida de Jasmine Spec Runner
     },
     jasmineHtmlReporter: {
-      suppressAll: true // removes the duplicated traces
+      suppressAll: true // elimina las trazas duplicadas
     },
     coverageReporter: {
       dir: require('path').join(__dirname, './coverage/'),

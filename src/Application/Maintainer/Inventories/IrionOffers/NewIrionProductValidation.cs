@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Application.Maintainer.Inventories.IrionOffers;
 
-// Read again at confirmation, including after external I/O. This helper never stages or saves entities.
+// Se vuelve a leer al confirmar, incluso después de la E/S externa. Este helper nunca deja entidades preparadas ni las guarda.
 public static class NewIrionProductValidation
 {
     private static readonly Regex Source = new(@"\Ahttps://irion\.cl/products/[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*\z",
@@ -39,7 +39,7 @@ public static class NewIrionProductValidation
 
         var products = trackProduct ? context.Products : context.Products.AsNoTracking();
         var product = await products.SingleOrDefaultAsync(x => x.ProductId == p.NewProductId, token);
-        // Use the existing name equality rule; SQL Server collation remains the authority at save time.
+        // Usa la regla de igualdad de nombres existente; la colación de SQL Server sigue siendo la autoridad al guardar.
         var nameOccupied = await context.Products.AsNoTracking().AnyAsync(x => x.ProductName == p.ProductName && x.ProductId != p.NewProductId, token);
         var inventory = await context.Inventories.AsNoTracking().SingleOrDefaultAsync(x => x.ProductId == p.NewProductId && x.StoreId == storeId, token);
         var matching = false;

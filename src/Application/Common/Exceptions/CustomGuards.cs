@@ -4,7 +4,8 @@ namespace Application.Common.Exceptions;
 public static class CustomGuards
 {
     /// <summary>
-    /// Throws an <see cref="NotFoundException" /> or a custom <see cref="Exception" /> if <paramref name="input" /> with <paramref name="key" /> is not found.
+    /// Lanza <see cref="NotFoundException" /> o una <see cref="Exception" /> propia si no se encuentra
+    /// <paramref name="input" /> con <paramref name="key" />.
     public static T NotFound<T>(this IGuardClause guardClause, [NotNull][ValidatedNotNull] T? input, string message)
     {
         guardClause.Null(message, nameof(message));
