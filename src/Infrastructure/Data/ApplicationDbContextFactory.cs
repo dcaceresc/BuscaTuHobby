@@ -29,6 +29,8 @@ public class ApplicationDbContextFactory
             .SetBasePath(basePath)
             .AddJsonFile("appsettings.json", optional: false)
             .AddJsonFile("appsettings.Development.json", optional: true)
+            // Use the same store as WebAPI; environment variables retain precedence.
+            .AddUserSecrets("BuscaTuHobby-WebAPI-8d7a90e6-4523-44a9-a234-114a1e6a3c91")
             .AddEnvironmentVariables()
             .Build();
 

@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <UserSecretsId>BuscaTuHobby-WebAPI-8d7a90e6-4523-44a9-a234-114a1e6a3c91</UserSecretsId>
     <ImplicitUsings>enable</ImplicitUsings>
     <SpaRoot>..\WebUI</SpaRoot>
     <SpaProxyLaunchCommand>pnpm start</SpaProxyLaunchCommand>

@@ -21,6 +21,16 @@ Asegúrate de tener instaladas las siguientes herramientas antes de comenzar:
 - Node.js y npm: https://nodejs.org/
 - Angular CLI: https://angular.io/cli
 
+### Conexión local a SQL Server
+
+La conexión `ConnectionStrings:BuscaTuHobby` se guarda en **.NET User Secrets**, no en los archivos `appsettings` versionados. Configúrala para tu usuario antes de iniciar la API en Development:
+
+```bash
+dotnet user-secrets set 'ConnectionStrings:BuscaTuHobby' 'Server=localhost;Database=BuscaTuHobby;User ID=sa;Password="<contraseña-local>";TrustServerCertificate=true' --project src/Web/WebAPI
+```
+
+El marcador `<contraseña-local>` no es una contraseña real. No publiques el valor ni lo incluyas en comandos compartidos. User Secrets guarda datos locales sin cifrar y no es un almacén para producción. La API en Development y la factoría de EF Core usan el mismo `UserSecretsId`; las variables de entorno (`ConnectionStrings__BuscaTuHobby`) mantienen prioridad. En producción configura la conexión mediante el gestor de secretos del entorno. Cambiar este valor no modifica la contraseña del servidor SQL ni aplica migraciones.
+
 ### Configuración del Proyecto 
 
 1. Clona este repositorio: `git clone https://github.com/dcaceresc/BuscaTuHobby.git` 
