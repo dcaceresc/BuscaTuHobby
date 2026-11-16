@@ -26,6 +26,7 @@ internal static class FidelityChecks
         await RecentActivityFeed(check, services);
         await PriceHistorySeries(check, services);
         await BestDeals(check, services);
+        await OfferFreshness(check);
         await ProductByIdImages(check, services);
         SqlTranslation(check);
         ImagesFolderMapping(check);
@@ -648,6 +649,37 @@ internal static class FidelityChecks
                 check(false, "The temporary image folders could not be removed: " + root);
             }
         }
+    }
+
+    // La frescura de una oferta creada a mano es un dato obligatorio: sin ella la tabla de ofertas no muestra fecha.
+    private static Task OfferFreshness(Action<bool, string> check)
+    {
+        var manufacturer = Manufacturer.Create("Bandai");
+        var franchise = Franchise.Create("Gundam");
+        var product = Product.Create("RG 1/144 RX-78-2", manufacturer.ManufacturerId, franchise.FranchiseId, null,
+            false, "8+", "13cm", "Maqueta", new DateOnly(2024, 2, 1));
+        var store = Store.Create("Tienda", "https://tienda.cl", "icon", 1, "tienda");
+        var offer = Inventory.Create(product.ProductId, store.StoreId, 1000, 1000, 0);
+
+        var observedAt = new DateTime(2026, 11, 16, 12, 30, 0, DateTimeKind.Utc);
+        offer.MarkObserved(observedAt);
+        check(offer.ObservedAtUtc == observedAt,
+            "A hand-made offer records the date its price was observed");
+
+        var rejected = false;
+        try
+        {
+            offer.MarkObserved(default);
+        }
+        catch (ArgumentException)
+        {
+            rejected = true;
+        }
+
+        check(rejected && offer.ObservedAtUtc == observedAt,
+            "An empty observation date is rejected and leaves the stored one untouched");
+
+        return Task.CompletedTask;
     }
 
     private static void Assign(Category category, Product product)

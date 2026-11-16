@@ -229,6 +229,15 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
             Inventory.Create(goku.ProductId, paris.StoreId, 48990, 64990, 25),
         };
 
+        // La frescura es parte de lo que la tabla de ofertas debe mostrar: con fecha de observación nula la celda
+        // queda vacía, así que el seed reparte observaciones recientes en lugar de dejar el campo sin dato.
+        var observedAt = DateTime.UtcNow.AddMinutes(-25);
+        foreach (var inventory in inventories)
+        {
+            inventory.MarkObserved(observedAt);
+            observedAt = observedAt.AddMinutes(-37);
+        }
+
         await _context.Inventories.AddRangeAsync(inventories);
         await _context.SaveChangesAsync();
 
