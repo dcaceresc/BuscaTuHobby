@@ -20,6 +20,10 @@ export const routes: Routes = [
         loadChildren: () => import("./features/security/security.routes").then(m => m.routes)
       },
       {
+        path: 'products/:productId',
+        loadComponent: () => import('./features/dashboard/product-detail/product-detail.component').then(m => m.ProductDetailComponent)
+      },
+      {
         path: 'forbidden',
         loadComponent: () => import('./shared/components/forbidden/forbidden.component').then(m => m.ForbiddenComponent)
       }

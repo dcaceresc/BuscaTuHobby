@@ -1,0 +1,175 @@
+<div class="product-detail container py-4">
+  <a routerLink="/" class="product-detail__back btn btn-link px-0 mb-3">
+    <i class="bi bi-arrow-left me-1"></i>Volver a la búsqueda
+  </a>
+
+  @if (isLoading()) {
+    <div class="text-center py-5">
+      <span class="spinner-border" role="status" aria-hidden="true"></span>
+      <p class="text-muted mt-3 mb-0">Cargando producto...</p>
+    </div>
+  } @else if (notFound()) {
+    <div class="alert alert-warning" role="alert">
+      <i class="bi bi-exclamation-triangle me-1"></i>
+      No encontramos este producto o ya no está disponible.
+    </div>
+  } @else if (product(); as p) {
+    <div class="row g-4">
+      <div class="col-lg-5">
+        <img
+          class="product-detail__image img-fluid rounded border"
+          [src]="mainImage()"
+          [alt]="p.productName">
+        @if (p.imageUrls.length > 1) {
+          <div class="d-flex flex-wrap gap-2 mt-2">
+            @for (image of p.imageUrls; track image; let i = $index) {
+              <button
+                type="button"
+                class="product-detail__thumb btn p-0 border rounded"
+                [class.product-detail__thumb--active]="i === selectedImage()"
+                (click)="selectImage(i)"
+                [attr.aria-label]="'Ver imagen ' + (i + 1)">
+                <img [src]="image" [alt]="p.productName + ' imagen ' + (i + 1)" class="rounded">
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <div class="col-lg-7">
+        <h1 class="h3 mb-2">{{ p.productName }}</h1>
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <span class="badge bg-primary">{{ p.manufacturerName }}</span>
+          <span class="badge bg-info text-dark">{{ p.franchiseName }}</span>
+          @if (p.serieName) {
+            <span class="badge bg-dark">{{ p.serieName }}</span>
+          }
+          @for (category of p.categories; track category) {
+            <span class="badge bg-secondary">{{ category }}</span>
+          }
+        </div>
+
+        <p class="text-muted">{{ p.productDescription }}</p>
+
+        @if (p.offers.length > 0) {
+          <div class="product-detail__price-box rounded p-3 mb-3">
+            <span class="product-detail__price-label text-muted small d-block">Desde</span>
+            <span class="product-detail__price">${{ p.minPrice | number: '1.0-0' : 'es-CL' }}</span>
+            <span class="text-muted small ms-2">
+              en {{ p.storeCount }} {{ p.storeCount === 1 ? 'tienda' : 'tiendas' }}
+            </span>
+            @if (p.maxPrice > p.minPrice) {
+              <span class="text-muted small d-block">
+                Hasta ${{ p.maxPrice | number: '1.0-0' : 'es-CL' }}
+              </span>
+            }
+          </div>
+        }
+
+        <dl class="row mb-0 product-detail__specs">
+          <dt class="col-sm-4">Escala / tamaño</dt>
+          <dd class="col-sm-8">{{ p.productSize }}</dd>
+          <dt class="col-sm-4">Edad recomendada</dt>
+          <dd class="col-sm-8">{{ p.productTargetAge }}</dd>
+          <dt class="col-sm-4">Fecha de lanzamiento</dt>
+          <dd class="col-sm-8">{{ p.productReleaseDate | date: 'd MMM y' : 'UTC' : 'es-CL' }}</dd>
+          <dt class="col-sm-4">Requiere base</dt>
+          <dd class="col-sm-8">{{ p.productHasBase ? 'Sí' : 'No' }}</dd>
+          <dt class="col-sm-4">Visitas</dt>
+          <dd class="col-sm-8 mb-0">{{ p.productViewCount | number }}</dd>
+        </dl>
+      </div>
+    </div>
+
+    <section class="mt-5" aria-labelledby="offers-title">
+      <h2 class="h5 mb-3" id="offers-title">Tiendas y precios</h2>
+      @if (p.offers.length === 0) {
+        <div class="alert alert-secondary mb-0" role="alert">
+          Todavía no hay tiendas con este producto publicado.
+        </div>
+      } @else {
+        <p class="text-muted small">Ordenadas de la más barata a la más cara.</p>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th scope="col">Tienda</th>
+                <th scope="col" class="text-end">Precio</th>
+                <th scope="col" class="text-end">Normal</th>
+                <th scope="col" class="text-center">Descuento</th>
+                <th scope="col">Disponibilidad</th>
+                <th scope="col" class="text-end"><span class="visually-hidden">Ir a la tienda</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (offer of p.offers; track offer.inventoryId; let i = $index) {
+                <tr>
+                  <td>
+                    <span class="d-inline-flex align-items-center gap-2">
+                      @if (offer.storeIcon) {
+                        <i [class]="offer.storeIcon" aria-hidden="true"></i>
+                      }
+                      {{ offer.storeName }}
+                    </span>
+                    @if (i === 0) {
+                      <span class="badge bg-success ms-2">Más barata</span>
+                    }
+                  </td>
+                  <td class="text-end fw-bold">${{ offer.price | number: '1.0-0' : 'es-CL' }}</td>
+                  <td class="text-end text-muted">
+                    @if (offer.originalPrice > offer.price) {
+                      <s>${{ offer.originalPrice | number: '1.0-0' : 'es-CL' }}</s>
+                    } @else {
+                      <span aria-hidden="true">—</span>
+                    }
+                  </td>
+                  <td class="text-center">
+                    @if (offer.discountPercentage > 0) {
+                      <span class="badge bg-success">-{{ offer.discountPercentage }}%</span>
+                    } @else {
+                      <span aria-hidden="true">—</span>
+                    }
+                  </td>
+                  <td>
+                    @if (offer.availability === false) {
+                      <span class="text-danger">Sin stock</span>
+                    } @else {
+                      <span class="text-success">Disponible</span>
+                    }
+                  </td>
+                  <td class="text-end">
+                    @if (offer.sourceUrl) {
+                      <a class="btn btn-sm btn-outline-primary"
+                         [href]="offer.sourceUrl" target="_blank" rel="noopener noreferrer">
+                        Ver oferta <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
+                      </a>
+                    } @else {
+                      <a class="btn btn-sm btn-outline-secondary"
+                         [href]="offer.storeWebSite" target="_blank" rel="noopener noreferrer">
+                        Ir a la tienda <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
+                      </a>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+
+    <section class="mt-5" aria-labelledby="history-title">
+      <h2 class="h5 mb-3" id="history-title">Evolución del precio</h2>
+      @if (isChartLoading()) {
+        <div class="text-center py-4">
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          <span class="text-muted ms-2">Cargando historial...</span>
+        </div>
+      } @else {
+        <app-price-chart
+          [points]="pricePoints()"
+          label="Precio mínimo por día, en pesos chilenos" />
+      }
+    </section>
+  }
+</div>

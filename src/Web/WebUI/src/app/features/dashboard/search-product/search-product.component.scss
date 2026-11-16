@@ -52,6 +52,11 @@
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
     transform: translateX(4px);
   }
+
+  &--link {
+    cursor: pointer;
+    color: inherit;
+  }
 }
 
 .product-name {

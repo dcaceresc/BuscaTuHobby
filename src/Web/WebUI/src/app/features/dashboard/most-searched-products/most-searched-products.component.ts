@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { DashboardService } from '@app/core/services';
 import { NotificationService } from '@app/core/services';
 import { MostSearchedProductDto } from '@app/core/models';
 
 @Component({
   selector: 'app-most-searched-products',
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, RouterLink],
   templateUrl: './most-searched-products.component.html',
   styleUrl: './most-searched-products.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

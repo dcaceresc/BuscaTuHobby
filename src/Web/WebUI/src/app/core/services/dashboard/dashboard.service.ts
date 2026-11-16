@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApiResponse } from '@app/core/models';
-import { MenuCategoryDto, MenuStoreDto, MostSearchedProductDto, RecentPostDto, BestDealDto, PopularCategoryDto, FeaturedStoreDto, RecentActivityDto, SearchProductDto } from '@app/core/models/dashboard/dashboard.model';
+import { MenuCategoryDto, MenuStoreDto, MostSearchedProductDto, RecentPostDto, BestDealDto, PopularCategoryDto, FeaturedStoreDto, RecentActivityDto, SearchProductDto, ProductDetailDto, ProductPriceHistoryDto } from '@app/core/models/dashboard/dashboard.model';
 
 @Injectable({
   providedIn: 'root'
@@ -52,5 +52,15 @@ export class DashboardService {
 
   public searchProducts(term: string) {
     return this.http.get<ApiResponse<SearchProductDto[]>>(`api/dashboard/search-products?term=${encodeURIComponent(term)}`);
+  }
+
+  public getProductDetail(productId: string) {
+    return this.http.get<ApiResponse<ProductDetailDto>>(`api/dashboard/products/${encodeURIComponent(productId)}`);
+  }
+
+  public getProductPriceHistory(productId: string, days = 0) {
+    return this.http.get<ApiResponse<ProductPriceHistoryDto>>(
+      `api/dashboard/products/${encodeURIComponent(productId)}/price-history?days=${days}`
+    );
   }
 }

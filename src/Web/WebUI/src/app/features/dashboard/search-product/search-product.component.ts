@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged, switchMap, of, takeUntil } from 'rxjs';
 import { DashboardService } from '@app/core/services';
 import { NotificationService } from '@app/core/services/notification.service';
@@ -7,7 +8,7 @@ import { SearchProductDto } from '@app/core/models/dashboard/dashboard.model';
 
 @Component({
   selector: 'app-search-product',
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, RouterLink],
   templateUrl: './search-product.component.html',
   styleUrl: './search-product.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

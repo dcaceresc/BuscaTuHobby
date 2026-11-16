@@ -3,7 +3,8 @@
   <div class="row">
     @for (product of products(); track product.productId; let i = $index) {
       <div class="col-md-3 mb-3">
-        <div class="card">
+        <a class="card most-searched-card text-decoration-none text-reset d-block h-100"
+           [routerLink]="['/products', product.productId]">
           <img src="../../../../assets/images/placeholder.svg?height=200&width=300" class="card-img-top product-img" alt="{{ product.productName }}">
           <div class="card-body">
             <span class="badge mb-2" [class]="getBadgeClass(i)">{{ getBadgeLabel(i) }}</span>
@@ -19,7 +20,7 @@
               <small class="text-muted">{{ product.productViewCount | number }} búsquedas</small>
             </div>
           </div>
-        </div>
+        </a>
       </div>
     }
   </div>
