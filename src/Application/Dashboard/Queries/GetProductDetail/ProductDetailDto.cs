@@ -37,4 +37,8 @@ public class ProductOfferDto
     public bool? Availability { get; set; }
     public string? SourceUrl { get; set; }
     public DateTime? ObservedAtUtc { get; set; }
+
+    // Condición como entero (0 nueva, 1 refabricada, 2 usada) para respetar el contrato HTTP sin JsonStringEnumConverter.
+    public int Condition { get; set; }
+    public string? PaymentMethodLabel { get; set; }
 }

@@ -40,7 +40,7 @@ internal static class ProductDetailChecks
         foreach (var store in new[] { cheap, middle, expensive, disabled }) fake.Stores.Add(store);
 
         var expensiveOffer = Offer(product, expensive, 25000, 30000, 17);
-        var cheapOffer = Offer(product, cheap, 19990, 24990, 20);
+        var cheapOffer = Offer(product, cheap, 19990, 24990, 20, ProductCondition.Refurbished, "Tarjeta CMR");
         var middleOffer = Offer(product, middle, 21990, 26990, 19);
         var hiddenByAvailability = Offer(product, middle, 15000, 20000, 25);
         Set(hiddenByAvailability, nameof(Inventory.Availability), (bool?)false);
@@ -82,6 +82,10 @@ internal static class ProductDetailChecks
             data.Offers[0].StoreSlug == "barata" && data.Offers[0].StoreIcon == "bi bi-shop" &&
             data.Offers[0].OriginalPrice == 24990 && data.Offers[0].DiscountPercentage == 20,
             "Each offer carries the store identity and the offer's own price tuple");
+        check(data is not null && data.Offers[0].Condition == (int)ProductCondition.Refurbished &&
+            data.Offers[0].PaymentMethodLabel == "Tarjeta CMR" &&
+            data.Offers[1].Condition == (int)ProductCondition.New && data.Offers[1].PaymentMethodLabel is null,
+            "Each offer publishes its integer condition and its payment method without touching the order");
 
         result = await detail.Handle(new(Guid.NewGuid()), default);
         check(!result.Success && result.Message == "El producto no existe o no está disponible." && result.Data is null,
@@ -214,9 +218,11 @@ internal static class ProductDetailChecks
         return product;
     }
 
-    private static Inventory Offer(Product product, Store store, int price, int originalPrice, int discount)
+    private static Inventory Offer(Product product, Store store, int price, int originalPrice, int discount,
+        ProductCondition condition = ProductCondition.New, string? paymentMethodLabel = null)
     {
-        var offer = Inventory.Create(product.ProductId, store.StoreId, price, originalPrice, discount);
+        var offer = Inventory.Create(product.ProductId, store.StoreId, price, originalPrice, discount, condition,
+            paymentMethodLabel);
         Set(offer, nameof(Inventory.Product), product);
         Set(offer, nameof(Inventory.Store), store);
         return offer;

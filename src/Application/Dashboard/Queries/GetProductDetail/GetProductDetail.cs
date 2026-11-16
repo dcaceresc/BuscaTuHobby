@@ -66,7 +66,9 @@ public class GetProductDetailHandler(IApplicationDbContext context, IApiResponse
                     DiscountPercentage = i.DiscountPercentage,
                     Availability = i.Availability,
                     SourceUrl = i.SourceUrl,
-                    ObservedAtUtc = i.ObservedAtUtc
+                    ObservedAtUtc = i.ObservedAtUtc,
+                    Condition = (int)i.Condition,
+                    PaymentMethodLabel = i.PaymentMethodLabel
                 })
                 .ToListAsync(cancellationToken);
 

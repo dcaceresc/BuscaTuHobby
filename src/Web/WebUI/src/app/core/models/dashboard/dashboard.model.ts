@@ -85,6 +85,9 @@ export interface ProductOfferDto{
     availability: boolean | null;
     sourceUrl: string | null;
     observedAtUtc: string | null;
+    // La condición viaja como entero desde la API: 0 nueva, 1 reutilizada, 2 usada.
+    condition: number;
+    paymentMethodLabel: string | null;
 }
 
 export interface ProductDetailDto{

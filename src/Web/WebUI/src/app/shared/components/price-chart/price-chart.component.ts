@@ -20,9 +20,11 @@ const round2 = (value: number): number => Math.round(value * 100) / 100;
 export interface PriceChartGeometryPoint {
   date: string;
   minPrice: number;
+  maxPrice: number;
   offerCount: number;
   x: number;
   y: number;
+  maxY: number;
 }
 
 export interface PriceChartTick {
@@ -36,16 +38,20 @@ export interface PriceChartGeometry {
   viewBox: string;
   points: PriceChartGeometryPoint[];
   polyline: string;
+  maxPolyline: string;
   area: string;
+  band: string;
   firstX: number;
   lastX: number;
   baselineY: number;
   dateLabelY: number;
   minPrice: number;
   maxPrice: number;
-  maxPriceY: number;
   minPoint: PriceChartGeometryPoint | null;
   minLabelX: number;
+  maxPoint: PriceChartGeometryPoint | null;
+  maxLabelX: number;
+  maxLabelY: number;
   ticks: PriceChartTick[];
 }
 
@@ -68,20 +74,32 @@ function buildGeometry(series: PricePointDto[]): PriceChartGeometry {
   const points: PriceChartGeometryPoint[] = series.map((point, index) => ({
     date: point.date,
     minPrice: point.minPrice,
+    maxPrice: point.maxPrice,
     offerCount: point.offerCount,
     x: round2(
       series.length > 1 ? CHART_PADDING.left + index * stepX : CHART_PADDING.left + innerWidth / 2
     ),
-    y: yFor(point.minPrice)
+    y: yFor(point.minPrice),
+    maxY: yFor(point.maxPrice)
   }));
 
   const minPoint = points.reduce<PriceChartGeometryPoint | null>(
     (current, point) => (current === null || point.minPrice < current.minPrice ? point : current),
     null
   );
+  const maxPoint = points.reduce<PriceChartGeometryPoint | null>(
+    (current, point) => (current === null || point.maxPrice > current.maxPrice ? point : current),
+    null
+  );
   const firstX = points[0]?.x ?? CHART_PADDING.left;
   const lastX = points[points.length - 1]?.x ?? CHART_PADDING.left + innerWidth;
   const axisEndX = round2(CHART_PADDING.left + innerWidth);
+
+  // Una etiqueta cerca del borde se desplaza hacia dentro para no salir del viewBox.
+  const labelX = (x: number): number =>
+    round2(
+      Math.min(Math.max(x, CHART_PADDING.left + 20), CHART_WIDTH - CHART_PADDING.right - 20)
+    );
 
   const midValue = Math.round((floor + ceiling) / 2);
   const ticks: PriceChartTick[] = [
@@ -94,10 +112,20 @@ function buildGeometry(series: PricePointDto[]): PriceChartGeometry {
     viewBox: `0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`,
     points,
     polyline: points.map((point) => `${point.x},${point.y}`).join(' '),
+    maxPolyline: points.map((point) => `${point.x},${point.maxY}`).join(' '),
     area: [
       `${firstX},${baselineY}`,
       ...points.map((point) => `${point.x},${point.y}`),
       `${lastX},${baselineY}`
+    ].join(' '),
+    // La banda recorre el mínimo hacia adelante y el máximo hacia atrás, de modo que el relleno cubre
+    // la dispersión observada de cada día con la misma escala vertical que ambas líneas.
+    band: [
+      ...points.map((point) => `${point.x},${point.y}`),
+      ...points
+        .slice()
+        .reverse()
+        .map((point) => `${point.x},${point.maxY}`)
     ].join(' '),
     firstX,
     lastX,
@@ -105,16 +133,11 @@ function buildGeometry(series: PricePointDto[]): PriceChartGeometry {
     dateLabelY: CHART_HEIGHT - 6,
     minPrice,
     maxPrice,
-    maxPriceY: yFor(maxPrice),
     minPoint,
-    minLabelX: minPoint
-      ? round2(
-          Math.min(
-            Math.max(minPoint.x, CHART_PADDING.left + 20),
-            CHART_WIDTH - CHART_PADDING.right - 20
-          )
-        )
-      : 0,
+    minLabelX: minPoint ? labelX(minPoint.x) : 0,
+    maxPoint,
+    maxLabelX: maxPoint ? labelX(maxPoint.x) : 0,
+    maxLabelY: maxPoint ? round2(Math.max(CHART_PADDING.top - 2, maxPoint.maxY - 6)) : 0,
     ticks
   };
 }
@@ -148,6 +171,6 @@ export class PriceChartComponent {
     const minimum = formatNumber(this.geometry().minPrice, LOCALE, PRICE_FORMAT);
     const maximum = formatNumber(this.geometry().maxPrice, LOCALE, PRICE_FORMAT);
 
-    return `Evolución del precio mínimo en pesos chilenos entre el ${from} y el ${to}: de $${minimum} a $${maximum}.`;
+    return `Evolución del precio en pesos chilenos entre el ${from} y el ${to}: mínimo de $${minimum} y máximo de $${maximum}.`;
   });
 }

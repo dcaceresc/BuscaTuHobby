@@ -162,9 +162,10 @@ internal static class PriceHistoryChecks
 
         // (e) Estructura de la migración, SQL de siembra y rollback.
         var migrations = modelContext.GetService<IMigrationsAssembly>();
-        var newest = migrations.Migrations.OrderBy(m => m.Key, StringComparer.Ordinal).LastOrDefault();
-        check(newest.Value is not null && newest.Key.EndsWith("_InventoryPriceHistory"),
-            "(e) The price history migration is the newest discoverable migration");
+        // Ya existe una migración posterior (condición y medio de pago), así que se busca por identificador.
+        var newest = migrations.Migrations.OrderBy(m => m.Key, StringComparer.Ordinal)
+            .LastOrDefault(m => m.Key.EndsWith("_InventoryPriceHistory"));
+        check(newest.Value is not null, "(e) The price history migration is discoverable by its identifier");
         if (newest.Value is not null)
         {
             var migration = migrations.CreateMigration(newest.Value, modelContext.Database.ProviderName!);
@@ -196,8 +197,14 @@ internal static class PriceHistoryChecks
             var differ = modelContext.GetService<IMigrationsModelDiffer>();
             var initializer = modelContext.GetService<IModelRuntimeInitializer>();
             var target = initializer.Initialize(migration.TargetModel, designTime: true);
-            check(!differ.HasDifferences(target.GetRelationalModel(), model.GetRelationalModel()),
-                "(e) The migration target model matches the current model");
+            // Una migración posterior agrega condición y medio de pago: el objetivo de esta migración queda atrás
+            // exactamente por esas dos columnas y por nada más.
+            var differences = differ.GetDifferences(target.GetRelationalModel(), model.GetRelationalModel());
+            check(differences.OfType<AddColumnOperation>()
+                    .Select(c => c.Table + "." + c.Name).OrderBy(n => n, StringComparer.Ordinal)
+                    .SequenceEqual(new[] { "Inventories.Condition", "Inventories.PaymentMethodLabel" }) &&
+                differences.Count == 2,
+                "(e) The price history migration target differs from today's model only by the later condition columns");
             var file = Directory.EnumerateFiles("src/Infrastructure/Data/Migrations", "*_InventoryPriceHistory.cs")
                 .FirstOrDefault();
             var text = file is null ? "" : File.ReadAllText(file);

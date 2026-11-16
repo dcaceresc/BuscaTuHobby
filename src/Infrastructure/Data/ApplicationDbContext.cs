@@ -124,6 +124,15 @@ namespace Infrastructure.Data
                 entity.Property(e => e.SourceUrl).HasMaxLength(2048);
                 entity.Property(e => e.ExternalVariantId).HasMaxLength(128);
                 entity.Property(e => e.RowVersion).IsRowVersion();
+
+                // Valor predeterminado de la primera condición (0) para que las filas existentes queden como nuevas al migrar.
+                entity.Property(e => e.Condition)
+                .IsRequired()
+                .HasDefaultValue(ProductCondition.New);
+
+                entity.Property(e => e.PaymentMethodLabel)
+                .HasMaxLength(OfferConditionRules.MaxPaymentMethodLabelLength);
+
                 entity.HasIndex(e => new { e.StoreId, e.ProductId }).IsUnique();
             });
 

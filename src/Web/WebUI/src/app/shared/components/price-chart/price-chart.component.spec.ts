@@ -25,8 +25,16 @@ describe('PriceChartComponent', () => {
     return fixture;
   }
 
-  function coordinatePairs(polyline: SVGPolylineElement): string[] {
-    return (polyline.getAttribute('points') ?? '').trim().split(/\s+/);
+  function coordinatePairs(element: SVGElement): string[] {
+    return (element.getAttribute('points') ?? '').trim().split(/\s+/);
+  }
+
+  function yValues(pairs: string[]): number[] {
+    return pairs.map((pair) => Number(pair.split(',')[1]));
+  }
+
+  function xValues(pairs: string[]): string[] {
+    return pairs.map((pair) => pair.split(',')[0]);
   }
 
   it('shows the empty state and no chart when there are no points', () => {
@@ -76,10 +84,61 @@ describe('PriceChartComponent', () => {
     const rows = Array.from(table!.querySelectorAll('tbody tr')).map((row) =>
       Array.from(row.querySelectorAll('td')).map((cell) => cell.textContent?.trim() ?? '')
     );
-    expect(rows.every((cells) => cells.length === 3)).toBe(true);
+    expect(rows.every((cells) => cells.length === 4)).toBe(true);
     expect(rows[0][0]).toContain('2025');
     expect(rows[0][1]).toContain('12.990');
-    expect(rows[0][2]).toBe('2');
+    expect(rows[0][2]).toContain('15.990');
+    expect(rows[0][3]).toBe('2');
+  });
+
+  it('draws the observed maximum as a second polyline over the same x positions', () => {
+    const fixture = render(THREE_POINTS);
+    const host: HTMLElement = fixture.nativeElement;
+    const polylines = Array.from(host.querySelectorAll('polyline')) as SVGPolylineElement[];
+
+    expect(polylines).toHaveLength(2);
+    const minPairs = coordinatePairs(polylines[0]);
+    const maxPairs = coordinatePairs(polylines[1]);
+    expect(minPairs).toHaveLength(3);
+    expect(maxPairs).toHaveLength(3);
+    expect(xValues(maxPairs)).toEqual(xValues(minPairs));
+
+    // En SVG el eje y crece hacia abajo, así que el máximo de cada día queda sobre el mínimo.
+    yValues(maxPairs).forEach((maxY, index) => {
+      expect(Number.isFinite(maxY)).toBe(true);
+      expect(maxY).toBeLessThan(yValues(minPairs)[index]);
+    });
+  });
+
+  it('fills the band between the minimum and the maximum inside the observed values', () => {
+    const fixture = render(THREE_POINTS);
+    const host: HTMLElement = fixture.nativeElement;
+    const band = host.querySelector('polygon.price-chart__band') as SVGPolygonElement | null;
+
+    expect(band).not.toBeNull();
+    const bandPairs = coordinatePairs(band!);
+    // La banda recorre el mínimo hacia adelante y el máximo hacia atrás: dos vértices por día.
+    expect(bandPairs).toHaveLength(THREE_POINTS.length * 2);
+
+    const polylines = Array.from(host.querySelectorAll('polyline')) as SVGPolylineElement[];
+    const minPairs = coordinatePairs(polylines[0]);
+    const maxPairs = coordinatePairs(polylines[1]);
+    const observedYs = new Set([...yValues(minPairs), ...yValues(maxPairs)]);
+    const bandYs = yValues(bandPairs);
+
+    bandYs.forEach((y) => expect(observedYs.has(y)).toBe(true));
+    expect(Math.max(...bandYs)).toBe(Math.max(...yValues(minPairs)));
+    expect(Math.min(...bandYs)).toBe(Math.min(...yValues(maxPairs)));
+    expect(new Set(xValues(bandPairs))).toEqual(new Set(xValues(minPairs)));
+  });
+
+  it('no longer draws the maximum as a flat dashed reference line', () => {
+    const fixture = render(THREE_POINTS);
+    const host: HTMLElement = fixture.nativeElement;
+
+    expect(host.querySelector('.price-chart__max-line')).toBeNull();
+    expect(host.textContent).toContain('Máx.');
+    expect(host.textContent).toContain('17.990');
   });
 
   it('exposes an accessible description with the price range and the period', () => {
@@ -99,13 +158,18 @@ describe('PriceChartComponent', () => {
       { date: '2025-09-01', minPrice: 9900, maxPrice: 9900, offerCount: 1 },
       { date: '2025-09-02', minPrice: 9900, maxPrice: 9900, offerCount: 1 }
     ]);
-    const polyline = fixture.nativeElement.querySelector('polyline') as SVGPolylineElement | null;
+    const host: HTMLElement = fixture.nativeElement;
+    const polylines = Array.from(host.querySelectorAll('polyline')) as SVGPolylineElement[];
 
-    expect(polyline).not.toBeNull();
-    const pairs = coordinatePairs(polyline!);
-    expect(pairs).toHaveLength(2);
-    const ys = pairs.map((pair) => Number(pair.split(',')[1]));
+    expect(polylines).toHaveLength(2);
+    const minPairs = coordinatePairs(polylines[0]);
+    expect(minPairs).toHaveLength(2);
+    const ys = yValues(minPairs);
     expect(ys.every((y) => Number.isFinite(y))).toBe(true);
     expect(ys[0]).toBe(ys[1]);
+
+    // Con precios iguales la banda se aplana: ambos extremos comparten la misma y.
+    expect(yValues(coordinatePairs(polylines[1]))).toEqual(ys);
+    expect(host.querySelector('polygon.price-chart__band')).not.toBeNull();
   });
 });

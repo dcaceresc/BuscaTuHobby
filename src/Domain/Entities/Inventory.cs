@@ -2,7 +2,8 @@
 
 public class Inventory : AuditableEntity
 {
-    private Inventory(Guid storeId, Guid productId, int price, int originalPrice, int discountPercentage)
+    private Inventory(Guid storeId, Guid productId, int price, int originalPrice, int discountPercentage,
+        ProductCondition condition, string? paymentMethodLabel)
     {
         InventoryId = Guid.NewGuid();
         StoreId = storeId;
@@ -10,6 +11,8 @@ public class Inventory : AuditableEntity
         Price = price;
         OriginalPrice = originalPrice;
         DiscountPercentage = discountPercentage;
+        Condition = condition;
+        PaymentMethodLabel = paymentMethodLabel;
         IsActive = true;
     }
 
@@ -24,21 +27,34 @@ public class Inventory : AuditableEntity
     public string? ExternalVariantId { get; private set; }
     public bool? Availability { get; private set; }
     public DateTime? ObservedAtUtc { get; private set; }
+
+    // "Nueva" es el valor por defecto porque las ofertas anteriores a este campo y las importadas no informan
+    // condición: es la suposición más honesta y además el valor 0 que la migración asigna a las filas existentes.
+    public ProductCondition Condition { get; private set; } = ProductCondition.New;
+    public string? PaymentMethodLabel { get; private set; }
     public byte[] RowVersion { get; private set; } = [];
 
     public virtual Product Product { get; private set; } = default!;
     public virtual Store Store { get; private set; } = default!;
 
 
-    public static Inventory Create(Guid productId, Guid storeId, int price, int originalPrice, int discountPercentage)
+    // Los parámetros nuevos son opcionales para no cambiar a ningún llamador existente: si se omiten, la oferta
+    // queda como nueva y sin medio de pago, que es exactamente lo que ya ocurría antes de estos campos.
+    public static Inventory Create(Guid productId, Guid storeId, int price, int originalPrice, int discountPercentage,
+        ProductCondition condition = ProductCondition.New, string? paymentMethodLabel = null)
     {
         ValidateReferences(productId, storeId);
-        return new Inventory(storeId, productId, price, originalPrice, discountPercentage);
+        ValidateOfferDetails(condition, paymentMethodLabel);
+        return new Inventory(storeId, productId, price, originalPrice, discountPercentage, condition, paymentMethodLabel);
     }
 
-    public void Update(Guid productId, Guid storeId, int price, int originalPrice, int discountPercentage)
+    // Los mutadores exigen condición y medio de pago: al crearlos son opcionales porque una oferta nueva es
+    // nueva, pero al modificarlos un valor por defecto borraría en silencio lo que cargó el administrador.
+    public void Update(Guid productId, Guid storeId, int price, int originalPrice, int discountPercentage,
+        ProductCondition condition, string? paymentMethodLabel)
     {
         ValidateReferences(productId, storeId);
+        ValidateOfferDetails(condition, paymentMethodLabel);
         if (SourceUrl is not null && (ProductId != productId || StoreId != storeId))
             throw new InvalidOperationException("No se puede cambiar la asociación de una oferta importada.");
         StoreId = storeId;
@@ -46,26 +62,30 @@ public class Inventory : AuditableEntity
         Price = price;
         OriginalPrice = originalPrice;
         DiscountPercentage = discountPercentage;
+        Condition = condition;
+        PaymentMethodLabel = paymentMethodLabel;
     }
 
     // The application validates the selected store/product and converts whole CLP values before calling these methods.
     public static Inventory CreateImportedOffer(Guid productId, Guid storeId, int price, int originalPrice,
-        int discountPercentage, string sourceUrl, string externalVariantId, bool availability, DateTime observedAtUtc)
+        int discountPercentage, string sourceUrl, string externalVariantId, bool availability, DateTime observedAtUtc,
+        ProductCondition condition = ProductCondition.New, string? paymentMethodLabel = null)
     {
-        var inventory = Create(productId, storeId, price, originalPrice, discountPercentage);
+        var inventory = Create(productId, storeId, price, originalPrice, discountPercentage, condition, paymentMethodLabel);
         ValidateImport(price, originalPrice, discountPercentage, sourceUrl, externalVariantId, observedAtUtc);
         inventory.SetObservation(sourceUrl, externalVariantId, availability, observedAtUtc);
         return inventory;
     }
 
     public void UpdateImportedOffer(int price, int originalPrice, int discountPercentage, string sourceUrl,
-        string externalVariantId, bool availability, DateTime observedAtUtc)
+        string externalVariantId, bool availability, DateTime observedAtUtc,
+        ProductCondition condition, string? paymentMethodLabel)
     {
         if (SourceUrl is null || SourceUrl != sourceUrl || ExternalVariantId != externalVariantId)
             throw new InvalidOperationException("La oferta ya tiene otra vinculación o no está vinculada.");
         ValidateReferences(ProductId, StoreId);
         ValidateImport(price, originalPrice, discountPercentage, sourceUrl, externalVariantId, observedAtUtc);
-        Update(ProductId, StoreId, price, originalPrice, discountPercentage);
+        Update(ProductId, StoreId, price, originalPrice, discountPercentage, condition, paymentMethodLabel);
         SetObservation(sourceUrl, externalVariantId, availability, observedAtUtc);
     }
 
@@ -81,6 +101,16 @@ public class Inventory : AuditableEntity
     {
         if (productId == Guid.Empty || storeId == Guid.Empty)
             throw new ArgumentException("Producto y tienda son obligatorios.");
+    }
+
+    // La condición y la etiqueta se validan igual que el resto de los metadatos de la oferta: rechazo atómico con
+    // un mensaje en español y sin mutar nada antes de comprobarlo.
+    private static void ValidateOfferDetails(ProductCondition condition, string? paymentMethodLabel)
+    {
+        if (!OfferConditionRules.IsValidCondition((int)condition))
+            throw new ArgumentException(OfferConditionRules.InvalidConditionMessage, nameof(condition));
+        if (!OfferConditionRules.IsValidPaymentMethodLabel(paymentMethodLabel))
+            throw new ArgumentException(OfferConditionRules.InvalidPaymentMethodLabelMessage, nameof(paymentMethodLabel));
     }
 
     private static void ValidateImport(int price, int originalPrice, int discountPercentage, string sourceUrl,

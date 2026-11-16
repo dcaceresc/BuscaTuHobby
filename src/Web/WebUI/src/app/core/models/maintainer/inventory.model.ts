@@ -13,6 +13,9 @@ export interface InventoryVM {
     price: number;
     originalPrice: number;
     discountPercentage: number;
+    // La condición de la oferta viaja como entero: 0 nueva, 1 reutilizada, 2 usada.
+    condition: number;
+    paymentMethodLabel: string | null;
 }
 
 export interface CreateInventory{
@@ -21,6 +24,8 @@ export interface CreateInventory{
     price: number;
     originalPrice: number;
     discountPercentage: number;
+    condition: number;
+    paymentMethodLabel: string | null;
 }
 
 export interface UpdateInventory{
@@ -30,4 +35,6 @@ export interface UpdateInventory{
     price: number;
     originalPrice: number;
     discountPercentage: number;
+    condition: number;
+    paymentMethodLabel: string | null;
 }

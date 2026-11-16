@@ -98,6 +98,9 @@
                 <th scope="col" class="text-end">Normal</th>
                 <th scope="col" class="text-center">Descuento</th>
                 <th scope="col">Disponibilidad</th>
+                <th scope="col">Condición</th>
+                <th scope="col">Medio de pago</th>
+                <th scope="col">Última observación</th>
                 <th scope="col" class="text-end"><span class="visually-hidden">Ir a la tienda</span></th>
               </tr>
             </thead>
@@ -137,6 +140,22 @@
                       <span class="text-success">Disponible</span>
                     }
                   </td>
+                  <td class="product-detail__condition">
+                    <span class="badge {{ conditionClass(offer.condition) }}">{{ conditionLabel(offer.condition) }}</span>
+                  </td>
+                  <td class="product-detail__payment">
+                    @if (offer.paymentMethodLabel) {
+                      <span class="badge bg-light text-dark border">{{ offer.paymentMethodLabel }}</span>
+                    } @else {
+                      <span aria-hidden="true">—</span>
+                    }
+                  </td>
+                  <td class="text-nowrap product-detail__observed">
+                    <!-- La oferta puede no tener una observación registrada; en ese caso la celda queda vacía. -->
+                    @if (offer.observedAtUtc) {
+                      {{ observedAt(offer.observedAtUtc) }}
+                    }
+                  </td>
                   <td class="text-end">
                     @if (offer.sourceUrl) {
                       <a class="btn btn-sm btn-outline-primary"
@@ -159,11 +178,34 @@
     </section>
 
     <section class="mt-5" aria-labelledby="history-title">
-      <h2 class="h5 mb-1" id="history-title">Evolución del precio</h2>
+      <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+        <h2 class="h5 mb-0" id="history-title">Evolución del precio</h2>
+        <div
+          class="btn-group btn-group-sm ms-sm-auto"
+          role="group"
+          aria-label="Ventana del historial de precios">
+          @for (window of priceWindows; track window.days) {
+            <button
+              type="button"
+              class="btn btn-outline-primary product-detail__window-btn"
+              [class.active]="selectedDays() === window.days"
+              [class.product-detail__window-btn--active]="selectedDays() === window.days"
+              [attr.aria-pressed]="selectedDays() === window.days"
+              (click)="selectWindow(window.days)">
+              {{ window.label }}
+            </button>
+          }
+        </div>
+      </div>
       <!-- La serie conserva los precios observados aunque la oferta ya no esté disponible, así que se advierte al lector. -->
       <p class="text-muted small mb-3">
         Incluye ofertas que pueden no estar disponibles hoy; el precio actual está en la tabla de arriba.
       </p>
+      @if (isWindowLoading()) {
+        <p class="text-muted small mb-2" role="status">
+          <span class="spinner-border spinner-border-sm me-2" aria-hidden="true"></span>Actualizando historial...
+        </p>
+      }
       @if (isChartLoading()) {
         <div class="text-center py-4">
           <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -172,7 +214,7 @@
       } @else {
         <app-price-chart
           [points]="pricePoints()"
-          label="Precio mínimo por día, en pesos chilenos" />
+          label="Precio mínimo y máximo por día, en pesos chilenos" />
       }
     </section>
   }

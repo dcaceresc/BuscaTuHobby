@@ -72,7 +72,9 @@ public class ConfirmNewIrionProductOfferHandler(
                 if (request.ExpectedInventoryId != row.InventoryId || request.ExpectedRowVersion != Convert.ToBase64String(row.RowVersion))
                     return Outcome("Conflict", row.InventoryId);
                 var before = InventoryPricePoint.Capture(row);
-                row.UpdateImportedOffer(price, reference, discount, request.SourceUrl, request.ExternalVariantId, variant.Available, DateTime.UtcNow);
+                // La importación solo refresca precios y disponibilidad: conserva la condición y el medio de pago ya registrados.
+                row.UpdateImportedOffer(price, reference, discount, request.SourceUrl, request.ExternalVariantId,
+                    variant.Available, DateTime.UtcNow, row.Condition, row.PaymentMethodLabel);
                 InventoryPriceHistoryRecorder.Record(context, row, before);
             }
             else

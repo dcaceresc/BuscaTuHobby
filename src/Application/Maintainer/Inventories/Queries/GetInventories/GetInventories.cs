@@ -21,7 +21,9 @@ public class GetInventoriesHandler(IApplicationDbContext context, IApiResponseSe
                 ProductName = x.Product.ProductName,
                 StoreName = x.Store.StoreName,
                 Price = x.Price.ToString("C0"),
-                IsActive = x.IsActive
+                IsActive = x.IsActive,
+                Condition = (int)x.Condition,
+                PaymentMethodLabel = x.PaymentMethodLabel
             })
             .ToListAsync(cancellationToken);
 

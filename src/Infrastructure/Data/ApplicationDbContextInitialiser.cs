@@ -190,30 +190,31 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         await _context.Products.AddRangeAsync(gundamRx78, funkoSpider, legoFalcon, goku);
         await _context.SaveChangesAsync();
 
-        // Inventarios (relaciones producto-tienda con precios originales y descuentos)
+        // Inventarios (relaciones producto-tienda con precios originales y descuentos). Los precios de ejemplo no cambian;
+        // se agrega variedad de condición y medio de pago para que la comparación sea visible sin editar la base a mano.
         var inventories = new[]
         {
             // Gundam RX-78-2
             Inventory.Create(gundamRx78.ProductId, amazon.StoreId, 25990, 39990, 35),
-            Inventory.Create(gundamRx78.ProductId, mercadoLibre.StoreId, 27990, 34990, 20),
-            Inventory.Create(gundamRx78.ProductId, linio.StoreId, 26990, 32990, 18),
-            Inventory.Create(gundamRx78.ProductId, falabella.StoreId, 28990, 36990, 22),
+            Inventory.Create(gundamRx78.ProductId, mercadoLibre.StoreId, 27990, 34990, 20, ProductCondition.Refurbished),
+            Inventory.Create(gundamRx78.ProductId, linio.StoreId, 26990, 32990, 18, ProductCondition.New, "Tarjeta Linio"),
+            Inventory.Create(gundamRx78.ProductId, falabella.StoreId, 28990, 36990, 22, ProductCondition.New, "Tarjeta CMR Falabella"),
             Inventory.Create(gundamRx78.ProductId, ripley.StoreId, 27490, 34990, 21),
             Inventory.Create(gundamRx78.ProductId, paris.StoreId, 26490, 33490, 21),
 
             // Funko Pop Spider-Man
             Inventory.Create(funkoSpider.ProductId, amazon.StoreId, 12990, 16990, 24),
             Inventory.Create(funkoSpider.ProductId, falabella.StoreId, 13990, 17990, 22),
-            Inventory.Create(funkoSpider.ProductId, ripley.StoreId, 14490, 17990, 19),
+            Inventory.Create(funkoSpider.ProductId, ripley.StoreId, 14490, 17990, 19, ProductCondition.Used),
             Inventory.Create(funkoSpider.ProductId, mercadoLibre.StoreId, 11990, 15990, 25),
-            Inventory.Create(funkoSpider.ProductId, linio.StoreId, 13490, 17490, 23),
+            Inventory.Create(funkoSpider.ProductId, linio.StoreId, 13490, 17490, 23, ProductCondition.New, "Tarjeta Linio"),
             Inventory.Create(funkoSpider.ProductId, paris.StoreId, 12490, 14990, 17),
 
             // LEGO Millennium Falcon
             Inventory.Create(legoFalcon.ProductId, amazon.StoreId, 899990, 1099990, 18),
             Inventory.Create(legoFalcon.ProductId, paris.StoreId, 949990, 1199990, 21),
-            Inventory.Create(legoFalcon.ProductId, mercadoLibre.StoreId, 879990, 1149990, 23),
-            Inventory.Create(legoFalcon.ProductId, falabella.StoreId, 929990, 1299990, 28),
+            Inventory.Create(legoFalcon.ProductId, mercadoLibre.StoreId, 879990, 1149990, 23, ProductCondition.Used),
+            Inventory.Create(legoFalcon.ProductId, falabella.StoreId, 929990, 1299990, 28, ProductCondition.New, "Tarjeta CMR Falabella"),
             Inventory.Create(legoFalcon.ProductId, ripley.StoreId, 919990, 1199990, 23),
             Inventory.Create(legoFalcon.ProductId, linio.StoreId, 889990, 1249990, 29),
 
@@ -221,7 +222,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
             Inventory.Create(goku.ProductId, linio.StoreId, 45990, 69990, 34),
             Inventory.Create(goku.ProductId, mercadoLibre.StoreId, 43990, 54990, 20),
             Inventory.Create(goku.ProductId, ripley.StoreId, 47990, 59990, 20),
-            Inventory.Create(goku.ProductId, amazon.StoreId, 44990, 74990, 40),
+            Inventory.Create(goku.ProductId, amazon.StoreId, 44990, 74990, 40, ProductCondition.Refurbished),
             Inventory.Create(goku.ProductId, falabella.StoreId, 46990, 62990, 25),
             Inventory.Create(goku.ProductId, paris.StoreId, 48990, 64990, 25),
         };

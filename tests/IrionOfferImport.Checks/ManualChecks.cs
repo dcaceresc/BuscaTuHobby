@@ -54,7 +54,7 @@ internal static class ManualChecks
         if (factory is not null)
         {
             var imported = (Inventory)factory.Invoke(null, [Guid.NewGuid(), store, 100, 0, 0,
-                "https://irion.cl/products/model", "123", true, DateTime.UtcNow])!;
+                "https://irion.cl/products/model", "123", true, DateTime.UtcNow, ProductCondition.New, null])!;
             fake.Rows.Add(imported);
             var saves = fake.Saves;
             before = State();

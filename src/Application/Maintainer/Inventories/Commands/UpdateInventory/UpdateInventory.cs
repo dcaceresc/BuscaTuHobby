@@ -10,6 +10,10 @@ public record UpdateInventory : IRequest<ApiResponse>
     public int Price { get; init; }
     public int OriginalPrice { get; init; }
     public int DiscountPercentage { get; init; }
+
+    // Condición como entero (0 nueva, 1 refabricada, 2 usada); el valor inicial mantiene compilando a los llamadores previos.
+    public int Condition { get; init; } = (int)ProductCondition.New;
+    public string? PaymentMethodLabel { get; init; }
 }
 
 public class UpdateInventoryHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<UpdateInventory, ApiResponse>
@@ -25,12 +29,19 @@ public class UpdateInventoryHandler(IApplicationDbContext context, IApiResponseS
 
             Guard.Against.NotFound(inventory, $"No existe inventario con Id {request.InventoryId}");
 
+            if (!OfferConditionRules.IsValidCondition(request.Condition))
+                return _responseService.Fail(OfferConditionRules.InvalidConditionMessage);
+
+            if (!OfferConditionRules.IsValidPaymentMethodLabel(request.PaymentMethodLabel))
+                return _responseService.Fail(OfferConditionRules.InvalidPaymentMethodLabelMessage);
+
             if (await _context.Inventories.AnyAsync(i => i.InventoryId != request.InventoryId &&
                 i.StoreId == request.StoreId && i.ProductId == request.ProductId, cancellationToken))
                 return _responseService.Fail("No se pudo actualizar el inventario");
 
             var before = InventoryPricePoint.Capture(inventory);
-            inventory.Update(request.ProductId, request.StoreId, request.Price, request.OriginalPrice, request.DiscountPercentage);
+            inventory.Update(request.ProductId, request.StoreId, request.Price, request.OriginalPrice,
+                request.DiscountPercentage, (ProductCondition)request.Condition, request.PaymentMethodLabel);
             InventoryPriceHistoryRecorder.Record(_context, inventory, before);
 
             await _context.SaveChangesAsync(cancellationToken);

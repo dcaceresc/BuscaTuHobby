@@ -3,12 +3,16 @@ import localeEsCl from '@angular/common/locales/es-CL';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { Subject, of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ProductDetailComponent } from './product-detail.component';
 import { DashboardService } from '@app/core/services';
 import { NotificationService } from '@app/core/services/notification.service';
-import { ProductDetailDto } from '@app/core/models/dashboard/dashboard.model';
+import {
+  ProductDetailDto,
+  ProductPriceHistoryDto,
+  ProductPricePointDto
+} from '@app/core/models/dashboard/dashboard.model';
 
 registerLocaleData(localeEsCl, 'es-CL');
 
@@ -34,15 +38,32 @@ function detail(overrides: Partial<ProductDetailDto> = {}): ProductDetailDto {
       {
         inventoryId: 'a', storeId: 's1', storeName: 'Tienda Barata', storeSlug: 'barata',
         storeIcon: 'bi bi-shop', storeWebSite: 'https://barata.cl', price: 19990, originalPrice: 24990,
-        discountPercentage: 20, availability: true, sourceUrl: 'https://barata.cl/p/1', observedAtUtc: null
+        discountPercentage: 20, availability: true, sourceUrl: 'https://barata.cl/p/1',
+        // La API envía la observación sin zona horaria, como la entrega SQL Server.
+        observedAtUtc: '2025-09-01T13:45:00', condition: 0, paymentMethodLabel: 'Tarjeta CMR'
       },
       {
         inventoryId: 'b', storeId: 's2', storeName: 'Tienda Cara', storeSlug: 'cara',
         storeIcon: 'bi bi-shop', storeWebSite: 'https://cara.cl', price: 25000, originalPrice: 25000,
-        discountPercentage: 0, availability: false, sourceUrl: null, observedAtUtc: null
+        discountPercentage: 0, availability: false, sourceUrl: null, observedAtUtc: null,
+        condition: 2, paymentMethodLabel: null
       }
     ],
     ...overrides
+  };
+}
+
+const HISTORY_POINTS: ProductPricePointDto[] = [
+  { date: '2025-09-01', minPrice: 19990, maxPrice: 24990, offerCount: 2 },
+  { date: '2025-09-20', minPrice: 18990, maxPrice: 25990, offerCount: 3 }
+];
+
+function history(points: ProductPricePointDto[]): ProductPriceHistoryDto {
+  return {
+    productId: '11111111-1111-1111-1111-111111111111',
+    productName: 'RX-78-2 Gundam',
+    hasHistory: points.length > 0,
+    points
   };
 }
 
@@ -145,6 +166,77 @@ describe('ProductDetailComponent', () => {
 
     expect(text).toContain('Todavía no hay precios registrados para este producto.');
     expect(fixture.nativeElement.querySelector('app-price-chart svg')).toBeNull();
+  });
+
+  it('shows the condition of every offer as a Spanish badge', async () => {
+    const fixture = await render();
+    const host = fixture.nativeElement as HTMLElement;
+
+    const first = host.querySelector('tbody tr:nth-child(1) .product-detail__condition .badge');
+    const second = host.querySelector('tbody tr:nth-child(2) .product-detail__condition .badge');
+
+    expect(first?.textContent?.trim()).toBe('Nueva');
+    expect(second?.textContent?.trim()).toBe('Usada');
+  });
+
+  it('renders the payment method label as data and omits it when it is null', async () => {
+    const fixture = await render();
+    const host = fixture.nativeElement as HTMLElement;
+
+    const first = host.querySelector('tbody tr:nth-child(1) .product-detail__payment');
+    const second = host.querySelector('tbody tr:nth-child(2) .product-detail__payment');
+
+    expect(first?.textContent).toContain('Tarjeta CMR');
+    expect(second?.querySelector('.badge')).toBeNull();
+    expect(second?.textContent ?? '').not.toContain('Tarjeta');
+  });
+
+  it('shows when each price was last observed and leaves the cell empty when it is null', async () => {
+    const fixture = await render();
+    const host = fixture.nativeElement as HTMLElement;
+
+    const first = host.querySelector('tbody tr:nth-child(1) .product-detail__observed');
+    const second = host.querySelector('tbody tr:nth-child(2) .product-detail__observed');
+
+    expect(first?.textContent).toContain('2025');
+    expect(first?.textContent).toContain('13:45');
+    expect(first?.textContent ?? '').not.toContain('hace');
+    expect(second?.textContent?.trim()).toBe('');
+  });
+
+  it('defaults the day window to the whole history and reloads it with the chosen window', async () => {
+    const fixture = await render();
+    const host = fixture.nativeElement as HTMLElement;
+    const productId = '11111111-1111-1111-1111-111111111111';
+
+    expect(dashboard.getProductPriceHistory).toHaveBeenCalledWith(productId, 0);
+    expect(host.querySelectorAll('.product-detail__window-btn')).toHaveLength(3);
+    expect(host.querySelector('.product-detail__window-btn--active')?.textContent?.trim()).toBe('Todo');
+
+    host.querySelectorAll<HTMLButtonElement>('.product-detail__window-btn')[0].click();
+    fixture.detectChanges();
+    expect(dashboard.getProductPriceHistory).toHaveBeenLastCalledWith(productId, 30);
+
+    host.querySelectorAll<HTMLButtonElement>('.product-detail__window-btn')[1].click();
+    fixture.detectChanges();
+    expect(dashboard.getProductPriceHistory).toHaveBeenLastCalledWith(productId, 90);
+  });
+
+  it('keeps the chart visible while a new window is being fetched', async () => {
+    const pending = new Subject<{ success: boolean; message: string; data: ProductPriceHistoryDto }>();
+    dashboard.getProductPriceHistory
+      .mockReturnValueOnce(of({ success: true, message: '', data: history(HISTORY_POINTS) }))
+      .mockReturnValueOnce(pending.asObservable());
+    const fixture = await render();
+    const host = fixture.nativeElement as HTMLElement;
+
+    expect(host.querySelector('app-price-chart svg')).not.toBeNull();
+
+    host.querySelectorAll<HTMLButtonElement>('.product-detail__window-btn')[0].click();
+    fixture.detectChanges();
+
+    expect(host.textContent).toContain('Actualizando historial');
+    expect(host.querySelector('app-price-chart svg')).not.toBeNull();
   });
 
   it('reports a missing product instead of rendering an empty page', async () => {

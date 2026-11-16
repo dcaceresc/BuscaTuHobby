@@ -45,20 +45,19 @@
             ${{ tick.value | number: '1.0-0' : 'es-CL' }}
           </text>
         }
-        <line
-          class="price-chart__max-line"
-          [attr.x1]="geometry().firstX"
-          [attr.x2]="geometry().lastX"
-          [attr.y1]="geometry().maxPriceY"
-          [attr.y2]="geometry().maxPriceY" />
-        <text
-          class="price-chart__max-label"
-          [attr.x]="geometry().lastX"
-          [attr.y]="geometry().maxPriceY + 12"
-          text-anchor="end">
-          Máx. ${{ geometry().maxPrice | number: '1.0-0' : 'es-CL' }}
-        </text>
+        <!-- La banda rellena la dispersión observada entre el mínimo y el máximo de cada día. -->
+        <polygon class="price-chart__band" [attr.points]="geometry().band" />
         <polyline class="price-chart__line" [attr.points]="geometry().polyline" />
+        <polyline class="price-chart__line price-chart__line--max" [attr.points]="geometry().maxPolyline" />
+        @if (geometry().maxPoint; as maxPoint) {
+          <text
+            class="price-chart__max-label"
+            [attr.x]="geometry().maxLabelX"
+            [attr.y]="geometry().maxLabelY"
+            text-anchor="middle">
+            Máx. ${{ maxPoint.maxPrice | number: '1.0-0' : 'es-CL' }}
+          </text>
+        }
         @if (geometry().minPoint; as minPoint) {
           <circle
             class="price-chart__marker"
@@ -92,11 +91,12 @@
 
     <div class="visually-hidden">
       <table class="table table-sm mb-0">
-        <caption>Precio mínimo y ofertas registradas por día</caption>
+        <caption>Precio mínimo, precio máximo y ofertas registradas por día</caption>
         <thead>
           <tr>
             <th scope="col">Fecha</th>
             <th scope="col">Precio mínimo</th>
+            <th scope="col">Precio máximo</th>
             <th scope="col">Ofertas</th>
           </tr>
         </thead>
@@ -105,6 +105,7 @@
             <tr>
               <td>{{ point.date | date: 'd MMM y' : 'UTC' : 'es-CL' }}</td>
               <td>${{ point.minPrice | number: '1.0-0' : 'es-CL' }}</td>
+              <td>${{ point.maxPrice | number: '1.0-0' : 'es-CL' }}</td>
               <td>{{ point.offerCount }}</td>
             </tr>
           }

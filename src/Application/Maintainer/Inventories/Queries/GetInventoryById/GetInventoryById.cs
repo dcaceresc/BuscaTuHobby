@@ -20,6 +20,8 @@ public class GetInventoryByIdHandler(IApplicationDbContext context, IApiResponse
                    Price = x.Price,
                    OriginalPrice = x.OriginalPrice,
                    DiscountPercentage = x.DiscountPercentage,
+                   Condition = (int)x.Condition,
+                   PaymentMethodLabel = x.PaymentMethodLabel,
                })
                .FirstOrDefaultAsync(x => x.InventoryId == request.InventoryId, cancellationToken);
 

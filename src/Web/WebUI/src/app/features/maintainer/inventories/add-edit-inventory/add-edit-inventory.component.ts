@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal, input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ProductDto, StoreDto } from '@app/core/models';
+import { CreateInventory, ProductDto, StoreDto, UpdateInventory } from '@app/core/models';
 import { InventoryService, NotificationService, ProductService, StoreService } from '@app/core/services';
 import { NgSelectModule } from '@ng-select/ng-select';
 
@@ -56,7 +56,9 @@ export class AddEditInventoryComponent implements OnInit {
         productId: ['',Validators.required],
         price: ['', Validators.required],
         originalPrice: ['', Validators.required],
-        discountPercentage: ['', [Validators.required, Validators.min(0), Validators.max(100)]]
+        discountPercentage: ['', [Validators.required, Validators.min(0), Validators.max(100)]],
+        condition: [0, Validators.required],
+        paymentMethodLabel: [null]
       });
     }else{
       this.inventoryForm = this.formBuilder.group({
@@ -64,7 +66,9 @@ export class AddEditInventoryComponent implements OnInit {
         productId: ['',Validators.required],
         price: ['', Validators.required],
         originalPrice: ['', Validators.required],
-        discountPercentage: ['', [Validators.required, Validators.min(0), Validators.max(100)]]
+        discountPercentage: ['', [Validators.required, Validators.min(0), Validators.max(100)]],
+        condition: [0, Validators.required],
+        paymentMethodLabel: [null]
       });
     }
   }
@@ -100,6 +104,26 @@ export class AddEditInventoryComponent implements OnInit {
   }
 
 
+  /** El medio de pago es opcional: un texto vacío viaja como ausencia de dato. */
+  private paymentLabel(): string | null {
+    const value = this.inventoryForm.value.paymentMethodLabel;
+    return typeof value === 'string' && value.trim().length > 0 ? value.trim() : null;
+  }
+
+  /** Arma el cuerpo compartido por crear y editar, ya con los dos campos nuevos. */
+  private basePayload(): CreateInventory {
+    const value = this.inventoryForm.value;
+    return {
+      storeId: value.storeId,
+      productId: value.productId,
+      price: value.price,
+      originalPrice: value.originalPrice,
+      discountPercentage: value.discountPercentage,
+      condition: value.condition,
+      paymentMethodLabel: this.paymentLabel()
+    };
+  }
+
   public onSubmit(): void {
     if (this.inventoryForm.invalid) {
       this.notificationService.showInvalidFormError();
@@ -107,7 +131,11 @@ export class AddEditInventoryComponent implements OnInit {
     }
 
     if(this.isEditMode){
-      this.inventoryService.updateInventory(this.inventoryId(),this.inventoryForm.value).subscribe({
+      const payload: UpdateInventory = {
+        ...this.basePayload(),
+        inventoryId: this.inventoryId() ?? ''
+      };
+      this.inventoryService.updateInventory(this.inventoryId(), payload).subscribe({
         next: (response) => {
           if(!response.success){
             this.notificationService.showError("Error", response.message);
@@ -121,7 +149,7 @@ export class AddEditInventoryComponent implements OnInit {
         }
       });
     }else{
-      this.inventoryService.createInventory(this.inventoryForm.value).subscribe({
+      this.inventoryService.createInventory(this.basePayload()).subscribe({
         next: (response) => {
           if(!response.success){
             this.notificationService.showError("Error", response.message);
