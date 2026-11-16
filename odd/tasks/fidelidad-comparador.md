@@ -5,9 +5,10 @@ falso, después la oferta rica y el historial, después el catálogo de Gunpla.
 
 Base de análisis: `docs/referencia-solotodo.md` (sitio verificado con peticiones reales) y
 `docs/estado-del-sitio.md` (auditoría con evidencia). Branch `feat/fidelidad-comparador`; baseline
-`34d492c`. Trabajo previo sin commitear preservado y nunca incluido en un commit: README.md,
-`src/Infrastructure/Data/ApplicationDbContextFactory.cs`, `src/Web/WebAPI/WebAPI.csproj`,
-`src/Web/WebAPI/appsettings.Development.json`, `mise.toml`.
+`21c56d0`, el commit del propio usuario que mueve la cadena de conexión a user-secrets. Los cuatro ficheros de trabajo previo (README.md,
+`src/Infrastructure/Data/ApplicationDbContextFactory.cs`, `src/Web/WebAPI/WebAPI.csproj` y
+`src/Web/WebAPI/appsettings.Development.json`) están en el commit `21c56d0` del usuario, que es la base
+de esta rama; no se tocaron. `mise.toml` sigue sin trackear.
 
 ## Specs
 
@@ -72,3 +73,6 @@ L17. Block 3 done. `Product` gained `Grade` (`GunplaGrade`: None = 0, HG = 1, MG
 L18. Integration gap found by the parallel writers and closed by the parent: `ProductDetailDto` did not publish `Grade`, `Scale` and `PartNumber`, so the three new rows on the product page would have stayed invisible with real data while the frontend model already declared them. Added to the DTO, the projection and the check.
 L19. Evidence for block 3: `dotnet build BuscaTuHobby.sln` exit 0 with 0 errors; checks exit 0 with `PASS: 1210 assertions`; `pnpm exec ng test --watch=false` exit 0 with 15 files and 125 tests; `pnpm exec ng build` exit 0 with initial total 635.76 kB and the two pre-existing budget warnings. The backend writer disclosed that it wrote the implementation before the checks in this block, so those 100 assertions were not observed failing first.
 L20. Release limits, unchanged and now larger: two migrations (`20260722000000`, `20260723000000`) have never been applied or rolled back, the development seed has never run against a database, and the SQL translation of the price-sorted join, the facet groupings and the offerless-last ordering is unproven because the checks run on LINQ to objects. Bringing the site up against an isolated SQL Server is the remaining gate before any deployment claim.
+L21. Second independent verification, over blocks 2 and 3, passed the migration, domain-invariant, store-endpoint, contract and test-execution claims and failed three. Fixed: the category listing published a fabricated `0` price for a product with no eligible offers, so `MinPrice`/`MaxPrice` are now nullable and the card shows "Sin ofertas"; the catalog issued two requests per navigation and a stale category response could overwrite the current one, so loading now goes through a navigation stream with `switchMap`; and an out-of-range page blamed the filters and hid the paginator, so it now names the real total and offers a way back to the first page. Also fixed on the way: `UpdateProduct` defaulted grade, scale and part number, which reset stored catalog data for any client that omitted them — they are now optional and null means keep the stored value; the vocabulary said "refabricada" in the API and "Reutilizada" in the interface, now one word; the store page published the payment label without a column for it; and the edit product screen had an empty `onSubmit`, so it had never saved anything, which also exposed that `UpdateProduct.SerieId` was non-nullable although a product may have no series.
+L22. Final evidence for the branch: `dotnet build BuscaTuHobby.sln` exit 0 with 0 errors; checks exit 0 with `PASS: 1228 assertions`; `pnpm exec ng test --watch=false` exit 0 with 16 files and 135 tests; `pnpm exec ng build` exit 0 with initial total 636.06 kB and the two pre-existing budget warnings.
+L23. Two advisories left open on purpose: the category facets count every product of the category while the header total counts the filtered page, so at a glance both numbers can disagree; and the two migrations plus the development seed have never run against a real database. Neither is hidden; both need a decision, not more code.

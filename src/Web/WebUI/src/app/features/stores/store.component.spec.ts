@@ -134,6 +134,45 @@ describe('StoreComponent', () => {
     expect(second.querySelector('.store__observed')?.textContent?.trim()).toBe('');
   });
 
+  it('shows the payment method column with the offer label and leaves it empty when not informed', async () => {
+    const harness = await render('/stores/hobby-store', store({
+      offers: [
+        offer({ paymentMethodLabel: 'Tarjeta CMR' }),
+        offer({
+          inventoryId: 'b',
+          productId: '22222222-2222-2222-2222-222222222222',
+          productName: 'Zaku II',
+          discountPercentage: 0,
+          paymentMethodLabel: null
+        })
+      ]
+    }));
+    const host = harness.routeNativeElement as HTMLElement;
+    const headers = Array.from(host.querySelectorAll('thead th')).map(th => th.textContent?.trim());
+
+    // El medio de pago entra entre la condición y la observación, sin alterar el orden de las demás columnas.
+    expect(headers).toEqual([
+      'Producto', 'Precio', 'Normal', 'Descuento', 'Condición', 'Medio de pago', 'Última observación'
+    ]);
+
+    const first = host.querySelector<HTMLElement>('tbody tr:nth-child(1)') as HTMLElement;
+    const second = host.querySelector<HTMLElement>('tbody tr:nth-child(2)') as HTMLElement;
+
+    expect(first.querySelector('.store__payment')?.textContent).toBe('Tarjeta CMR');
+    expect(second.querySelector('.store__payment')?.textContent?.trim()).toBe('');
+  });
+
+  it('names the refurbished condition "Reutilizada", the same vocabulary as the product page', async () => {
+    const harness = await render('/stores/hobby-store', store({
+      offerCount: 1,
+      offers: [offer({ condition: 1 })]
+    }));
+    const host = harness.routeNativeElement as HTMLElement;
+
+    expect(host.querySelector('.store__condition')?.textContent?.trim()).toBe('Reutilizada');
+    expect(host.textContent).not.toContain('Refabricada');
+  });
+
   it('shows a Spanish message when the store has no offers', async () => {
     const harness = await render('/stores/hobby-store', store({ offers: [], offerCount: 0 }));
     const text = harness.routeNativeElement?.textContent ?? '';

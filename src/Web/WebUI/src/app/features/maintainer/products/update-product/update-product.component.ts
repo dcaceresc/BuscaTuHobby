@@ -2,7 +2,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CategoryDto, FranchiseDto, GUNPLA_GRADE_OPTIONS, ManufacturerDto, SerieByFranchiseDto } from '@app/core/models';
+import { CategoryDto, FranchiseDto, GUNPLA_GRADE_OPTIONS, ManufacturerDto, SerieByFranchiseDto, UpdateProduct } from '@app/core/models';
 import { CategoryService, FranchiseService, ManufacturerService, NotificationService, ProductService, SerieService } from '@app/core/services';
 import { NgSelectModule } from '@ng-select/ng-select';
 
@@ -194,10 +194,49 @@ export class UpdateProductComponent implements OnInit {
 
   public onSubmit(): void {
 
+    if (this.productForm.invalid) {
+      return;
+    }
+
+    // La edición guarda con el mismo servicio que usa la pantalla de alta: el payload lleva grado, escala y número
+    // de parte además de los campos que ya existían, y la API exige que la Id del cuerpo coincida con la de la ruta.
+    this.productService.updateProduct(this.productId, this.buildProduct()).subscribe({
+      next: (response) => {
+
+        if (!response.success) {
+          this.notificationService.showError('Error', response.message);
+          return;
+        }
+
+        this.notificationService.showSuccess('Exito', 'Producto actualizado correctamente');
+        this.router.navigate(['/maintainer/products']);
+      },
+      error: () => {
+        this.notificationService.showDefaultError();
+      }
+    });
   }
 
   public onCancel(): void {
     this.router.navigate(['/maintainer/products']);
   }
 
+  /** Arma el producto con la escala y el número de parte normalizados, sin tocar el resto del formulario. */
+  private buildProduct(): UpdateProduct {
+    const form = this.productForm.value;
+
+    return {
+      ...form,
+      productId: this.productId ?? '',
+      scale: normalizeOptionalText(form.scale),
+      partNumber: normalizeOptionalText(form.partNumber)
+    };
+  }
+
+}
+
+/** Convierte un texto opcional en null cuando está vacío; la API rechaza cadenas vacías o con espacios en los extremos. */
+function normalizeOptionalText(value: string | null | undefined): string | null {
+  const text = (value ?? '').trim();
+  return text.length === 0 ? null : text;
 }

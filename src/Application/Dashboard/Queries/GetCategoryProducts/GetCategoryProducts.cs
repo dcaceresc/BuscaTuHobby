@@ -175,8 +175,10 @@ public class GetCategoryProductsHandler(IApplicationDbContext context, IApiRespo
                 Grade = r.Grade,
                 Scale = r.Scale,
                 PartNumber = r.PartNumber,
-                MinPrice = r.Cheapest ?? 0,
-                MaxPrice = r.Dearest ?? 0,
+                // Sin ofertas elegibles no hay precio: la fila publica null en las dos columnas en lugar de un cero
+                // que el visitante leería como "gratis". El conteo de tiendas ya es 0 en ese caso.
+                MinPrice = r.Cheapest,
+                MaxPrice = r.Dearest,
                 StoreCount = r.StoreCount,
                 ImageUrls = r.ImageIds.Select(id => $"/images/{id}.jpg").ToList()
             }).ToList();

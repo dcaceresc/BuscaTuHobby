@@ -55,6 +55,7 @@
                 <th scope="col" class="text-end">Normal</th>
                 <th scope="col" class="text-center">Descuento</th>
                 <th scope="col">Condición</th>
+                <th scope="col">Medio de pago</th>
                 <th scope="col">Última observación</th>
               </tr>
             </thead>
@@ -82,6 +83,8 @@
                     }
                   </td>
                   <td class="store__condition">{{ conditionLabel(offer.condition) }}</td>
+                  <!-- El medio de pago es opcional: una oferta que no lo informa deja la celda vacía. -->
+                  <td class="store__payment">{{ offer.paymentMethodLabel }}</td>
                   <td class="text-nowrap store__observed">
                     <!-- La oferta puede no tener una observación registrada; en ese caso la celda queda vacía. -->
                     @if (offer.observedAtUtc) {

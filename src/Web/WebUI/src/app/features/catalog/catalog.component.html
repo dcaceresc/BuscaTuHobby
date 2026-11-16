@@ -89,7 +89,17 @@
       </aside>
 
       <div class="col-lg-9">
-        @if (data.items.length === 0) {
+        @if (data.items.length === 0 && isOutOfRange(data)) {
+          <!-- La categoría sí tiene productos, pero no en la página pedida: se nombra el total real y se ofrece volver. -->
+          <div class="alert alert-info catalog__empty catalog__out-of-range" role="alert">
+            La página {{ query().page }} no existe en esta categoría: tiene
+            {{ data.total }} {{ data.total === 1 ? 'producto' : 'productos' }} en
+            {{ totalPages() }} {{ totalPages() === 1 ? 'página' : 'páginas' }}.
+            <button type="button" class="btn btn-link p-0 align-baseline catalog__first-page" (click)="onPageChange(1)">
+              Volver a la primera página
+            </button>
+          </div>
+        } @else if (data.items.length === 0) {
           <div class="alert alert-info catalog__empty" role="alert">
             No hay productos en esta categoría con los filtros seleccionados.
             Prueba con otros filtros.
@@ -129,45 +139,50 @@
                         }
                       </div>
                     }
-                    <p class="catalog__price mb-1">
-                      @if (product.minPrice === product.maxPrice) {
-                        ${{ product.minPrice | number: '1.0-0' : 'es-CL' }}
-                      } @else {
-                        ${{ product.minPrice | number: '1.0-0' : 'es-CL' }} -
-                        ${{ product.maxPrice | number: '1.0-0' : 'es-CL' }}
-                      }
-                    </p>
-                    <p class="text-muted small mb-0">
-                      <i class="bi bi-shop" aria-hidden="true"></i>
-                      {{ product.storeCount }} {{ product.storeCount === 1 ? 'tienda' : 'tiendas' }}
-                    </p>
+                    @if (product.minPrice !== null && product.maxPrice !== null) {
+                      <p class="catalog__price mb-1">
+                        @if (product.minPrice === product.maxPrice) {
+                          ${{ product.minPrice | number: '1.0-0' : 'es-CL' }}
+                        } @else {
+                          ${{ product.minPrice | number: '1.0-0' : 'es-CL' }} -
+                          ${{ product.maxPrice | number: '1.0-0' : 'es-CL' }}
+                        }
+                      </p>
+                      <p class="text-muted small mb-0">
+                        <i class="bi bi-shop" aria-hidden="true"></i>
+                        {{ product.storeCount }} {{ product.storeCount === 1 ? 'tienda' : 'tiendas' }}
+                      </p>
+                    } @else {
+                      <!-- Sin ofertas elegibles la API no publica precios: la ficha lo dice en lugar de inventar un $0. -->
+                      <p class="catalog__no-offers text-muted mb-1">Sin ofertas</p>
+                    }
                   </div>
                 </article>
               </div>
             }
           </div>
+        }
 
-          @if (totalPages() > 1) {
-            <nav class="mt-4" aria-label="Paginación del catálogo">
-              <ul class="pagination justify-content-center mb-0">
-                <li class="page-item" [class.disabled]="query().page <= 1">
-                  <button type="button" class="page-link" (click)="onPageChange(query().page - 1)">
-                    Anterior
-                  </button>
+        @if (totalPages() > 1) {
+          <nav class="mt-4" aria-label="Paginación del catálogo">
+            <ul class="pagination justify-content-center mb-0">
+              <li class="page-item" [class.disabled]="query().page <= 1">
+                <button type="button" class="page-link" (click)="onPageChange(query().page - 1)">
+                  Anterior
+                </button>
+              </li>
+              @for (page of pages(); track page) {
+                <li class="page-item" [class.active]="page === query().page">
+                  <button type="button" class="page-link" (click)="onPageChange(page)">{{ page }}</button>
                 </li>
-                @for (page of pages(); track page) {
-                  <li class="page-item" [class.active]="page === query().page">
-                    <button type="button" class="page-link" (click)="onPageChange(page)">{{ page }}</button>
-                  </li>
-                }
-                <li class="page-item" [class.disabled]="query().page >= totalPages()">
-                  <button type="button" class="page-link" (click)="onPageChange(query().page + 1)">
-                    Siguiente
-                  </button>
-                </li>
-              </ul>
-            </nav>
-          }
+              }
+              <li class="page-item" [class.disabled]="query().page >= totalPages()">
+                <button type="button" class="page-link" (click)="onPageChange(query().page + 1)">
+                  Siguiente
+                </button>
+              </li>
+            </ul>
+          </nav>
         }
       </div>
     </div>

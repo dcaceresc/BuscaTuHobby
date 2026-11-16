@@ -28,8 +28,11 @@ public class CatalogProductDto
     public int Grade { get; set; }
     public string? Scale { get; set; }
     public string? PartNumber { get; set; }
-    public int MinPrice { get; set; }
-    public int MaxPrice { get; set; }
+    // Precio mínimo y máximo entre las ofertas elegibles del producto. Son opcionales a propósito: null significa
+    // que el producto no tiene ninguna oferta elegible y no se publica un cero inventado; un cero real sigue
+    // siendo un precio publicado.
+    public int? MinPrice { get; set; }
+    public int? MaxPrice { get; set; }
     public int StoreCount { get; set; }
     public List<string> ImageUrls { get; set; } = [];
 }

@@ -40,6 +40,10 @@ internal static class OfferConditionChecks
             Enum.GetUnderlyingType(typeof(ProductCondition)) == typeof(int) && values.Length == 3,
             "The condition contract is exactly three integer values 0 new, 1 refurbished, 2 used");
 
+        // El mensaje de rechazo usa el mismo vocabulario que la interfaz: "reutilizada", no "refabricada".
+        check(InvalidCondition == "La condición de la oferta debe ser 0 (nueva), 1 (reutilizada) o 2 (usada).",
+            "The invalid condition message keeps its wording and names the value 1 reutilizada like the interface");
+
         var product = Guid.NewGuid();
         var store = Guid.NewGuid();
         var offer = Inventory.Create(product, store, 100, 0, 0);

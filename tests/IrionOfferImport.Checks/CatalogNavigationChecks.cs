@@ -31,6 +31,7 @@ internal static class CatalogNavigationChecks
         MigrationShape(check);
         await MaintainerWriteSide(check);
         await CategoryListing(check);
+        await PriceHonesty(check);
         await StoreDetail(check);
     }
 
@@ -156,10 +157,12 @@ internal static class CatalogNavigationChecks
             "CategoryName:String,CategorySlug:String,Franchises:List<FilterOptionDto>,Grades:List<FilterOptionDto>," +
             "Items:List<CatalogProductDto>,Manufacturers:List<FilterOptionDto>,Page:Int32,PageSize:Int32,Total:Int32",
             "CategoryProductsDto publishes exactly the agreed category listing contract");
+        // Los dos precios son opcionales: null significa que el producto no tiene ninguna oferta elegible y por
+        // eso no se publica un cero inventado; un cero real sigue siendo un valor publicado.
         check(Shape(typeof(CatalogProductDto)) ==
-            "FranchiseName:String,Grade:Int32,ImageUrls:List<String>,ManufacturerName:String,MaxPrice:Int32," +
-            "MinPrice:Int32,PartNumber:String,ProductId:Guid,ProductName:String,Scale:String,StoreCount:Int32",
-            "CatalogProductDto publishes exactly the agreed catalog row contract");
+            "FranchiseName:String,Grade:Int32,ImageUrls:List<String>,ManufacturerName:String,MaxPrice:Int32?," +
+            "MinPrice:Int32?,PartNumber:String,ProductId:Guid,ProductName:String,Scale:String,StoreCount:Int32",
+            "CatalogProductDto publishes the two prices as optional so no price and a zero price differ");
         check(Shape(typeof(FilterOptionDto)) == "Count:Int32,Label:String,Value:String",
             "FilterOptionDto publishes exactly value, label and count");
         check(Shape(typeof(StoreDetailDto)) ==
@@ -311,23 +314,61 @@ internal static class CatalogNavigationChecks
             stored.PartNumber == "MG-001" && proxy.Links.Count == 2,
             "Updating a product replaces its Gunpla data and keeps the existing success message");
 
+        // La petición declara los tres datos como opcionales: null significa "conserva lo que ya está guardado".
+        check(typeof(UpdateProduct).GetProperty(nameof(UpdateProduct.Grade))?.PropertyType == typeof(int?) &&
+            typeof(UpdateProduct).GetProperty(nameof(UpdateProduct.Scale))?.PropertyType == typeof(string) &&
+            typeof(UpdateProduct).GetProperty(nameof(UpdateProduct.PartNumber))?.PropertyType == typeof(string),
+            "The update request declares the Gunpla fields as optional so omitting one keeps the stored value");
+
+        // Misma petición válida dejando en null los datos que no se quieren cambiar.
+        UpdateProduct NominalRequest(int? grade = null, string? scale = null, string? partNumber = null) => new()
+        {
+            ProductId = stored.ProductId, ProductName = "Kit nuevo", ManufacturerId = manufacturer.ManufacturerId,
+            FranchiseId = franchise.FranchiseId, SerieId = Guid.Empty, ProductHasBase = true,
+            ProductTargetAge = "15+", ProductSize = "1/144", ProductDescription = "desc",
+            ProductReleaseDate = new DateOnly(2026, 1, 1), CategoryIds = [category.CategoryId, other.CategoryId],
+            Grade = grade, Scale = scale, PartNumber = partNumber
+        };
+
+        // Omitir los tres datos conserva lo guardado en lugar de borrarlo.
+        var omitted = await new UpdateProductHandler(context, services).Handle(NominalRequest(), default);
+        check(omitted.Success && omitted.Message == "Producto actualizado correctamente" &&
+            stored.Grade == GunplaGrade.MasterGrade && stored.Scale == "1/100" && stored.PartNumber == "MG-001",
+            "An update that omits the grade, the scale and the part number keeps the three stored values");
+
+        // Un solo dato informado cambia solo ese dato y deja los otros dos como estaban.
+        var scaleOnly = await new UpdateProductHandler(context, services)
+            .Handle(NominalRequest(scale: "1/60"), default);
+        check(scaleOnly.Success && stored.Grade == GunplaGrade.MasterGrade && stored.Scale == "1/60" &&
+            stored.PartNumber == "MG-001",
+            "Supplying only the scale changes the scale and keeps the stored grade and part number");
+        var partNumberOnly = await new UpdateProductHandler(context, services)
+            .Handle(NominalRequest(partNumber: "MG-002"), default);
+        check(partNumberOnly.Success && stored.Grade == GunplaGrade.MasterGrade && stored.Scale == "1/60" &&
+            stored.PartNumber == "MG-002",
+            "Supplying only the part number changes it and keeps the stored grade and scale");
+        var gradeOnly = await new UpdateProductHandler(context, services)
+            .Handle(NominalRequest(grade: (int)GunplaGrade.PerfectGrade), default);
+        check(gradeOnly.Success && stored.Grade == GunplaGrade.PerfectGrade && stored.Scale == "1/60" &&
+            stored.PartNumber == "MG-002",
+            "Supplying only the grade changes it and keeps the stored scale and part number");
+
         var afterUpdate = Describe(stored);
         var updateSaves = proxy.Saves;
+
+        // Una cadena vacía no es una omisión: se valida como un valor informado y se rechaza con su mensaje.
         foreach (var invalid in new[]
                  {
-                     (7, "1/100", "MG-001", GunplaGradeRules.InvalidGradeMessage),
-                     ((int)GunplaGrade.MasterGrade, new string('a', 17), "MG-001", GunplaGradeRules.InvalidScaleMessage),
-                     ((int)GunplaGrade.MasterGrade, "1/100", new string('b', 65), GunplaGradeRules.InvalidPartNumberMessage)
+                     (7, "1/100", "MG-002", GunplaGradeRules.InvalidGradeMessage),
+                     (-1, "1/100", "MG-002", GunplaGradeRules.InvalidGradeMessage),
+                     ((int)GunplaGrade.MasterGrade, new string('a', 17), "MG-002", GunplaGradeRules.InvalidScaleMessage),
+                     ((int)GunplaGrade.MasterGrade, "", "MG-002", GunplaGradeRules.InvalidScaleMessage),
+                     ((int)GunplaGrade.MasterGrade, "1/60", new string('b', 65), GunplaGradeRules.InvalidPartNumberMessage),
+                     ((int)GunplaGrade.MasterGrade, "1/60", "", GunplaGradeRules.InvalidPartNumberMessage)
                  })
         {
-            var response = await new UpdateProductHandler(context, services).Handle(new()
-            {
-                ProductId = stored.ProductId, ProductName = "Kit nuevo", ManufacturerId = manufacturer.ManufacturerId,
-                FranchiseId = franchise.FranchiseId, SerieId = Guid.Empty, ProductHasBase = true,
-                ProductTargetAge = "15+", ProductSize = "1/144", ProductDescription = "desc",
-                ProductReleaseDate = new DateOnly(2026, 1, 1), CategoryIds = [category.CategoryId, other.CategoryId],
-                Grade = invalid.Item1, Scale = invalid.Item2, PartNumber = invalid.Item3
-            }, default);
+            var response = await new UpdateProductHandler(context, services)
+                .Handle(NominalRequest(invalid.Item1, invalid.Item2, invalid.Item3), default);
             check(!response.Success && response.Message == invalid.Item4 && Describe(stored) == afterUpdate &&
                 proxy.Saves == updateSaves,
                 "An invalid update is rejected with the exact Spanish message and changes nothing: " + invalid.Item4);
@@ -374,8 +415,8 @@ internal static class CatalogNavigationChecks
             alpha.ImageUrls[0] != alpha.ImageUrls[1],
             "Image URLs follow the published /images/{id}.jpg path in the stored order");
         var gamma = data.Items.Single(i => i.ProductId == fixture.Gamma.ProductId);
-        check(gamma.MinPrice == 0 && gamma.MaxPrice == 0 && gamma.StoreCount == 0,
-            "A product whose only offer is ineligible keeps zeroed aggregates");
+        check(gamma.MinPrice is null && gamma.MaxPrice is null && gamma.StoreCount == 0,
+            "A product whose only offer is ineligible publishes no price and zero stores");
 
         var manufacturers = data.Manufacturers;
         check(manufacturers.Count == 2 &&
@@ -437,7 +478,17 @@ internal static class CatalogNavigationChecks
         {
             var sorted = await List(sort: sort);
             check(sorted.Success && sorted.Data!.Items.Select(i => i.ProductName).SequenceEqual(expected),
-                "The " + sort + " order lists the products as expected, with offerless products last");
+                "The " + sort + " order lists the products in the expected sequence");
+        }
+
+        // Solo los dos órdenes de precio llevan al final el producto sin ofertas elegibles; "views" ordena por su
+        // propia clave y no promete nada sobre él. La comprobación anterior no puede afirmar lo contrario.
+        foreach (var (sort, offerlessLast) in new[] { ("price-asc", true), ("price-desc", true), ("views", false) })
+        {
+            var sorted = await List(sort: sort);
+            check((sorted.Data!.Items[^1].ProductId == fixture.Gamma.ProductId) == offerlessLast,
+                "The " + sort + " order " + (offerlessLast ? "places" : "does not place") +
+                " the product without eligible offers last");
         }
 
         foreach (var (filter, expected) in new (Func<Task<ApiResponse<CategoryProductsDto>>>, string[])[]
@@ -518,6 +569,43 @@ internal static class CatalogNavigationChecks
             "A store without eligible offers returns zeroed counts and an empty list");
     }
 
+    // El precio publicado no se inventa: un producto sin ofertas elegibles publica null en las dos columnas y el
+    // cero solo aparece cuando una oferta elegible realmente cobra cero. Las dos filas del caso viven en la
+    // categoría figuras (ver BuildFixture) para no alterar el listado de maquetas.
+    private static async Task PriceHonesty(Action<bool, string> check)
+    {
+        var fixture = BuildFixture();
+        var handler = new GetCategoryProductsHandler(fixture.Context, new ApiResponseService());
+
+        async Task<ApiResponse<CategoryProductsDto>> List(string? sort = null, int? minPrice = null,
+            int? maxPrice = null) =>
+            await handler.Handle(new("figuras", null, null, sort, null, null, null, minPrice, maxPrice), default);
+
+        var listing = await List();
+        check(listing.Success && listing.Data is not null,
+            "The figures listing of the price contract answers with the usual success envelope");
+        var items = listing.Data!.Items;
+        var offerless = items.Single(i => i.ProductId == fixture.Offerless.ProductId);
+        check(offerless.MinPrice is null && offerless.MaxPrice is null && offerless.StoreCount == 0,
+            "A product whose only offer is ineligible publishes no price instead of a fabricated zero");
+        var zero = items.Single(i => i.ProductId == fixture.ZeroPriced.ProductId);
+        check(zero.MinPrice == 0 && zero.MaxPrice == 0 && zero.StoreCount == 1,
+            "A genuine zero price is published as zero and stays distinguishable from having no price");
+
+        var cheapFirst = await List(sort: "price-asc");
+        check(cheapFirst.Data!.Items.Select(i => i.ProductName)
+                .SequenceEqual(new[] { "Zeta Zero", "Zeta Figure", "Alpha Figure" }),
+            "The ascending price order puts the genuine zero first and the offerless product last");
+
+        var zeroCeiling = await List(maxPrice: 0);
+        check(zeroCeiling.Data!.Items.Select(i => i.ProductId).SequenceEqual(new[] { fixture.ZeroPriced.ProductId }),
+            "A maximum price of zero matches the genuine zero price and excludes the product without a price");
+        var aboveZero = await List(minPrice: 1);
+        check(aboveZero.Data!.Items.Select(i => i.ProductId)
+                .SequenceEqual(new[] { fixture.OtherCategoryProduct.ProductId }),
+            "A minimum price above zero excludes both the zero price and the product without a price");
+    }
+
     private static Fixture BuildFixture() => new();
 
     private sealed class Fixture
@@ -534,6 +622,8 @@ internal static class CatalogNavigationChecks
         public Product Delta { get; }
         public Product Inactive { get; }
         public Product OtherCategoryProduct { get; }
+        public Product ZeroPriced { get; }
+        public Product Offerless { get; }
         public Inventory IneligibleAvailability { get; }
         public Inventory IneligibleByOfferFlag { get; }
 
@@ -592,6 +682,14 @@ internal static class CatalogNavigationChecks
             AddOffer(fake, Inactive, MainStore, 12000);
             // Otra categoría: no participa de los facets de maquetas ni del listado de la tienda principal.
             AddOffer(fake, OtherCategoryProduct, second, 1000);
+
+            // Figuras suma dos productos para separar el precio nulo del precio cero real: uno con una oferta
+            // elegible que cobra 0 y otro cuya única oferta no es elegible. Viven aquí para no mover el listado
+            // de maquetas que fijan las demás comprobaciones.
+            Offerless = Add(fake, figuras, "Alpha Figure", Bandai, Gundam, GunplaGrade.None, null, null, 20);
+            AddOffer(fake, Offerless, second, 9000, available: false);
+            ZeroPriced = Add(fake, figuras, "Zeta Zero", Bandai, Gundam, GunplaGrade.None, null, null, 10);
+            AddOffer(fake, ZeroPriced, second, 0);
         }
 
         private static Product Add(CatalogContext fake, Category category, string name, Manufacturer manufacturer,

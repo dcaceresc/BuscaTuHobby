@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
-import { of, throwError } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CatalogComponent } from './catalog.component';
 import { routes } from '../../app.routes';
@@ -212,6 +212,87 @@ describe('CatalogComponent', () => {
 
     expect(text).toContain('No hay productos en esta categoría con los filtros seleccionados.');
     expect(harness.routeNativeElement?.querySelectorAll('.catalog__card').length).toBe(0);
+  });
+
+  it('says "Sin ofertas" instead of inventing a price when the product has no eligible offer', async () => {
+    dashboard.getCategoryProducts.mockReturnValue(successPage({
+      total: 2,
+      items: [
+        catalogProduct({ minPrice: null, maxPrice: null, storeCount: 0 }),
+        catalogProduct({
+          productId: '33333333-3333-3333-3333-333333333333',
+          productName: 'Zaku II',
+          minPrice: 0,
+          maxPrice: 0,
+          storeCount: 1
+        })
+      ]
+    }));
+    const harness = await render();
+    const host = harness.routeNativeElement as HTMLElement;
+    const cards = Array.from(host.querySelectorAll<HTMLElement>('.catalog__card'));
+
+    // Sin ofertas elegibles no hay precio ni conteo de tiendas: la ficha no inventa un cero.
+    expect(cards[0].textContent).toContain('Sin ofertas');
+    expect(cards[0].textContent).not.toContain('$');
+    expect(cards[0].textContent).not.toContain('tienda');
+    expect(cards[0].querySelector('.catalog__price')).toBeNull();
+
+    // Un precio realmente cero se sigue mostrando como cero.
+    expect(cards[1].textContent).toContain('$0');
+    expect(cards[1].textContent).toContain('1 tienda');
+    expect(cards[1].textContent).not.toContain('Sin ofertas');
+  });
+
+  it('requests once per navigation and never lets a stale category overwrite the current one', async () => {
+    const uno = new Subject<any>();
+    const dos = new Subject<any>();
+    dashboard.getCategoryProducts.mockImplementation((slug: string) => slug === 'uno' ? uno : dos);
+
+    const harness = await render('/categories/uno?grade=1&page=2');
+    const before = dashboard.getCategoryProducts.mock.calls.length;
+
+    expect(before).toBe(1);
+    expect(dashboard.getCategoryProducts).toHaveBeenCalledWith('uno', expect.objectContaining({
+      grade: '1',
+      page: 2
+    }));
+
+    await harness.navigateByUrl('/categories/dos');
+    await flush(harness);
+
+    // Una sola petición para la navegación, con el argumento nuevo y sin los filtros de la categoría anterior.
+    const issued = dashboard.getCategoryProducts.mock.calls.slice(before);
+    expect(issued).toHaveLength(1);
+    expect(issued[0][0]).toBe('dos');
+    expect(issued[0][1]).toMatchObject({ page: 1, grade: '', sort: 'name' });
+
+    // La respuesta de la categoría abandonada llega tarde y no puede reemplazar la vigente.
+    dos.next({ success: true, message: '', data: categoryPage({ categoryName: 'Dos', categorySlug: 'dos' }) });
+    dos.complete();
+    uno.next({ success: true, message: '', data: categoryPage({ categoryName: 'Uno', categorySlug: 'uno' }) });
+    uno.complete();
+    await flush(harness);
+
+    expect((harness.routeNativeElement as HTMLElement).querySelector('h1')?.textContent).toContain('Dos');
+  });
+
+  it('says the requested page does not exist and offers the way back to the first page', async () => {
+    dashboard.getCategoryProducts.mockReturnValue(successPage({ total: 30, page: 99, items: [] }));
+    const harness = await render('/categories/gunpla?page=99');
+    const host = harness.routeNativeElement as HTMLElement;
+
+    expect(host.textContent).toContain('La página 99 no existe');
+    expect(host.textContent).toContain('30 productos');
+    expect(host.textContent).not.toContain('con los filtros seleccionados');
+    // El paginador sigue visible para que la vista no quede sin salida.
+    expect(host.querySelectorAll('.pagination .page-link').length).toBeGreaterThan(1);
+
+    (host.querySelector('.catalog__first-page') as HTMLButtonElement).click();
+    await flush(harness);
+
+    expect(TestBed.inject(Router).url).not.toContain('page=99');
+    expect(dashboard.getCategoryProducts).toHaveBeenLastCalledWith('gunpla', expect.objectContaining({ page: 1 }));
   });
 
   it('reports a failed envelope instead of rendering a blank page', async () => {

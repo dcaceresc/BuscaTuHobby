@@ -68,3 +68,24 @@ export interface CreateProduct{
     categoryIds:string[];
     productImages:string[];
 }
+
+/**
+ * Payload del PUT de producto. La API exige que `productId` coincida con la Id de la ruta y valida el grado, la
+ * escala y el número de parte antes de guardar; `serieId` viaja vacío cuando el producto no tiene serie.
+ */
+export interface UpdateProduct{
+    productId:string;
+    productName:string;
+    manufacturerId:string;
+    franchiseId:string;
+    serieId:string;
+    productHasBase:boolean;
+    productTargetAge:string;
+    productSize:string;
+    grade:number;
+    scale:string | null;
+    partNumber:string | null;
+    productDescription:string;
+    productReleaseDate:string;
+    categoryIds:string[];
+}

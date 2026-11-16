@@ -130,8 +130,10 @@ export interface CatalogProductDto{
     grade: number;
     scale: string | null;
     partNumber: string | null;
-    minPrice: number;
-    maxPrice: number;
+    // Los precios describen solo las ofertas elegibles del producto: null significa que hoy no tiene ninguna, y es
+    // distinto de un precio cero.
+    minPrice: number | null;
+    maxPrice: number | null;
     storeCount: number;
     imageUrls: string[];
 }

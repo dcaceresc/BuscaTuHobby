@@ -1,6 +1,6 @@
 namespace Domain.Entities;
 
-// Condición física de una oferta. Los números son el contrato HTTP con el frontend (0 nueva, 1 refabricada,
+// Condición física de una oferta. Los números son el contrato HTTP con el frontend (0 nueva, 1 reutilizada,
 // 2 usada) porque la API no configura JsonStringEnumConverter y los envía como enteros.
 public enum ProductCondition
 {
@@ -15,7 +15,7 @@ public static class OfferConditionRules
     public const int MaxPaymentMethodLabelLength = 64;
 
     public const string InvalidConditionMessage =
-        "La condición de la oferta debe ser 0 (nueva), 1 (refabricada) o 2 (usada).";
+        "La condición de la oferta debe ser 0 (nueva), 1 (reutilizada) o 2 (usada).";
 
     public const string InvalidPaymentMethodLabelMessage =
         "La etiqueta del medio de pago no puede estar vacía y admite hasta 64 caracteres.";
