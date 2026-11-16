@@ -3,8 +3,8 @@ import localeEsCl from '@angular/common/locales/es-CL';
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { PricePointDto } from './price-point.model';
 
-// Prices and dates are formatted in Chilean locale; registering it here keeps the locale data in the
-// component's lazy chunk instead of the initial bundle.
+// Los precios y las fechas se formatean en locale chileno; registrarlo aquí mantiene los datos de locale en el
+// chunk diferido del componente en lugar del bundle inicial.
 registerLocaleData(localeEsCl, 'es-CL');
 
 const CHART_WIDTH = 320;
@@ -56,8 +56,8 @@ function buildGeometry(series: PricePointDto[]): PriceChartGeometry {
   const minPrice = series.length > 0 ? Math.min(...series.map((point) => point.minPrice)) : 0;
   const maxPrice = series.length > 0 ? Math.max(...series.map((point) => point.maxPrice)) : 0;
 
-  // A single date or an equal-price series has no vertical span: widen the scale by
-  // one peso so the interpolation never divides by zero and a flat line stays centred.
+  // Una sola fecha o una serie de precios iguales no tiene extensión vertical: se amplía la escala en
+  // un peso para que la interpolación nunca divida por cero y una línea plana quede centrada.
   const hasSpan = maxPrice > minPrice;
   const floor = hasSpan ? minPrice : minPrice - 1;
   const ceiling = hasSpan ? maxPrice : maxPrice + 1;
@@ -130,7 +130,7 @@ export class PriceChartComponent {
   readonly points = input.required<PricePointDto[]>();
   readonly label = input<string>('Evolución de precios');
 
-  /** Chronological copy of the input; the parent owns the array and must not be mutated. */
+  /** Copia cronológica de la entrada; el padre es dueño del arreglo y no debe mutarse. */
   readonly series = computed(() =>
     [...this.points()].sort((a, b) => a.date.localeCompare(b.date))
   );

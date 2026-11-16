@@ -1,6 +1,6 @@
 /**
- * One aggregated price observation of a product for a single day.
- * `date` is an ISO calendar date (`YYYY-MM-DD`).
+ * Una observación de precio agregada de un producto para un solo día.
+ * `date` es una fecha de calendario ISO (`YYYY-MM-DD`).
  */
 export interface PricePointDto {
   date: string;

@@ -14,7 +14,10 @@
                 <tbody>
                     @for (deal of deals(); track deal.inventoryId) {
                     <tr>
-                        <td>{{ deal.productName }}</td>
+                        <td>
+                            <a class="text-decoration-none"
+                               [routerLink]="['/products', deal.productId]">{{ deal.productName }}</a>
+                        </td>
                         <td><span class="badge bg-primary">{{ deal.storeName }}</span></td>
                         <td><span class="discount-badge">-{{ deal.discountPercentage }}%</span></td>
                         <td>{{ deal.productViewCount | number }}</td>

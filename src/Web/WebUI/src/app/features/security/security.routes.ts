@@ -1,7 +1,13 @@
 import { Routes } from "@angular/router";
+import { AdminGuard } from "../../core/guards/admin.guard";
 
 export const routes : Routes =[
-    {path: 'auth', loadChildren: () => import("./auth/auth.routes").then(m => m.routes)},
-    {path: 'roles', loadChildren: () => import("./roles/roles.routes").then(m => m.routes)},
-    {path: 'users', loadChildren: () => import("./users/users.routes").then(m => m.routes)},
-];	
+    {
+        path: '',
+        children: [
+            {path: 'auth', loadChildren: () => import("./auth/auth.routes").then(m => m.routes)},
+            {path: 'roles', canActivate: [AdminGuard], loadChildren: () => import("./roles/roles.routes").then(m => m.routes)},
+            {path: 'users', canActivate: [AdminGuard], loadChildren: () => import("./users/users.routes").then(m => m.routes)},
+        ]
+    },
+];

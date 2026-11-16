@@ -29,6 +29,7 @@ export interface MostSearchedProductDto{
 
 export interface BestDealDto{
     inventoryId: string;
+    productId: string;
     productName: string;
     storeName: string;
     discountPercentage: number;

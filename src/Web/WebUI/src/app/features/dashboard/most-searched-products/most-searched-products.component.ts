@@ -48,12 +48,4 @@ export class MostSearchedProductsComponent implements OnInit {
       error: () => {}
     });
   }
-
-  public getBadgeLabel(index: number): string {
-    return index < 2 ? 'TRENDING' : 'POPULAR';
-  }
-
-  public getBadgeClass(index: number): string {
-    return index < 2 ? 'badge-trending' : 'badge-popular';
-  }
 }

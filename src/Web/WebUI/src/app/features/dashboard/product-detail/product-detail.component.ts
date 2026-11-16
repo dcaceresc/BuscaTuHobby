@@ -7,7 +7,7 @@ import { NotificationService } from '@app/core/services/notification.service';
 import { ProductDetailDto, ProductPricePointDto } from '@app/core/models/dashboard/dashboard.model';
 import { PriceChartComponent } from '@app/shared/components/price-chart/price-chart.component';
 
-// Prices and dates are formatted in Chilean locale; the locale data ships with this lazy chunk.
+// Los precios y las fechas se formatean en locale chileno; los datos de locale viajan con este chunk diferido.
 registerLocaleData(localeEsCl, 'es-CL');
 
 @Component({
@@ -30,7 +30,7 @@ export class ProductDetailComponent implements OnInit {
   public notFound = signal(false);
   public selectedImage = signal(0);
 
-  /** The gallery falls back to the shared placeholder when the product has no images. */
+  /** La galería recurre al placeholder compartido cuando el producto no tiene imágenes. */
   public mainImage = computed(() => {
     const images = this.product()?.imageUrls ?? [];
     return images.length === 0 ? 'assets/images/placeholder.svg' : images[this.selectedImage()] ?? images[0];
