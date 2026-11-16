@@ -1,6 +1,6 @@
 namespace Domain.Entities;
 
-// Append-only observation of the price-relevant fields of an offer. It is never updated or deleted individually.
+// Observación de solo adición de los campos de precio relevantes de una oferta. Nunca se actualiza ni se elimina de forma individual.
 public class InventoryPriceHistory
 {
     private InventoryPriceHistory(Guid inventoryId, int price, int originalPrice, int discountPercentage,

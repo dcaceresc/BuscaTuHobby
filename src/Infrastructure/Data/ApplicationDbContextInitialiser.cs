@@ -148,7 +148,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         if (_context.Products.Any())
             return;
 
-        // Manufacturers
+        // Fabricantes
         var bandai = Manufacturer.Create("Bandai");
         var funko = Manufacturer.Create("Funko");
         var lego = Manufacturer.Create("LEGO");
@@ -156,7 +156,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         await _context.Manufacturers.AddRangeAsync(bandai, funko, lego);
         await _context.SaveChangesAsync();
 
-        // Franchises
+        // Franquicias
         var gundam = Franchise.Create("Gundam");
         var marvel = Franchise.Create("Marvel");
         var starWars = Franchise.Create("Star Wars");
@@ -165,7 +165,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         await _context.Franchises.AddRangeAsync(gundam, marvel, starWars, dragonBall);
         await _context.SaveChangesAsync();
 
-        // Stores
+        // Tiendas
         var amazon = Store.Create("Amazon", "https://www.amazon.com", "bi bi-shop", 1, "amazon");
         var mercadoLibre = Store.Create("MercadoLibre", "https://www.mercadolibre.cl", "bi bi-shop", 2, "mercadolibre");
         var linio = Store.Create("Linio", "https://www.linio.cl", "bi bi-shop", 3, "linio");
@@ -176,7 +176,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         await _context.Stores.AddRangeAsync(amazon, mercadoLibre, linio, falabella, ripley, paris);
         await _context.SaveChangesAsync();
 
-        // Products
+        // Productos
         var gundamRx78 = Product.Create("Gundam RX-78-2", bandai.ManufacturerId, gundam.FranchiseId, null, true, "15+", "1/144", "Maqueta para armar", new DateOnly(2024, 1, 15));
         var funkoSpider = Product.Create("Funko Pop Spider-Man", funko.ManufacturerId, marvel.FranchiseId, null, true, "6+", "10cm", "Figura coleccionable", new DateOnly(2024, 3, 10));
         var legoFalcon = Product.Create("LEGO Millennium Falcon", lego.ManufacturerId, starWars.FranchiseId, null, false, "18+", "84cm", "Set de construccion", new DateOnly(2024, 5, 20));
@@ -190,7 +190,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         await _context.Products.AddRangeAsync(gundamRx78, funkoSpider, legoFalcon, goku);
         await _context.SaveChangesAsync();
 
-        // Inventories (product-store relationships with original prices and discounts)
+        // Inventarios (relaciones producto-tienda con precios originales y descuentos)
         var inventories = new[]
         {
             // Gundam RX-78-2
@@ -229,8 +229,8 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         await _context.Inventories.AddRangeAsync(inventories);
         await _context.SaveChangesAsync();
 
-        // Each seeded offer starts its price series with the baseline point it was created with, so a freshly
-        // seeded development database shows a real series instead of an empty chart.
+        // Cada oferta sembrada inicia su serie de precios con el punto de línea base con el que se creó, así que
+        // una base de datos de desarrollo recién sembrada muestra una serie real en lugar de un gráfico vacío.
         foreach (var inventory in inventories)
             InventoryPriceHistoryRecorder.RecordBaseline(_context, inventory);
         await _context.SaveChangesAsync();
@@ -241,7 +241,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         if (_context.Categories.Any())
             return;
 
-        // Categories
+        // Categorías
         var figurasDeAccion = Category.Create("Figuras de Acción", "bi bi-person-standing", 1, "figuras-de-accion");
         var maquetas = Category.Create("Maquetas", "bi bi-tools", 2, "maquetas");
         var coleccionables = Category.Create("Coleccionables", "bi bi-gem", 3, "coleccionables");
@@ -250,14 +250,14 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         await _context.Categories.AddRangeAsync(figurasDeAccion, maquetas, coleccionables, legoCategory);
         await _context.SaveChangesAsync();
 
-        // Get seeded products
+        // Obtener los productos sembrados
         var products = await _context.Products.ToListAsync();
         var gundamRx78 = products.First(p => p.ProductName == "Gundam RX-78-2");
         var funkoSpider = products.First(p => p.ProductName == "Funko Pop Spider-Man");
         var legoFalcon = products.First(p => p.ProductName == "LEGO Millennium Falcon");
         var goku = products.First(p => p.ProductName == "S.H.Figuarts Goku");
 
-        // ProductCategory relationships
+        // Relaciones de ProductCategory
         // Figuras de Acción: Funko Spider-Man, Goku, Gundam RX-78-2
         // Maquetas: Gundam RX-78-2, LEGO Falcon
         // Coleccionables: Funko Spider-Man, Goku

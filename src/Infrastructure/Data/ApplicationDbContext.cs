@@ -154,7 +154,7 @@ namespace Infrastructure.Data
                 .HasForeignKey(e => e.InventoryId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-                // Series query: every point of one offer in chronological order.
+                // Consulta de la serie: todos los puntos de una oferta en orden cronológico.
                 entity.HasIndex(e => new { e.InventoryId, e.ObservedAtUtc });
             });
 

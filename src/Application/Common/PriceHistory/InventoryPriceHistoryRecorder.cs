@@ -1,14 +1,14 @@
 namespace Application.Common.PriceHistory;
 
-// The four fields that make up one observation of an offer's price.
+// Los cuatro campos que componen una observación del precio de una oferta.
 public readonly record struct InventoryPricePoint(int Price, int OriginalPrice, int DiscountPercentage, bool? Availability)
 {
     public static InventoryPricePoint Capture(Inventory inventory) =>
         new(inventory.Price, inventory.OriginalPrice, inventory.DiscountPercentage, inventory.Availability);
 }
 
-// The only place where the price series grows: a point is appended only when one of the four price-relevant
-// fields differs from its pre-mutation value, so repeated identical observations never inflate the series.
+// El único lugar donde crece la serie de precios: se añade un punto solo cuando uno de los cuatro campos
+// de precio difiere de su valor previo a la mutación, así que las observaciones idénticas repetidas nunca inflan la serie.
 public static class InventoryPriceHistoryRecorder
 {
     public static void Record(IApplicationDbContext context, Inventory inventory, InventoryPricePoint before)
@@ -26,9 +26,9 @@ public static class InventoryPriceHistoryRecorder
             inventory.ObservedAtUtc ?? DateTime.UtcNow));
     }
 
-    // An offer created after the migration has no observation yet, so its series would stay empty until the
-    // first price change. Recording the creation point as the baseline keeps the series starting at creation,
-    // which is what the seeded baseline does for offers that already existed.
+    // Una oferta creada después de la migración todavía no tiene observación, así que su serie quedaría vacía
+    // hasta el primer cambio de precio. Registrar el punto de creación como línea base hace que la serie empiece
+    // en la creación, que es lo que hace la línea base sembrada para las ofertas que ya existían.
     public static void RecordBaseline(IApplicationDbContext context, Inventory inventory)
     {
         var current = InventoryPricePoint.Capture(inventory);

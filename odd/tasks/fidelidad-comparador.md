@@ -33,16 +33,18 @@ S7. Existing contracts stay additive: no existing endpoint changes shape or mess
 
 S8. Commit messages are written in Spanish with a subject and a descriptive body.
 
+S9. Requirement correction, verbatim: "los comentarios en el codigo deben estar en español agrego en el agent.md". Every code comment in every language and file type (C#, TypeScript, SCSS, HTML) is written in Spanish, and the rule is recorded in AGENTS.md. Comments introduced by this feature work are translated; code behaviour, identifiers, test names and user-facing strings are untouched. Commented-out code blocks are deleted rather than translated.
+
 ## Tasks
 
-- T1 [done] S2 | save both investigations as markdown | route: parent inline | Risk: none | commit: pending
-- T2 [pending] S3 | honest navigation: dead links, wildcard route, admin guard | route: bounded worker | Risk: none | commit: pending
-- T3 [pending] S3 | truthful widgets: search label, badges, category percentages, inactive rows, placeholder URL | route: bounded worker | Risk: none | commit: pending
-- T4 [pending] S3 | remove application folders with no handler, remove dead commented blocks | route: bounded worker | Risk: none | commit: pending
-- T5 [pending] S3 | price history eligibility parity with the offers list | route: bounded worker | Risk: item 3 | commit: pending
-- T6 [pending] S4 | serve product images from the configured folder | route: bounded worker | Risk: item 6 | commit: pending
+- T1 [done] S2 | save both investigations as markdown | route: parent inline | Risk: none | commit: f86d26c
+- T2 [done] S3 | honest navigation: dead links, wildcard route, admin guard scoped like the API | route: bounded worker + parent correction | Risk: none | commit: pending
+- T3 [done] S3 | truthful widgets: search label, badges, category percentages, inactive rows, placeholder URL | route: bounded workers | Risk: none | commit: pending
+- T4 [done] S3 | remove application folders with no handler, remove dead commented blocks | route: bounded workers | Risk: none | commit: pending
+- T5 [done] S3 | price history eligibility parity with the offers list | route: bounded worker | Risk: item 3 | commit: pending
+- T6 [done] S4 | serve product images from the configured folder and publish `/images/{id}.jpg` | route: bounded worker + parent | Risk: item 6 | commit: pending
 - T7 [pending] S3 | clickable highlighted offers | route: parent inline | Risk: none | commit: pending
-- T8 [pending] S3-S4 | checks and specs for everything touched in block 1 | route: bounded worker + independent verifier | Risk: item 6 | commit: pending
+- T8 [pending] S3-S4,S9 | checks, specs and Spanish comments for everything touched in block 1 | route: bounded workers + parent | Risk: item 6 | commit: pending
 - T9 [pending] S5 | offer condition, payment method and visible freshness, with migration | route: pending | Risk: item 1 | commit: pending
 - T10 [pending] S5 | chart maximum as a series and a reachable day window | route: pending | Risk: none | commit: pending
 - T11 [pending] S6 | Gunpla grade, structured scale and part number, with migration | route: pending | Risk: item 1 | commit: pending
@@ -55,3 +57,7 @@ L2. Original request, verbatim: "quiero que las las inventigaciones los guardes 
 L3. Reference site verified 2026-11-16 with real HTTP requests (home, a 236-result category listing with facets, a product detail page, robots, sitemap, and the public API with 182,331 products). Confirmed there: typed per-category specifications, base model and variant identity, part number, per-offer condition and payment method, normal-price strike-through, price-drop alert, product opinions, store comments route, related products, freshness timestamp, public API and affiliate links. Not confirmed: a price chart (`/products/{id}/prices/` returns 404 and no chart markup is served) and any product comparator.
 L4. Own audit reclassified while writing the docs: the fake catalog, hand-set counters and fabricated posts come from `ApplicationDbContextInitialiser`, which runs only in Development (`Program.cs:24`), so they are demo data rather than a lie to production users. The real code defects are the ones that would also be wrong with real data: the search label, the position-based badges, the percentage over the top four, the unfiltered activity feed and the placeholder query string.
 L5. Known environment limit, same as the previous feature: no isolated SQL Server, no `dotnet-ef` and no `sqlcmd`, so any migration in T9 and T11 can be written and reviewed structurally but cannot be applied or rolled back here. That stays an explicit unproven item.
+L6. Requirement correction, verbatim: "los comentarios en el codigo deben estar en español agrego en el agent.md". Recorded as S9 and added to AGENTS.md as a project exception to the English default for technical artifacts. The comments introduced by this feature work are translated; the code stays byte-identical apart from comment text.
+L7. Block 1 workers returned. Backend: percentages now divide by every active category, activity filters each source, price history applies the offers eligibility predicate, `BestDealDto` gained `ProductId`, `GetProductById` publishes `/images/{id}.jpg`, `Program.cs` maps the configured folder at `/images`, and the five handler-less Favorites/Reviews stubs were deleted after a whole-solution grep. Frontend: dead menu entries and both commented hardcoded blocks removed, categories and stores became non-interactive rows, `Perfil` removed, a wildcard route renders a new not-found page, and the most-searched card says "vistas" with no position-based badge.
+L8. Two worker findings the parent corrected before committing: the security guard was applied to the whole shell including `auth`, which would have blocked the anonymous admin-login and confirm-email paths, so it now guards only `roles` and `users`, matching the API; and `GetProductDetail` still published the physical folder name while the new middleware serves `/images`, so it now publishes `/images/{id}.jpg` and its check follows.
+L9. Accepted consequence of T5: filtering the series by the offer's current eligibility also removes points recorded while an offer was still active but is now disabled or unavailable. It is deliberate parity with the offers table, so the chart never shows a cheaper price the table refuses to list; it is documented as a visible data consequence instead of a hidden filter.

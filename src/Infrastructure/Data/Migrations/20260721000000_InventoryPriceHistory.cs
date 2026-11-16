@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Infrastructure.Data.Migrations;
 
-// Prepared manually without dotnet-ef. Review generated SQL before applying to an isolated SQL Server.
+// Preparada manualmente sin dotnet-ef. Revisar el SQL generado antes de aplicarla a un SQL Server aislado.
 public partial class InventoryPriceHistory : Migration
 {
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -38,8 +38,8 @@ public partial class InventoryPriceHistory : Migration
             table: "InventoryPriceHistories",
             columns: ["InventoryId", "ObservedAtUtc"]);
 
-        // One baseline point per active offer, copied from its current values at the migration instant.
-        // The NOT EXISTS guard keeps the statement harmless if the generated script is re-run.
+        // Un punto de línea base por oferta activa, copiado de sus valores actuales en el instante de la migración.
+        // La guarda NOT EXISTS mantiene la sentencia inofensiva si el script generado se vuelve a ejecutar.
         migrationBuilder.Sql("""
             INSERT INTO [InventoryPriceHistories]
                 ([PriceHistoryId], [InventoryId], [Price], [OriginalPrice], [DiscountPercentage], [Availability], [ObservedAtUtc], [IsBaseline])
@@ -56,7 +56,7 @@ public partial class InventoryPriceHistory : Migration
 
     protected override void Down(MigrationBuilder migrationBuilder)
     {
-        // Dropping the table removes the seeded baseline rows and the series index with it.
+        // Eliminar la tabla borra las filas de línea base sembradas y, con ellas, el índice de la serie.
         migrationBuilder.DropTable(name: "InventoryPriceHistories");
     }
 }
