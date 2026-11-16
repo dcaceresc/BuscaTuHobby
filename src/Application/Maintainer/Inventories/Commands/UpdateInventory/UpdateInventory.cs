@@ -1,4 +1,6 @@
-﻿namespace Application.Maintainer.Inventories.Commands.UpdateInventory;
+﻿using Application.Common.PriceHistory;
+
+namespace Application.Maintainer.Inventories.Commands.UpdateInventory;
 
 public record UpdateInventory : IRequest<ApiResponse>
 {
@@ -27,7 +29,9 @@ public class UpdateInventoryHandler(IApplicationDbContext context, IApiResponseS
                 i.StoreId == request.StoreId && i.ProductId == request.ProductId, cancellationToken))
                 return _responseService.Fail("No se pudo actualizar el inventario");
 
+            var before = InventoryPricePoint.Capture(inventory);
             inventory.Update(request.ProductId, request.StoreId, request.Price, request.OriginalPrice, request.DiscountPercentage);
+            InventoryPriceHistoryRecorder.Record(_context, inventory, before);
 
             await _context.SaveChangesAsync(cancellationToken);
 

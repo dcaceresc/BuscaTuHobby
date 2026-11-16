@@ -1,4 +1,6 @@
-﻿namespace Application.Maintainer.Inventories.Commands.CreateInventory;
+﻿using Application.Common.PriceHistory;
+
+namespace Application.Maintainer.Inventories.Commands.CreateInventory;
 
 public record CreateInventory(Guid ProductId, Guid StoreId, int Price, int OriginalPrice, int DiscountPercentage) : IRequest<ApiResponse>;
 
@@ -17,6 +19,7 @@ public class CreateInventoryHandler(IApplicationDbContext context, IApiResponseS
             var inventory = Inventory.Create(request.ProductId, request.StoreId, request.Price, request.OriginalPrice, request.DiscountPercentage);
 
             _context.Inventories.Add(inventory);
+            InventoryPriceHistoryRecorder.RecordBaseline(_context, inventory);
 
             await _context.SaveChangesAsync(cancellationToken);
 

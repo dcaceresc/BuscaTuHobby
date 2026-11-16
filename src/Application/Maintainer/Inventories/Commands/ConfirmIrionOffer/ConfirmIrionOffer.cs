@@ -1,4 +1,5 @@
 using Application.Common.Exceptions;
+using Application.Common.PriceHistory;
 using Application.Maintainer.Inventories.IrionOffers;
 using Application.Maintainer.Inventories.Queries.InspectIrionOffer;
 using Application.Maintainer.Products.Queries.PreviewIrionProduct;
@@ -80,8 +81,10 @@ public class ConfirmIrionOfferHandler(
                 if (request.ExpectedInventoryId != row.InventoryId ||
                     request.ExpectedRowVersion != Convert.ToBase64String(row.RowVersion))
                     return Outcome("Conflict", row.InventoryId);
+                var before = InventoryPricePoint.Capture(row);
                 row.UpdateImportedOffer(price, reference, discount, request.SourceUrl, request.ExternalVariantId,
                     variant.Available, DateTime.UtcNow);
+                InventoryPriceHistoryRecorder.Record(_context, row, before);
             }
             else
             {
@@ -89,6 +92,7 @@ public class ConfirmIrionOfferHandler(
                 row = Inventory.CreateImportedOffer(request.ProductId, request.StoreId, price, reference, discount,
                     request.SourceUrl, request.ExternalVariantId, variant.Available, DateTime.UtcNow);
                 _context.Inventories.Add(row);
+                InventoryPriceHistoryRecorder.RecordBaseline(_context, row);
             }
             await _context.SaveChangesAsync(cancellationToken);
             return Outcome("Saved", row.InventoryId);

@@ -68,11 +68,13 @@ internal static class ManualChecks
 public class ContextProxy : DispatchProxy
 {
     public List<Inventory> Rows { get; } = [];
+    public List<InventoryPriceHistory> Histories { get; } = [];
     public int Saves { get; private set; }
     public Exception? SaveError { get; set; }
     protected override object? Invoke(MethodInfo? targetMethod, object?[]? args) => targetMethod!.Name switch
     {
         "get_Inventories" => new InventorySet(Rows),
+        "get_InventoryPriceHistories" => new InspectionSet<InventoryPriceHistory>(Histories, _ => { }),
         "SaveChangesAsync" => Save(),
         _ => throw new NotSupportedException(targetMethod.Name)
     };

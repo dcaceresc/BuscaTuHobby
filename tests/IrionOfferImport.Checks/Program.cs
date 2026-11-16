@@ -10,9 +10,9 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
-if (args.SequenceEqual(new[] { "--prepare-metadata" }))
+if (args.Length > 0 && args[0] == "--prepare-metadata")
 {
-    MigrationMetadata.Prepare();
+    MigrationMetadata.Prepare(args.ElementAtOrDefault(1) ?? "20260720000000_IrionOffer", args.ElementAtOrDefault(2) ?? "IrionOffer");
     return 0;
 }
 
@@ -101,6 +101,7 @@ await NewProductChecks.Run(Check);
 await NewProductConfirmationChecks.Run(Check);
 await ConfirmationChecks.Run(Check);
 await DashboardChecks.Run(Check);
+await PriceHistoryChecks.Run(Check);
 using var context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
     .UseSqlServer("Server=unused;Database=StructuralOnly;Integrated Security=true;TrustServerCertificate=true").Options);
 var model = context.GetService<IDesignTimeModel>().Model;
@@ -133,9 +134,12 @@ if (migrationType.Value is not null)
     Check(generator.Generate(migration.DownOperations, model).Count > 0, "Rollback SQL generates without connection");
     var differ = context.GetService<IMigrationsModelDiffer>();
     var initializer = context.GetService<IModelRuntimeInitializer>();
-    var target = initializer.Initialize(migration.TargetModel, designTime: true);
+    // Only the newest migration keeps the current model as its target; earlier designers are frozen history.
+    var newestMigration = migrations.Migrations.OrderBy(m => m.Key, StringComparer.Ordinal).Last();
+    var target = initializer.Initialize(
+        migrations.CreateMigration(newestMigration.Value, context.Database.ProviderName!).TargetModel, designTime: true);
     var snapshot = initializer.Initialize(migrations.ModelSnapshot!.Model, designTime: true);
-    Check(!differ.HasDifferences(target.GetRelationalModel(), model.GetRelationalModel()), "Migration target matches current model");
+    Check(!differ.HasDifferences(target.GetRelationalModel(), model.GetRelationalModel()), "Newest migration target matches current model");
     Check(!differ.HasDifferences(snapshot.GetRelationalModel(), model.GetRelationalModel()), "Snapshot matches current model");
 }
 if (failures.Count > 0)

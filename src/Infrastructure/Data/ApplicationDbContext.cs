@@ -11,6 +11,7 @@ namespace Infrastructure.Data
         public DbSet<FavoriteProduct> FavoriteProducts => Set<FavoriteProduct>();
         public DbSet<Franchise> Franchises => Set<Franchise>();
         public DbSet<Inventory> Inventories => Set<Inventory>();
+        public DbSet<InventoryPriceHistory> InventoryPriceHistories => Set<InventoryPriceHistory>();
         public DbSet<Manufacturer> Manufacturers => Set<Manufacturer>();
         public DbSet<Post> Posts => Set<Post>();
         public DbSet<PostCategory> PostCategories => Set<PostCategory>();
@@ -124,6 +125,37 @@ namespace Infrastructure.Data
                 entity.Property(e => e.ExternalVariantId).HasMaxLength(128);
                 entity.Property(e => e.RowVersion).IsRowVersion();
                 entity.HasIndex(e => new { e.StoreId, e.ProductId }).IsUnique();
+            });
+
+            builder.Entity<InventoryPriceHistory>(entity =>
+            {
+                entity.HasKey(e => e.PriceHistoryId);
+
+                entity.Property(e => e.PriceHistoryId)
+                .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.Price)
+                .IsRequired();
+
+                entity.Property(e => e.OriginalPrice)
+                .IsRequired();
+
+                entity.Property(e => e.DiscountPercentage)
+                .IsRequired();
+
+                entity.Property(e => e.ObservedAtUtc)
+                .IsRequired();
+
+                entity.Property(e => e.IsBaseline)
+                .IsRequired();
+
+                entity.HasOne(e => e.Inventory)
+                .WithMany()
+                .HasForeignKey(e => e.InventoryId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+                // Series query: every point of one offer in chronological order.
+                entity.HasIndex(e => new { e.InventoryId, e.ObservedAtUtc });
             });
 
             builder.Entity<Manufacturer>(entity =>

@@ -323,6 +323,41 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Inventories");
                 });
 
+            modelBuilder.Entity("Domain.Entities.InventoryPriceHistory", b =>
+                {
+                    b.Property<Guid>("PriceHistoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
+
+                    b.Property<bool?>("Availability")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("DiscountPercentage")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("InventoryId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsBaseline")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("ObservedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("OriginalPrice")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("int");
+
+                    b.HasKey("PriceHistoryId");
+
+                    b.HasIndex("InventoryId", "ObservedAtUtc");
+
+                    b.ToTable("InventoryPriceHistories");
+                });
+
             modelBuilder.Entity("Domain.Entities.Manufacturer", b =>
                 {
                     b.Property<Guid>("ManufacturerId")
@@ -1041,6 +1076,17 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Product");
 
                     b.Navigation("Store");
+                });
+
+            modelBuilder.Entity("Domain.Entities.InventoryPriceHistory", b =>
+                {
+                    b.HasOne("Domain.Entities.Inventory", "Inventory")
+                        .WithMany()
+                        .HasForeignKey("InventoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Inventory");
                 });
 
             modelBuilder.Entity("Domain.Entities.Post", b =>

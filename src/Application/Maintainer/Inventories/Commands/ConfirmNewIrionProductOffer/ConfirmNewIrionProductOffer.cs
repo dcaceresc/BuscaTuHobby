@@ -1,4 +1,5 @@
 using Application.Common.Exceptions;
+using Application.Common.PriceHistory;
 using Application.Maintainer.Inventories.IrionOffers;
 using Application.Maintainer.Products.Queries.PreviewIrionProduct;
 
@@ -70,7 +71,9 @@ public class ConfirmNewIrionProductOfferHandler(
                     return Outcome("AlreadySaved", row.InventoryId);
                 if (request.ExpectedInventoryId != row.InventoryId || request.ExpectedRowVersion != Convert.ToBase64String(row.RowVersion))
                     return Outcome("Conflict", row.InventoryId);
+                var before = InventoryPricePoint.Capture(row);
                 row.UpdateImportedOffer(price, reference, discount, request.SourceUrl, request.ExternalVariantId, variant.Available, DateTime.UtcNow);
+                InventoryPriceHistoryRecorder.Record(context, row, before);
             }
             else
             {
@@ -82,6 +85,7 @@ public class ConfirmNewIrionProductOfferHandler(
                 context.Products.Add(product);
                 foreach (var categoryId in d.CategoryIds) context.ProductCategories.Add(product.AssignCategory(categoryId));
                 context.Inventories.Add(row);
+                InventoryPriceHistoryRecorder.RecordBaseline(context, row);
             }
             // The normal relational SaveChanges transaction is the sole product/categories/offer persistence boundary.
             await context.SaveChangesAsync(cancellationToken);

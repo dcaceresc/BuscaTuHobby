@@ -1,0 +1,37 @@
+# Página de producto con ofertas ordenadas y gráfico de precios
+Public product detail page: characteristics, stores selling it ordered cheapest-first, and price-over-time chart.
+Branch `feat/product-detail-prices`; baseline `59d0d05`. Pre-existing dirty files preserved and never committed.
+
+## Specs
+S1. Original request, verbatim: "necesito implementar funciones, cuando se busque un producto y se seleccione debe llevar la pagina del producto mostrando sus caracteristicas y las tiendas que lo venden ordenados de la mas barata a las mas cara, tambien quiero un grafico de precios por el tiempo, genera un plan".
+
+S2. Selecting a search result navigates to the product page. That page shows the product's characteristics and the stores that sell it, ordered strictly from cheapest to most expensive. Only offers with `Inventory.IsActive`, `Store.IsActive`, `Product.IsActive` and `Availability != false` are listed.
+
+S3. Decision "Resultados de búsqueda + más buscados (recomendado)": the clickable cards are the search results and the most-searched products, the two components that already expose `productId`. `BestDealDto` is not modified.
+
+S4. Decision "SVG propio, sin dependencias (recomendado)": the price chart is a project-owned SVG component in `shared/components/price-chart/`. No charting dependency is added and `package.json` gains no chart entry. The chart includes an equivalent accessible table, and renders a collecting-state instead of a broken line when there are fewer than two points.
+
+S5. Decision "Sembrar un punto base por oferta activa (recomendado)": there is no pre-existing price history. The migration seeds one baseline point per active `Inventory` from its current price, marked `IsBaseline`, and its `Down` removes the table. No historical price is invented beyond that seeded baseline.
+
+S6. Price history is recorded only when a price-relevant field changes (`Price`, `OriginalPrice`, `DiscountPercentage`, `Availability`). An import or update that changes none of them writes no row, so repeated identical observations do not inflate the series.
+
+S7. New public endpoints stay additive: `GET /api/dashboard/products/{id:guid}` and `GET /api/dashboard/products/{id:guid}/price-history?days=90`. No existing DTO, route or contract changes shape. A nonexistent product returns a failed `ApiResponse`, never an unhandled 500.
+
+S8. An offer **created** after the migration records its creation values as the baseline point (`IsBaseline = true`), through the same recorder, so its series starts at creation instead of staying empty until the first price change. This extends S5 to offers that did not exist at migration time and is still change-only for updates (S6). The development seeder records the same baseline for each seeded offer.
+
+## Tasks
+- T1 [done] S5-S6,S8 | price history entity, EF configuration, migration with seeded baseline and real Down, change-only recording plus creation baseline from every offer write path, deterministic checks | route: bounded worker + parent decision on the creation baseline | Risk: item 1 | commit: 9f3bfaf
+- T2 [pending] S2,S7 | public product-detail and price-series queries, cheapest-first ordering, additive routes, checks | route: parent inline | Risk: none | commit: pending
+- T3 [pending] S2-S3 | `products/:productId` route, product detail page, clickable search and most-searched cards, view-count bump | route: parent inline | Risk: none | commit: pending
+- T4 [pending] S4 | accessible SVG price chart component with empty and single-point states, Vitest spec | route: bounded worker | Risk: none | commit: pending
+- T5 [pending] S1-S7 | documentation and independent verification of the migration slice | route: parent + independent verifier | Risk: item 1 | commit: pending
+
+## Log
+L1. Original request, verbatim: "necesito implementar funciones, cuando se busque un producto y se seleccione debe llevar la pagina del producto mostrando sus caracteristicas y las tiendas que lo venden ordenados de la mas barata a las mas cara, tambien quiero un grafico de precios por el tiempo, genera un plan".
+L2. Repository facts established before planning: `SearchProductDto` already exposes `ProductId`, `MinPrice`, `MaxPrice`, `StoreCount`; `Inventory` holds one current `int` price (CLP) per store+product with `OriginalPrice`, `DiscountPercentage`, `Availability`, `SourceUrl`, `ObservedAtUtc`; `ProductImage` stores only an id served as `/images/{id}.jpg`; no price-history entity, table or migration exists anywhere in the repository; no public product-detail route exists and every entity route is maintainer-only behind a role policy; the frontend has no product-detail route and no charting dependency (Bootstrap 5.3 + Bootstrap Icons only).
+L3. Human selected the three plan decisions: "SVG propio, sin dependencias (recomendado)", "Sembrar un punto base por oferta activa (recomendado)", "Resultados de búsqueda + más buscados (recomendado)". Then selected "Sí, empieza por C1 (historial + migración)", described as "Creo el documento ODD y el todo, y ejecuto los slices en orden hasta C5, con commits por unidad de trabajo." Work-unit commits on branch `feat/product-detail-prices` are therefore authorized; push, PR and merge remain human decisions.
+L4. Baseline: branch `feat/product-detail-prices` from `59d0d05` on `master`. Pre-existing uncommitted work preserved and excluded from all commits: README.md, src/Infrastructure/Data/ApplicationDbContextFactory.cs, src/Web/WebAPI/WebAPI.csproj, src/Web/WebAPI/appsettings.Development.json, untracked mise.toml. `gentle-ai` CLI is not on PATH in this environment and no `.NET` test framework exists (checks are console executables under `tests/`); the RDD switch cannot be read here, so review runs only if it is later found enabled.
+L5. Verification limits recorded up front: backend checks use `DispatchProxy` fakes and do not prove SQL translation, so cheapest-first ordering and per-day aggregation must additionally be exercised once against a real SQL Server; the migration applies and rolls back only on an accessible isolated database, which is not available in this environment.
+L6. Gap found while reviewing T1 and closed by the parent as a spec refinement (S8): a worker decision recorded that offer creation would append no point, which left the chart empty for every offer created after the migration, including the whole development seed because the seeder runs after migrations. `RecordBaseline` now writes the creation point from `CreateInventory`, both import create branches and the development seeder. Checks grew from 1001 to 1003 assertions and still exit 0.
+L7. Slice boundary: T1 is one commit (`9f3bfaf`, 1874 changed lines) because the generated `ApplicationDbContextModelSnapshot` and the frozen migration designer account for most of the volume; the authored surface is the entity, one recorder, three call sites, one migration and its checks. One behavior, one reversible unit.
+L8. T1 evidence: `dotnet build BuscaTuHobby.sln` exit 0 with 3 pre-existing CS8618 warnings in `MenuCategoryDto.cs` and 0 errors; `dotnet run --project tests/IrionOfferImport.Checks/IrionOfferImport.Checks.csproj` exit 0, `PASS: 1003 assertions`. Proved structurally only: the checks do not run SQL Server, so the seed SQL, `Up`/`Down` application and the `NOT EXISTS` guard remain unproven against a real database.

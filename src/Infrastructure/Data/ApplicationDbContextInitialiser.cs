@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Common.PriceHistory;
+using Domain.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -226,6 +227,12 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         };
 
         await _context.Inventories.AddRangeAsync(inventories);
+        await _context.SaveChangesAsync();
+
+        // Each seeded offer starts its price series with the baseline point it was created with, so a freshly
+        // seeded development database shows a real series instead of an empty chart.
+        foreach (var inventory in inventories)
+            InventoryPriceHistoryRecorder.RecordBaseline(_context, inventory);
         await _context.SaveChangesAsync();
     }
 
