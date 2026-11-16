@@ -28,7 +28,7 @@ public class UtilityService : IUtilityService
 
     public bool IsValidEmail(string email)
     {
-        // Use a regular expression to validate the email format
+        // Usa una expresión regular para validar el formato del correo
         string pattern = @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$";
         Regex regex = new(pattern);
         return regex.IsMatch(email);

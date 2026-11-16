@@ -66,7 +66,7 @@ public class Inventory : AuditableEntity
         PaymentMethodLabel = paymentMethodLabel;
     }
 
-    // The application validates the selected store/product and converts whole CLP values before calling these methods.
+    // La aplicación valida la tienda y el producto elegidos y convierte los valores CLP enteros antes de llamar a estos métodos.
     public static Inventory CreateImportedOffer(Guid productId, Guid storeId, int price, int originalPrice,
         int discountPercentage, string sourceUrl, string externalVariantId, bool availability, DateTime observedAtUtc,
         ProductCondition condition = ProductCondition.New, string? paymentMethodLabel = null)

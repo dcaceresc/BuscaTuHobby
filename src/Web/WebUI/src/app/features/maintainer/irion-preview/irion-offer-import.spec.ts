@@ -190,7 +190,7 @@ describe('Importación explícita de Irion', () => {
     await ui.click('Revisar vinculación');
     expect(inspect).toHaveBeenCalledTimes(1);
     expect(ui.dom.querySelector('#irion-variant')?.matches(':disabled')).toBe(true);
-    // A stale response must remain harmless even if the form changes outside disabled human controls.
+    // Una respuesta obsoleta debe seguir siendo inofensiva aunque el formulario cambie fuera de los controles humanos deshabilitados.
     ui.fixture.componentInstance.offerForm.controls.productId.setValue('p2');
     inspected.next(envelope(inspection));
     inspected.complete();

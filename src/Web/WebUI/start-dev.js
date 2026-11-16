@@ -1,5 +1,5 @@
 // start-dev.js
-// Starts the Angular dev server with SSL using the ASP.NET Core dev certificate.
+// Levanta el servidor de desarrollo de Angular con SSL usando el certificado de desarrollo de ASP.NET Core.
 
 'use strict';
 
@@ -7,7 +7,7 @@ const path      = require('path');
 const { spawn } = require('child_process');
 const { name: APP_NAME } = require('./package.json');
 
-// ── Resolve certificate paths ───────────────────────────────────────────────
+// ── Resuelve las rutas del certificado ─────────────────────────────────────
 
 const CERT_BASE_FOLDER =
   process.env.APPDATA
@@ -17,9 +17,9 @@ const CERT_BASE_FOLDER =
 const CERT_FILE = path.join(CERT_BASE_FOLDER, `${APP_NAME}.pem`);
 const KEY_FILE  = path.join(CERT_BASE_FOLDER, `${APP_NAME}.key`);
 
-// ── Resolve @angular/cli entry point directly ───────────────────────────────
-//   Avoids all .cmd/.ps1 wrappers — calls node with the JS file directly.
-//   This works on all platforms and all Node versions without shell:true.
+// ── Resuelve el punto de entrada de @angular/cli directamente ───────────────
+//   Evita todos los envoltorios .cmd/.ps1: llama a node con el archivo JS directamente.
+//   Funciona en todas las plataformas y en todas las versiones de Node sin shell:true.
 
 const NG_JS = path.resolve(
   __dirname,
@@ -30,10 +30,10 @@ const NG_JS = path.resolve(
   'ng.js'
 );
 
-// ── Launch ng serve ─────────────────────────────────────────────────────────
+// ── Lanza ng serve ─────────────────────────────────────────────────────────
 
 const child = spawn(
-  process.execPath,           // the exact node binary currently running this script
+  process.execPath,           // el binario de node exacto que ejecuta este script
   [
     NG_JS,
     'serve',

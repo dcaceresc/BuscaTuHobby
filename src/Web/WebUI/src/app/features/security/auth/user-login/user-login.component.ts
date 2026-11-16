@@ -51,7 +51,6 @@ export class UserLoginComponent implements OnInit {
       },
       error: (error) => {
         this.notificationService.showError('Error', error.message);
-        // this.notificationService.showDefaultError();
       }
     });
 

@@ -37,7 +37,7 @@ public class ConfirmNewIrionProductOfferHandler(
 
             var preview = await extractor.ExtractAsync(request.SourceUrl, cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
-            // Track the product now, not before external I/O. Matching includes the complete metadata and category set.
+            // Rastrea el producto ahora, no antes de la E/S externa. La coincidencia incluye los metadatos completos y el conjunto de categorías.
             var current = await NewIrionProductValidation.InspectAsync(context, request.Product, request.StoreId,
                 request.SourceUrl, request.ExternalVariantId, cancellationToken, trackProduct: true);
             if (current.Error is not null) return responseService.Fail<IrionOfferConfirmationDto>(current.Error);
@@ -53,7 +53,7 @@ public class ConfirmNewIrionProductOfferHandler(
 
             var d = request.Product;
             var row = await context.Inventories.SingleOrDefaultAsync(i => i.ProductId == d.NewProductId && i.StoreId == request.StoreId, cancellationToken);
-            // Re-check using tracked product identity as well: a fresh no-tracking inspection alone must not authorize an occupied ID.
+            // Se vuelve a comprobar con la identidad del producto rastreado: una inspección sin seguimiento no puede autorizar por sí sola un ID ocupado.
             var final = await NewIrionProductValidation.InspectAsync(context, d, request.StoreId, request.SourceUrl,
                 request.ExternalVariantId, cancellationToken, trackProduct: true);
             if (final.Error is not null) return responseService.Fail<IrionOfferConfirmationDto>(final.Error);
@@ -89,7 +89,7 @@ public class ConfirmNewIrionProductOfferHandler(
                 context.Inventories.Add(row);
                 InventoryPriceHistoryRecorder.RecordBaseline(context, row);
             }
-            // The normal relational SaveChanges transaction is the sole product/categories/offer persistence boundary.
+            // La transacción normal de SaveChanges relacional es la única frontera de persistencia de producto, categorías y oferta.
             await context.SaveChangesAsync(cancellationToken);
             return Outcome("Saved", row.InventoryId);
         }

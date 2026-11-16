@@ -14,12 +14,6 @@ export const ErrorInterceptor: HttpInterceptorFn = (req, next) => {
       router.navigate(['/forbidden']);
     }
 
-    // if(err.status !== 401){
-    //   const error = err.error || err.statusText;
-    //   router.navigate(['/error'], { queryParams: { error } });
-    //   return throwError(() => error);
-    // }
-
     return throwError(() => err);
   }));
 };

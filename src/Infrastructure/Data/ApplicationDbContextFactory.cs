@@ -10,18 +10,18 @@ public class ApplicationDbContextFactory
 {
     public ApplicationDbContext CreateDbContext(string[] args)
     {
-        // Resolve the WebAPI project directory (contains appsettings.json)
+        // Resuelve el directorio del proyecto WebAPI (contiene appsettings.json)
         var currentDir = Directory.GetCurrentDirectory();
         string basePath;
 
-        // If CWD is already the WebAPI directory, use it directly
+        // Si el directorio de trabajo ya es WebAPI, se usa directamente
         if (File.Exists(Path.Combine(currentDir, "appsettings.json")))
         {
             basePath = currentDir;
         }
         else
         {
-            // Fallback: navigate from Infrastructure to WebAPI
+            // Alternativa: navegar de Infrastructure a WebAPI
             basePath = Path.Combine(currentDir, "..", "Web", "WebAPI");
         }
 
@@ -29,7 +29,7 @@ public class ApplicationDbContextFactory
             .SetBasePath(basePath)
             .AddJsonFile("appsettings.json", optional: false)
             .AddJsonFile("appsettings.Development.json", optional: true)
-            // Use the same store as WebAPI; environment variables retain precedence.
+            // Usa el mismo almacén que WebAPI; las variables de entorno conservan la precedencia.
             .AddUserSecrets("BuscaTuHobby-WebAPI-8d7a90e6-4523-44a9-a234-114a1e6a3c91")
             .AddEnvironmentVariables()
             .Build();

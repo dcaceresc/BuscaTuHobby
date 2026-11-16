@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-// Load dialog code and its built-in CSS only when a notification is needed.
+// Carga el código del diálogo y su CSS integrado solo cuando hace falta una notificación.
 const loadSwal = () => import('sweetalert2/dist/sweetalert2.esm.all.js')
   .then(module => module.default);
 

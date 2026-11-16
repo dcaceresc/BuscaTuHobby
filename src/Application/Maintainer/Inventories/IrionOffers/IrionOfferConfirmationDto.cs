@@ -4,7 +4,7 @@ namespace Application.Maintainer.Inventories.IrionOffers;
 
 public record IrionOfferSnapshot(string Currency, decimal Price, decimal? OriginalPrice, bool Available);
 
-// Non-saved outcomes carry data even though the outer ApiResponse.Success is false.
+// Los resultados no guardados llevan datos aunque el ApiResponse.Success exterior sea false.
 public record IrionOfferConfirmationDto(
     string Outcome,
     Guid? InventoryId,
