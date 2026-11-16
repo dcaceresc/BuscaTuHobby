@@ -149,6 +149,69 @@ internal static class ProductDetailChecks
         check(emptyDetail.Success && emptyDetail.Data is not null && emptyDetail.Data.Offers.Count == 0 &&
             emptyDetail.Data.StoreCount == 0 && emptyDetail.Data.MinPrice == 0 && emptyDetail.Data.MaxPrice == 0,
             "A product nobody sells returns zeroed aggregates and an empty offer list");
+
+        // Tie-break: equal prices are ordered by store name so the list is stable.
+        var tieProduct = NewProduct("Empate", manufacturer, franchise);
+        fake.Products.Add(tieProduct);
+        var zeta = Store.Create("Zeta", "https://zeta.cl", "bi bi-shop", 10, "zeta");
+        var alfa = Store.Create("Alfa", "https://alfa.cl", "bi bi-shop", 11, "alfa");
+        fake.Stores.Add(zeta);
+        fake.Stores.Add(alfa);
+        fake.Rows.Add(Offer(tieProduct, zeta, 20000, 25000, 20));
+        fake.Rows.Add(Offer(tieProduct, alfa, 20000, 25000, 20));
+        var tie = await detail.Handle(new(tieProduct.ProductId), default);
+        check(tie.Data is not null &&
+            tie.Data.Offers.Select(o => o.StoreName).SequenceEqual(new[] { "Alfa", "Zeta" }),
+            "Equal prices keep a stable order by store name");
+
+        // Availability is optional on imported offers: only an explicit false is excluded.
+        check(tie.Data is not null && tie.Data.Offers.All(o => o.Availability is null) && tie.Data.Offers.Count == 2,
+            "An offer without availability information is still listed");
+
+        // The client can ask for an unusable window: it must clamp instead of throwing or hiding the series.
+        var clamped = NewProduct("Ventana", manufacturer, franchise);
+        fake.Products.Add(clamped);
+        var clampedOffer = Offer(clamped, cheap, 40000, 45000, 11);
+        fake.Rows.Add(clampedOffer);
+        var now = DateTime.UtcNow;
+        AddPoint(fake, clampedOffer, 41000, now.AddDays(-3700));
+        AddPoint(fake, clampedOffer, 40500, now.AddDays(-3600));
+        AddPoint(fake, clampedOffer, 39990, now.AddDays(-1));
+        var negativeWindow = await history.Handle(new(clamped.ProductId, -5), default);
+        check(negativeWindow.Success && negativeWindow.Data is not null &&
+            negativeWindow.Data.Points.Count == 3,
+            "A negative window clamps to the whole series instead of failing");
+        var overflowingWindow = await history.Handle(new(clamped.ProductId, int.MaxValue), default);
+        check(overflowingWindow.Success && overflowingWindow.Data is not null &&
+            overflowingWindow.Data.Points.Count == 2,
+            "A window beyond the maximum clamps without overflow and drops older points");
+        var boundaryWindow = await history.Handle(new(clamped.ProductId, 3650), default);
+        check(boundaryWindow.Success && boundaryWindow.Data is not null &&
+            boundaryWindow.Data.Points.Count == 2,
+            "The maximum window keeps only the points inside it");
+
+        // An inactive product is not a 500: both endpoints answer with the same typed failure.
+        var removed = NewProduct("Retirado", manufacturer, franchise);
+        removed.ToggleActive();
+        fake.Products.Add(removed);
+        var removedDetail = await detail.Handle(new(removed.ProductId), default);
+        var removedSeries = await history.Handle(new(removed.ProductId), default);
+        check(!removedDetail.Success && !removedSeries.Success && removedDetail.Data is null &&
+            removedSeries.Data is null &&
+            removedDetail.Message == "El producto no existe o no está disponible." &&
+            removedSeries.Message == removedDetail.Message,
+            "An inactive product fails both endpoints with the same typed envelope");
+    }
+
+    private static Product NewProduct(string name, Manufacturer manufacturer, Franchise franchise)
+    {
+        var product = Product.Create(name, manufacturer.ManufacturerId, franchise.FranchiseId, null, false,
+            "8+", "5cm", name, new DateOnly(2024, 5, 1));
+        Set(product, nameof(Product.Manufacturer), manufacturer);
+        Set(product, nameof(Product.Franchise), franchise);
+        Set(product, nameof(Product.ProductCategories), new List<ProductCategory>());
+        Set(product, nameof(Product.ProductImages), new List<ProductImage>());
+        return product;
     }
 
     private static Inventory Offer(Product product, Store store, int price, int originalPrice, int discount)

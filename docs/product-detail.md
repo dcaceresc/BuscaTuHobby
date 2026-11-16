@@ -50,7 +50,9 @@ La tabla `InventoryPriceHistories` es de solo agregado: nunca se actualiza ni se
   `Availability`. Actualizar solo `SourceUrl`, `ExternalVariantId` u `ObservedAtUtc` no escribe nada,
   de modo que una importación repetida e idéntica no infla la serie.
 - La regla vive en un único lugar: `Application.Common.PriceHistory.InventoryPriceHistoryRecorder`.
-  Se invoca desde `UpdateInventory`, `ConfirmIrionOffer` y `ConfirmNewIrionProductOffer`.
+  Las actualizaciones pasan por `Record` desde `UpdateInventory`, `ConfirmIrionOffer` y
+  `ConfirmNewIrionProductOffer`; las altas usan `RecordBaseline` desde `CreateInventory`, las ramas de
+  creación de ambos comandos de importación y el seeder de desarrollo.
 - Al **crear** una oferta se registra un punto base (`IsBaseline = true`) con sus valores iniciales,
   para que la serie empiece en la creación y no quede vacía hasta el primer cambio de precio.
 - La migración `20260721000000_InventoryPriceHistory` siembra un punto base por cada oferta activa
