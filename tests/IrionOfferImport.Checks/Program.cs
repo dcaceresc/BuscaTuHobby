@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using Application.Maintainer.Inventories.Commands.CreateInventory;
 using Application.Maintainer.Inventories.Commands.UpdateInventory;
 using Domain.Entities;
@@ -102,6 +102,7 @@ await NewProductConfirmationChecks.Run(Check);
 await ConfirmationChecks.Run(Check);
 await DashboardChecks.Run(Check);
 await PriceHistoryChecks.Run(Check);
+await ProductDetailChecks.Run(Check);
 using var context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
     .UseSqlServer("Server=unused;Database=StructuralOnly;Integrated Security=true;TrustServerCertificate=true").Options);
 var model = context.GetService<IDesignTimeModel>().Model;
