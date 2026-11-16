@@ -5,13 +5,15 @@ using Application.Dashboard.Queries.GetPopularCategories;
 using Application.Dashboard.Queries.GetProductPriceHistory;
 using Application.Dashboard.Queries.GetRecentActivity;
 using Application.Maintainer.Products.Queries.GetProductById;
+using Domain.Common;
 using Domain.Entities;
 using Infrastructure.Data;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
-// Comprobaciones de veracidad de los widgets del dashboard y del trabajo de paridad del historial de precios.
-// Todo aquí se ejecuta contra dobles en memoria y generación de SQL sin conexión: sin base de datos y sin HTTP.
+// Comprobaciones de veracidad de los widgets del dashboard, del historial de precios y de la carpeta de imágenes.
+// Todo aquí se ejecuta contra dobles en memoria, generación de SQL sin conexión y una carpeta temporal: sin base de
+// datos, sin HTTP y sin arrancar la API.
 internal static class FidelityChecks
 {
     private const string StructuralConnection =
@@ -22,11 +24,12 @@ internal static class FidelityChecks
         var services = new ApiResponseService();
         await PopularCategories(check, services);
         await RecentActivityFeed(check, services);
-        await PriceHistoryEligibility(check, services);
+        await PriceHistorySeries(check, services);
         await BestDeals(check, services);
         await ProductByIdImages(check, services);
         SqlTranslation(check);
         ImagesFolderMapping(check);
+        await ImagesFolderResolution(check);
     }
 
     private static async Task PopularCategories(Action<bool, string> check, IApiResponseService services)
@@ -97,6 +100,56 @@ internal static class FidelityChecks
         check(all.Success && all.Message is null && all.Data is not null &&
             all.Data.Select(r => r.Percentage).SequenceEqual(new[] { 60, 40 }) && all.Data.Sum(r => r.Percentage) == 100,
             "A top four that covers every active category still adds up to 100");
+
+        // Cinco categorías activas y no vacías, ordenadas de mayor a menor, con el límite de cuatro filas: cada fila
+        // es una parte pequeña del total y la primera debe reflejar el total, no la suma de las cuatro mostradas.
+        var wide = DispatchProxy.Create<IApplicationDbContext, InspectionContext>();
+        var wideFake = (InspectionContext)(object)wide;
+        foreach (var (name, count) in new[] { ("Cincuenta", 60), ("Cincuenta y cinco", 55), ("Cuarenta y cinco", 45), ("Treinta", 35), ("Veinte", 30) })
+        {
+            var category = Category.Create(name, "bi bi-box", 0, name.ToLowerInvariant().Replace(' ', '-'));
+            Set(category, nameof(Category.ProductCategories), new List<ProductCategory>());
+            wideFake.Categories.Add(category);
+            for (var index = 0; index < count; index++)
+            {
+                var product = Product.Create(name + " " + index, Guid.NewGuid(), Guid.NewGuid(), null, false, "", "", "", default);
+                wideFake.Products.Add(product);
+                Assign(category, product);
+            }
+        }
+        var share = await new GetPopularCategoriesHandler(wide, services).Handle(new GetPopularCategories(), default);
+        var shareRows = share.Data ?? [];
+        // Total honesto: 225 productos enlazados en las cinco categorías activas.
+        var topFourSum = 60 + 55 + 45 + 35;
+        check(share.Success && share.Message is null && shareRows.Count == 4 &&
+            shareRows.Select(r => r.ProductCount).SequenceEqual(new[] { 60, 55, 45, 35 }),
+            "Five non-empty active categories still produce exactly four rows ordered by product count");
+        check(shareRows.Count == 4 && shareRows[0].Percentage == (int)Math.Round(60d / 225 * 100) &&
+            shareRows[0].Percentage != (int)Math.Round(60d / topFourSum * 100) &&
+            shareRows[0].Percentage < 50,
+            "The first row divides by every active category, not by the sum of the four shown rows");
+        check(shareRows.Select(r => r.Percentage).SequenceEqual(new[] { 27, 24, 20, 16 }) &&
+            shareRows.Sum(r => r.Percentage) < 100,
+            "Each shown row is a small part of the whole, so the four rows never add up to 100");
+
+        // Un mismo producto en dos categorías: dos filas y ninguna llega al 100 %.
+        var shared = DispatchProxy.Create<IApplicationDbContext, InspectionContext>();
+        var sharedFake = (InspectionContext)(object)shared;
+        var twice = Product.Create("Dos veces", Guid.NewGuid(), Guid.NewGuid(), null, false, "", "", "", default);
+        sharedFake.Products.Add(twice);
+        foreach (var name in new[] { "Primera", "Segunda" })
+        {
+            var category = Category.Create(name, "bi bi-box", 0, name.ToLowerInvariant());
+            Set(category, nameof(Category.ProductCategories), new List<ProductCategory>());
+            sharedFake.Categories.Add(category);
+            Assign(category, twice);
+        }
+        var sharedRows = (await new GetPopularCategoriesHandler(shared, services)
+            .Handle(new GetPopularCategories(), default)).Data ?? [];
+        check(sharedRows.Count == 2 && sharedRows.All(r => r.ProductCount == 1) &&
+            sharedRows.Select(r => r.Percentage).SequenceEqual(new[] { 50, 50 }) &&
+            sharedRows.All(r => r.Percentage < 100),
+            "A product linked to two categories yields two rows, each below 100 percent");
     }
 
     private static async Task RecentActivityFeed(Action<bool, string> check, IApiResponseService services)
@@ -105,7 +158,7 @@ internal static class FidelityChecks
         var fake = (InspectionContext)(object)context;
         var start = new DateTime(2026, 5, 1, 12, 0, 0, DateTimeKind.Utc);
 
-        Product AddProduct(string name, bool active, int hours)
+        Product AddProduct(string name, bool active, double hours)
         {
             var product = Product.Create(name, Guid.NewGuid(), Guid.NewGuid(), null, false, "", "", "", default);
             product.Created = start.AddHours(-hours);
@@ -113,7 +166,7 @@ internal static class FidelityChecks
             fake.Products.Add(product);
             return product;
         }
-        Store AddStore(string name, bool active, int hours)
+        Store AddStore(string name, bool active, double hours)
         {
             var store = Store.Create(name, "https://example.test/", "icon", 0, name.ToLowerInvariant().Replace(' ', '-'));
             store.Created = start.AddHours(-hours);
@@ -121,7 +174,7 @@ internal static class FidelityChecks
             fake.Stores.Add(store);
             return store;
         }
-        Inventory AddOffer(Product owner, Store store, int discount, bool active, int hours)
+        Inventory AddOffer(Product owner, Store store, int discount, bool active, double hours)
         {
             var offer = Inventory.Create(owner.ProductId, store.StoreId, 100, 0, discount);
             Set(offer, nameof(Inventory.Product), owner);
@@ -131,7 +184,18 @@ internal static class FidelityChecks
             fake.Rows.Add(offer);
             return offer;
         }
-        Post AddPost(string title, bool active, int hours)
+        Inventory AddImportedOffer(Product owner, Store store, int price, int originalPrice, int discount,
+            bool available, double hours)
+        {
+            var offer = Inventory.CreateImportedOffer(owner.ProductId, store.StoreId, price, originalPrice, discount,
+                "https://irion.cl/products/model", "123", available, start.AddHours(-hours));
+            Set(offer, nameof(Inventory.Product), owner);
+            Set(offer, nameof(Inventory.Store), store);
+            offer.Created = start.AddHours(-hours);
+            fake.Rows.Add(offer);
+            return offer;
+        }
+        Post AddPost(string title, bool active, double hours)
         {
             var post = Post.Create(title, "Contenido", Guid.NewGuid());
             post.Created = start.AddHours(-hours);
@@ -149,18 +213,22 @@ internal static class FidelityChecks
         AddOffer(activeProduct, openStore, 25, false, 7);
         AddOffer(retiredProduct, openStore, 30, true, 8);
         AddOffer(activeProduct, closedStore, 35, true, 9);
+        // Misma tienda y mismo producto: una oferta disponible se anuncia y la no disponible no.
+        var available = AddImportedOffer(activeProduct, openStore, 100, 200, 50, true, 5.5);
+        var soldOut = AddImportedOffer(activeProduct, openStore, 75, 100, 25, false, 4.5);
         AddPost("Guía vigente", true, 10);
         AddPost("Guía retirada", false, 11);
 
         var response = await new GetRecentActivityHandler(context, services).Handle(new GetRecentActivity(), default);
         var rows = response.Data ?? [];
-        check(response.Success && response.Message is null && rows.Count == 5,
+        check(response.Success && response.Message is null && rows.Count == 6,
             "Recent activity returns only the eligible rows of every source");
         check(rows.Select(r => (r.ActivityType, r.Title, r.Description)).SequenceEqual(new[]
             {
                 ("Producto", "Nuevo producto agregado", "Activo agregado a la plataforma"),
                 ("Tienda", "Nueva tienda afiliada", "Tienda Viva se unió a la plataforma"),
                 ("Oferta", "Nueva oferta disponible", "Activo en Tienda Viva con 15% descuento"),
+                ("Oferta", "Nueva oferta disponible", "Activo en Tienda Viva con 50% descuento"),
                 ("Oferta", "Precio actualizado", "Activo en Tienda Viva"),
                 ("Publicación", "Nueva publicación", "Guía vigente")
             }),
@@ -171,7 +239,11 @@ internal static class FidelityChecks
             !r.Description.Contains("25% descuento") && !r.Description.Contains("30% descuento") &&
             !r.Description.Contains("35% descuento") && r.Description != "Guía retirada"),
             "Inactive products, disabled offers, closed stores and inactive posts never appear as activity");
-        check(discounted.InventoryId != Guid.Empty && plain.InventoryId != Guid.Empty,
+        check(rows.Any(r => r.Description == "Activo en Tienda Viva con 50% descuento") &&
+            rows.All(r => !r.Description.Contains("25% descuento")),
+            "An unavailable offer is excluded from the feed while an available one from the same store is kept");
+        check(discounted.InventoryId != Guid.Empty && plain.InventoryId != Guid.Empty &&
+            available.InventoryId != soldOut.InventoryId,
             "Both eligible offers of the same product and store are reported");
 
         for (var index = 0; index < 6; index++) AddProduct("Extra " + index, true, 20 + index);
@@ -183,7 +255,7 @@ internal static class FidelityChecks
         check(fake.Saves == 0, "Recent activity saves nothing");
     }
 
-    private static async Task PriceHistoryEligibility(Action<bool, string> check, IApiResponseService services)
+    private static async Task PriceHistorySeries(Action<bool, string> check, IApiResponseService services)
     {
         var context = DispatchProxy.Create<IApplicationDbContext, InspectionContext>();
         var fake = (InspectionContext)(object)context;
@@ -241,22 +313,53 @@ internal static class FidelityChecks
         var pointsBefore = fake.Histories.Count;
         var response = await new GetProductPriceHistoryHandler(context, services).Handle(new(product.ProductId), default);
         var points = response.Data?.Points ?? [];
-        check(response.Success && response.Data is not null && response.Data.HasHistory && points.Count == 2,
-            "Only eligible offers draw a point: a day whose only observation is ineligible disappears");
-        check(points.Count == 2 && points[0].Date == day.Date && points[0].MinPrice == 20000 &&
-            points[0].MaxPrice == 23000 && points[0].OfferCount == 2 &&
-            points[1].Date == day.AddDays(2).Date && points[1].MinPrice == 19990 &&
-            points[1].MaxPrice == 19990 && points[1].OfferCount == 1,
-            "The chart keeps eligible observations and drops disabled offers, closed stores and unavailable offers");
-        check(points.All(p => p.MinPrice is not (400 or 500 or 1000 or 900 or 77 or 300)) &&
-            points.All(p => p.MaxPrice is not (400 or 500 or 1000 or 900 or 77 or 300)),
-            "No ineligible price survives in the series extremes");
+        check(response.Success && response.Data is not null && response.Data.HasHistory && points.Count == 3,
+            "The series keeps every recorded day of the product, whatever the offer's current state");
+        check(points.Count == 3 && points[0].Date == day.Date && points[0].MinPrice == 400 &&
+            points[0].MaxPrice == 23000 && points[0].OfferCount == 5 &&
+            points[1].Date == day.AddDays(1).Date && points[1].MinPrice == 900 &&
+            points[1].MaxPrice == 900 && points[1].OfferCount == 1 &&
+            points[2].Date == day.AddDays(2).Date && points[2].MinPrice == 19990 &&
+            points[2].MaxPrice == 19990 && points[2].OfferCount == 1,
+            "Points from a now-disabled offer, a closed store and an unavailable offer still draw the chart");
+        check(points.Any(p => p.MinPrice == 400 && p.MaxPrice == 23000) &&
+            points.All(p => p.MinPrice is not (77 or 300) && p.MaxPrice is not (77 or 300)),
+            "The series keeps the prices of ineligible offers but never another product's observation");
 
         var hidden = await new GetProductPriceHistoryHandler(context, services).Handle(new(onlyIneligible.ProductId), default);
-        check(hidden.Success && hidden.Data is not null && !hidden.Data.HasHistory && hidden.Data.Points.Count == 0,
-            "A product whose whole history comes from a now-disabled offer reports an empty series");
+        check(hidden.Success && hidden.Data is not null && hidden.Data.HasHistory &&
+            hidden.Data.Points.Count == 1 && hidden.Data.Points[0].MinPrice == 300 &&
+            hidden.Data.Points[0].MaxPrice == 300 && hidden.Data.Points[0].OfferCount == 1,
+            "A product whose only offer is now disabled still reports what it cost instead of claiming no prices");
         check(fake.Histories.Count == pointsBefore && fake.Saves == 0,
             "Reading the series appends no observation and saves nothing");
+
+        // La ventana de días sigue recortando la serie y no reintroduce el filtro de elegibilidad.
+        var windowContext = DispatchProxy.Create<IApplicationDbContext, InspectionContext>();
+        var windowFake = (InspectionContext)(object)windowContext;
+        var watched = Product.Create("Vigilado", manufacturer.ManufacturerId, franchise.FranchiseId, null, false,
+            "8+", "10cm", "Otra", new DateOnly(2024, 4, 1));
+        windowFake.Products.Add(watched);
+        var closedShop = Store.Create("Clausurada", "https://clausurada.cl", "icon", 3, "clausurada");
+        closedShop.ToggleActive();
+        windowFake.Stores.Add(closedShop);
+        var stale = Inventory.Create(watched.ProductId, closedShop.StoreId, 800, 800, 0);
+        Set(stale, nameof(Inventory.Product), watched);
+        Set(stale, nameof(Inventory.Store), closedShop);
+        stale.ToggleActive();
+        windowFake.Rows.Add(stale);
+        var now = DateTime.UtcNow;
+        AddPoint(windowFake, stale, 900, now.AddDays(-400));
+        AddPoint(windowFake, stale, 800, now.AddDays(-2));
+
+        var complete = await new GetProductPriceHistoryHandler(windowContext, services).Handle(new(watched.ProductId), default);
+        var windowed = await new GetProductPriceHistoryHandler(windowContext, services)
+            .Handle(new(watched.ProductId, 30), default);
+        check(complete.Success && complete.Data is { HasHistory: true } && complete.Data.Points.Count == 2,
+            "Without a day window a disabled offer in a closed store still draws both recorded points");
+        check(windowed.Success && windowed.Data is { HasHistory: true } && windowed.Data.Points.Count == 1 &&
+            windowed.Data.Points[0].MinPrice == 800 && windowed.Data.Points[0].MaxPrice == 800,
+            "The days window still trims the series to the requested recent days");
     }
 
     private static async Task BestDeals(Action<bool, string> check, IApiResponseService services)
@@ -381,7 +484,7 @@ internal static class FidelityChecks
             "ProductCategories", "Products");
         CheckSql("The recent-activity offer eligibility predicate translates to SQL Server",
             () => context.Inventories
-                .Where(i => i.IsActive && i.Store.IsActive && i.Product.IsActive)
+                .Where(i => i.IsActive && i.Store.IsActive && i.Product.IsActive && i.Availability != false)
                 .OrderByDescending(i => i.Created)
                 .Take(5)
                 .Select(i => new RecentActivityDto
@@ -392,7 +495,7 @@ internal static class FidelityChecks
                     CreatedAt = i.Created
                 })
                 .ToQueryString(),
-            "Inventories", "Stores", "Products", "ORDER BY");
+            "Inventories", "Stores", "Products", "Availability", "ORDER BY");
         CheckSql("The recent-activity post filter translates to SQL Server",
             () => context.Posts
                 .Where(p => p.IsActive)
@@ -407,11 +510,11 @@ internal static class FidelityChecks
                 })
                 .ToQueryString(),
             "Posts", "IsActive");
-        CheckSql("The price-history eligibility predicate and the daily grouping translate to SQL Server",
+        // El historial de precios se filtra solo por producto y por ventana temporal: la asimetría con la tabla de
+        // ofertas es deliberada y la interfaz debe explicarla.
+        CheckSql("The price-history product filter and the daily grouping translate to SQL Server",
             () => context.InventoryPriceHistories
-                .Where(h => h.Inventory.ProductId == productId && h.Inventory.IsActive &&
-                            h.Inventory.Store.IsActive && h.Inventory.Product.IsActive &&
-                            h.Inventory.Availability != false)
+                .Where(h => h.Inventory.ProductId == productId)
                 .GroupBy(h => h.ObservedAtUtc.Date)
                 .Select(g => new PricePointDto
                 {
@@ -422,7 +525,7 @@ internal static class FidelityChecks
                 })
                 .OrderBy(p => p.Date)
                 .ToQueryString(),
-            "InventoryPriceHistories", "GROUP BY", "MIN(", "MAX(", "Stores", "Products");
+            "InventoryPriceHistories", "GROUP BY", "MIN(", "MAX(", "Inventories");
         CheckSql("The maintenance product-by-id projection translates to SQL Server",
             () => context.Products
                 .Where(x => x.ProductId == productId)
@@ -474,6 +577,77 @@ internal static class FidelityChecks
         check(source.Contains("return null;", StringComparison.Ordinal) &&
             source.Contains("LogWarning", StringComparison.Ordinal),
             "A folder that cannot be created is logged and skipped instead of aborting startup");
+    }
+
+    // Comprueba la única resolución de la carpeta de imágenes y el escritor real del archivo. No prueba que una
+    // petición HTTP sirva la imagen ni que la raíz de contenido de un despliegue real difiera de su directorio de
+    // trabajo: aquí solo se compara la regla compartida con una carpeta temporal fuera del repositorio.
+    private static async Task ImagesFolderResolution(Action<bool, string> check)
+    {
+        var root = Path.Combine(Path.GetTempPath(), "fidelity-images-" + Guid.NewGuid().ToString("N"));
+        var contentRoot = Path.GetFullPath(Path.Combine(root, "content"));
+        var absoluteFolder = Path.GetFullPath(Path.Combine(root, "absolute-images"));
+        var workingDirectory = Path.GetFullPath(Path.Combine(root, "elsewhere"));
+        Directory.CreateDirectory(contentRoot);
+        Directory.CreateDirectory(absoluteFolder);
+        Directory.CreateDirectory(workingDirectory);
+
+        var originalFolder = SiteConfig.FolderImage;
+        var originalDirectory = Directory.GetCurrentDirectory();
+        try
+        {
+            var relative = SiteConfig.ResolveFolderImage("images", contentRoot);
+            check(Path.IsPathRooted(relative) && relative == Path.Combine(contentRoot, "images"),
+                "A relative configured folder resolves to an absolute path under the content root");
+            check(SiteConfig.ResolveFolderImage(null, contentRoot) == relative &&
+                SiteConfig.ResolveFolderImage("  ", contentRoot) == relative,
+                "A missing or blank configuration keeps the same images default");
+            var absolute = SiteConfig.ResolveFolderImage(absoluteFolder, contentRoot);
+            check(Path.IsPathRooted(absolute) && absolute == absoluteFolder && absolute != relative,
+                "An absolute configured folder is kept exactly as an absolute path");
+
+            // La regla del lector es la de Program.cs: una ruta absoluta se usa tal cual y una relativa se resuelve
+            // contra la raíz de contenido. Con el valor ya resuelto, ambas ramas devuelven la carpeta del escritor.
+            string Reader(string configured) =>
+                Path.IsPathRooted(configured) ? configured : Path.Combine(contentRoot, configured);
+
+            SiteConfig.FolderImage = absolute;
+            var imageId = Guid.NewGuid();
+            Directory.SetCurrentDirectory(workingDirectory);
+            await new UtilityService().SaveImagen(Convert.ToBase64String([1, 2, 3, 4]), imageId);
+            Directory.SetCurrentDirectory(originalDirectory);
+            check(File.Exists(Path.Combine(absoluteFolder, imageId + ".jpg")),
+                "The image writer stores the file in the configured absolute folder");
+            check(!File.Exists(Path.Combine(workingDirectory, imageId + ".jpg")),
+                "The image writer ignores the process working directory");
+            check(Reader(SiteConfig.FolderImage) == Path.GetFullPath(absoluteFolder) &&
+                Reader(SiteConfig.FolderImage) == Path.GetDirectoryName(
+                    Path.Combine(absoluteFolder, imageId + ".jpg")),
+                "The reader resolves the same absolute folder the writer wrote into");
+
+            var initializer = File.ReadAllText(Path.Combine("src", "Infrastructure", "Configuration", "ConfigurationInitializer.cs"));
+            check(initializer.Contains("app.Environment.ContentRootPath", StringComparison.Ordinal) &&
+                initializer.Contains("SiteConfig.ResolveFolderImage(", StringComparison.Ordinal) &&
+                !initializer.Contains("SiteConfig.FolderImage = configurations", StringComparison.Ordinal),
+                "The configuration load is the only place that resolves the folder, against the content root");
+            var utility = File.ReadAllText(Path.Combine("src", "Infrastructure", "Services", "UtilityService.cs"));
+            check(utility.Contains("SiteConfig.FolderImage", StringComparison.Ordinal) &&
+                !utility.Contains("ContentRootPath", StringComparison.Ordinal),
+                "The image writer uses the resolved folder and never resolves it a second time");
+        }
+        finally
+        {
+            Directory.SetCurrentDirectory(originalDirectory);
+            SiteConfig.FolderImage = originalFolder;
+            try
+            {
+                Directory.Delete(root, true);
+            }
+            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException)
+            {
+                check(false, "The temporary image folders could not be removed: " + root);
+            }
+        }
     }
 
     private static void Assign(Category category, Product product)

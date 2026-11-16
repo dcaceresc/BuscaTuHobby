@@ -31,12 +31,14 @@ public class GetPopularCategoriesHandler(IApplicationDbContext context, IApiResp
                 .SelectMany(c => c.ProductCategories)
                 .CountAsync(pc => pc.Product.IsActive, cancellationToken);
 
+            // Sin Math.Min(100, ...): el numerador de cada fila es un subconjunto de los enlaces que suma el
+            // denominador, así que la proporción nunca supera 1 y el recorte era inalcanzable.
             var result = categories.Select(c => new PopularCategoryDto
             {
                 CategoryName = c.CategoryName,
                 ProductCount = c.ProductCount,
                 Percentage = totalProducts > 0
-                    ? Math.Min(100, (int)Math.Round((double)c.ProductCount / totalProducts * 100))
+                    ? (int)Math.Round((double)c.ProductCount / totalProducts * 100)
                     : 0
             }).ToList();
 

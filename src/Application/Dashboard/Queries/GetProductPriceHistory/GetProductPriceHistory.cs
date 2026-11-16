@@ -24,14 +24,13 @@ public class GetProductPriceHistoryHandler(IApplicationDbContext context, IApiRe
                 return _responseService.Fail<ProductPriceHistoryDto>("El producto no existe o no está disponible.");
 
             var days = Math.Clamp(request.Days, 0, MaxDays);
-            // La misma elegibilidad que la lista de ofertas: una oferta desactivada, una tienda cerrada o una
-            // oferta no disponible no deben dibujar un precio que la página del producto oculta. Los puntos
-            // registrados mientras una oferta seguía activa desaparecen junto con la oferta que los produjo.
+            // La serie responde qué costó este producto, no qué ofertas siguen vigentes: incluye todos los puntos
+            // registrados para el producto, incluso los de una oferta hoy desactivada, de una tienda cerrada o con
+            // Availability == false. Es una asimetría deliberada con la tabla de ofertas y la interfaz debe
+            // explicarla: aquí el historial no se filtra por elegibilidad, solo por producto y por la ventana de días.
             var query = _context.InventoryPriceHistories
                 .AsNoTracking()
-                .Where(h => h.Inventory.ProductId == request.ProductId &&
-                            h.Inventory.IsActive && h.Inventory.Store.IsActive &&
-                            h.Inventory.Product.IsActive && h.Inventory.Availability != false);
+                .Where(h => h.Inventory.ProductId == request.ProductId);
             if (days > 0)
             {
                 var since = DateTime.UtcNow.AddDays(-days);

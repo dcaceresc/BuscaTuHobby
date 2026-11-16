@@ -25,8 +25,10 @@ public class GetRecentActivityHandler(IApplicationDbContext context, IApiRespons
                 })
                 .ToListAsync(cancellationToken);
 
+            // Misma elegibilidad que la tabla de ofertas: una oferta no disponible no debe anunciarse como actividad
+            // si la página del producto no la va a listar.
             var recentInventories = await _context.Inventories
-                .Where(i => i.IsActive && i.Store.IsActive && i.Product.IsActive)
+                .Where(i => i.IsActive && i.Store.IsActive && i.Product.IsActive && i.Availability != false)
                 .OrderByDescending(i => i.Created)
                 .Take(5)
                 .Select(i => new RecentActivityDto

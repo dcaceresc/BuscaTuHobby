@@ -69,6 +69,9 @@ public class UtilityService : IUtilityService
 
     public async Task SaveImagen(string image, Guid name)
     {
+        // SiteConfig.FolderImage ya es una ruta absoluta: ConfigurationInitializer la resolvió contra la raíz de
+        // contenido al cargar la configuración. Aquí no se vuelve a resolver a propósito; si se escribiera una ruta
+        // relativa, los archivos quedarían en el directorio de trabajo y /images no los serviría.
         string imagesFolderPath = SiteConfig.FolderImage;
 
         if (!Directory.Exists(imagesFolderPath))

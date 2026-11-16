@@ -54,6 +54,18 @@ describe('MostSearchedProductsComponent', () => {
     }));
   });
 
+  it('calls the block most viewed because the API orders by ProductViewCount', async () => {
+    const fixture = await render();
+    const host = fixture.nativeElement as HTMLElement;
+    const heading = host.querySelector('h4');
+    const text = host.textContent ?? '';
+
+    expect(heading?.textContent?.trim()).toBe('Productos Más Vistos');
+    expect(text).not.toContain('Productos Más Buscados');
+    expect(text).not.toContain('Buscados');
+    expect(text).not.toContain('búsquedas');
+  });
+
   it('labels the view counter as vistas because no search log exists', async () => {
     const fixture = await render();
     const host = fixture.nativeElement as HTMLElement;

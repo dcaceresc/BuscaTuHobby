@@ -128,6 +128,17 @@ describe('ProductDetailComponent', () => {
     expect(image?.getAttribute('src')).toBe('assets/images/placeholder.svg');
   });
 
+  it('warns that the series includes offers that may not be available today', async () => {
+    const fixture = await render();
+    const host = fixture.nativeElement as HTMLElement;
+    const section = host.querySelector('section[aria-labelledby="history-title"]');
+    const note = section?.querySelector('p');
+
+    expect(note?.textContent).toContain('pueden no estar disponibles hoy');
+    expect(note?.classList).toContain('text-muted');
+    expect(note?.classList).toContain('small');
+  });
+
   it('shows the price chart empty state when there is no recorded history', async () => {
     const fixture = await render();
     const text = (fixture.nativeElement as HTMLElement).textContent ?? '';

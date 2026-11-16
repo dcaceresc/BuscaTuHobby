@@ -159,7 +159,11 @@
     </section>
 
     <section class="mt-5" aria-labelledby="history-title">
-      <h2 class="h5 mb-3" id="history-title">Evolución del precio</h2>
+      <h2 class="h5 mb-1" id="history-title">Evolución del precio</h2>
+      <!-- La serie conserva los precios observados aunque la oferta ya no esté disponible, así que se advierte al lector. -->
+      <p class="text-muted small mb-3">
+        Incluye ofertas que pueden no estar disponibles hoy; el precio actual está en la tabla de arriba.
+      </p>
       @if (isChartLoading()) {
         <div class="text-center py-4">
           <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
