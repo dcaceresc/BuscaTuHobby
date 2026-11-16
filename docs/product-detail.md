@@ -20,6 +20,7 @@ Devuelve `ApiResponse<ProductDetailDto>`.
 | `imageUrls` | rutas `{FolderImage}/{productImageId}.jpg`, en el orden de las imágenes |
 | `offers` | ofertas ordenadas por `Price` ascendente y, a igual precio, por nombre de tienda |
 | `storeCount`, `minPrice`, `maxPrice` | agregados calculados solo sobre las ofertas listadas |
+| `grade`, `scale`, `partNumber` | grado de Gunpla (0 sin grado, 1 HG, 2 MG, 3 RG, 4 PG, 5 SD, 6 otro), escala y número de parte |
 
 Una oferta aparece solo si se cumple todo: `Inventory.IsActive`, `Store.IsActive`,
 `Product.IsActive` y `Availability != false`. Es la misma regla de elegibilidad que usan
@@ -27,6 +28,9 @@ Una oferta aparece solo si se cumple todo: `Inventory.IsActive`, `Store.IsActive
 
 Si el producto no existe o está inactivo, la respuesta es `success: false` con
 `"El producto no existe o no está disponible."`; nunca se lanza una excepción al cliente.
+
+Cada oferta de la tabla declara además su condición (0 nueva, 1 reutilizada, 2 usada), su medio de pago
+cuando la tienda lo informa y la fecha absoluta de la última observación del precio.
 
 ### `GET /api/dashboard/products/{id}/price-history?days=90`
 
@@ -70,3 +74,17 @@ Advertencia de alcance: esas comprobaciones de backend usan un `DbContext` falso
 demuestran la traducción a SQL (`ORDER BY`, `CAST(datetime2 AS date)`), ni que la migración aplique
 y revierta en SQL Server, ni que el SQL de siembra sea idempotente en un servidor real. Eso exige
 una base aislada accesible.
+
+## Navegación del catálogo
+
+| Endpoint | Devuelve |
+| --- | --- |
+| `GET /api/dashboard/categories/{slug}/products` | página de productos de una categoría con facetas por fabricante, franquicia y grado, orden y filtros |
+| `GET /api/dashboard/stores/{slug}` | una tienda con sus conteos y sus ofertas de la más barata a la más cara |
+
+Parámetros de la categoría: `page` (desde 1), `pageSize` (1..48, por defecto 20), `sort`
+(`name` por defecto, `price-asc`, `price-desc`, `views`), `grade`, `manufacturerId`, `franchiseId`,
+`minPrice` y `maxPrice`. Los productos sin ofertas elegibles quedan al final en ambos órdenes de precio.
+
+En la interfaz, `/categories/:slug` y `/stores/:slug` mantienen su estado en la URL: recargar o compartir
+un enlace reproduce la misma vista.

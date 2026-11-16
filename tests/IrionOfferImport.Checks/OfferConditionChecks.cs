@@ -188,10 +188,14 @@ internal static class OfferConditionChecks
         using var context = StructuralContext();
         var model = context.GetService<IDesignTimeModel>().Model;
         var migrations = context.GetService<IMigrationsAssembly>();
-        var newest = migrations.Migrations.OrderBy(m => m.Key, StringComparer.Ordinal).Last();
-        check(newest.Key == "20260722000000_OfferConditionAndPaymentMethod",
-            "The new migration is the newest discoverable one and sorts after the price history migration");
-        var migration = migrations.CreateMigration(newest.Value, context.Database.ProviderName!);
+        // Una migración posterior (grado, escala y número de parte) pasa a ser la más nueva: la de condición y
+        // medio de pago se busca por identificador en lugar de asumir que sigue siendo la última.
+        var newest = migrations.Migrations.OrderBy(m => m.Key, StringComparer.Ordinal)
+            .LastOrDefault(m => m.Key.EndsWith("_OfferConditionAndPaymentMethod"));
+        check(newest.Key == "20260722000000_OfferConditionAndPaymentMethod" &&
+            string.CompareOrdinal(newest.Key, "20260721000000_InventoryPriceHistory") > 0,
+            "The offer condition migration is discoverable and sorts after the price history migration");
+        var migration = migrations.CreateMigration(newest.Value!, context.Database.ProviderName!);
         var up = migration.UpOperations;
         var condition = up.OfType<AddColumnOperation>().SingleOrDefault(c => c.Name == "Condition");
         var label = up.OfType<AddColumnOperation>().SingleOrDefault(c => c.Name == "PaymentMethodLabel");

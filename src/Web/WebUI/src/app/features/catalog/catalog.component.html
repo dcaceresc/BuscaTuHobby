@@ -1,0 +1,175 @@
+<div class="catalog container py-4">
+  @if (category(); as data) {
+    <header class="catalog__header mb-4">
+      <h1 class="h3 mb-1">{{ data.categoryName }}</h1>
+      <p class="text-muted mb-0">
+        {{ data.total }} {{ data.total === 1 ? 'producto' : 'productos' }} en esta categoría
+      </p>
+    </header>
+  }
+
+  @if (errorMessage()) {
+    <div class="alert alert-warning catalog__error" role="alert">
+      <i class="bi bi-exclamation-triangle me-1" aria-hidden="true"></i>{{ errorMessage() }}
+    </div>
+  }
+
+  @if (isLoading()) {
+    <div class="text-center py-5">
+      <span class="spinner-border" role="status" aria-hidden="true"></span>
+      <p class="text-muted mt-3 mb-0">Cargando productos...</p>
+    </div>
+  } @else if (category(); as data) {
+    <div class="row g-4">
+      <aside class="col-lg-3">
+        <div class="catalog__filters card">
+          <div class="card-body">
+            <h2 class="h6 text-uppercase text-muted mb-3">Filtros</h2>
+
+            <div class="mb-3">
+              <label for="manufacturerId" class="form-label">Fabricante</label>
+              <select
+                class="form-select catalog__filter"
+                id="manufacturerId"
+                [value]="query().manufacturerId"
+                (change)="onManufacturerChange($event)">
+                <option value="">Todos los fabricantes</option>
+                @for (option of data.manufacturers; track option.value) {
+                  <option [value]="option.value">{{ option.label }} ({{ option.count }})</option>
+                }
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="franchiseId" class="form-label">Franquicia</label>
+              <select
+                class="form-select catalog__filter"
+                id="franchiseId"
+                [value]="query().franchiseId"
+                (change)="onFranchiseChange($event)">
+                <option value="">Todas las franquicias</option>
+                @for (option of data.franchises; track option.value) {
+                  <option [value]="option.value">{{ option.label }} ({{ option.count }})</option>
+                }
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="grade" class="form-label">Grado</label>
+              <select
+                class="form-select catalog__filter"
+                id="grade"
+                [value]="query().grade"
+                (change)="onGradeChange($event)">
+                <option value="">Todos los grados</option>
+                @for (option of data.grades; track option.value) {
+                  <option [value]="option.value">{{ option.label }} ({{ option.count }})</option>
+                }
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label for="sort" class="form-label">Ordenar por</label>
+              <select
+                class="form-select catalog__filter"
+                id="sort"
+                [value]="query().sort"
+                (change)="onSortChange($event)">
+                @for (option of sortOptions; track option.value) {
+                  <option [value]="option.value">{{ option.label }}</option>
+                }
+              </select>
+            </div>
+
+            <button type="button" class="btn btn-link px-0 catalog__clear" (click)="clearFilters()">
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <div class="col-lg-9">
+        @if (data.items.length === 0) {
+          <div class="alert alert-info catalog__empty" role="alert">
+            No hay productos en esta categoría con los filtros seleccionados.
+            Prueba con otros filtros.
+          </div>
+        } @else {
+          <div class="row g-3">
+            @for (product of data.items; track product.productId) {
+              <div class="col-12 col-sm-6 col-xl-4">
+                <article class="card h-100 catalog__card">
+                  <a [routerLink]="['/products', product.productId]" class="catalog__image-link">
+                    <img
+                      class="card-img-top catalog__image"
+                      [src]="imageFor(product)"
+                      [alt]="product.productName">
+                  </a>
+                  <div class="card-body d-flex flex-column">
+                    <h2 class="h6 card-title mb-1">
+                      <a class="text-decoration-none" [routerLink]="['/products', product.productId]">
+                        {{ product.productName }}
+                      </a>
+                    </h2>
+                    <p class="text-muted small mb-2">
+                      {{ product.manufacturerName }} · {{ product.franchiseName }}
+                    </p>
+                    @if (product.grade > 0 || product.scale || product.partNumber) {
+                      <div class="d-flex flex-wrap gap-1 mb-2">
+                        @if (product.grade > 0) {
+                          <span class="badge bg-dark">{{ gradeLabel(product.grade) }}</span>
+                        }
+                        @if (product.scale) {
+                          <span class="badge bg-secondary">{{ product.scale }}</span>
+                        }
+                        @if (product.partNumber) {
+                          <span class="badge bg-light text-dark border catalog__part-number">
+                            {{ product.partNumber }}
+                          </span>
+                        }
+                      </div>
+                    }
+                    <p class="catalog__price mb-1">
+                      @if (product.minPrice === product.maxPrice) {
+                        ${{ product.minPrice | number: '1.0-0' : 'es-CL' }}
+                      } @else {
+                        ${{ product.minPrice | number: '1.0-0' : 'es-CL' }} -
+                        ${{ product.maxPrice | number: '1.0-0' : 'es-CL' }}
+                      }
+                    </p>
+                    <p class="text-muted small mb-0">
+                      <i class="bi bi-shop" aria-hidden="true"></i>
+                      {{ product.storeCount }} {{ product.storeCount === 1 ? 'tienda' : 'tiendas' }}
+                    </p>
+                  </div>
+                </article>
+              </div>
+            }
+          </div>
+
+          @if (totalPages() > 1) {
+            <nav class="mt-4" aria-label="Paginación del catálogo">
+              <ul class="pagination justify-content-center mb-0">
+                <li class="page-item" [class.disabled]="query().page <= 1">
+                  <button type="button" class="page-link" (click)="onPageChange(query().page - 1)">
+                    Anterior
+                  </button>
+                </li>
+                @for (page of pages(); track page) {
+                  <li class="page-item" [class.active]="page === query().page">
+                    <button type="button" class="page-link" (click)="onPageChange(page)">{{ page }}</button>
+                  </li>
+                }
+                <li class="page-item" [class.disabled]="query().page >= totalPages()">
+                  <button type="button" class="page-link" (click)="onPageChange(query().page + 1)">
+                    Siguiente
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          }
+        }
+      </div>
+    </div>
+  }
+</div>

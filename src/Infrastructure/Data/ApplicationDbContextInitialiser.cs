@@ -176,10 +176,12 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         await _context.Stores.AddRangeAsync(amazon, mercadoLibre, linio, falabella, ripley, paris);
         await _context.SaveChangesAsync();
 
-        // Productos
-        var gundamRx78 = Product.Create("Gundam RX-78-2", bandai.ManufacturerId, gundam.FranchiseId, null, true, "15+", "1/144", "Maqueta para armar", new DateOnly(2024, 1, 15));
+        // Productos. Grado, escala y número de parte completan la ficha Gunpla: el único kit del catálogo de demo
+        // informa su grado real y las figuras y sets que no son maquetas quedan sin grado, sin escala y solo con su
+        // número de set cuando existe. Son datos de demostración, no un catálogo real.
+        var gundamRx78 = Product.Create("Gundam RX-78-2", bandai.ManufacturerId, gundam.FranchiseId, null, true, "15+", "1/144", "Maqueta para armar", new DateOnly(2024, 1, 15), GunplaGrade.HighGrade, "1/144", "HGUC-191");
         var funkoSpider = Product.Create("Funko Pop Spider-Man", funko.ManufacturerId, marvel.FranchiseId, null, true, "6+", "10cm", "Figura coleccionable", new DateOnly(2024, 3, 10));
-        var legoFalcon = Product.Create("LEGO Millennium Falcon", lego.ManufacturerId, starWars.FranchiseId, null, false, "18+", "84cm", "Set de construccion", new DateOnly(2024, 5, 20));
+        var legoFalcon = Product.Create("LEGO Millennium Falcon", lego.ManufacturerId, starWars.FranchiseId, null, false, "18+", "84cm", "Set de construccion", new DateOnly(2024, 5, 20), GunplaGrade.None, null, "75192");
         var goku = Product.Create("S.H.Figuarts Goku", bandai.ManufacturerId, dragonBall.FranchiseId, null, true, "15+", "14cm", "Figura articulada", new DateOnly(2024, 2, 28));
 
         gundamRx78.SetViewCount(1234);

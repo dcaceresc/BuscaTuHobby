@@ -11,6 +11,9 @@ public class ProductDetailDto
     public bool ProductHasBase { get; set; }
     public string ProductTargetAge { get; set; } = default!;
     public string ProductSize { get; set; } = default!;
+    public int Grade { get; set; }
+    public string? Scale { get; set; }
+    public string? PartNumber { get; set; }
     public DateOnly ProductReleaseDate { get; set; }
     public int ProductViewCount { get; set; }
     public List<string> Categories { get; set; } = [];

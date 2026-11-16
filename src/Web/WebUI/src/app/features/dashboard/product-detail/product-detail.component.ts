@@ -1,10 +1,16 @@
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
-import { DatePipe, DecimalPipe, formatDate, registerLocaleData } from '@angular/common';
+import { DatePipe, DecimalPipe, registerLocaleData } from '@angular/common';
 import localeEsCl from '@angular/common/locales/es-CL';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { DashboardService } from '@app/core/services';
 import { NotificationService } from '@app/core/services/notification.service';
-import { ProductDetailDto, ProductPricePointDto } from '@app/core/models/dashboard/dashboard.model';
+import {
+  ProductDetailDto,
+  ProductPricePointDto,
+  formatObservedAt,
+  offerConditionLabel
+} from '@app/core/models/dashboard/dashboard.model';
+import { gunplaGradeLabel } from '@app/core/models';
 import { PriceChartComponent } from '@app/shared/components/price-chart/price-chart.component';
 
 // Los precios y las fechas se formatean en locale chileno; los datos de locale viajan con este chunk diferido.
@@ -17,8 +23,7 @@ const PRICE_WINDOWS = [
   { label: 'Todo', days: 0 }
 ] as const;
 
-// La condición de la oferta llega como entero desde la API: 0 nueva, 1 reutilizada, 2 usada.
-const CONDITION_LABELS: Record<number, string> = { 0: 'Nueva', 1: 'Reutilizada', 2: 'Usada' };
+// Colores del badge de condición: verde para nueva, ámbar para reutilizada y gris para usada.
 const CONDITION_BADGES: Record<number, string> = {
   0: 'bg-success',
   1: 'bg-warning text-dark',
@@ -79,22 +84,20 @@ export class ProductDetailComponent implements OnInit {
     this.loadPriceHistory(days, true);
   }
 
-  public conditionLabel(condition: number): string {
-    return CONDITION_LABELS[condition] ?? 'Sin dato';
-  }
+  public conditionLabel = offerConditionLabel;
 
   public conditionClass(condition: number): string {
     return CONDITION_BADGES[condition] ?? 'bg-light text-dark';
   }
 
+  /** Etiqueta del grado Gunpla; la fila se omite cuando el producto no tiene grado asignado. */
+  public gradeLabel = gunplaGradeLabel;
+
   /**
-   * La API envía la observación sin zona horaria; como el campo se llama `observedAtUtc` se interpreta como UTC
-   * para que la fecha mostrada no se desplace con la zona del navegador.
+   * La API envía la observación sin zona horaria; el formateo compartido la interpreta como UTC para que la
+   * fecha mostrada no se desplace con la zona del navegador.
    */
-  public observedAt(value: string): string {
-    const iso = /(Z|[+-]\d{2}:?\d{2})$/i.test(value) ? value : `${value}Z`;
-    return formatDate(iso, 'd MMM y, HH:mm', 'es-CL', 'UTC');
-  }
+  public observedAt = formatObservedAt;
 
   private loadProduct(): void {
     this.dashboardService.getProductDetail(this.productId).subscribe({

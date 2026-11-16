@@ -523,6 +523,11 @@ namespace Infrastructure.Data.Migrations
                     b.Property<Guid>("FranchiseId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("Grade")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(GunplaGrade.None);
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
@@ -534,6 +539,10 @@ namespace Infrastructure.Data.Migrations
 
                     b.Property<Guid>("ManufacturerId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("PartNumber")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
 
                     b.Property<string>("ProductDescription")
                         .IsRequired()
@@ -564,6 +573,10 @@ namespace Infrastructure.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasDefaultValue(0);
+
+                    b.Property<string>("Scale")
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)");
 
                     b.Property<Guid?>("SerieId")
                         .HasColumnType("uniqueidentifier");

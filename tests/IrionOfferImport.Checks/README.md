@@ -39,7 +39,19 @@ temporary folder outside the repository from a different working directory). The
 SQL generation and that temporary folder; they cannot prove that a real HTTP request serves an image, nor
 that a real deployment's content root differs from its working directory.
 
-Current full-suite evidence: **1075** assertions and exit 0 for
+`CatalogNavigationChecks` covers the Gunpla catalog slice: the seven integer grade values and their Spanish
+facet labels, the entity defaults (`None`, null scale, null part number), the exact rejection messages for an
+undefined grade, a blank scale/part number and both length caps, `Update` requiring the three arguments with no
+default, the EF model columns, the hand-written `20260723000000_ProductGradeScaleAndPartNumber` migration
+(with its `Down` and generated SQL), the frozen designer, the maintainer write side (grade range and lengths
+rejected with the exact Spanish message and nothing persisted, every existing field and message preserved) and
+both public listings against an in-memory fixture: the offer eligibility rule applied to items, prices, store
+counts and store aggregates, the unknown/inactive/blank slug failure on both endpoints, the paging clamps and
+the pre-paging total, each sort order with offerless products last, every filter and their combination, and
+the three facet lists with their counts. The fixture is LINQ-to-Objects, so these checks do not prove that
+SQL Server translates or executes the price-sorted join, the facet grouping or the projection.
+
+Current full-suite evidence: **1209** assertions and exit 0 for
 `dotnet run --project tests/IrionOfferImport.Checks/IrionOfferImport.Checks.csproj`.
 
 `Inventory.CreateImportedOffer` and `UpdateImportedOffer` accept already server-validated whole integer prices

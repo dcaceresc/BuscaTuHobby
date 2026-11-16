@@ -1,6 +1,11 @@
 # Estado del sitio: qué falta y qué no funciona
 
-Auditoría de BuscaTuHobby contra la referencia de `docs/referencia-solotodo.md`. Cada hallazgo lleva
+Auditoría de BuscaTuHobby contra la referencia de `docs/referencia-solotodo.md`.
+
+> **Foto previa a la implementación.** Este documento describe el estado del sitio antes de los tres
+> bloques de `odd/tasks/fidelidad-comparador.md`. Lo que aquí aparece como ausente o defectuoso puede
+> estar ya resuelto; el registro de lo implementado y de lo que sigue sin probarse está en ese
+> documento de tareas. Cada hallazgo lleva
 evidencia (`archivo:línea`). El documento separa tres cosas que conviene no mezclar: lo que **no
 existe**, lo que existe pero **no se puede usar**, y lo que existe y **miente**.
 

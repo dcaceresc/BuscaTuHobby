@@ -197,14 +197,19 @@ internal static class PriceHistoryChecks
             var differ = modelContext.GetService<IMigrationsModelDiffer>();
             var initializer = modelContext.GetService<IModelRuntimeInitializer>();
             var target = initializer.Initialize(migration.TargetModel, designTime: true);
-            // Una migración posterior agrega condición y medio de pago: el objetivo de esta migración queda atrás
-            // exactamente por esas dos columnas y por nada más.
+            // Dos migraciones posteriores agregan columnas: condición y medio de pago en Inventories, y grado,
+            // escala y número de parte en Products son tres columnas nuevas. El objetivo de esta migración queda
+            // atrás exactamente por esas cinco columnas y por nada más.
             var differences = differ.GetDifferences(target.GetRelationalModel(), model.GetRelationalModel());
             check(differences.OfType<AddColumnOperation>()
                     .Select(c => c.Table + "." + c.Name).OrderBy(n => n, StringComparer.Ordinal)
-                    .SequenceEqual(new[] { "Inventories.Condition", "Inventories.PaymentMethodLabel" }) &&
-                differences.Count == 2,
-                "(e) The price history migration target differs from today's model only by the later condition columns");
+                    .SequenceEqual(new[]
+                    {
+                        "Inventories.Condition", "Inventories.PaymentMethodLabel", "Products.Grade",
+                        "Products.PartNumber", "Products.Scale"
+                    }) &&
+                differences.Count == 5,
+                "(e) The price history migration target differs from today's model only by the later additive columns");
             var file = Directory.EnumerateFiles("src/Infrastructure/Data/Migrations", "*_InventoryPriceHistory.cs")
                 .FirstOrDefault();
             var text = file is null ? "" : File.ReadAllText(file);

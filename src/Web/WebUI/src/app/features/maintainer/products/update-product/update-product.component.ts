@@ -2,7 +2,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CategoryDto, FranchiseDto, ManufacturerDto, SerieByFranchiseDto } from '@app/core/models';
+import { CategoryDto, FranchiseDto, GUNPLA_GRADE_OPTIONS, ManufacturerDto, SerieByFranchiseDto } from '@app/core/models';
 import { CategoryService, FranchiseService, ManufacturerService, NotificationService, ProductService, SerieService } from '@app/core/services';
 import { NgSelectModule } from '@ng-select/ng-select';
 
@@ -39,6 +39,8 @@ export class UpdateProductComponent implements OnInit {
   public today = new Date().toISOString().split('T')[0];
   public productImagePreview = signal<{path: string , base64: string}[]>([]);
   public productImage = signal<File[]>([]);
+  // Los siete grados Gunpla, con su sigla, tal como los publica la API.
+  public readonly grades = GUNPLA_GRADE_OPTIONS;
 
 
   public ngOnInit(): void {
@@ -54,6 +56,11 @@ export class UpdateProductComponent implements OnInit {
       productHasBase: [false,Validators.required],
       productTargetAge: [''],
       productSize: ['',Validators.required],
+      // La API rechaza una escala o un número de parte vacíos o con espacios en los extremos; la lectura los trae
+      // como null cuando el producto no los informa.
+      grade: [0],
+      scale: ['', Validators.maxLength(16)],
+      partNumber: ['', Validators.maxLength(64)],
       productDescription: ['',Validators.required],
       productReleaseDate: [this.today,Validators.required],
       categoryIds: ['', Validators.required],

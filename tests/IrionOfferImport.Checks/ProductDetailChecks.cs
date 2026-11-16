@@ -18,7 +18,7 @@ internal static class ProductDetailChecks
         var franchise = Franchise.Create("Gundam");
         var building = Category.Create("Maquetas", "bi bi-tools", 1, "maquetas");
         var product = Product.Create("RX-78-2 Gundam", manufacturer.ManufacturerId, franchise.FranchiseId, null, true,
-            "8+", "18cm", "Maqueta a escala", new DateOnly(2024, 1, 15));
+            "8+", "18cm", "Maqueta a escala", new DateOnly(2024, 1, 15), GunplaGrade.HighGrade, "1/144", "HGUC-191");
         var other = Product.Create("Otro producto", manufacturer.ManufacturerId, franchise.FranchiseId, null, false,
             "15+", "10cm", "Otra maqueta", new DateOnly(2024, 2, 20));
         Set(product, nameof(Product.Manufacturer), manufacturer);
@@ -62,6 +62,10 @@ internal static class ProductDetailChecks
             data.ProductTargetAge == "8+" && data.ProductSize == "18cm" &&
             data.ProductReleaseDate == new DateOnly(2024, 1, 15) && data.Categories.SequenceEqual(new[] { "Maquetas" }),
             "The product page returns the product's own characteristics");
+
+        check(data is not null && data.Grade == (int)GunplaGrade.HighGrade && data.Scale == "1/144" &&
+            data.PartNumber == "HGUC-191",
+            "The product page publishes the grade, the scale and the part number");
 
         check(data is not null && data.ImageUrls.Count == 2 &&
             data.ImageUrls[0].StartsWith("/images/", StringComparison.Ordinal) &&

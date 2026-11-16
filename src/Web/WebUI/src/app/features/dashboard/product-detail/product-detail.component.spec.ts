@@ -27,6 +27,9 @@ function detail(overrides: Partial<ProductDetailDto> = {}): ProductDetailDto {
     productHasBase: true,
     productTargetAge: '8+',
     productSize: '18cm',
+    grade: 2,
+    scale: '1/100',
+    partNumber: 'MG-001',
     productReleaseDate: '2024-01-15',
     productViewCount: 1234,
     categories: ['Maquetas'],
@@ -119,6 +122,39 @@ describe('ProductDetailComponent', () => {
     expect(text).toContain('18cm');
     expect(text).toContain('8+');
     expect(fixture.nativeElement.querySelectorAll('dd')[1].textContent).toContain('8+');
+  });
+
+  it('shows the Gunpla grade, the scale and the part number of the catalog', async () => {
+    const fixture = await render();
+    const labels = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('dt'))
+      .map(label => label.textContent?.trim());
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+
+    expect(labels).toContain('Grado');
+    expect(labels).toContain('Escala');
+    expect(labels).toContain('Número de parte');
+    expect(text).toContain('Master Grade (MG)');
+    expect(text).toContain('1/100');
+    expect(text).toContain('MG-001');
+  });
+
+  it('omits the catalog rows the product does not have', async () => {
+    dashboard.getProductDetail.mockReturnValue(of({
+      success: true,
+      message: null,
+      data: detail({ grade: 0, scale: null, partNumber: null })
+    }));
+    const fixture = await render();
+    const labels = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('dt'))
+      .map(label => label.textContent?.trim());
+
+    expect(labels).not.toContain('Grado');
+    expect(labels).not.toContain('Escala');
+    expect(labels).not.toContain('Número de parte');
+    // Las filas existentes siguen intactas.
+    expect(labels).toContain('Escala / tamaño');
+    expect(labels).toContain('Edad recomendada');
+    expect(labels).toContain('Visitas');
   });
 
   it('lists the stores in the order the API returned them', async () => {

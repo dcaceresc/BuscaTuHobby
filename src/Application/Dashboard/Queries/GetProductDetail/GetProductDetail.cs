@@ -29,6 +29,9 @@ public class GetProductDetailHandler(IApplicationDbContext context, IApiResponse
                         ProductHasBase = p.ProductHasBase,
                         ProductTargetAge = p.ProductTargetAge,
                         ProductSize = p.ProductSize,
+                        Grade = (int)p.Grade,
+                        Scale = p.Scale,
+                        PartNumber = p.PartNumber,
                         ProductReleaseDate = p.ProductReleaseDate,
                         ProductViewCount = p.ProductViewCount,
                         Categories = p.ProductCategories.Select(pc => pc.Category.CategoryName).ToList()

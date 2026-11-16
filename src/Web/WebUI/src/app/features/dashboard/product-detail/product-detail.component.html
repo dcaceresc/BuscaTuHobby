@@ -75,6 +75,18 @@
           <dd class="col-sm-8">{{ p.productReleaseDate | date: 'd MMM y' : 'UTC' : 'es-CL' }}</dd>
           <dt class="col-sm-4">Requiere base</dt>
           <dd class="col-sm-8">{{ p.productHasBase ? 'Sí' : 'No' }}</dd>
+          @if (p.grade > 0) {
+            <dt class="col-sm-4">Grado</dt>
+            <dd class="col-sm-8">{{ gradeLabel(p.grade) }}</dd>
+          }
+          @if (p.scale) {
+            <dt class="col-sm-4">Escala</dt>
+            <dd class="col-sm-8">{{ p.scale }}</dd>
+          }
+          @if (p.partNumber) {
+            <dt class="col-sm-4">Número de parte</dt>
+            <dd class="col-sm-8">{{ p.partNumber }}</dd>
+          }
           <dt class="col-sm-4">Visitas</dt>
           <dd class="col-sm-8 mb-0">{{ p.productViewCount | number }}</dd>
         </dl>

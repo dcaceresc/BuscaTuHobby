@@ -112,7 +112,8 @@ internal static class NewProductConfirmationChecks
         await Reject(x => x.Extractor.After = () => {
             x.Seed(); var d = x.Request.Product;
             x.Fake.Products[0].Update("Concurrent name", d.ManufacturerId, d.FranchiseId, d.SerieId, false,
-                d.ProductTargetAge, d.ProductSize, d.ProductDescription, d.ProductReleaseDate!.Value);
+                d.ProductTargetAge, d.ProductSize, d.ProductDescription, d.ProductReleaseDate!.Value,
+                x.Fake.Products[0].Grade, x.Fake.Products[0].Scale, x.Fake.Products[0].PartNumber);
         }, "Conflict", null);
         foreach (var error in new DbUpdateException[] { new("private"), new DbUpdateConcurrencyException("private") })
             await Reject(x => x.Fake.SaveError = error, "Conflict", null, saves: 1);

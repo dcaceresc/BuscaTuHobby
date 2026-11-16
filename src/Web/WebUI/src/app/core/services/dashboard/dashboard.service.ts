@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApiResponse } from '@app/core/models';
-import { MenuCategoryDto, MenuStoreDto, MostSearchedProductDto, RecentPostDto, BestDealDto, PopularCategoryDto, FeaturedStoreDto, RecentActivityDto, SearchProductDto, ProductDetailDto, ProductPriceHistoryDto } from '@app/core/models/dashboard/dashboard.model';
+import { MenuCategoryDto, MenuStoreDto, MostSearchedProductDto, RecentPostDto, BestDealDto, PopularCategoryDto, FeaturedStoreDto, RecentActivityDto, SearchProductDto, ProductDetailDto, ProductPriceHistoryDto, CategoryProductsDto, CategoryProductsQuery, StoreDetailDto } from '@app/core/models/dashboard/dashboard.model';
 
 @Injectable({
   providedIn: 'root'
@@ -62,5 +62,41 @@ export class DashboardService {
     return this.http.get<ApiResponse<ProductPriceHistoryDto>>(
       `api/dashboard/products/${encodeURIComponent(productId)}/price-history?days=${days}`
     );
+  }
+
+  /**
+   * Catálogo público de una categoría. Los filtros viajan como parámetros de consulta para que la API responda
+   * exactamente la vista que la URL describe.
+   */
+  public getCategoryProducts(slug: string, query: CategoryProductsQuery) {
+    let params = new HttpParams()
+      .set('page', query.page)
+      .set('pageSize', query.pageSize)
+      .set('sort', query.sort);
+
+    if (query.grade) {
+      params = params.set('grade', query.grade);
+    }
+    if (query.manufacturerId) {
+      params = params.set('manufacturerId', query.manufacturerId);
+    }
+    if (query.franchiseId) {
+      params = params.set('franchiseId', query.franchiseId);
+    }
+    if (query.minPrice) {
+      params = params.set('minPrice', query.minPrice);
+    }
+    if (query.maxPrice) {
+      params = params.set('maxPrice', query.maxPrice);
+    }
+
+    return this.http.get<ApiResponse<CategoryProductsDto>>(
+      `api/dashboard/categories/${encodeURIComponent(slug)}/products`,
+      { params }
+    );
+  }
+
+  public getStoreDetail(slug: string) {
+    return this.http.get<ApiResponse<StoreDetailDto>>(`api/dashboard/stores/${encodeURIComponent(slug)}`);
   }
 }

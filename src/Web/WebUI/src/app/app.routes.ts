@@ -33,6 +33,14 @@ export const routes: Routes = [
         loadComponent: () => import('./features/dashboard/product-detail/product-detail.component').then(m => m.ProductDetailComponent)
       },
       {
+        path: 'categories/:slug',
+        loadComponent: () => import('./features/catalog/catalog.component').then(m => m.CatalogComponent)
+      },
+      {
+        path: 'stores/:slug',
+        loadComponent: () => import('./features/stores/store.component').then(m => m.StoreComponent)
+      },
+      {
         path: 'forbidden',
         loadComponent: () => import('./shared/components/forbidden/forbidden.component').then(m => m.ForbiddenComponent)
       },

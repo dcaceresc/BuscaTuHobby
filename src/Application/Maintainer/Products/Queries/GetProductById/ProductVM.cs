@@ -14,4 +14,10 @@ public class ProductVM
     public string ProductReleaseDate { get; set; } = default!;
     public IList<Guid> CategoryIds { get; set; } = default!;
     public IList<string> ProductImages { get; set; } = default!;
+
+    // Grado, escala y número de parte del producto. El grado viaja como entero (0 sin grado ... 6 otro) para
+    // respetar el contrato HTTP sin JsonStringEnumConverter.
+    public int Grade { get; set; }
+    public string? Scale { get; set; }
+    public string? PartNumber { get; set; }
 }

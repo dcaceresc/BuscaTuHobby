@@ -259,6 +259,18 @@ namespace Infrastructure.Data
                 .IsRequired()
                 .HasDefaultValue(0);
 
+                // Valor predeterminado del primer grado (0, sin grado) para que las filas existentes queden igual al migrar.
+                entity.Property(e => e.Grade)
+                .IsRequired()
+                .HasDefaultValue(GunplaGrade.None);
+
+                // Escala y número de parte son opcionales: null significa que el producto no los informa.
+                entity.Property(e => e.Scale)
+                .HasMaxLength(GunplaGradeRules.MaxScaleLength);
+
+                entity.Property(e => e.PartNumber)
+                .HasMaxLength(GunplaGradeRules.MaxPartNumberLength);
+
             });
 
             builder.Entity<ProductCategory>(entity =>

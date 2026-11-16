@@ -77,6 +77,31 @@
           </div>
 
           <div class="row">
+            <div class="col-md-4">
+              <div class="form-floating mb-3">
+                <select class="form-select" id="grade" formControlName="grade">
+                  @for (grade of grades; track grade.value) {
+                    <option [ngValue]="grade.value">{{ grade.label }}</option>
+                  }
+                </select>
+                <label for="grade">Grado</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-floating mb-3">
+                <input class="form-control" id="scale" formControlName="scale" placeholder="Escala">
+                <label for="scale">Escala</label>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-floating mb-3">
+                <input class="form-control" id="partNumber" formControlName="partNumber" placeholder="Número de parte">
+                <label for="partNumber">Número de parte</label>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
             <div class="col-md-6">
               <div class="form-floating mb-3">
                 <input class="form-control" type="date" id="productReleaseDate" formControlName="productReleaseDate" placeholder="Fecha de Lanzamiento" required>

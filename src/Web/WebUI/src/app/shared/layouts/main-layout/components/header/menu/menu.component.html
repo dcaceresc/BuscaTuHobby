@@ -22,9 +22,9 @@
         <a class="nav-link text-success fw-bold" style="cursor: pointer;" (click)="showCategoriesMenu()"><i class="bi bi-arrow-left"></i> Volver</a>
         <hr class="my-2">
         <h6 class="px-3 text-muted text-uppercase small">Categorías</h6>
-        <!-- Las categorías son filas simples, no enlaces: las páginas públicas de categoría llegan con el bloque de navegación del catálogo. La entrada "Ver todas..." vuelve con la página de listado de categorías. -->
+        <!-- Las categorías vuelven a ser enlaces ahora que su página pública existe en /categories/{slug}. -->
         @for (category of categories(); track $index) {
-          <span class="nav-link"><i class="bi" [ngClass]="category.categoryIcon"></i> {{category.categoryName}}</span>
+          <a class="nav-link" [routerLink]="['/categories', category.categorySlug]" (click)="activeOffcanvas.dismiss()"><i class="bi" [ngClass]="category.categoryIcon"></i> {{category.categoryName}}</a>
         }
     </nav>
   }@else if (showStores){
@@ -33,9 +33,9 @@
         <a class="nav-link text-success fw-bold" style="cursor: pointer;" (click)="showStoresMenu()"><i class="bi bi-arrow-left"></i> Volver</a>
         <hr class="my-2">
         <h6 class="px-3 text-muted text-uppercase small">Tiendas</h6>
-        <!-- Las tiendas son filas simples, no enlaces: las páginas públicas de tienda llegan con el bloque de navegación del catálogo. La entrada "Ver todas..." vuelve con la página de listado de tiendas. -->
+        <!-- Las tiendas vuelven a ser enlaces ahora que su página pública existe en /stores/{slug}. -->
         @for(store of stores(); track $index) {
-          <span class="nav-link"><i class="bi" [ngClass]="store.storeIcon"></i> {{store.storeName}}</span>
+          <a class="nav-link" [routerLink]="['/stores', store.storeSlug]" (click)="activeOffcanvas.dismiss()"><i class="bi" [ngClass]="store.storeIcon"></i> {{store.storeName}}</a>
         }
     </nav>
   }

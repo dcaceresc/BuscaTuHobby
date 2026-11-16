@@ -72,37 +72,35 @@ describe('MenuComponent', () => {
     expect(host.querySelectorAll('a[href="#"]').length).toBe(0);
   });
 
-  it('renders categories as non interactive rows instead of links', async () => {
+  it('renders categories as links to their public page', async () => {
     const fixture = await render();
     const host = fixture.nativeElement as HTMLElement;
 
     (Array.from(host.querySelectorAll('a')).find(anchor => anchor.textContent?.includes('Categorías')) as HTMLElement).click();
     fixture.detectChanges();
 
-    const rows = Array.from(host.querySelectorAll('span.nav-link'));
-    const row = rows.find(element => element.textContent?.includes('Gunpla'));
+    const row = Array.from(host.querySelectorAll('a.nav-link'))
+      .find(anchor => anchor.textContent?.includes('Gunpla'));
 
     expect(row).toBeDefined();
     expect(row?.querySelector('i')?.className).toContain('bi-robot');
-    expect(anchors(host).some(anchor => anchor.getAttribute('href') === 'gunpla')).toBe(false);
-    expect(ancestorsAreLinks(row)).toBe(false);
+    expect(row?.getAttribute('href')).toBe('/categories/gunpla');
     expect(host.textContent).not.toContain('Ver todas');
   });
 
-  it('renders stores as non interactive rows instead of links', async () => {
+  it('renders stores as links to their public page', async () => {
     const fixture = await render();
     const host = fixture.nativeElement as HTMLElement;
 
     (Array.from(host.querySelectorAll('a')).find(anchor => anchor.textContent?.includes('Tiendas')) as HTMLElement).click();
     fixture.detectChanges();
 
-    const rows = Array.from(host.querySelectorAll('span.nav-link'));
-    const row = rows.find(element => element.textContent?.includes('Hobby Store'));
+    const row = Array.from(host.querySelectorAll('a.nav-link'))
+      .find(anchor => anchor.textContent?.includes('Hobby Store'));
 
     expect(row).toBeDefined();
     expect(row?.querySelector('i')?.className).toContain('bi-shop');
-    expect(anchors(host).some(anchor => anchor.getAttribute('href') === 'hobby-store')).toBe(false);
-    expect(ancestorsAreLinks(row)).toBe(false);
+    expect(row?.getAttribute('href')).toBe('/stores/hobby-store');
     expect(host.textContent).not.toContain('Ver todas');
   });
 
@@ -117,13 +115,3 @@ describe('MenuComponent', () => {
   });
 });
 
-function ancestorsAreLinks(element: Element | undefined): boolean {
-  let current = element?.parentElement ?? null;
-  while (current) {
-    if (current.tagName === 'A') {
-      return true;
-    }
-    current = current.parentElement;
-  }
-  return false;
-}

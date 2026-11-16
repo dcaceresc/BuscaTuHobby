@@ -2,7 +2,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CategoryDto, FranchiseDto, ManufacturerDto, SerieByFranchiseDto } from '@app/core/models';
+import { CategoryDto, CreateProduct, FranchiseDto, GUNPLA_GRADE_OPTIONS, ManufacturerDto, SerieByFranchiseDto } from '@app/core/models';
 import { CategoryService, FranchiseService, ManufacturerService, NotificationService, ProductService, SerieService } from '@app/core/services';
 import { NgSelectModule } from '@ng-select/ng-select';
 
@@ -35,6 +35,8 @@ export class AddProductComponent implements OnInit {
   public today = new Date().toISOString().split('T')[0];
   public productImagePreview = signal<string[]>([]);
   public productImage = signal<File[]>([]);
+  // Los siete grados Gunpla, con su sigla, tal como los publica la API.
+  public readonly grades = GUNPLA_GRADE_OPTIONS;
 
 
   public ngOnInit(): void {
@@ -46,6 +48,11 @@ export class AddProductComponent implements OnInit {
       productHasBase: [false,Validators.required],
       productTargetAge: [''],
       productSize: ['',Validators.required],
+      // La API rechaza una escala o un número de parte vacíos o con espacios en los extremos; el formulario los
+      // envía como null cuando el administrador no los informa.
+      grade: [0],
+      scale: ['', Validators.maxLength(16)],
+      partNumber: ['', Validators.maxLength(64)],
       productDescription: ['',Validators.required],
       productReleaseDate: [this.today,Validators.required],
       categoryIds: ['', Validators.required],
@@ -195,7 +202,7 @@ export class AddProductComponent implements OnInit {
     }
 
 
-    this.productService.createProduct(this.productForm.value).subscribe({
+    this.productService.createProduct(this.buildProduct()).subscribe({
       next: (response) => {
         if(!response.success){
           this.notificationService.showError("Error",response.message);
@@ -238,4 +245,21 @@ export class AddProductComponent implements OnInit {
     this.router.navigate(['/maintainer/products']);
   }
 
+  /** Arma el producto con la escala y el número de parte normalizados, sin tocar el resto del formulario. */
+  private buildProduct(): CreateProduct {
+    const form = this.productForm.value;
+
+    return {
+      ...form,
+      scale: normalizeOptionalText(form.scale),
+      partNumber: normalizeOptionalText(form.partNumber)
+    };
+  }
+
+}
+
+/** Convierte un texto opcional en null cuando está vacío; la API rechaza cadenas vacías o con espacios en los extremos. */
+function normalizeOptionalText(value: string | null | undefined): string | null {
+  const text = (value ?? '').trim();
+  return text.length === 0 ? null : text;
 }

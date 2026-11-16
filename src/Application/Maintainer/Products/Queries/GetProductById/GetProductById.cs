@@ -29,7 +29,10 @@ public class GetProductByIdHandler(IApplicationDbContext context, IApiResponseSe
                                    ProductHasBase = x.ProductHasBase,
                                    ProductReleaseDate = x.ProductReleaseDate.ToString("yyyy-MM-dd"),
                                    ProductTargetAge = x.ProductTargetAge,
-                                   ProductSize = x.ProductSize
+                                   ProductSize = x.ProductSize,
+                                   Grade = (int)x.Grade,
+                                   Scale = x.Scale,
+                                   PartNumber = x.PartNumber
                                },
                                ImageIds = x.ProductImages
                                    .OrderBy(pi => pi.ProductImageOrder)

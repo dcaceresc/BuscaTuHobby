@@ -1,0 +1,99 @@
+<div class="store container py-4">
+  @if (errorMessage()) {
+    <div class="alert alert-warning store__error" role="alert">
+      <i class="bi bi-exclamation-triangle me-1" aria-hidden="true"></i>{{ errorMessage() }}
+    </div>
+  }
+
+  @if (isLoading()) {
+    <div class="text-center py-5">
+      <span class="spinner-border" role="status" aria-hidden="true"></span>
+      <p class="text-muted mt-3 mb-0">Cargando tienda...</p>
+    </div>
+  } @else if (store(); as s) {
+    <header class="store__header d-flex flex-wrap align-items-center gap-3 mb-4">
+      @if (s.storeIcon) {
+        <i class="store__icon fs-2" [class]="s.storeIcon" aria-hidden="true"></i>
+      }
+      <div class="flex-grow-1">
+        <h1 class="h3 mb-1">{{ s.storeName }}</h1>
+        <a
+          class="store__website link-primary small"
+          [href]="s.storeWebSite"
+          target="_blank"
+          rel="noopener noreferrer">
+          {{ s.storeWebSite }}
+          <i class="bi bi-box-arrow-up-right" aria-hidden="true"></i>
+        </a>
+      </div>
+      <div class="d-flex gap-3 text-muted small">
+        <span class="store__product-count">
+          <i class="bi bi-box-seam" aria-hidden="true"></i>
+          {{ s.productCount }} {{ s.productCount === 1 ? 'producto' : 'productos' }}
+        </span>
+        <span class="store__offer-count">
+          <i class="bi bi-tags" aria-hidden="true"></i>
+          {{ s.offerCount }} {{ s.offerCount === 1 ? 'oferta' : 'ofertas' }}
+        </span>
+      </div>
+    </header>
+
+    <section aria-labelledby="store-offers-title">
+      <h2 class="h5 mb-3" id="store-offers-title">Ofertas publicadas</h2>
+
+      @if (s.offers.length === 0) {
+        <div class="alert alert-secondary store__empty" role="alert">
+          Esta tienda todavía no tiene ofertas publicadas.
+        </div>
+      } @else {
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead>
+              <tr>
+                <th scope="col">Producto</th>
+                <th scope="col" class="text-end">Precio</th>
+                <th scope="col" class="text-end">Normal</th>
+                <th scope="col" class="text-center">Descuento</th>
+                <th scope="col">Condición</th>
+                <th scope="col">Última observación</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (offer of s.offers; track offer.inventoryId) {
+                <tr>
+                  <td>
+                    <a class="text-decoration-none" [routerLink]="['/products', offer.productId]">
+                      {{ offer.productName }}
+                    </a>
+                  </td>
+                  <td class="text-end fw-bold">${{ offer.price | number: '1.0-0' : 'es-CL' }}</td>
+                  <td class="text-end text-muted">
+                    @if (offer.originalPrice > offer.price) {
+                      <s>${{ offer.originalPrice | number: '1.0-0' : 'es-CL' }}</s>
+                    } @else {
+                      <span aria-hidden="true">—</span>
+                    }
+                  </td>
+                  <td class="text-center">
+                    @if (offer.discountPercentage > 0) {
+                      <span class="badge bg-success">-{{ offer.discountPercentage }}%</span>
+                    } @else {
+                      <span aria-hidden="true">—</span>
+                    }
+                  </td>
+                  <td class="store__condition">{{ conditionLabel(offer.condition) }}</td>
+                  <td class="text-nowrap store__observed">
+                    <!-- La oferta puede no tener una observación registrada; en ese caso la celda queda vacía. -->
+                    @if (offer.observedAtUtc) {
+                      {{ observedAt(offer.observedAtUtc) }}
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  }
+</div>
