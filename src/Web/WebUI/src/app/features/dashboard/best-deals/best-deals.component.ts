@@ -1,11 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { BestDealDto } from '@app/core/models';
 import { DashboardService, NotificationService } from '@app/core/services';
 
 @Component({
   selector: 'app-best-deals',
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, RouterLink],
   templateUrl: './best-deals.component.html',
   styleUrl: './best-deals.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush

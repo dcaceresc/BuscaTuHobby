@@ -27,7 +27,7 @@ internal static class ManualNumericChecks
                 created.Success, created.Message, row?.ProductId, row?.StoreId, row?.Price, row?.OriginalPrice,
                 row?.DiscountPercentage, row?.IsActive, fake.Saves, Rows = fake.Rows.Count }));
             if (row is null) continue;
-            row.Update(product, store, 999, 0, 0);
+            row.Update(product, store, 999, 0, 0, row.Condition, row.PaymentMethodLabel);
             row.ToggleActive();
             var updated = await new UpdateInventoryHandler(context, new ApiResponseService()).Handle(new()
             {

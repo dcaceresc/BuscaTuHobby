@@ -54,7 +54,7 @@ internal static class ManualChecks
         if (factory is not null)
         {
             var imported = (Inventory)factory.Invoke(null, [Guid.NewGuid(), store, 100, 0, 0,
-                "https://irion.cl/products/model", "123", true, DateTime.UtcNow])!;
+                "https://irion.cl/products/model", "123", true, DateTime.UtcNow, ProductCondition.New, null])!;
             fake.Rows.Add(imported);
             var saves = fake.Saves;
             before = State();
@@ -68,11 +68,13 @@ internal static class ManualChecks
 public class ContextProxy : DispatchProxy
 {
     public List<Inventory> Rows { get; } = [];
+    public List<InventoryPriceHistory> Histories { get; } = [];
     public int Saves { get; private set; }
     public Exception? SaveError { get; set; }
     protected override object? Invoke(MethodInfo? targetMethod, object?[]? args) => targetMethod!.Name switch
     {
         "get_Inventories" => new InventorySet(Rows),
+        "get_InventoryPriceHistories" => new InspectionSet<InventoryPriceHistory>(Histories, _ => { }),
         "SaveChangesAsync" => Save(),
         _ => throw new NotSupportedException(targetMethod.Name)
     };

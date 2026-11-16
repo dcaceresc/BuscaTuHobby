@@ -131,7 +131,10 @@ public class InspectionContext : DispatchProxy
 {
     public List<Product> Products { get; } = [];
     public List<Store> Stores { get; } = [];
+    public List<Category> Categories { get; } = [];
+    public List<Post> Posts { get; } = [];
     public List<Inventory> Rows { get; } = [];
+    public List<InventoryPriceHistory> Histories { get; } = [];
     public int PairLookups { get; private set; }
     public int Saves { get; private set; }
     public Exception? SaveError { get; set; }
@@ -144,7 +147,10 @@ public class InspectionContext : DispatchProxy
     {
         "get_Products" => new InspectionSet<Product>(Products, OnQuery),
         "get_Stores" => new InspectionSet<Store>(Stores, OnQuery),
+        "get_Categories" => new InspectionSet<Category>(Categories, OnQuery),
+        "get_Posts" => new InspectionSet<Post>(Posts, OnQuery),
         "get_Inventories" => new InspectionSet<Inventory>(Rows, token => { PairLookups++; OnQuery(token); }),
+        "get_InventoryPriceHistories" => new InspectionSet<InventoryPriceHistory>(Histories, OnQuery),
         "SaveChangesAsync" => Save((CancellationToken)args![0]!),
         _ => throw new NotSupportedException(method.Name)
     };

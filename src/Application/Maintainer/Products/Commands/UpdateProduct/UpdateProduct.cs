@@ -6,13 +6,21 @@ public class UpdateProduct : IRequest<ApiResponse>
     public string ProductName { get; init; } = default!;
     public Guid ManufacturerId { get; init; }
     public Guid FranchiseId { get; init; }
-    public Guid SerieId { get; init; }
+    public Guid? SerieId { get; init; }
     public bool ProductHasBase { get; init; }
     public string ProductTargetAge { get; init; } = default!;
     public string ProductSize { get; init; } = default!;
     public string ProductDescription { get; init; } = default!;
     public DateOnly ProductReleaseDate { get; init; }
     public IList<Guid> CategoryIds { get; init; } = default!;
+
+    // Grado, escala y número de parte del producto. El grado viaja como entero (0 sin grado ... 6 otro) y la
+    // escala y el número de parte son opcionales. Los tres son opcionales en la petición y null significa "conserva
+    // lo que ya está guardado": un valor omitido ya no borra en silencio lo que cargó el administrador. Una cadena
+    // vacía no es una omisión, se valida como un dato informado y se rechaza con su mensaje en español.
+    public int? Grade { get; init; }
+    public string? Scale { get; init; }
+    public string? PartNumber { get; init; }
 }
 
 public class UpdateProductHandler(IApplicationDbContext context, IApiResponseService responseService) : IRequestHandler<UpdateProduct, ApiResponse>
@@ -28,7 +36,21 @@ public class UpdateProductHandler(IApplicationDbContext context, IApiResponseSer
 
             Guard.Against.NotFound(product, $"No existe Producto con la Id {request.ProductId}");
 
-            product.Update(request.ProductName, request.ManufacturerId, request.FranchiseId, request.SerieId, request.ProductHasBase, request.ProductTargetAge, request.ProductSize, request.ProductDescription, request.ProductReleaseDate);
+            // Los datos de Gunpla omitidos se resuelven con lo que ya está guardado antes de validar, así el
+            // rechazo sigue siendo atómico y el mutador recibe siempre los tres valores efectivos.
+            var grade = request.Grade ?? (int)product.Grade;
+            var scale = request.Scale ?? product.Scale;
+            var partNumber = request.PartNumber ?? product.PartNumber;
+
+            // Se valida antes de mutar para que el rechazo tenga el mensaje exacto en español y no cambie nada.
+            if (!GunplaGradeRules.IsValidGrade(grade))
+                return _responseService.Fail(GunplaGradeRules.InvalidGradeMessage);
+            if (!GunplaGradeRules.IsValidScale(scale))
+                return _responseService.Fail(GunplaGradeRules.InvalidScaleMessage);
+            if (!GunplaGradeRules.IsValidPartNumber(partNumber))
+                return _responseService.Fail(GunplaGradeRules.InvalidPartNumberMessage);
+
+            product.Update(request.ProductName, request.ManufacturerId, request.FranchiseId, request.SerieId, request.ProductHasBase, request.ProductTargetAge, request.ProductSize, request.ProductDescription, request.ProductReleaseDate, (GunplaGrade)grade, scale, partNumber);
 
             var productCategoriesOld = await _context.ProductCategories.Where(x => x.ProductId == request.ProductId).ToListAsync(cancellationToken);
 

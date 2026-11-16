@@ -1,14 +1,5 @@
  @use '@src/variables.scss' as *;
  
-.badge-trending {
-    background-color: $red;
-}
-        
-.badge-popular {
-    background-color: $yellow;
-    color: #000;
-}
-
 .badge-stores {
     background-color: $green;
     color: white;
@@ -24,4 +15,13 @@
     height: 200px;
     object-fit: cover;
     border-radius: 0.5rem;
+}
+.most-searched-card {
+    cursor: pointer;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+    }
 }

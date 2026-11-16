@@ -22,7 +22,40 @@ dotnet run --project tests/IrionOfferImport.Checks/IrionOfferImport.Checks.cspro
 
 That explicit maintenance mode only writes `src/Infrastructure/Data/Migrations/20260720000000_IrionOffer.Designer.cs` and refuses to overwrite different contents. It is not part of normal checks and must not be used to refresh an existing migration after future model changes. Review the migration before any application. Down removes the newly added metadata; it does not remove inventory rows.
 
-`Inventory.CreateImportedOffer` and `UpdateImportedOffer` accept already server-validated whole integer prices and a canonical HTTPS source identity. Import updates require an existing matching source and variant; unlinked legacy offers cannot be adopted. Availability is independent of administrative activation. Strict numeric validation applies only to import methods; manual create/update preserve baseline numeric semantics, including zero prices and inconsistent reference/discount tuples. Public-handler preservation checks cover both accepted responses and exact row/save effects. Legacy/manual metadata remains null; manual same-pair price edits preserve import metadata and activation, while imported association changes are rejected atomically.
+`PriceHistoryChecks` covers the price-history slice: an offer whose price, original price, discount or availability changes appends exactly one non-baseline point with the post-change values, while an identical observation, an activation toggle or an import that only refreshes metadata appends none, and creating an offer appends none. It also pins the model metadata (entity, `(InventoryId, ObservedAtUtc)` index, cascading relationship) and the hand-written `20260721000000_InventoryPriceHistory` migration (table, index, idempotent baseline seed for active offers, table-dropping `Down`, generated SQL, target model). The same explicit maintenance mode freezes any newer hand-written migration by passing its id and class: `-- --prepare-metadata 20260721000000_InventoryPriceHistory InventoryPriceHistory`; with no arguments it still targets `IrionOffer`. These checks use fakes and model metadata only, so they do not prove SQL translation, that the seed SQL runs on a real server, or that the migration applies and rolls back against SQL Server.
+
+`FidelityChecks` covers the truthful-dashboard slice. Popular-category percentages divide by every active
+category, so the four shown rows still add up to less than 100 and the first row divides by the whole instead
+of by those four rows (five non-empty active categories), and a product linked to two categories yields two
+rows, each below 100. The activity feed applies the offers eligibility, including `Availability != false`,
+so an unavailable offer is never announced. The price-history series keeps every recorded point of the
+product — from an offer that is now disabled, from a closed store and with `Availability == false` — trimmed
+only by the `days` window and never by another product's observations; that asymmetry with the offers table
+is deliberate and the interface must explain it. The same file pins the single image-folder resolution:
+`SiteConfig.ResolveFolderImage` resolves a relative folder against the content root and keeps an absolute one
+as is, the configuration load is the only place that resolves it, and `UtilityService.SaveImagen` writes into
+that absolute folder instead of the process working directory (asserted by writing a real file into a
+temporary folder outside the repository from a different working directory). These checks use fakes, offline
+SQL generation and that temporary folder; they cannot prove that a real HTTP request serves an image, nor
+that a real deployment's content root differs from its working directory.
+
+`CatalogNavigationChecks` covers the Gunpla catalog slice: the seven integer grade values and their Spanish
+facet labels, the entity defaults (`None`, null scale, null part number), the exact rejection messages for an
+undefined grade, a blank scale/part number and both length caps, `Update` requiring the three arguments with no
+default, the EF model columns, the hand-written `20260723000000_ProductGradeScaleAndPartNumber` migration
+(with its `Down` and generated SQL), the frozen designer, the maintainer write side (grade range and lengths
+rejected with the exact Spanish message and nothing persisted, every existing field and message preserved) and
+both public listings against an in-memory fixture: the offer eligibility rule applied to items, prices, store
+counts and store aggregates, the unknown/inactive/blank slug failure on both endpoints, the paging clamps and
+the pre-paging total, each sort order with offerless products last, every filter and their combination, and
+the three facet lists with their counts. The fixture is LINQ-to-Objects, so these checks do not prove that
+SQL Server translates or executes the price-sorted join, the facet grouping or the projection.
+
+Current full-suite evidence: **1209** assertions and exit 0 for
+`dotnet run --project tests/IrionOfferImport.Checks/IrionOfferImport.Checks.csproj`.
+
+`Inventory.CreateImportedOffer` and `UpdateImportedOffer` accept already server-validated whole integer prices
+and a canonical HTTPS source identity. Import updates require an existing matching source and variant; unlinked legacy offers cannot be adopted. Availability is independent of administrative activation. Strict numeric validation applies only to import methods; manual create/update preserve baseline numeric semantics, including zero prices and inconsistent reference/discount tuples. Public-handler preservation checks cover both accepted responses and exact row/save effects. Legacy/manual metadata remains null; manual same-pair price edits preserve import metadata and activation, while imported association changes are rejected atomically.
 
 T2 inspection public-handler checks cover active/missing product and store, exact root Irion store URLs, canonical source and positive Int64 variant metadata, typed Create/Update/Conflict results, legacy and external identity conflicts, disabled inventory preservation, base64 rowversion, safe errors and cancellation propagation. Every path asserts unchanged stored fields and save counts; accepted inspections perform exactly one pair lookup. The handler has no extractor/HTTP dependency. Existing manual successful behavior checks remain unchanged.
 

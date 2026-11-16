@@ -24,8 +24,15 @@ public class GetPopularCategoriesHandler(IApplicationDbContext context, IApiResp
                 .Take(4)
                 .ToListAsync(cancellationToken);
 
-            var totalProducts = categories.Sum(c => c.ProductCount);
+            // La participación se mide contra todas las categorías activas, no contra las cuatro filas de arriba:
+            // un subconjunto presentado como el total siempre sumaría cerca del 100 %.
+            var totalProducts = await _context.Categories
+                .Where(c => c.IsActive)
+                .SelectMany(c => c.ProductCategories)
+                .CountAsync(pc => pc.Product.IsActive, cancellationToken);
 
+            // Sin Math.Min(100, ...): el numerador de cada fila es un subconjunto de los enlaces que suma el
+            // denominador, así que la proporción nunca supera 1 y el recorte era inalcanzable.
             var result = categories.Select(c => new PopularCategoryDto
             {
                 CategoryName = c.CategoryName,

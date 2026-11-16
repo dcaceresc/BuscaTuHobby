@@ -1,0 +1,14 @@
+.store {
+  &__header {
+    border-bottom: 1px solid var(--bs-border-color);
+    padding-bottom: 1rem;
+  }
+
+  &__website {
+    text-decoration: none;
+  }
+
+  &__observed {
+    color: var(--bs-secondary-color);
+  }
+}

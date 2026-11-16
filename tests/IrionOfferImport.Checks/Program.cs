@@ -1,4 +1,4 @@
-using System.Reflection;
+﻿using System.Reflection;
 using Application.Maintainer.Inventories.Commands.CreateInventory;
 using Application.Maintainer.Inventories.Commands.UpdateInventory;
 using Domain.Entities;
@@ -10,9 +10,9 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 
-if (args.SequenceEqual(new[] { "--prepare-metadata" }))
+if (args.Length > 0 && args[0] == "--prepare-metadata")
 {
-    MigrationMetadata.Prepare();
+    MigrationMetadata.Prepare(args.ElementAtOrDefault(1) ?? "20260720000000_IrionOffer", args.ElementAtOrDefault(2) ?? "IrionOffer");
     return 0;
 }
 
@@ -38,7 +38,7 @@ Check(metadata.All(n => typeof(Inventory).GetProperty(n) is not null), "Nullable
 foreach (var name in metadata)
     Check(typeof(Inventory).GetProperty(name)?.GetValue(legacy) is null, "Legacy has no fabricated " + name);
 legacy.ToggleActive();
-legacy.Update(product, store, 120, 150, 20);
+legacy.Update(product, store, 120, 150, 20, legacy.Condition, legacy.PaymentMethodLabel);
 Check(!legacy.IsActive && legacy.Price == 120 && legacy.OriginalPrice == 150 && legacy.DiscountPercentage == 20,
     "Manual update preserves disabled state and valid prices");
 await ManualNumericChecks.Run(Check);
@@ -52,22 +52,23 @@ if (createImported is not null && updateImported is not null)
     const string source = "https://irion.cl/products/model";
     var observed = new DateTime(2026, 4, 1, 12, 0, 0, DateTimeKind.Utc);
     Inventory Create(string url, string variant, DateTime time) =>
-        (Inventory)Invoke(createImported, null, [product, store, 100, 200, 50, url, variant, true, time])!;
+        (Inventory)Invoke(createImported, null, [product, store, 100, 200, 50, url, variant, true, time,
+            ProductCondition.New, null])!;
     void Update(Inventory row, string url, string variant, DateTime time, bool available = false) =>
-        Invoke(updateImported, row, [90, 100, 10, url, variant, available, time]);
+        Invoke(updateImported, row, [90, 100, 10, url, variant, available, time, ProductCondition.New, null]);
     var imported = Create(source, "123", observed);
     imported.ToggleActive();
     Update(imported, source, "123", observed.AddMinutes(1));
     Check(!imported.IsActive && imported.Price == 90 && (bool?)typeof(Inventory).GetProperty("Availability")!.GetValue(imported) == false,
         "Imported unavailable update never reactivates disabled row");
-    imported.Update(product, store, 80, 100, 20);
+    imported.Update(product, store, 80, 100, 20, imported.Condition, imported.PaymentMethodLabel);
     Check((string?)typeof(Inventory).GetProperty("ExternalVariantId")!.GetValue(imported) == "123" &&
         (DateTime?)typeof(Inventory).GetProperty("ObservedAtUtc")!.GetValue(imported) == observed.AddMinutes(1) && !imported.IsActive,
         "Manual same-pair edit preserves identity and disabled state");
     var unchanged = State(imported);
     foreach (var ids in new[] { (Guid.NewGuid(), store), (product, Guid.NewGuid()) })
     {
-        Reject(() => imported.Update(ids.Item1, ids.Item2, 70, 0, 0), "Imported pair cannot change silently");
+        Reject(() => imported.Update(ids.Item1, ids.Item2, 70, 0, 0, imported.Condition, imported.PaymentMethodLabel), "Imported pair cannot change silently");
         Check(State(imported) == unchanged, "Association rejection is atomic");
     }
     foreach (var identity in new[] { (source, "124"), (source + "-other", "123") })
@@ -81,15 +82,16 @@ if (createImported is not null && updateImported is not null)
     foreach (var prices in new[] { (0, 0, 0), (-1, 0, 0), (100, -1, 0), (100, 90, 0), (100, 0, 1),
         (100, 200, -1), (100, 200, 101), (int.MinValue, 1, 0), (100, 200, 49) })
     {
-        Reject(() => Invoke(createImported, null, [product, store, prices.Item1, prices.Item2, prices.Item3, source, "123", true, observed]),
+        Reject(() => Invoke(createImported, null, [product, store, prices.Item1, prices.Item2, prices.Item3, source, "123", true, observed,
+            ProductCondition.New, null]),
             "Imported factory rejects price metadata " + prices);
-        Reject(() => Invoke(updateImported, imported, [prices.Item1, prices.Item2, prices.Item3, source, "123", true, observed]),
+        Reject(() => Invoke(updateImported, imported, [prices.Item1, prices.Item2, prices.Item3, source, "123", true, observed, ProductCondition.New, null]),
             "Imported price metadata rejected " + prices);
         Check(State(imported) == unchanged, "Imported validation is atomic " + prices);
     }
-    var maximum = (Inventory)Invoke(createImported, null, [product, store, int.MaxValue, int.MaxValue, 0, source, "123", false, observed])!;
+    var maximum = (Inventory)Invoke(createImported, null, [product, store, int.MaxValue, int.MaxValue, 0, source, "123", false, observed, ProductCondition.New, null])!;
     Check(maximum.Price == int.MaxValue && maximum.IsActive, "Int32 maximum accepted; unavailable does not disable administrative state");
-    var rounded = (Inventory)Invoke(createImported, null, [product, store, 199, 200, 1, source, "123", true, observed])!;
+    var rounded = (Inventory)Invoke(createImported, null, [product, store, 199, 200, 1, source, "123", true, observed, ProductCondition.New, null])!;
     Check(rounded.DiscountPercentage == 1, "Imported midpoint discount rounds away from zero");
     foreach (var input in new[] { ("", "123", observed), (source, "", observed), (source, "123", observed.ToLocalTime()), (source, "123", default(DateTime)) })
         Reject(() => Create(input.Item1, input.Item2, input.Item3), "Reject invalid import metadata");
@@ -101,6 +103,11 @@ await NewProductChecks.Run(Check);
 await NewProductConfirmationChecks.Run(Check);
 await ConfirmationChecks.Run(Check);
 await DashboardChecks.Run(Check);
+await PriceHistoryChecks.Run(Check);
+await ProductDetailChecks.Run(Check);
+await FidelityChecks.Run(Check);
+await OfferConditionChecks.Run(Check);
+await CatalogNavigationChecks.Run(Check);
 using var context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
     .UseSqlServer("Server=unused;Database=StructuralOnly;Integrated Security=true;TrustServerCertificate=true").Options);
 var model = context.GetService<IDesignTimeModel>().Model;
@@ -133,9 +140,12 @@ if (migrationType.Value is not null)
     Check(generator.Generate(migration.DownOperations, model).Count > 0, "Rollback SQL generates without connection");
     var differ = context.GetService<IMigrationsModelDiffer>();
     var initializer = context.GetService<IModelRuntimeInitializer>();
-    var target = initializer.Initialize(migration.TargetModel, designTime: true);
+    // Solo la migración más nueva mantiene el modelo actual como objetivo; los designers anteriores son historia congelada.
+    var newestMigration = migrations.Migrations.OrderBy(m => m.Key, StringComparer.Ordinal).Last();
+    var target = initializer.Initialize(
+        migrations.CreateMigration(newestMigration.Value, context.Database.ProviderName!).TargetModel, designTime: true);
     var snapshot = initializer.Initialize(migrations.ModelSnapshot!.Model, designTime: true);
-    Check(!differ.HasDifferences(target.GetRelationalModel(), model.GetRelationalModel()), "Migration target matches current model");
+    Check(!differ.HasDifferences(target.GetRelationalModel(), model.GetRelationalModel()), "Newest migration target matches current model");
     Check(!differ.HasDifferences(snapshot.GetRelationalModel(), model.GetRelationalModel()), "Snapshot matches current model");
 }
 if (failures.Count > 0)
@@ -147,7 +157,7 @@ if (failures.Count > 0)
 Console.WriteLine($"PASS: {count} assertions; structural SQL/model and fake orchestration only; no database or HTTP used.");
 return 0;
 
-static object? Invoke(MethodInfo method, object? target, object[] args)
+static object? Invoke(MethodInfo method, object? target, object?[] args)
 {
     try { return method.Invoke(target, args); }
     catch (TargetInvocationException e) when (e.InnerException is not null)

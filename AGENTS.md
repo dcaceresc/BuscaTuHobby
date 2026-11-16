@@ -85,6 +85,15 @@ All endpoints return `ApiResponse` or `ApiResponse<T>` (defined in `Domain.Commo
 ### Validation
 Use `Ardalis.GuardClauses` with custom guard extensions in `Application.Common.Exceptions.CustomGuards` (`NotFound`, `ForbiddenAccess`, `InvalidInput`).
 
+## Code Comments
+
+- **All code comments are written in Spanish**, in every language and file type: C# `//` and `///`,
+  TypeScript, SCSS and HTML `<!-- -->`. This is an explicit project exception to the English default
+  for technical artifacts.
+- Identifiers, file names, commit messages, test names and user-facing strings follow their own rules;
+  this one is only about comments.
+- Comments explain why, not what. Never leave a commented-out block of code: delete it.
+
 ## C# Code Style
 
 ### Naming

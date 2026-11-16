@@ -81,7 +81,7 @@ internal static class DashboardChecks
             AddOffer(inactive, legacyStore, 1, 90, true);
             AddOffer(empty, emptyStore, 1, 90, false);
             var services = new ApiResponseService();
-            // Serialize scalar state rather than the deliberately bidirectional navigation graph.
+            // Serializar el estado escalar en lugar del grafo de navegación deliberadamente bidireccional.
             string State() => JsonSerializer.Serialize(new
             {
                 Products = fake.Products.Select(p => new { p.ProductId, p.IsActive, p.ProductViewCount }),
@@ -154,7 +154,7 @@ internal static class DashboardChecks
             }
             Assert(State() == before && fake.Saves == 0, "all dashboard handlers leave state and save counters unchanged");
 
-            // Pin the existing top-five deal cap using only ordinary active legacy offers.
+            // Fijar el límite actual de cinco ofertas usando solo ofertas heredadas activas y ordinarias.
             var ranked = new List<Inventory>();
             for (var index = 0; index < 6; index++)
                 ranked.Add(AddOffer(AddProduct("Ranked " + index, 0), legacyStore, 100, 30 + index, null));

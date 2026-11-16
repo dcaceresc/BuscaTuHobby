@@ -11,9 +11,7 @@
           </a>
             <a class="nav-link" (click)="showCategoriesMenu()" style="cursor: pointer;"><i class="bi bi-grid-3x3-gap"></i> Categorías</a>
             <a class="nav-link" (click)="showStoresMenu()" style="cursor: pointer;"><i class="bi bi-shop"></i> Tiendas</a>
-          <a class="nav-link" routerLink="/ofertas" routerLinkActive="active"><i class="bi bi-tag"></i> Ofertas</a>
-          <a class="nav-link" routerLink="/favoritos" routerLinkActive="active"><i class="bi bi-heart"></i> Mis Favoritos</a>
-          <a class="nav-link" href="#"><i class="bi bi-clock-history"></i> Historial</a>
+          <!-- Se eliminaron "Ofertas", "Mis Favoritos" e "Historial" porque /ofertas, /favoritos y la pantalla de historial de precios todavía no existen. Vuelven con la funcionalidad que les dé una ruta real. -->
           <hr>
           <!-- Enlaces a login y register en navegación lateral -->
           <a class="nav-link" routerLink="/login"><i class="bi bi-box-arrow-in-right"></i> Iniciar Sesión</a>
@@ -24,22 +22,10 @@
         <a class="nav-link text-success fw-bold" style="cursor: pointer;" (click)="showCategoriesMenu()"><i class="bi bi-arrow-left"></i> Volver</a>
         <hr class="my-2">
         <h6 class="px-3 text-muted text-uppercase small">Categorías</h6>
-        <!-- <a class="nav-link" href="#"><i class="bi bi-robot"></i> Figuras de Acción</a>
-        <a class="nav-link" href="#"><i class="bi bi-box"></i> Maquetas y Modelismo</a>
-        <a class="nav-link" href="#"><i class="bi bi-bricks"></i> LEGO y Construcción</a>
-        <a class="nav-link" href="#"><i class="bi bi-gem"></i> Funko Pop</a>
-        <a class="nav-link" href="#"><i class="bi bi-star"></i> Anime y Manga</a>
-        <a class="nav-link" href="#"><i class="bi bi-controller"></i> Videojuegos</a>
-        <a class="nav-link" href="#"><i class="bi bi-film"></i> Cine y Series</a>
-        <a class="nav-link" href="#"><i class="bi bi-book"></i> Comics</a>
-        <a class="nav-link" href="#"><i class="bi bi-car-front"></i> Vehículos a Escala</a>
-        <a class="nav-link" href="#"><i class="bi bi-airplane"></i> Aviación</a>
-        <a class="nav-link" href="#"><i class="bi bi-palette"></i> Pintura y Herramientas</a>
-        <a class="nav-link" href="#"><i class="bi bi-three-dots"></i> Ver todas...</a> -->
+        <!-- Las categorías vuelven a ser enlaces ahora que su página pública existe en /categories/{slug}. -->
         @for (category of categories(); track $index) {
-          <a class="nav-link" href="{{category.categorySlug}}"><i class="bi" [ngClass]="category.categoryIcon"></i> {{category.categoryName}}</a>
+          <a class="nav-link" [routerLink]="['/categories', category.categorySlug]" (click)="activeOffcanvas.dismiss()"><i class="bi" [ngClass]="category.categoryIcon"></i> {{category.categoryName}}</a>
         }
-        <a class="nav-link" href="#"><i class="bi bi-three-dots"></i> Ver todas...</a>
     </nav>
   }@else if (showStores){
 
@@ -47,22 +33,11 @@
         <a class="nav-link text-success fw-bold" style="cursor: pointer;" (click)="showStoresMenu()"><i class="bi bi-arrow-left"></i> Volver</a>
         <hr class="my-2">
         <h6 class="px-3 text-muted text-uppercase small">Tiendas</h6>
-        <!-- <a class="nav-link" href="#"><i class="bi bi-cart"></i> Amazon</a>
-        <a class="nav-link" href="#"><i class="bi bi-bag"></i> MercadoLibre</a>
-        <a class="nav-link" href="#"><i class="bi bi-shop-window"></i> eBay</a>
-        <a class="nav-link" href="#"><i class="bi bi-basket"></i> AliExpress</a>
-        <a class="nav-link" href="#"><i class="bi bi-box-seam"></i> HobbyLink Japan</a>
-        <a class="nav-link" href="#"><i class="bi bi-globe"></i> AmiAmi</a>
-        <a class="nav-link" href="#"><i class="bi bi-building"></i> BigBadToyStore</a>
-        <a class="nav-link" href="#"><i class="bi bi-lightning"></i> Plaza Japan</a>
-        <a class="nav-link" href="#"><i class="bi bi-star-fill"></i> Sideshow</a>
-        <a class="nav-link" href="#"><i class="bi bi-gem"></i> Entertainment Earth</a> -->
+        <!-- Las tiendas vuelven a ser enlaces ahora que su página pública existe en /stores/{slug}. -->
         @for(store of stores(); track $index) {
-          <a class="nav-link" href="{{store.storeSlug}}"><i class="bi" [ngClass]="store.storeIcon"></i> {{store.storeName}}</a>
+          <a class="nav-link" [routerLink]="['/stores', store.storeSlug]" (click)="activeOffcanvas.dismiss()"><i class="bi" [ngClass]="store.storeIcon"></i> {{store.storeName}}</a>
         }
-        <a class="nav-link" href="#"><i class="bi bi-three-dots"></i> Ver todas...</a>
     </nav>
   }
 
 </div>
-

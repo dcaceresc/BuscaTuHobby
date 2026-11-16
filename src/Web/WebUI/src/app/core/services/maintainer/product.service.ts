@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApiResponse } from '../../models/apiResponse.model';
-import { CreateProduct, ProductDto, ProductVM } from '../../models/maintainer/product.model';
+import { CreateProduct, ProductDto, ProductVM, UpdateProduct } from '../../models/maintainer/product.model';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +28,7 @@ export class ProductService {
     return this.http.post<ApiResponse<any>>(`/api/maintainer/products/${id}/images`, images);
   }
 
-  public updateProduct(id : string | null,product: ProductDto) {
+  public updateProduct(id : string | null,product: UpdateProduct) {
     return this.http.put<ApiResponse<any>>(`/api/maintainer/products/${id}`, product);
   }
 

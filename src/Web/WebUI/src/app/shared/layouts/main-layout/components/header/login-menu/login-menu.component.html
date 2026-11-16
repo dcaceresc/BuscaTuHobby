@@ -25,10 +25,7 @@
   </button>
 
   <div ngbDropdownMenu [attr.aria-labelledby]="'authenticatedDropdown'" class="dropdown-menu dropdown-menu-end">
-    <button ngbDropdownItem [routerLink]="['/profile']">
-      <i class="bi bi-person"></i> 
-      Perfil
-    </button>
+    <!-- Se eliminó la entrada "Perfil" porque /profile no tiene ruta. Vuelve con la pantalla de perfil. -->
     <button ngbDropdownItem (click)="logout()">
       <i class="bi bi-box-arrow-right"></i> 
       Cerrar Sesión

@@ -12,7 +12,10 @@ public static class InitialiserExtensions
 
         var initialiser = scope.ServiceProvider.GetRequiredService<ConfigurationInitializer>();
 
-        await initialiser.InitialiseAsync();
+        // La raíz de contenido es la única base válida para una carpeta relativa: el directorio de trabajo del
+        // proceso puede ser otro (systemd con WorkingDirectory=/, IIS en proceso) y el escritor de imágenes no
+        // pasa por el pipeline HTTP, así que aquí se resuelve una sola vez y ambos lados leen el mismo valor.
+        await initialiser.InitialiseAsync(app.Environment.ContentRootPath);
     }
 }
 
@@ -21,7 +24,7 @@ public class ConfigurationInitializer(ILogger<ConfigurationInitializer> logger, 
     private readonly ILogger<ConfigurationInitializer> _logger = logger;
     private readonly ApplicationDbContext _context = context;
 
-    public async Task InitialiseAsync()
+    public async Task InitialiseAsync(string contentRootPath)
     {
         try
         {
@@ -33,7 +36,9 @@ public class ConfigurationInitializer(ILogger<ConfigurationInitializer> logger, 
             foreach (var configuration in configurations)
             {
                 SiteConfig.SiteStatus = Convert.ToBoolean(configurations.Find(x => x.ConfigurationName.Equals("SiteStatus", StringComparison.CurrentCultureIgnoreCase))?.ConfigurationValue ?? "true");
-                SiteConfig.FolderImage = configurations.Find(x => x.ConfigurationName.Equals("FolderImage", StringComparison.CurrentCultureIgnoreCase))?.ConfigurationValue ?? "images";
+                SiteConfig.FolderImage = SiteConfig.ResolveFolderImage(
+                    configurations.Find(x => x.ConfigurationName.Equals("FolderImage", StringComparison.CurrentCultureIgnoreCase))?.ConfigurationValue,
+                    contentRootPath);
             }
         }
         catch (Exception ex)

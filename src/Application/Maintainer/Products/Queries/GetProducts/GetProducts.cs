@@ -25,7 +25,10 @@ public class GetProductsHandler(IApplicationDbContext context, IApiResponseServi
                     FranchiseName = x.Franchise.FranchiseName,
                     SerieName = x.Serie != null ? x.Serie.SerieName : "Toda la Franquicia",
                     Categories = x.ProductCategories.Select(cp => cp.Category.CategoryName).ToList(),
-                    IsActive = x.IsActive
+                    IsActive = x.IsActive,
+                    Grade = (int)x.Grade,
+                    Scale = x.Scale,
+                    PartNumber = x.PartNumber
                 }).ToListAsync(cancellationToken);
 
             return _responseService.Success(products);

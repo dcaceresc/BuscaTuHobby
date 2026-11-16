@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Common.PriceHistory;
+using Domain.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -147,7 +148,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         if (_context.Products.Any())
             return;
 
-        // Manufacturers
+        // Fabricantes
         var bandai = Manufacturer.Create("Bandai");
         var funko = Manufacturer.Create("Funko");
         var lego = Manufacturer.Create("LEGO");
@@ -155,7 +156,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         await _context.Manufacturers.AddRangeAsync(bandai, funko, lego);
         await _context.SaveChangesAsync();
 
-        // Franchises
+        // Franquicias
         var gundam = Franchise.Create("Gundam");
         var marvel = Franchise.Create("Marvel");
         var starWars = Franchise.Create("Star Wars");
@@ -164,7 +165,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         await _context.Franchises.AddRangeAsync(gundam, marvel, starWars, dragonBall);
         await _context.SaveChangesAsync();
 
-        // Stores
+        // Tiendas
         var amazon = Store.Create("Amazon", "https://www.amazon.com", "bi bi-shop", 1, "amazon");
         var mercadoLibre = Store.Create("MercadoLibre", "https://www.mercadolibre.cl", "bi bi-shop", 2, "mercadolibre");
         var linio = Store.Create("Linio", "https://www.linio.cl", "bi bi-shop", 3, "linio");
@@ -175,10 +176,12 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         await _context.Stores.AddRangeAsync(amazon, mercadoLibre, linio, falabella, ripley, paris);
         await _context.SaveChangesAsync();
 
-        // Products
-        var gundamRx78 = Product.Create("Gundam RX-78-2", bandai.ManufacturerId, gundam.FranchiseId, null, true, "15+", "1/144", "Maqueta para armar", new DateOnly(2024, 1, 15));
+        // Productos. Grado, escala y número de parte completan la ficha Gunpla: el único kit del catálogo de demo
+        // informa su grado real y las figuras y sets que no son maquetas quedan sin grado, sin escala y solo con su
+        // número de set cuando existe. Son datos de demostración, no un catálogo real.
+        var gundamRx78 = Product.Create("Gundam RX-78-2", bandai.ManufacturerId, gundam.FranchiseId, null, true, "15+", "1/144", "Maqueta para armar", new DateOnly(2024, 1, 15), GunplaGrade.HighGrade, "1/144", "HGUC-191");
         var funkoSpider = Product.Create("Funko Pop Spider-Man", funko.ManufacturerId, marvel.FranchiseId, null, true, "6+", "10cm", "Figura coleccionable", new DateOnly(2024, 3, 10));
-        var legoFalcon = Product.Create("LEGO Millennium Falcon", lego.ManufacturerId, starWars.FranchiseId, null, false, "18+", "84cm", "Set de construccion", new DateOnly(2024, 5, 20));
+        var legoFalcon = Product.Create("LEGO Millennium Falcon", lego.ManufacturerId, starWars.FranchiseId, null, false, "18+", "84cm", "Set de construccion", new DateOnly(2024, 5, 20), GunplaGrade.None, null, "75192");
         var goku = Product.Create("S.H.Figuarts Goku", bandai.ManufacturerId, dragonBall.FranchiseId, null, true, "15+", "14cm", "Figura articulada", new DateOnly(2024, 2, 28));
 
         gundamRx78.SetViewCount(1234);
@@ -189,30 +192,31 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         await _context.Products.AddRangeAsync(gundamRx78, funkoSpider, legoFalcon, goku);
         await _context.SaveChangesAsync();
 
-        // Inventories (product-store relationships with original prices and discounts)
+        // Inventarios (relaciones producto-tienda con precios originales y descuentos). Los precios de ejemplo no cambian;
+        // se agrega variedad de condición y medio de pago para que la comparación sea visible sin editar la base a mano.
         var inventories = new[]
         {
             // Gundam RX-78-2
             Inventory.Create(gundamRx78.ProductId, amazon.StoreId, 25990, 39990, 35),
-            Inventory.Create(gundamRx78.ProductId, mercadoLibre.StoreId, 27990, 34990, 20),
-            Inventory.Create(gundamRx78.ProductId, linio.StoreId, 26990, 32990, 18),
-            Inventory.Create(gundamRx78.ProductId, falabella.StoreId, 28990, 36990, 22),
+            Inventory.Create(gundamRx78.ProductId, mercadoLibre.StoreId, 27990, 34990, 20, ProductCondition.Refurbished),
+            Inventory.Create(gundamRx78.ProductId, linio.StoreId, 26990, 32990, 18, ProductCondition.New, "Tarjeta Linio"),
+            Inventory.Create(gundamRx78.ProductId, falabella.StoreId, 28990, 36990, 22, ProductCondition.New, "Tarjeta CMR Falabella"),
             Inventory.Create(gundamRx78.ProductId, ripley.StoreId, 27490, 34990, 21),
             Inventory.Create(gundamRx78.ProductId, paris.StoreId, 26490, 33490, 21),
 
             // Funko Pop Spider-Man
             Inventory.Create(funkoSpider.ProductId, amazon.StoreId, 12990, 16990, 24),
             Inventory.Create(funkoSpider.ProductId, falabella.StoreId, 13990, 17990, 22),
-            Inventory.Create(funkoSpider.ProductId, ripley.StoreId, 14490, 17990, 19),
+            Inventory.Create(funkoSpider.ProductId, ripley.StoreId, 14490, 17990, 19, ProductCondition.Used),
             Inventory.Create(funkoSpider.ProductId, mercadoLibre.StoreId, 11990, 15990, 25),
-            Inventory.Create(funkoSpider.ProductId, linio.StoreId, 13490, 17490, 23),
+            Inventory.Create(funkoSpider.ProductId, linio.StoreId, 13490, 17490, 23, ProductCondition.New, "Tarjeta Linio"),
             Inventory.Create(funkoSpider.ProductId, paris.StoreId, 12490, 14990, 17),
 
             // LEGO Millennium Falcon
             Inventory.Create(legoFalcon.ProductId, amazon.StoreId, 899990, 1099990, 18),
             Inventory.Create(legoFalcon.ProductId, paris.StoreId, 949990, 1199990, 21),
-            Inventory.Create(legoFalcon.ProductId, mercadoLibre.StoreId, 879990, 1149990, 23),
-            Inventory.Create(legoFalcon.ProductId, falabella.StoreId, 929990, 1299990, 28),
+            Inventory.Create(legoFalcon.ProductId, mercadoLibre.StoreId, 879990, 1149990, 23, ProductCondition.Used),
+            Inventory.Create(legoFalcon.ProductId, falabella.StoreId, 929990, 1299990, 28, ProductCondition.New, "Tarjeta CMR Falabella"),
             Inventory.Create(legoFalcon.ProductId, ripley.StoreId, 919990, 1199990, 23),
             Inventory.Create(legoFalcon.ProductId, linio.StoreId, 889990, 1249990, 29),
 
@@ -220,12 +224,18 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
             Inventory.Create(goku.ProductId, linio.StoreId, 45990, 69990, 34),
             Inventory.Create(goku.ProductId, mercadoLibre.StoreId, 43990, 54990, 20),
             Inventory.Create(goku.ProductId, ripley.StoreId, 47990, 59990, 20),
-            Inventory.Create(goku.ProductId, amazon.StoreId, 44990, 74990, 40),
+            Inventory.Create(goku.ProductId, amazon.StoreId, 44990, 74990, 40, ProductCondition.Refurbished),
             Inventory.Create(goku.ProductId, falabella.StoreId, 46990, 62990, 25),
             Inventory.Create(goku.ProductId, paris.StoreId, 48990, 64990, 25),
         };
 
         await _context.Inventories.AddRangeAsync(inventories);
+        await _context.SaveChangesAsync();
+
+        // Cada oferta sembrada inicia su serie de precios con el punto de línea base con el que se creó, así que
+        // una base de datos de desarrollo recién sembrada muestra una serie real en lugar de un gráfico vacío.
+        foreach (var inventory in inventories)
+            InventoryPriceHistoryRecorder.RecordBaseline(_context, inventory);
         await _context.SaveChangesAsync();
     }
 
@@ -234,7 +244,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         if (_context.Categories.Any())
             return;
 
-        // Categories
+        // Categorías
         var figurasDeAccion = Category.Create("Figuras de Acción", "bi bi-person-standing", 1, "figuras-de-accion");
         var maquetas = Category.Create("Maquetas", "bi bi-tools", 2, "maquetas");
         var coleccionables = Category.Create("Coleccionables", "bi bi-gem", 3, "coleccionables");
@@ -243,14 +253,14 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         await _context.Categories.AddRangeAsync(figurasDeAccion, maquetas, coleccionables, legoCategory);
         await _context.SaveChangesAsync();
 
-        // Get seeded products
+        // Obtener los productos sembrados
         var products = await _context.Products.ToListAsync();
         var gundamRx78 = products.First(p => p.ProductName == "Gundam RX-78-2");
         var funkoSpider = products.First(p => p.ProductName == "Funko Pop Spider-Man");
         var legoFalcon = products.First(p => p.ProductName == "LEGO Millennium Falcon");
         var goku = products.First(p => p.ProductName == "S.H.Figuarts Goku");
 
-        // ProductCategory relationships
+        // Relaciones de ProductCategory
         // Figuras de Acción: Funko Spider-Man, Goku, Gundam RX-78-2
         // Maquetas: Gundam RX-78-2, LEGO Falcon
         // Coleccionables: Funko Spider-Man, Goku

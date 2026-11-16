@@ -32,6 +32,21 @@
             <label for="discountPercentage" class="form-label">Descuento (%)</label>
         </div>
 
+        <div class="form-floating mb-3">
+            <select class="form-select" id="condition" formControlName="condition" required>
+              <option [ngValue]="0">Nueva</option>
+              <option [ngValue]="1">Reutilizada</option>
+              <option [ngValue]="2">Usada</option>
+            </select>
+            <label for="condition" class="form-label">Condición</label>
+        </div>
+
+        <!-- El medio de pago es opcional y se muestra tal como se escribe aquí. -->
+        <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="paymentMethodLabel" formControlName="paymentMethodLabel" placeholder="Medio de pago (opcional)">
+            <label for="paymentMethodLabel" class="form-label">Medio de pago (opcional)</label>
+        </div>
+
   
         <div class="d-flex justify-content-end">
           <button type="submit" class="btn bg-primary me-2" [disabled]="inventoryForm.invalid">Guardar</button>

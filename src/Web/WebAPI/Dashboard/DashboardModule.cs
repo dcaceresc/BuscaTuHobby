@@ -1,13 +1,17 @@
 ﻿using Application.Dashboard.Commands.IncrementPostViewCount;
 using Application.Dashboard.Commands.IncrementProductViewCount;
 using Application.Dashboard.Queries.GetBestDeals;
+using Application.Dashboard.Queries.GetCategoryProducts;
 using Application.Dashboard.Queries.GetMenuCategories;
 using Application.Dashboard.Queries.GetMenuStores;
 using Application.Dashboard.Queries.GetMostSearchedProducts;
 using Application.Dashboard.Queries.GetPopularCategories;
+using Application.Dashboard.Queries.GetProductDetail;
+using Application.Dashboard.Queries.GetProductPriceHistory;
 using Application.Dashboard.Queries.GetRecentPosts;
 using Application.Dashboard.Queries.GetFeaturedStores;
 using Application.Dashboard.Queries.GetRecentActivity;
+using Application.Dashboard.Queries.GetStoreDetail;
 using Application.Dashboard.Queries.SearchProducts;
 
 namespace WebAPI.Dashboard;
@@ -29,6 +33,10 @@ public class DashboardModule : ICarterModule
         group.MapGet("featured-stores", GetFeaturedStores);
         group.MapGet("recent-activity", GetRecentActivity);
         group.MapGet("search-products", SearchProductsQuery);
+        group.MapGet("products/{id:guid}", GetProductDetailQuery);
+        group.MapGet("products/{id:guid}/price-history", GetProductPriceHistoryQuery);
+        group.MapGet("categories/{slug}/products", GetCategoryProductsQuery);
+        group.MapGet("stores/{slug}", GetStoreDetailQuery);
 
     }
     
@@ -43,4 +51,16 @@ public class DashboardModule : ICarterModule
     private static async Task<IResult> GetFeaturedStores(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetFeaturedStores()));
     private static async Task<IResult> GetRecentActivity(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetRecentActivity()));
     private static async Task<IResult> SearchProductsQuery(string? term, IRequestDispatcher sender) => Results.Ok(await sender.Send(new SearchProducts(term ?? string.Empty)));
+    private static async Task<IResult> GetProductDetailQuery(Guid id, IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetProductDetail(id)));
+    private static async Task<IResult> GetProductPriceHistoryQuery(Guid id, int? days, IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetProductPriceHistory(id, days ?? 0)));
+
+    // Todos los parámetros de la consulta son opcionales salvo el slug: el caso de uso acota página y tamaño y
+    // resuelve el orden predeterminado.
+    private static async Task<IResult> GetCategoryProductsQuery(string slug, int? page, int? pageSize, string? sort,
+        int? grade, Guid? manufacturerId, Guid? franchiseId, int? minPrice, int? maxPrice, IRequestDispatcher sender) =>
+        Results.Ok(await sender.Send(new GetCategoryProducts(slug, page, pageSize, sort, grade, manufacturerId,
+            franchiseId, minPrice, maxPrice)));
+
+    private static async Task<IResult> GetStoreDetailQuery(string slug, IRequestDispatcher sender) =>
+        Results.Ok(await sender.Send(new GetStoreDetail(slug)));
 }

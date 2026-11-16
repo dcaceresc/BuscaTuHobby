@@ -92,13 +92,13 @@ internal static class NewProductChecks
             old.IsActive && old.ProductViewCount == 0, "Old factory GUID and permissive field semantics preserved");
         fake.Products.Add(product);
         fake.ProductCategories.AddRange(details.CategoryIds.Select(product.AssignCategory));
-        await Inspect(request, "Conflict"); // Occupied ID alone is never adopted.
+        await Inspect(request, "Conflict"); // Un ID ocupado por sí solo nunca se adopta.
         var row = Inventory.CreateImportedOffer(product.ProductId, store.StoreId, 100, 0, 0, request.SourceUrl, "123", true, DateTime.UtcNow);
         typeof(Inventory).GetProperty(nameof(Inventory.RowVersion))!.SetValue(row, new byte[] { 1, 2, 3 });
         fake.Rows.Add(row);
         await Inspect(request, "Update");
         typeof(Product).GetProperty(nameof(Product.ProductImages))!.SetValue(product, new List<ProductImage> { product.AssignImage(1) });
-        await Inspect(request, "Update"); // Images added later are outside the retry input scope.
+        await Inspect(request, "Update"); // Las imágenes añadidas después quedan fuera del alcance de entrada del reintento.
         var otherMaker = Manufacturer.Create("Other"); fake.Manufacturers.Add(otherMaker);
         var otherFranchise = Franchise.Create("Other"); fake.Franchises.Add(otherFranchise);
         var otherSerie = Serie.Create("Other", franchise.FranchiseId); fake.Series.Add(otherSerie);
@@ -168,7 +168,7 @@ public class NewProductContext : InspectionContext
 {
     public List<Manufacturer> Manufacturers { get; } = [];
     public List<Franchise> Franchises { get; } = [];
-    public List<Category> Categories { get; } = [];
+    public new List<Category> Categories { get; } = [];
     public List<Serie> Series { get; } = [];
     public List<ProductCategory> ProductCategories { get; } = [];
     public string NewPersisted { get; private set; } = "";

@@ -1,0 +1,303 @@
+import { registerLocaleData } from '@angular/common';
+import localeEsCl from '@angular/common/locales/es-CL';
+import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { Subject, of, throwError } from 'rxjs';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ProductDetailComponent } from './product-detail.component';
+import { DashboardService } from '@app/core/services';
+import { NotificationService } from '@app/core/services/notification.service';
+import {
+  ProductDetailDto,
+  ProductPriceHistoryDto,
+  ProductPricePointDto
+} from '@app/core/models/dashboard/dashboard.model';
+
+registerLocaleData(localeEsCl, 'es-CL');
+
+function detail(overrides: Partial<ProductDetailDto> = {}): ProductDetailDto {
+  return {
+    productId: '11111111-1111-1111-1111-111111111111',
+    productName: 'RX-78-2 Gundam',
+    productDescription: 'Maqueta a escala',
+    manufacturerName: 'Bandai',
+    franchiseName: 'Gundam',
+    serieName: null,
+    productHasBase: true,
+    productTargetAge: '8+',
+    productSize: '18cm',
+    grade: 2,
+    scale: '1/100',
+    partNumber: 'MG-001',
+    productReleaseDate: '2024-01-15',
+    productViewCount: 1234,
+    categories: ['Maquetas'],
+    imageUrls: [],
+    storeCount: 2,
+    minPrice: 19990,
+    maxPrice: 25000,
+    offers: [
+      {
+        inventoryId: 'a', storeId: 's1', storeName: 'Tienda Barata', storeSlug: 'barata',
+        storeIcon: 'bi bi-shop', storeWebSite: 'https://barata.cl', price: 19990, originalPrice: 24990,
+        discountPercentage: 20, availability: true, sourceUrl: 'https://barata.cl/p/1',
+        // La API envía la observación sin zona horaria, como la entrega SQL Server.
+        observedAtUtc: '2025-09-01T13:45:00', condition: 0, paymentMethodLabel: 'Tarjeta CMR'
+      },
+      {
+        inventoryId: 'b', storeId: 's2', storeName: 'Tienda Cara', storeSlug: 'cara',
+        storeIcon: 'bi bi-shop', storeWebSite: 'https://cara.cl', price: 25000, originalPrice: 25000,
+        discountPercentage: 0, availability: false, sourceUrl: null, observedAtUtc: null,
+        condition: 2, paymentMethodLabel: null
+      }
+    ],
+    ...overrides
+  };
+}
+
+const HISTORY_POINTS: ProductPricePointDto[] = [
+  { date: '2025-09-01', minPrice: 19990, maxPrice: 24990, offerCount: 2 },
+  { date: '2025-09-20', minPrice: 18990, maxPrice: 25990, offerCount: 3 }
+];
+
+function history(points: ProductPricePointDto[]): ProductPriceHistoryDto {
+  return {
+    productId: '11111111-1111-1111-1111-111111111111',
+    productName: 'RX-78-2 Gundam',
+    hasHistory: points.length > 0,
+    points
+  };
+}
+
+const dashboard = {
+  getProductDetail: vi.fn(),
+  getProductPriceHistory: vi.fn(),
+  incrementProductViewCount: vi.fn()
+};
+const notifications = { showError: vi.fn(), showDefaultError: vi.fn() };
+
+async function render(productId = '11111111-1111-1111-1111-111111111111') {
+  TestBed.configureTestingModule({
+    imports: [ProductDetailComponent],
+    providers: [
+      provideRouter([]),
+      { provide: ActivatedRoute, useValue: { snapshot: { paramMap: convertToParamMap({ productId }) } } },
+      { provide: DashboardService, useValue: dashboard },
+      { provide: NotificationService, useValue: notifications }
+    ]
+  });
+  const fixture = TestBed.createComponent(ProductDetailComponent);
+  fixture.detectChanges();
+  await fixture.whenStable();
+  fixture.detectChanges();
+  return fixture;
+}
+
+describe('ProductDetailComponent', () => {
+  beforeEach(() => {
+    dashboard.getProductDetail.mockReset();
+    dashboard.getProductPriceHistory.mockReset();
+    dashboard.incrementProductViewCount.mockReset();
+    notifications.showError.mockReset();
+    notifications.showDefaultError.mockReset();
+    dashboard.getProductDetail.mockReturnValue(of({ success: true, message: null, data: detail() }));
+    dashboard.getProductPriceHistory.mockReturnValue(of({
+      success: true, message: null,
+      data: {
+        productId: '11111111-1111-1111-1111-111111111111', productName: 'RX-78-2 Gundam', hasHistory: false, points: []
+      }
+    }));
+    dashboard.incrementProductViewCount.mockReturnValue(of({ success: true, message: null }));
+  });
+
+  it('renders the product characteristics returned by the API', async () => {
+    const fixture = await render();
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+
+    expect(text).toContain('RX-78-2 Gundam');
+    expect(text).toContain('Maqueta a escala');
+    expect(text).toContain('Bandai');
+    expect(text).toContain('Gundam');
+    expect(text).toContain('18cm');
+    expect(text).toContain('8+');
+    expect(fixture.nativeElement.querySelectorAll('dd')[1].textContent).toContain('8+');
+  });
+
+  it('shows the Gunpla grade, the scale and the part number of the catalog', async () => {
+    const fixture = await render();
+    const labels = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('dt'))
+      .map(label => label.textContent?.trim());
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+
+    expect(labels).toContain('Grado');
+    expect(labels).toContain('Escala');
+    expect(labels).toContain('Número de parte');
+    expect(text).toContain('Master Grade (MG)');
+    expect(text).toContain('1/100');
+    expect(text).toContain('MG-001');
+  });
+
+  it('omits the catalog rows the product does not have', async () => {
+    dashboard.getProductDetail.mockReturnValue(of({
+      success: true,
+      message: null,
+      data: detail({ grade: 0, scale: null, partNumber: null })
+    }));
+    const fixture = await render();
+    const labels = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('dt'))
+      .map(label => label.textContent?.trim());
+
+    expect(labels).not.toContain('Grado');
+    expect(labels).not.toContain('Escala');
+    expect(labels).not.toContain('Número de parte');
+    // Las filas existentes siguen intactas.
+    expect(labels).toContain('Escala / tamaño');
+    expect(labels).toContain('Edad recomendada');
+    expect(labels).toContain('Visitas');
+  });
+
+  it('lists the stores in the order the API returned them', async () => {
+    const fixture = await render();
+    const rows = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('tbody tr'));
+
+    expect(rows).toHaveLength(2);
+    expect(rows[0].textContent).toContain('Tienda Barata');
+    expect(rows[0].textContent).toContain('19.990');
+    expect(rows[0].textContent).toContain('Más barata');
+    expect(rows[1].textContent).toContain('Tienda Cara');
+    expect(rows[1].textContent).not.toContain('Más barata');
+  });
+
+  it('flags an unavailable offer and links the ones with a source URL', async () => {
+    const fixture = await render();
+    const host = fixture.nativeElement as HTMLElement;
+
+    expect(host.querySelector('tbody tr:nth-child(2)')?.textContent).toContain('Sin stock');
+    expect(host.querySelector('tbody tr:nth-child(1) a')?.getAttribute('href')).toBe('https://barata.cl/p/1');
+    expect(host.querySelector('tbody tr:nth-child(2) a')?.getAttribute('href')).toBe('https://cara.cl');
+  });
+
+  it('falls back to the placeholder image when the product has none', async () => {
+    const fixture = await render();
+    const image = (fixture.nativeElement as HTMLElement).querySelector('img.product-detail__image');
+
+    expect(image?.getAttribute('src')).toBe('assets/images/placeholder.svg');
+  });
+
+  it('warns that the series includes offers that may not be available today', async () => {
+    const fixture = await render();
+    const host = fixture.nativeElement as HTMLElement;
+    const section = host.querySelector('section[aria-labelledby="history-title"]');
+    const note = section?.querySelector('p');
+
+    expect(note?.textContent).toContain('pueden no estar disponibles hoy');
+    expect(note?.classList).toContain('text-muted');
+    expect(note?.classList).toContain('small');
+  });
+
+  it('shows the price chart empty state when there is no recorded history', async () => {
+    const fixture = await render();
+    const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+
+    expect(text).toContain('Todavía no hay precios registrados para este producto.');
+    expect(fixture.nativeElement.querySelector('app-price-chart svg')).toBeNull();
+  });
+
+  it('shows the condition of every offer as a Spanish badge', async () => {
+    const fixture = await render();
+    const host = fixture.nativeElement as HTMLElement;
+
+    const first = host.querySelector('tbody tr:nth-child(1) .product-detail__condition .badge');
+    const second = host.querySelector('tbody tr:nth-child(2) .product-detail__condition .badge');
+
+    expect(first?.textContent?.trim()).toBe('Nueva');
+    expect(second?.textContent?.trim()).toBe('Usada');
+  });
+
+  it('renders the payment method label as data and omits it when it is null', async () => {
+    const fixture = await render();
+    const host = fixture.nativeElement as HTMLElement;
+
+    const first = host.querySelector('tbody tr:nth-child(1) .product-detail__payment');
+    const second = host.querySelector('tbody tr:nth-child(2) .product-detail__payment');
+
+    expect(first?.textContent).toContain('Tarjeta CMR');
+    expect(second?.querySelector('.badge')).toBeNull();
+    expect(second?.textContent ?? '').not.toContain('Tarjeta');
+  });
+
+  it('shows when each price was last observed and leaves the cell empty when it is null', async () => {
+    const fixture = await render();
+    const host = fixture.nativeElement as HTMLElement;
+
+    const first = host.querySelector('tbody tr:nth-child(1) .product-detail__observed');
+    const second = host.querySelector('tbody tr:nth-child(2) .product-detail__observed');
+
+    expect(first?.textContent).toContain('2025');
+    expect(first?.textContent).toContain('13:45');
+    expect(first?.textContent ?? '').not.toContain('hace');
+    expect(second?.textContent?.trim()).toBe('');
+  });
+
+  it('defaults the day window to the whole history and reloads it with the chosen window', async () => {
+    const fixture = await render();
+    const host = fixture.nativeElement as HTMLElement;
+    const productId = '11111111-1111-1111-1111-111111111111';
+
+    expect(dashboard.getProductPriceHistory).toHaveBeenCalledWith(productId, 0);
+    expect(host.querySelectorAll('.product-detail__window-btn')).toHaveLength(3);
+    expect(host.querySelector('.product-detail__window-btn--active')?.textContent?.trim()).toBe('Todo');
+
+    host.querySelectorAll<HTMLButtonElement>('.product-detail__window-btn')[0].click();
+    fixture.detectChanges();
+    expect(dashboard.getProductPriceHistory).toHaveBeenLastCalledWith(productId, 30);
+
+    host.querySelectorAll<HTMLButtonElement>('.product-detail__window-btn')[1].click();
+    fixture.detectChanges();
+    expect(dashboard.getProductPriceHistory).toHaveBeenLastCalledWith(productId, 90);
+  });
+
+  it('keeps the chart visible while a new window is being fetched', async () => {
+    const pending = new Subject<{ success: boolean; message: string; data: ProductPriceHistoryDto }>();
+    dashboard.getProductPriceHistory
+      .mockReturnValueOnce(of({ success: true, message: '', data: history(HISTORY_POINTS) }))
+      .mockReturnValueOnce(pending.asObservable());
+    const fixture = await render();
+    const host = fixture.nativeElement as HTMLElement;
+
+    expect(host.querySelector('app-price-chart svg')).not.toBeNull();
+
+    host.querySelectorAll<HTMLButtonElement>('.product-detail__window-btn')[0].click();
+    fixture.detectChanges();
+
+    expect(host.textContent).toContain('Actualizando historial');
+    expect(host.querySelector('app-price-chart svg')).not.toBeNull();
+  });
+
+  it('reports a missing product instead of rendering an empty page', async () => {
+    dashboard.getProductDetail.mockReturnValue(of({
+      success: false, message: 'El producto no existe o no está disponible.', data: null
+    }));
+    const fixture = await render();
+
+    expect((fixture.nativeElement as HTMLElement).textContent)
+      .toContain('No encontramos este producto o ya no está disponible.');
+    expect(notifications.showError).toHaveBeenCalledWith('Error', 'El producto no existe o no está disponible.');
+    expect(dashboard.incrementProductViewCount).not.toHaveBeenCalled();
+  });
+
+  it('counts one view when the product loads', async () => {
+    await render();
+
+    expect(dashboard.incrementProductViewCount).toHaveBeenCalledExactlyOnceWith('11111111-1111-1111-1111-111111111111');
+  });
+
+  it('keeps the page usable when the series request fails', async () => {
+    dashboard.getProductPriceHistory.mockReturnValue(throwError(() => new Error('boom')));
+    const fixture = await render();
+
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('RX-78-2 Gundam');
+    expect(notifications.showDefaultError).not.toHaveBeenCalled();
+  });
+});
