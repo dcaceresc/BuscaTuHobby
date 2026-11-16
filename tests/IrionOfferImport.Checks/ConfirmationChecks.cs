@@ -129,7 +129,7 @@ internal static class ConfirmationChecks
             await Reject(f => f.Fake.SaveError = failure, "Conflict", null, saveAttempt: true);
             await Reject(f => { f.Link(); f.Fake.SaveError = failure; }, "Conflict", null, saveAttempt: true);
         }
-        // External awaits can invalidate active selections or the current pair before mutation.
+        // Las esperas externas pueden invalidar las selecciones activas o el par actual antes de la mutación.
         await Reject(f => f.Extractor.After = () => f.Product.ToggleActive(), message: "Selecciona un producto activo existente.");
         await Reject(f => f.Extractor.After = () => f.Store.ToggleActive(), message: "Selecciona una tienda activa de Irion con una URL válida.");
         await Reject(f => f.Extractor.After = () => f.Store.Update("Irion", "https://evil.test", "", 0, "irion"),

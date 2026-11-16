@@ -26,7 +26,7 @@ internal static class ProductDetailChecks
         var link = product.AssignCategory(building.CategoryId);
         Set(link, nameof(ProductCategory.Category), building);
         Set(product, nameof(Product.ProductCategories), new List<ProductCategory> { link });
-        // Deliberately out of order: the ordered projection must sort by ProductImageOrder.
+        // Deliberadamente desordenadas: la proyección ordenada debe ordenar por ProductImageOrder.
         Set(product, nameof(Product.ProductImages),
             new List<ProductImage> { product.AssignImage(2), product.AssignImage(1) });
         fake.Products.Add(product);
@@ -64,7 +64,7 @@ internal static class ProductDetailChecks
             "The product page returns the product's own characteristics");
 
         check(data is not null && data.ImageUrls.Count == 2 &&
-            data.ImageUrls[0].StartsWith("images/", StringComparison.Ordinal) &&
+            data.ImageUrls[0].StartsWith("/images/", StringComparison.Ordinal) &&
             data.ImageUrls[0].EndsWith(".jpg", StringComparison.Ordinal) &&
             data.ImageUrls[0] != data.ImageUrls[1],
             "Image URLs follow the configured folder and the image order");
@@ -87,7 +87,7 @@ internal static class ProductDetailChecks
         check(!result.Success && result.Message == "El producto no existe o no está disponible." && result.Data is null,
             "An unknown product fails with a typed envelope instead of an exception");
 
-        // Price series: one point per day, aggregated across offers, oldest first.
+        // Serie de precios: un punto por día, agregado entre todas las ofertas, del más antiguo al más nuevo.
         var observed = new DateTime(2026, 3, 1, 8, 30, 0, DateTimeKind.Utc);
         AddPoint(fake, cheapOffer, 20000, observed);
         AddPoint(fake, middleOffer, 23000, observed.AddHours(3));
@@ -107,7 +107,7 @@ internal static class ProductDetailChecks
             points[0].Date < points[1].Date,
             "Each point carries the cheapest and dearest observed price and counts only this product's offers");
 
-        // A window test needs points relative to now: fixed dates would drift out of the window.
+        // Una prueba de ventana necesita puntos relativos a ahora: las fechas fijas se saldrían de la ventana.
         var windowed = Product.Create("Con ventana", manufacturer.ManufacturerId, franchise.FranchiseId, null, false,
             "8+", "5cm", "Con dos observaciones", new DateOnly(2024, 4, 1));
         Set(windowed, nameof(Product.Manufacturer), manufacturer);
@@ -150,7 +150,7 @@ internal static class ProductDetailChecks
             emptyDetail.Data.StoreCount == 0 && emptyDetail.Data.MinPrice == 0 && emptyDetail.Data.MaxPrice == 0,
             "A product nobody sells returns zeroed aggregates and an empty offer list");
 
-        // Tie-break: equal prices are ordered by store name so the list is stable.
+        // Desempate: los precios iguales se ordenan por nombre de tienda para que la lista sea estable.
         var tieProduct = NewProduct("Empate", manufacturer, franchise);
         fake.Products.Add(tieProduct);
         var zeta = Store.Create("Zeta", "https://zeta.cl", "bi bi-shop", 10, "zeta");
@@ -164,11 +164,11 @@ internal static class ProductDetailChecks
             tie.Data.Offers.Select(o => o.StoreName).SequenceEqual(new[] { "Alfa", "Zeta" }),
             "Equal prices keep a stable order by store name");
 
-        // Availability is optional on imported offers: only an explicit false is excluded.
+        // La disponibilidad es opcional en las ofertas importadas: solo se excluye un false explícito.
         check(tie.Data is not null && tie.Data.Offers.All(o => o.Availability is null) && tie.Data.Offers.Count == 2,
             "An offer without availability information is still listed");
 
-        // The client can ask for an unusable window: it must clamp instead of throwing or hiding the series.
+        // El cliente puede pedir una ventana inutilizable: debe acotarla en lugar de lanzar una excepción u ocultar la serie.
         var clamped = NewProduct("Ventana", manufacturer, franchise);
         fake.Products.Add(clamped);
         var clampedOffer = Offer(clamped, cheap, 40000, 45000, 11);
@@ -190,7 +190,7 @@ internal static class ProductDetailChecks
             boundaryWindow.Data.Points.Count == 2,
             "The maximum window keeps only the points inside it");
 
-        // An inactive product is not a 500: both endpoints answer with the same typed failure.
+        // Un producto inactivo no es un 500: ambos endpoints responden con el mismo fallo tipado.
         var removed = NewProduct("Retirado", manufacturer, franchise);
         removed.ToggleActive();
         fake.Products.Add(removed);

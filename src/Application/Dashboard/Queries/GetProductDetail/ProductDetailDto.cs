@@ -19,7 +19,7 @@ public class ProductDetailDto
     public int MinPrice { get; set; }
     public int MaxPrice { get; set; }
 
-    // Ordered from the cheapest store to the most expensive one.
+    // Ordenadas de la tienda más barata a la más cara.
     public List<ProductOfferDto> Offers { get; set; } = [];
 }
 

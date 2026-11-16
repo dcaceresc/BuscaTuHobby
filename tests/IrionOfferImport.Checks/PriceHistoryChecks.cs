@@ -23,7 +23,7 @@ internal static class PriceHistoryChecks
 
     public static async Task Run(Action<bool, string> check)
     {
-        // (a)-(c) Change-only recording through the manual handlers.
+        // (a)-(c) Registro solo ante cambios a través de los handlers manuales.
         var context = DispatchProxy.Create<IApplicationDbContext, ContextProxy>();
         var fake = (ContextProxy)(object)context;
         var product = Guid.NewGuid();
@@ -57,7 +57,7 @@ internal static class PriceHistoryChecks
             point.ObservedAtUtc.Kind == DateTimeKind.Utc,
             "(a) The appended point carries post-change values, no baseline flag and the observation instant");
 
-        // (b) Non-price-only paths: administrative activation and identical manual edits.
+        // (b) Rutas que no son solo de precio: activación administrativa y ediciones manuales idénticas.
         var beforeToggle = Rows();
         response = await new ToggleInventoryHandler(context, services).Handle(new(row.InventoryId), default);
         check(response.Success && response.Message == "Inventario actualizado correctamente" && !row.IsActive &&
@@ -73,7 +73,7 @@ internal static class PriceHistoryChecks
             Rows() == beforeIdentical && fake.Histories.Count == 2 && fake.Saves == 4,
             "(b) Repeating the identical price tuple appends no history row");
 
-        // (c) Only the discount differs.
+        // (c) Solo difiere el descuento.
         response = await new UpdateInventoryHandler(context, services).Handle(new()
         {
             InventoryId = row.InventoryId, ProductId = product, StoreId = store,
@@ -84,7 +84,7 @@ internal static class PriceHistoryChecks
             fake.Histories[2].DiscountPercentage == 25 && !fake.Histories[2].IsBaseline,
             "(c) Changing only DiscountPercentage appends exactly one history row");
 
-        // The same rule protects the import paths, which also mutate Availability.
+        // La misma regla protege las rutas de importación, que también mutan Availability.
         var importContext = DispatchProxy.Create<IApplicationDbContext, InspectionContext>();
         var import = (InspectionContext)(object)importContext;
         var importedProduct = Product.Create("Model", Guid.NewGuid(), Guid.NewGuid(), null, false, "", "", "", default);
@@ -115,7 +115,7 @@ internal static class PriceHistoryChecks
             import.Histories[1].Price == 90 && import.Histories[1].Availability == false,
             "(c) An import that changes only Availability appends exactly one history row");
 
-        // A create through the import path also starts the series with the baseline point.
+        // Una creación por la ruta de importación también inicia la serie con el punto de línea base.
         var createContext = DispatchProxy.Create<IApplicationDbContext, InspectionContext>();
         var created = (InspectionContext)(object)createContext;
         var unlinkedProduct = Product.Create("Model two", Guid.NewGuid(), Guid.NewGuid(), null, false, "", "", "", default);
@@ -132,7 +132,7 @@ internal static class PriceHistoryChecks
             created.Histories[0].OriginalPrice == 1500,
             "(a) Creating an offer through the import path seeds exactly one baseline point");
 
-        // (d) EF model.
+        // (d) Modelo de EF.
         using var modelContext = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseSqlServer("Server=unused;Database=StructuralOnly;Integrated Security=true;TrustServerCertificate=true").Options);
         var model = modelContext.GetService<IDesignTimeModel>().Model;
@@ -160,7 +160,7 @@ internal static class PriceHistoryChecks
                 "(d) The offer relationship cascades on delete from Inventories");
         }
 
-        // (e) Migration structure, seed SQL and rollback.
+        // (e) Estructura de la migración, SQL de siembra y rollback.
         var migrations = modelContext.GetService<IMigrationsAssembly>();
         var newest = migrations.Migrations.OrderBy(m => m.Key, StringComparer.Ordinal).LastOrDefault();
         check(newest.Value is not null && newest.Key.EndsWith("_InventoryPriceHistory"),

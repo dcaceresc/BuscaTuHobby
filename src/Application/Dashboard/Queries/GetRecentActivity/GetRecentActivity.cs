@@ -13,6 +13,7 @@ public class GetRecentActivityHandler(IApplicationDbContext context, IApiRespons
         try
         {
             var recentProducts = await _context.Products
+                .Where(p => p.IsActive)
                 .OrderByDescending(p => p.Created)
                 .Take(5)
                 .Select(p => new RecentActivityDto
@@ -25,6 +26,7 @@ public class GetRecentActivityHandler(IApplicationDbContext context, IApiRespons
                 .ToListAsync(cancellationToken);
 
             var recentInventories = await _context.Inventories
+                .Where(i => i.IsActive && i.Store.IsActive && i.Product.IsActive)
                 .OrderByDescending(i => i.Created)
                 .Take(5)
                 .Select(i => new RecentActivityDto
@@ -38,6 +40,7 @@ public class GetRecentActivityHandler(IApplicationDbContext context, IApiRespons
                 .ToListAsync(cancellationToken);
 
             var recentStores = await _context.Stores
+                .Where(s => s.IsActive)
                 .OrderByDescending(s => s.Created)
                 .Take(5)
                 .Select(s => new RecentActivityDto
@@ -50,6 +53,7 @@ public class GetRecentActivityHandler(IApplicationDbContext context, IApiRespons
                 .ToListAsync(cancellationToken);
 
             var recentPosts = await _context.Posts
+                .Where(p => p.IsActive)
                 .OrderByDescending(p => p.Created)
                 .Take(5)
                 .Select(p => new RecentActivityDto

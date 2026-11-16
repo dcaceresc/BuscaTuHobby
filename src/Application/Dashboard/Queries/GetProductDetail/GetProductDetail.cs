@@ -12,7 +12,7 @@ public class GetProductDetailHandler(IApplicationDbContext context, IApiResponse
     {
         try
         {
-            // Image URLs are built after materialization: the identifier to path conversion is not a SQL operation.
+            // Las URL de las imágenes se construyen después de la materialización: la conversión de identificador a ruta no es una operación SQL.
             var row = await _context.Products
                 .AsNoTracking()
                 .Where(p => p.ProductId == request.ProductId && p.IsActive)
@@ -44,9 +44,9 @@ public class GetProductDetailHandler(IApplicationDbContext context, IApiResponse
                 return _responseService.Fail<ProductDetailDto>("El producto no existe o no está disponible.");
 
             var product = row.Detail;
-            product.ImageUrls = row.ImageIds.Select(id => $"{SiteConfig.FolderImage}/{id}.jpg").ToList();
+            product.ImageUrls = row.ImageIds.Select(id => $"/images/{id}.jpg").ToList();
 
-            // Cheapest first: the ordering is applied by the database, not by the consumer.
+            // Primero la más barata: el orden lo aplica la base de datos, no el consumidor.
             product.Offers = await _context.Inventories
                 .AsNoTracking()
                 .Where(i => i.ProductId == request.ProductId && i.IsActive && i.Store.IsActive &&

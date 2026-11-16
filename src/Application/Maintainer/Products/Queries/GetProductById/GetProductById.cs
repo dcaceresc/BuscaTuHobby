@@ -10,33 +10,39 @@ public class GetProductByIdHandler(IApplicationDbContext context, IApiResponseSe
     {
         try
         {
-            var product = await _context.Products
-                           .Include(x => x.Manufacturer)
-                           .Include(x => x.ProductCategories)
-                           .Include(x => x.Franchise)
-                           .ThenInclude(x => x.Series)
-                           .Include(x => x.ProductImages)
+            // La carpeta física no forma parte de la URL pública: /images/{id}.jpg se mapea a la carpeta
+            // configurada mediante el middleware de archivos estáticos de Program.cs.
+            var row = await _context.Products
                            .AsNoTracking()
-                           .Select(x => new ProductVM()
+                           .Where(x => x.ProductId == request.ProductId)
+                           .Select(x => new
                            {
-                               ProductId = x.ProductId,
-                               ProductName = x.ProductName,
-                               CategoryIds = x.ProductCategories.Select(pc => pc.CategoryId).ToList(),
-                               ProductImages = x.ProductImages.OrderBy(pi => pi.ProductImageOrder).Select(pi => $"{SiteConfig.FolderImage}/{pi.ProductImageId}.jpg").ToList(),
-                               FranchiseId = x.FranchiseId,
-                               ManufacturerId = x.ManufacturerId,
-                               SerieId = x.SerieId,
-                               ProductDescription = x.ProductDescription,
-                               ProductHasBase = x.ProductHasBase,
-                               ProductReleaseDate = x.ProductReleaseDate.ToString("yyyy-MM-dd"),
-                               ProductTargetAge = x.ProductTargetAge,
-                               ProductSize = x.ProductSize
+                               Detail = new ProductVM()
+                               {
+                                   ProductId = x.ProductId,
+                                   ProductName = x.ProductName,
+                                   CategoryIds = x.ProductCategories.Select(pc => pc.CategoryId).ToList(),
+                                   FranchiseId = x.FranchiseId,
+                                   ManufacturerId = x.ManufacturerId,
+                                   SerieId = x.SerieId,
+                                   ProductDescription = x.ProductDescription,
+                                   ProductHasBase = x.ProductHasBase,
+                                   ProductReleaseDate = x.ProductReleaseDate.ToString("yyyy-MM-dd"),
+                                   ProductTargetAge = x.ProductTargetAge,
+                                   ProductSize = x.ProductSize
+                               },
+                               ImageIds = x.ProductImages
+                                   .OrderBy(pi => pi.ProductImageOrder)
+                                   .Select(pi => pi.ProductImageId)
+                                   .ToList()
                            })
-                           .FirstOrDefaultAsync(x => x.ProductId == request.ProductId, cancellationToken);
+                           .FirstOrDefaultAsync(cancellationToken);
 
-            Guard.Against.NotFound(product, $"No existe producto con la Id {request.ProductId}");
+            Guard.Against.NotFound(row, $"No existe producto con la Id {request.ProductId}");
 
-            return _responseService.Success(product);
+            row.Detail.ProductImages = row.ImageIds.Select(imageId => $"/images/{imageId}.jpg").ToList();
+
+            return _responseService.Success(row.Detail);
         }
         catch (Exception)
         {

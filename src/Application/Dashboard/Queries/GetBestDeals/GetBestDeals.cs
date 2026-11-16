@@ -20,6 +20,7 @@ public class GetBestDealsHandler(IApplicationDbContext context, IApiResponseServ
                 .Select(i => new BestDealDto
                 {
                     InventoryId = i.InventoryId,
+                    ProductId = i.ProductId,
                     ProductName = i.Product.ProductName,
                     StoreName = i.Store.StoreName,
                     DiscountPercentage = i.DiscountPercentage,

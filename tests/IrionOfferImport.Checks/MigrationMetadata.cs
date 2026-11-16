@@ -1,7 +1,7 @@
 internal static class MigrationMetadata
 {
-    // Offline, bounded alternative to dotnet-ef for freezing the manually prepared snapshot.
-    // No arguments reproduce the original IrionOffer designer; pass "<id>" "<class>" only for a newer migration.
+    // Alternativa sin conexión y acotada a dotnet-ef para congelar la instantánea preparada manualmente.
+    // Sin argumentos reproduce el designer original de IrionOffer; pasar "<id>" "<class>" solo para una migración más nueva.
     public static void Prepare(string id = "20260720000000_IrionOffer", string className = "IrionOffer")
     {
         const string directory = "src/Infrastructure/Data/Migrations/";

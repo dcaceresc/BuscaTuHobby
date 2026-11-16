@@ -103,6 +103,7 @@ await ConfirmationChecks.Run(Check);
 await DashboardChecks.Run(Check);
 await PriceHistoryChecks.Run(Check);
 await ProductDetailChecks.Run(Check);
+await FidelityChecks.Run(Check);
 using var context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
     .UseSqlServer("Server=unused;Database=StructuralOnly;Integrated Security=true;TrustServerCertificate=true").Options);
 var model = context.GetService<IDesignTimeModel>().Model;
@@ -135,7 +136,7 @@ if (migrationType.Value is not null)
     Check(generator.Generate(migration.DownOperations, model).Count > 0, "Rollback SQL generates without connection");
     var differ = context.GetService<IMigrationsModelDiffer>();
     var initializer = context.GetService<IModelRuntimeInitializer>();
-    // Only the newest migration keeps the current model as its target; earlier designers are frozen history.
+    // Solo la migración más nueva mantiene el modelo actual como objetivo; los designers anteriores son historia congelada.
     var newestMigration = migrations.Migrations.OrderBy(m => m.Key, StringComparer.Ordinal).Last();
     var target = initializer.Initialize(
         migrations.CreateMigration(newestMigration.Value, context.Database.ProviderName!).TargetModel, designTime: true);
