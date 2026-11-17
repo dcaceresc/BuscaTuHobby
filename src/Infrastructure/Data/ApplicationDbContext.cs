@@ -341,6 +341,11 @@ namespace Infrastructure.Data
                 entity.Property(e => e.PartNumber)
                 .HasMaxLength(GunplaGradeRules.MaxPartNumberLength);
 
+                // El GTIN se guarda sin índice único a propósito: la misma caja puede aparecer en varias tiendas y una
+                // misma tienda puede repetir el código. La ingesta empareja por él y aparca el conflicto para revisión.
+                entity.Property(e => e.Gtin)
+                .HasMaxLength(Product.MaximumGtinLength);
+
             });
 
             builder.Entity<ProductCategory>(entity =>

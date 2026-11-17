@@ -220,6 +220,8 @@ internal static class StoreConnectorChecks
         check(scope.ServiceProvider.GetRequiredService<ICatalogDiscovery>() is ICatalogDiscovery &&
             scope.ServiceProvider.GetRequiredService<IImportRunService>() is IImportRunService,
             "Sitemap discovery and the run service resolve from the same composition");
+        check(scope.ServiceProvider.GetRequiredService<IImportRunProcessor>() is IImportRunProcessor,
+            "The run processor resolves with the same connector set");
     }
 
     private static ApplicationDbContext StructuralContext() =>

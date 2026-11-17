@@ -2,12 +2,14 @@ namespace Domain.Entities;
 
 // Estado de una entrada del catálogo dentro de una ejecución. Los números se guardan en la columna y son el
 // contrato de la consulta de reanudación: pendiente y el error transitorio son lo único que se vuelve a procesar.
+// Parked es el final explícito de lo que necesita una persona: ni se publica ni se reintenta solo.
 public enum ImportItemState
 {
     Pending = 0,
     Stored = 1,
     Skipped = 2,
-    Failed = 3
+    Failed = 3,
+    Parked = 4
 }
 
 // Una URL del catálogo descubierta en el sitemap, con lo que se sabe de su intento. Sin esta fila, depurar una
@@ -95,6 +97,18 @@ public class ImportItem
         HttpStatus = httpStatus;
         ErrorMessage = errorMessage;
         AttemptedAtUtc = attemptedAtUtc;
+    }
+
+    // Aparcar es la salida de lo dudoso: la ficha se leyó (o no se pudo interpretar) y no se publica nada. El motivo
+    // queda escrito en la misma columna de error porque es lo que leerá la revisión humana, y no se reintenta solo:
+    // volver a pasarla sin intervención produciría el mismo resultado.
+    public void MarkParked(string reason)
+    {
+        ValidateErrorMessage(reason);
+        State = ImportItemState.Parked;
+        HttpStatus = null;
+        ErrorMessage = reason;
+        AttemptedAtUtc = null;
     }
 
     public static bool IsValidSourceUrl(string? url) =>

@@ -2,7 +2,12 @@
 
 public class Product : AuditableEntity
 {
-    private Product(string productName, Guid manufacturerId, Guid franchiseId, Guid? serieId, bool productHasBase, string productTargetAge, string productSize, string productDescription, DateOnly productReleaseDate, GunplaGrade grade, string? scale, string? partNumber)
+    // El código de barras del fabricante (GTIN-8/12/13/14) identifica la caja, no la fila del catálogo: dos tiendas
+    // pueden publicar la misma caja como productos distintos y una tienda puede repetir el código en un lote.
+    public const int MaximumGtinLength = 14;
+    public const string InvalidGtinMessage = "El código de barras (GTIN) debe tener entre 8 y 14 dígitos.";
+
+    private Product(string productName, Guid manufacturerId, Guid franchiseId, Guid? serieId, bool productHasBase, string productTargetAge, string productSize, string productDescription, DateOnly productReleaseDate, GunplaGrade grade, string? scale, string? partNumber, string? gtin)
     {
         ProductId = Guid.NewGuid();
         ProductName = productName;
@@ -17,6 +22,7 @@ public class Product : AuditableEntity
         Grade = grade;
         Scale = scale;
         PartNumber = partNumber;
+        Gtin = gtin;
         ProductViewCount = 0;
         IsActive = true;
     }
@@ -41,6 +47,10 @@ public class Product : AuditableEntity
     public string? Scale { get; private set; }
     public string? PartNumber { get; private set; }
 
+    // Código de barras que publicó la tienda. Sin columna propia la ingesta descartaba el dato y no podía reconocer
+    // la misma caja entre dos tiendas; null sigue significando "la ficha no lo informa".
+    public string? Gtin { get; private set; }
+
     public virtual Manufacturer Manufacturer { get; private set; } = default!;
     public virtual Franchise Franchise { get; private set; } = default!;
     public virtual Serie? Serie { get; private set; } = default!;
@@ -53,16 +63,17 @@ public class Product : AuditableEntity
 
     // Los parámetros de Gunpla son opcionales para no cambiar a ningún llamador existente: un producto creado sin
     // ellos queda sin grado, sin escala y sin número de parte, que es exactamente lo que ocurría antes de estos campos.
-    public static Product Create(string productName, Guid manufacturerId, Guid franchiseId, Guid? serieId, bool productHasBase, string productTargetAge, string productSize, string productDescription, DateOnly productReleaseDate, GunplaGrade grade = GunplaGrade.None, string? scale = null, string? partNumber = null)
+    public static Product Create(string productName, Guid manufacturerId, Guid franchiseId, Guid? serieId, bool productHasBase, string productTargetAge, string productSize, string productDescription, DateOnly productReleaseDate, GunplaGrade grade = GunplaGrade.None, string? scale = null, string? partNumber = null, string? gtin = null)
     {
         ValidateGunplaDetails(grade, scale, partNumber);
-        return new Product(productName, manufacturerId, franchiseId, serieId, productHasBase, productTargetAge, productSize, productDescription, productReleaseDate, grade, scale, partNumber);
+        ValidateGtin(gtin);
+        return new Product(productName, manufacturerId, franchiseId, serieId, productHasBase, productTargetAge, productSize, productDescription, productReleaseDate, grade, scale, partNumber, gtin);
     }
 
-    public static Product CreateWithProvidedId(Guid productId, string productName, Guid manufacturerId, Guid franchiseId, Guid? serieId, bool productHasBase, string productTargetAge, string productSize, string productDescription, DateOnly productReleaseDate, GunplaGrade grade = GunplaGrade.None, string? scale = null, string? partNumber = null)
+    public static Product CreateWithProvidedId(Guid productId, string productName, Guid manufacturerId, Guid franchiseId, Guid? serieId, bool productHasBase, string productTargetAge, string productSize, string productDescription, DateOnly productReleaseDate, GunplaGrade grade = GunplaGrade.None, string? scale = null, string? partNumber = null, string? gtin = null)
     {
         if (productId == Guid.Empty) throw new ArgumentException("El identificador del producto es obligatorio.", nameof(productId));
-        var product = Create(productName, manufacturerId, franchiseId, serieId, productHasBase, productTargetAge, productSize, productDescription, productReleaseDate, grade, scale, partNumber);
+        var product = Create(productName, manufacturerId, franchiseId, serieId, productHasBase, productTargetAge, productSize, productDescription, productReleaseDate, grade, scale, partNumber, gtin);
         product.ProductId = productId;
         return product;
     }
@@ -70,6 +81,9 @@ public class Product : AuditableEntity
     // El mutador exige grado, escala y número de parte sin valor por defecto: al crearlos son opcionales porque un
     // producto nuevo puede no informarlos, pero al modificarlos un valor por defecto borraría en silencio lo que
     // cargó el administrador. Mismo criterio que Inventory.Update.
+    //
+    // No expone el GTIN a propósito: la edición manual no toca identidad que el administrador no puede ver en el
+    // formulario, así que un guardado desde el backoffice nunca borra el código de barras que cargó la ingesta.
     public void Update(string productName, Guid manufacturerId, Guid franchiseId, Guid? serieId, bool productHasBase, string productTargetAge, string productSize, string productDescription, DateOnly productReleaseDate, GunplaGrade grade, string? scale, string? partNumber)
     {
         ValidateGunplaDetails(grade, scale, partNumber);
@@ -85,6 +99,15 @@ public class Product : AuditableEntity
         Grade = grade;
         Scale = scale;
         PartNumber = partNumber;
+    }
+
+    // Igual que la escala, el GTIN es opcional: null significa "no informado". Un texto vacío o con otro alfabeto
+    // no es "no informado", es un dato mal escrito, y se rechaza antes de escribir nada.
+    private static void ValidateGtin(string? gtin)
+    {
+        if (gtin is null) return;
+        if (gtin.Length is < 8 or > MaximumGtinLength || gtin != gtin.Trim() || !gtin.All(char.IsAsciiDigit))
+            throw new ArgumentException(InvalidGtinMessage, nameof(gtin));
     }
 
     // El grado, la escala y el número de parte se validan antes de mutar nada, para que el rechazo sea atómico y

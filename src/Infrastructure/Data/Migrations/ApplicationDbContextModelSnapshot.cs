@@ -607,6 +607,10 @@ namespace Infrastructure.Data.Migrations
                         .HasColumnType("int")
                         .HasDefaultValue(GunplaGrade.None);
 
+                    b.Property<string>("Gtin")
+                        .HasMaxLength(14)
+                        .HasColumnType("nvarchar(14)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 

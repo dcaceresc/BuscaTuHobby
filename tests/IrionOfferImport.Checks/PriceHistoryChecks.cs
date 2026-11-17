@@ -197,8 +197,8 @@ internal static class PriceHistoryChecks
             var differ = modelContext.GetService<IMigrationsModelDiffer>();
             var initializer = modelContext.GetService<IModelRuntimeInitializer>();
             var target = initializer.Initialize(migration.TargetModel, designTime: true);
-            // Las migraciones posteriores agregan columnas (condición y medio de pago en Inventories, grado, escala
-            // y número de parte en Products, configuración de conector en Stores) y dos tablas de ingesta. El
+            // Las migraciones posteriores agregan columnas (condición y medio de pago en Inventories, grado, escala,
+            // número de parte y GTIN en Products, configuración de conector en Stores) y dos tablas de ingesta. El
             // objetivo de esta migración queda atrás exactamente por eso y por nada más.
             var differences = differ.GetDifferences(target.GetRelationalModel(), model.GetRelationalModel());
             check(differences.OfType<AddColumnOperation>()
@@ -206,7 +206,8 @@ internal static class PriceHistoryChecks
                     .SequenceEqual(new[]
                     {
                         "Inventories.Condition", "Inventories.PaymentMethodLabel", "Products.Grade",
-                        "Products.PartNumber", "Products.Scale", "Stores.ConnectorKey", "Stores.ConnectorSettings"
+                        "Products.Gtin", "Products.PartNumber", "Products.Scale", "Stores.ConnectorKey",
+                        "Stores.ConnectorSettings"
                     }) &&
                 differences.OfType<CreateTableOperation>()
                     .Select(c => c.Name).OrderBy(n => n, StringComparer.Ordinal)
@@ -218,7 +219,7 @@ internal static class PriceHistoryChecks
                         "IX_ImportItems_ImportRunId_SourceUrl", "IX_ImportItems_ImportRunId_State",
                         "IX_ImportRuns_StoreId"
                     }) &&
-                differences.Count == 12,
+                differences.Count == 13,
                 "(e) The price history migration target differs from today's model only by the later additive changes");
             var file = Directory.EnumerateFiles("src/Infrastructure/Data/Migrations", "*_InventoryPriceHistory.cs")
                 .FirstOrDefault();

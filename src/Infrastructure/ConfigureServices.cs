@@ -62,6 +62,11 @@ public static class ConfigureServices
             client.Timeout = TimeSpan.FromSeconds(15))
             .ConfigurePrimaryHttpMessageHandler(StoreTransport);
         services.AddScoped<IImportRunService, ImportRunService>();
+        // La pasada que convierte lo encolado en ofertas recibe todos los conectores registrados: la tienda elige por
+        // la clave de su fila y el limitador y robots.txt siguen dentro del conector.
+        services.AddScoped<IImportRunProcessor>(provider => new ImportRunProcessor(
+            provider.GetRequiredService<IApplicationDbContext>(),
+            provider.GetServices<IStoreConnector>()));
         // El cargador recibe todos los conectores registrados y elige por la clave de la fila: añadir una tienda
         // Shopify no toca esta composición, solo añade una fila.
         services.AddScoped<IStoreProductLoader>(provider => new StoreProductLoader(

@@ -51,7 +51,17 @@ the pre-paging total, each sort order with offerless products last, every filter
 the three facet lists with their counts. The fixture is LINQ-to-Objects, so these checks do not prove that
 SQL Server translates or executes the price-sorted join, the facet grouping or the projection.
 
-Current full-suite evidence: **1209** assertions and exit 0 for
+`IngestionChecks` covers the catalog-identity slice (T2b): the nullable `Product.Gtin` with its hand-written
+`20261116000002_ProductGtin` migration (single additive column, column-dropping `Down`, generated SQL, no index by
+the documented decision that a barcode may legitimately repeat, newest-target and snapshot consistency), title
+normalization, grade/scale parsing (including that `[Preventa] GUNDAM EX Gundam Universe` declares neither), the
+create/reuse/park decision with its exact Spanish reasons, the shared on-demand `Sin clasificar` franchise, and the
+`ImportRunProcessor` pass over queued items: SKU, barcode and title reuse, creation of manufacturer/product/offer/GTIN,
+the change-only price recorder, parked items that publish nothing, second-pass idempotency, budget and 429/robots
+stops, and cancellation. Fakes conflate tracked and stored state, so cancellation is asserted against a JSON snapshot
+taken at the last save; no SQL server, HTTP request or database is used.
+
+Current full-suite evidence: **1438** assertions and exit 0 for
 `dotnet run --project tests/IrionOfferImport.Checks/IrionOfferImport.Checks.csproj`.
 
 `Inventory.CreateImportedOffer` and `UpdateImportedOffer` accept already server-validated whole integer prices
