@@ -1,3 +1,4 @@
+using Application.Common.Ingestion;
 using Application.Maintainer.Products.Queries.PreviewIrionProduct;
 
 namespace Application.Common.Interfaces;
@@ -17,4 +18,16 @@ public interface IStoreConnector
     /// </summary>
     Task<IrionProductPreviewDto> LoadProductAsync(
         StoreContext store, string url, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Lee la ficha completa, que incluye el tipo de producto que publica la plataforma. La ingesta lo necesita para
+    /// clasificar el producto; el preview manual no lo publica porque su DTO es un contrato existente.
+    /// </summary>
+    /// <remarks>
+    /// La implementación por defecto deja que un conector que solo sepa entregar la vista previa siga funcionando:
+    /// la ficha se arma con el tipo "no informado" en vez de obligar a tocar todos los conectores y dobles a la vez.
+    /// </remarks>
+    async Task<StoreProductSheet> LoadSheetAsync(
+        StoreContext store, string url, CancellationToken cancellationToken) =>
+        StoreProductSheet.FromPreview(await LoadProductAsync(store, url, cancellationToken));
 }

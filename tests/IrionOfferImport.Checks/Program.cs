@@ -111,6 +111,7 @@ await CatalogNavigationChecks.Run(Check);
 await StoreConnectorChecks.Run(Check);
 ImportRunChecks.Run(Check);
 await IngestionChecks.Run(Check);
+ClassificationChecks.Run(Check);
 using var context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
     .UseSqlServer("Server=unused;Database=StructuralOnly;Integrated Security=true;TrustServerCertificate=true").Options);
 var model = context.GetService<IDesignTimeModel>().Model;

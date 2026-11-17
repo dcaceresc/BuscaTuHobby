@@ -70,10 +70,10 @@ public sealed class ImportRunProcessor(
                 break;
             }
 
-            IrionProductPreviewDto preview;
+            StoreProductSheet sheet;
             try
             {
-                preview = await connector.LoadProductAsync(store, item.SourceUrl, cancellationToken);
+                sheet = await connector.LoadSheetAsync(store, item.SourceUrl, cancellationToken);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -121,7 +121,7 @@ public sealed class ImportRunProcessor(
                 continue;
             }
 
-            var parkReason = await ParkOrStoreAsync(preview, store, catalog, observedAtUtc, cancellationToken);
+            var parkReason = await ParkOrStoreAsync(sheet, store, catalog, observedAtUtc, cancellationToken);
             if (parkReason is null)
             {
                 item.MarkStored(StoredHttpStatus, observedAtUtc);
@@ -153,7 +153,7 @@ public sealed class ImportRunProcessor(
     /// Aplica la identidad a una ficha leída. Devuelve null cuando la oferta quedó guardada y el motivo cuando hay que
     /// aparcarla; en ese caso no se crea ni se modifica ningún producto ni ninguna oferta.
     /// </summary>
-    private async Task<string?> StoreAsync(IrionProductPreviewDto preview, StoreContext store, Catalog catalog,
+    private async Task<string?> StoreAsync(StoreProductSheet preview, StoreContext store, Catalog catalog,
         DateTime observedAtUtc, CancellationToken cancellationToken)
     {
         var variant = ChooseVariant(preview);
@@ -197,6 +197,8 @@ public sealed class ImportRunProcessor(
             }
 
             _context.Inventories.Add(offer);
+            // El producto nace ya clasificado: sin categoría no aparece al navegar y queda fuera del catálogo real.
+            EnsureClassification(product, preview, catalog);
             return null;
         }
 
@@ -210,7 +212,82 @@ public sealed class ImportRunProcessor(
             observedAtUtc, ProductCondition.New, null);
         // El registrador sólo añade un punto cuando el precio cambió: una segunda pasada idéntica no infla la serie.
         InventoryPriceHistoryRecorder.Record(_context, existing, before);
+        // Un producto reutilizado que la ingesta creó antes sin clasificar se completa aquí; el que ya tiene categoría
+        // (humana o de otra pasada) no se toca.
+        EnsureClassification(product, preview, catalog);
         return null;
+    }
+
+    /// <summary>
+    /// Escribe la clasificación de un producto que la ingesta acaba de guardar. Nunca quita nada: si el producto ya
+    /// tiene alguna categoría se supone que una persona la asignó y la ingesta no la reemplaza. El vínculo
+    /// (producto, categoría) se deduplica contra la base y contra la propia pasada para que reejecutar no duplique.
+    /// </summary>
+    private void EnsureClassification(Product product, StoreProductSheet sheet, Catalog catalog)
+    {
+        if (!catalog.Classification.ClassifiedProducts.Add(product.ProductId)) return;
+
+        var decision = ProductClassification.Classify(new ProductClassificationInput(
+            sheet.DeclaredProductType, sheet.Tags, sheet.Title));
+        foreach (var match in decision.Matches)
+        {
+            var category = CategoryFor(match.Category, catalog);
+            if (!catalog.Classification.Links.Add((product.ProductId, category.CategoryId))) continue;
+            _context.ProductCategories.Add(ProductCategory.Create(product.ProductId, category.CategoryId));
+        }
+    }
+
+    // La categoría se resuelve por slug: una fila existente se reutiliza tal como está (nombre, icono y orden los
+    // administra una persona) y solo se crea la que las reglas declaran. El nombre es único en la base igual que el
+    // slug, así que también se busca por nombre: una persona pudo crearla con otro slug y crear la declarada haría
+    // fallar el guardado de toda la pasada. CategoryOrder también es único, así que una categoría nueva toma el primer
+    // orden libre desde el declarado en vez de chocar.
+    /// <summary>
+    /// Clasifica el catálogo existente con lo único que se conserva de una ficha antigua: el título. Sin esto, cada
+    /// producto que entró antes de existir la clasificación se quedaría sin categoría, porque su URL nunca se vuelve
+    /// a procesar. Solo toca productos sin ninguna categoría: lo que una persona asignó no se reemplaza.
+    /// </summary>
+    public async Task<int> ClassifyExistingAsync(CancellationToken cancellationToken)
+    {
+        var catalog = await LoadCatalogAsync(cancellationToken);
+        var pending = catalog.Products
+            .Where(product => !catalog.Classification.ClassifiedProducts.Contains(product.ProductId))
+            .ToList();
+        if (pending.Count == 0) return 0;
+
+        foreach (var product in pending)
+        {
+            var decision = ProductClassification.Classify(
+                new ProductClassificationInput(null, [], product.ProductName));
+            foreach (var match in decision.Matches)
+            {
+                var category = CategoryFor(match.Category, catalog);
+                if (!catalog.Classification.Links.Add((product.ProductId, category.CategoryId))) continue;
+                _context.ProductCategories.Add(ProductCategory.Create(product.ProductId, category.CategoryId));
+            }
+
+            // Evita que un segundo pase vuelva a clasificar el mismo producto dentro de la misma ejecución.
+            catalog.Classification.ClassifiedProducts.Add(product.ProductId);
+        }
+
+        await _context.SaveChangesAsync(cancellationToken);
+        return pending.Count;
+    }
+
+    private Category CategoryFor(DeclaredCategory declared, Catalog catalog)
+    {
+        var existing = catalog.Categories.FirstOrDefault(category =>
+                string.Equals(category.CategorySlug, declared.Slug, StringComparison.OrdinalIgnoreCase)) ??
+            catalog.Categories.FirstOrDefault(category =>
+                ProductIdentity.Normalize(category.CategoryName) == ProductIdentity.Normalize(declared.Name));
+        if (existing is not null) return existing;
+
+        var order = declared.Order;
+        while (catalog.Categories.Any(category => category.CategoryOrder == order)) order++;
+        var created = Category.Create(declared.Name, declared.Icon, order, declared.Slug);
+        _context.Categories.Add(created);
+        catalog.Categories.Add(created);
+        return created;
     }
 
     private Product CreateProduct(ProductIdentityInput identity, string? description, Catalog catalog)
@@ -249,7 +326,7 @@ public sealed class ImportRunProcessor(
 
     // Un dato que el dominio rechaza invalida esa ficha, nunca la pasada completa: se aparca con el motivo para que
     // una revisión lo corrija en lugar de tumbar la importación entera.
-    private async Task<string?> ParkOrStoreAsync(IrionProductPreviewDto preview, StoreContext store, Catalog catalog,
+    private async Task<string?> ParkOrStoreAsync(StoreProductSheet preview, StoreContext store, Catalog catalog,
         DateTime observedAtUtc, CancellationToken cancellationToken)
     {
         try
@@ -283,18 +360,32 @@ public sealed class ImportRunProcessor(
 
     // La primera variante disponible con precio; si ninguna está disponible, la primera con precio. Sin precio válido
     // no hay oferta que publicar y la ficha se aparca.
-    private static IrionVariantPreviewDto? ChooseVariant(IrionProductPreviewDto preview)
+    private static IrionVariantPreviewDto? ChooseVariant(StoreProductSheet preview)
     {
         var priced = preview.Variants.Where(variant => variant.Price > 0).ToArray();
         return priced.FirstOrDefault(variant => variant.Available) ?? priced.FirstOrDefault();
     }
 
     // El catálogo se carga una vez por pasada, no por ficha: el emparejamiento por título normalizado no se puede
-    // traducir a SQL, así que la comparación se hace en memoria sobre una foto que la propia pasada va ampliando.
-    private async Task<Catalog> LoadCatalogAsync(CancellationToken cancellationToken) => new(
-        await _context.Products.AsNoTracking().ToListAsync(cancellationToken),
-        await _context.Manufacturers.AsNoTracking().ToListAsync(cancellationToken),
-        await _context.Franchises.AsNoTracking().ToListAsync(cancellationToken));
+    // traducir a SQL, así que la comparación se hace en memoria sobre una foto que la propia pasada va ampliando. Las
+    // categorías y los vínculos existentes se cargan igual para no duplicar filas ni pisar una clasificación humana.
+    private async Task<Catalog> LoadCatalogAsync(CancellationToken cancellationToken)
+    {
+        var links = await _context.ProductCategories.AsNoTracking().ToListAsync(cancellationToken);
+        var classification = new ClassificationState();
+        foreach (var link in links)
+        {
+            classification.ClassifiedProducts.Add(link.ProductId);
+            classification.Links.Add((link.ProductId, link.CategoryId));
+        }
+
+        return new Catalog(
+            await _context.Products.AsNoTracking().ToListAsync(cancellationToken),
+            await _context.Manufacturers.AsNoTracking().ToListAsync(cancellationToken),
+            await _context.Franchises.AsNoTracking().ToListAsync(cancellationToken),
+            await _context.Categories.AsNoTracking().ToListAsync(cancellationToken),
+            classification);
+    }
 
     private static IReadOnlyList<ProductIdentityCandidate> Candidates(Catalog catalog) =>
         catalog.Products.Select(product => new ProductIdentityCandidate(
@@ -336,5 +427,14 @@ public sealed class ImportRunProcessor(
     }
 
     // La foto del catálogo que la pasada usa para emparejar y amplía al crear.
-    private sealed record Catalog(List<Product> Products, List<Manufacturer> Manufacturers, List<Franchise> Franchises);
+    private sealed record Catalog(List<Product> Products, List<Manufacturer> Manufacturers, List<Franchise> Franchises,
+        List<Category> Categories, ClassificationState Classification);
+
+    // Qué productos ya están clasificados y qué vínculos existen, para no duplicar ProductCategory en una segunda
+    // pasada. La pasada los amplía al escribir para que dos fichas del mismo producto no creen dos veces lo mismo.
+    private sealed class ClassificationState
+    {
+        public HashSet<Guid> ClassifiedProducts { get; } = [];
+        public HashSet<(Guid ProductId, Guid CategoryId)> Links { get; } = [];
+    }
 }

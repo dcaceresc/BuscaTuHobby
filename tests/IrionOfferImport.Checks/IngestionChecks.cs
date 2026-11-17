@@ -284,6 +284,10 @@ internal static class IngestionChecks
         await DoubtfulItemIsParked(check);
         await SheetWithoutIdentifiersIsStored(check);
         await SecondPassIsIdempotent(check);
+        await CreatedProductIsClassified(check);
+        await ReusedProductWithoutCategoriesIsClassified(check);
+        await HumanCategoryIsPreserved(check);
+        await DeclaredCategoriesAreReusedOrCreated(check);
         await BudgetAndPolitenessStopThePass(check);
         await CancellationDoesNotWrite(check);
         await Rejections(check);
@@ -510,6 +514,116 @@ internal static class IngestionChecks
             "f) The second run audits its items as stored by itself");
     }
 
+    // (h) Todo producto creado por la ingesta entra al sitio en la categoría que declaran las reglas, y solo se crean
+    // las categorías declaradas: nada de una categoría por título.
+    private static async Task CreatedProductIsClassified(Action<bool, string> check)
+    {
+        var fixture = new Fixture();
+        const string url = "https://irion.cl/products/monopoly";
+        fixture.Connector.Sheets[url] = Sheet(url, "HASBRO GAMING MONOPOLY CHILE", "Hasbro", "HAS-1",
+            "5010993441945", 19990);
+        fixture.Connector.Types[url] = "Juegos de Mesa";
+        var run = fixture.Enqueue(url);
+
+        var result = await fixture.Process(run.Run);
+
+        var product = fixture.Fake.Products.Single();
+        var category = fixture.CategoryOf(product);
+        check(result.Stored == 1 && category is { CategorySlug: "juegos-de-mesa", CategoryName: "Juegos de Mesa",
+                CategoryIcon: "bi bi-dice-5", CategoryOrder: 6 },
+            "h) A created product is classified into the category its store type declares");
+        check(fixture.Fake.Categories.Count == 1 && fixture.Fake.Categories[0] == category,
+            "h) Only the declared category is created: no category is invented per title");
+    }
+
+    // (i) Un producto reutilizado que no tenía categoría se clasifica en la misma pasada, sin tocar su identidad.
+    private static async Task ReusedProductWithoutCategoriesIsClassified(Action<bool, string> check)
+    {
+        var fixture = new Fixture();
+        var product = fixture.AddProduct("Gundam EX", "Bandai - Tamashii Nations", GunplaGrade.None, null, null,
+            "6535699571882");
+        const string url = "https://luffytoys.cl/products/gundam-ex";
+        fixture.Connector.Sheets[url] = Sheet(url, "[Preventa] GUNDAM EX Gundam Universe",
+            "Bandai - Tamashii Nations", null, "6535699571882", 31990, 39990);
+        fixture.Connector.Types[url] = "Figura de Acción";
+        var run = fixture.Enqueue(url);
+
+        var result = await fixture.Process(run.Run);
+
+        check(result.Stored == 1 && fixture.Fake.Products.Count == 1 &&
+            fixture.CategoryOf(product) is { CategorySlug: "figuras-de-accion" },
+            "i) A reused product without categories is classified by the store type");
+        check(product.ProductName == "Gundam EX" && product.Gtin == "6535699571882",
+            "i) Classifying a reused product never rewrites its identity");
+    }
+
+    // (j) Una categoría que asignó una persona es una decisión editorial: la ingesta no la reemplaza ni la completa.
+    private static async Task HumanCategoryIsPreserved(Action<bool, string> check)
+    {
+        var fixture = new Fixture();
+        var product = fixture.AddProduct("Beastars 6", "Milky Way", GunplaGrade.None, null, null, null);
+        var human = fixture.AddCategory("Rarezas", "bi bi-star", 5, "rarezas");
+        fixture.Fake.CategoryLinks.Add(ProductCategory.Create(product.ProductId, human.CategoryId));
+        const string url = "https://luffytoys.cl/products/beastars-6";
+        fixture.Connector.Sheets[url] = Sheet(url, "Beastars 6", "Milky Way", null, null, 12990);
+        fixture.Connector.Types[url] = "Manga";
+        var run = fixture.Enqueue(url);
+
+        var result = await fixture.Process(run.Run);
+
+        check(result.Stored == 1 &&
+            fixture.Fake.CategoryLinks.Select(link => link.CategoryId).SequenceEqual(new[] { human.CategoryId }),
+            "j) A product a human already classified keeps exactly that category");
+        check(fixture.Fake.Categories.Count == 1 && fixture.Fake.Categories[0].CategorySlug == "rarezas",
+            "j) The ingestion does not create the declared category for an already classified product");
+    }
+
+    // (k) Reejecutar no duplica vínculos y reutiliza por slug la categoría que ya existe, sin renombrarla ni
+    // reordenarla; si el orden declarado está tomado, la categoría nueva usa el siguiente libre.
+    private static async Task DeclaredCategoriesAreReusedOrCreated(Action<bool, string> check)
+    {
+        var fixture = new Fixture();
+        var maquetas = fixture.AddCategory("Maquetas", "bi bi-tools", 2, "maquetas");
+        fixture.AddCategory("Rarezas", "bi bi-star", 5, "rarezas");
+        // Categoría que una persona creó con el nombre declarado y otro slug: el nombre también es único en la base.
+        var humanLibros = fixture.AddCategory("Libros", "bi bi-journal", 7, "libros-y-revistas");
+        const string kit = "https://irion.cl/products/gundam";
+        const string manga = "https://irion.cl/products/beastars";
+        const string book = "https://irion.cl/products/guia";
+        fixture.Connector.Sheets[kit] = Sheet(kit, "RG 1/144 Gundam RX-78-2", "Bandai", "RG-1", null, 25990);
+        fixture.Connector.Types[kit] = "Model Kit";
+        fixture.Connector.Sheets[manga] = Sheet(manga, "Beastars 6", "Milky Way", null, null, 12990);
+        fixture.Connector.Types[manga] = "Manga";
+        fixture.Connector.Sheets[book] = Sheet(book, "Guía del hobby", "Panini", null, null, 15990);
+        fixture.Connector.Types[book] = "Libro";
+
+        var first = fixture.Enqueue(kit, manga, book);
+        var firstResult = await fixture.Process(first.Run);
+        var links = fixture.Fake.CategoryLinks.Count;
+        var categories = fixture.Fake.Categories.Count;
+
+        check(firstResult.Stored == 3 && links == 3,
+            "k) Each stored product receives exactly one category link in the first pass");
+        check(fixture.Fake.Categories[0] == maquetas && maquetas.CategoryName == "Maquetas" &&
+            maquetas.CategoryIcon == "bi bi-tools" && maquetas.CategoryOrder == 2,
+            "k) An existing category is reused by slug and never renamed or reordered");
+        check(fixture.CategoryOf(fixture.Fake.Products.Single(row => row.PartNumber is null && row.ProductName == "Guía del hobby")) ==
+            humanLibros && humanLibros.CategorySlug == "libros-y-revistas" && humanLibros.CategoryIcon == "bi bi-journal",
+            "k) A category a person created with the declared name and another slug is reused instead of failing the save");
+        var declaredMangas = fixture.Fake.Categories.Single(category => category.CategorySlug == "mangas");
+        check(declaredMangas.CategoryName == "Mangas" && declaredMangas.CategoryIcon == "bi bi-book" &&
+            declaredMangas.CategoryOrder == 6,
+            "k) A declared category whose order is taken is created at the next free order");
+
+        var second = fixture.Enqueue(kit, manga, book);
+        await fixture.Process(second.Run);
+
+        check(fixture.Fake.CategoryLinks.Count == links && fixture.Fake.Categories.Count == categories,
+            "k) A second pass adds no duplicate links and no duplicate categories");
+        check(fixture.Fake.CategoryLinks.Select(link => (link.ProductId, link.CategoryId)).Distinct().Count() == links,
+            "k) The (product, category) pair stays unique after re-running");
+    }
+
     // El presupuesto y la cortesía con la tienda cortan la pasada sin cerrar la ejecución.
     private static async Task BudgetAndPolitenessStopThePass(Action<bool, string> check)
     {
@@ -718,6 +832,19 @@ internal static class IngestionChecks
             return product;
         }
 
+        public Category AddCategory(string name, string icon, int order, string slug)
+        {
+            var category = Category.Create(name, icon, order, slug);
+            Fake.Categories.Add(category);
+            return category;
+        }
+
+        public Category? CategoryOf(Product product)
+        {
+            var link = Fake.CategoryLinks.FirstOrDefault(row => row.ProductId == product.ProductId);
+            return link is null ? null : Fake.Categories.Single(row => row.CategoryId == link.CategoryId);
+        }
+
         public Inventory AddOffer(Product product, int price, int original, int discount, string sourceUrl,
             string variant, bool available)
         {
@@ -754,6 +881,8 @@ internal static class IngestionChecks
     private sealed class StubConnector : IStoreConnector
     {
         public Dictionary<string, IrionProductPreviewDto> Sheets { get; } = new(StringComparer.Ordinal);
+        // Tipo de producto declarado por la tienda: la ingesta lo usa antes que las etiquetas y el título.
+        public Dictionary<string, string?> Types { get; } = new(StringComparer.Ordinal);
         public Dictionary<string, Exception> Failures { get; } = new(StringComparer.Ordinal);
         public List<string> Loaded { get; } = [];
         public Action<string>? OnLoad { get; set; }
@@ -761,13 +890,20 @@ internal static class IngestionChecks
         public string Key => "shopify";
 
         public Task<IrionProductPreviewDto> LoadProductAsync(
-            StoreContext store, string url, CancellationToken cancellationToken)
+            StoreContext store, string url, CancellationToken cancellationToken) =>
+            Task.FromResult(Load(url, cancellationToken).ToPreview());
+
+        public Task<StoreProductSheet> LoadSheetAsync(
+            StoreContext store, string url, CancellationToken cancellationToken) =>
+            Task.FromResult(Load(url, cancellationToken));
+
+        private StoreProductSheet Load(string url, CancellationToken cancellationToken)
         {
             Loaded.Add(url);
             OnLoad?.Invoke(url);
             cancellationToken.ThrowIfCancellationRequested();
             if (Failures.TryGetValue(url, out var failure)) throw failure;
-            return Task.FromResult(Sheets[url]);
+            return StoreProductSheet.FromPreview(Sheets[url]) with { ProductType = Types.GetValueOrDefault(url) };
         }
     }
 }
@@ -780,6 +916,7 @@ public class IngestionContext : InspectionContext
     public List<ImportItem> ImportItems { get; } = [];
     public List<Manufacturer> Manufacturers { get; } = [];
     public List<Franchise> Franchises { get; } = [];
+    public List<ProductCategory> CategoryLinks { get; } = [];
     public string Snapshot { get; private set; } = "";
 
     public void Capture() => Snapshot = JsonSerializer.Serialize(new
@@ -810,7 +947,12 @@ public class IngestionContext : InspectionContext
             row.ObservedAtUtc, row.IsBaseline
         }),
         Manufacturers = Manufacturers.Select(row => new { row.ManufacturerId, row.ManufacturerName }),
-        Franchises = Franchises.Select(row => new { row.FranchiseId, row.FranchiseName })
+        Franchises = Franchises.Select(row => new { row.FranchiseId, row.FranchiseName }),
+        Categories = Categories.Select(row => new
+        {
+            row.CategoryId, row.CategoryName, row.CategoryIcon, row.CategoryOrder, row.CategorySlug, row.IsActive
+        }),
+        CategoryLinks = CategoryLinks.Select(row => new { row.ProductId, row.CategoryId })
     });
 
     protected override object? Invoke(MethodInfo? method, object?[]? args)
@@ -835,6 +977,7 @@ public class IngestionContext : InspectionContext
             "get_ImportItems" => new InspectionSet<ImportItem>(ImportItems, Query),
             "get_Manufacturers" => new InspectionSet<Manufacturer>(Manufacturers, Query),
             "get_Franchises" => new InspectionSet<Franchise>(Franchises, Query),
+            "get_ProductCategories" => new InspectionSet<ProductCategory>(CategoryLinks, Query),
             _ => base.Invoke(method, args)
         };
     }

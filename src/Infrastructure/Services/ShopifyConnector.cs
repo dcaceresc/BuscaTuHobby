@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Application.Common.Exceptions;
+using Application.Common.Ingestion;
 using Application.Common.Interfaces;
 using Application.Maintainer.Products.Queries.PreviewIrionProduct;
 
@@ -34,6 +35,10 @@ public sealed class ShopifyConnector(HttpClient client, RobotsTxtCache robots, D
     public string Key => ConnectorKey;
 
     public async Task<IrionProductPreviewDto> LoadProductAsync(
+        StoreContext store, string url, CancellationToken cancellationToken) =>
+        (await LoadSheetAsync(store, url, cancellationToken)).ToPreview();
+
+    public async Task<StoreProductSheet> LoadSheetAsync(
         StoreContext store, string url, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(store);
@@ -78,9 +83,12 @@ public sealed class ShopifyConnector(HttpClient client, RobotsTxtCache robots, D
                 throw new InvalidDataException("El producto no contiene variantes.");
 
             // La moneda es la de la tienda, no una constante: una segunda fila puede cobrar en otra moneda.
-            return new IrionProductPreviewDto(sourceUrl,
+            // El tipo de producto ("type" en Shopify) se lee aquí porque la ingesta clasifica con él antes que con
+            // las etiquetas o el título; el campo vacío o ausente queda como "no informado".
+            return new StoreProductSheet(sourceUrl,
                 RequiredString(product, "title"), RequiredString(product, "vendor"), store.Currency,
                 RequiredString(product, "description"),
+                OptionalString(product, "type"),
                 product.GetProperty("tags").EnumerateArray().Select(value => value.GetString() ??
                     throw new InvalidDataException("Etiqueta inválida.")).ToArray(),
                 product.GetProperty("images").EnumerateArray().Select(value => ImageUrl(value.GetString())).ToArray(),

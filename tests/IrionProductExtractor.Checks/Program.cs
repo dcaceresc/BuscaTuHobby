@@ -66,6 +66,22 @@ Check(preview.Variants[0].Sku == "BLOK-71428" && preview.Variants[0].Barcode == 
 Check(preview.Variants[1].Sku is null && !preview.Variants[1].Available && preview.Variants[1].OriginalPrice == 24990m, "Variant data is independent");
 Check(preview.Variants[1].DiscountPercentage == 20.01m, "Discount calculation");
 
+// La ingesta clasifica con el tipo de producto que publica la tienda; el preview manual sigue entregando el mismo
+// DTO, así que la ficha tipada y la vista previa tienen que describir el mismo producto.
+var sheet = await product.Connector.LoadSheetAsync(irion, irionUrl, default);
+Check(sheet.ProductType == "Model Kit" && sheet.DeclaredProductType == "Model Kit",
+    "The store product type is read and exposed for ingestion");
+Check(sheet.ToPreview() is var projected && projected.Title == preview.Title &&
+    projected.Vendor == preview.Vendor && projected.Currency == preview.Currency &&
+    projected.DescriptionHtml == preview.DescriptionHtml && projected.Available == preview.Available &&
+    projected.Tags.SequenceEqual(preview.Tags) && projected.ImageUrls.SequenceEqual(preview.ImageUrls) &&
+    projected.Variants[0] == preview.Variants[0] && projected.Variants[1] == preview.Variants[1],
+    "The manual preview projection keeps every published field unchanged");
+var untyped = new Scenario(permissiveRobots, _ => new HttpResponseMessage(HttpStatusCode.OK)
+    { Content = new StringContent(fixture.Replace("\"type\":\"Model Kit\",", string.Empty)) });
+Check((await untyped.Connector.LoadSheetAsync(irion, irionUrl, default)).DeclaredProductType is null,
+    "A sheet that does not declare a product type leaves it as not informed");
+
 // Una URL que no es de producto no llega ni a robots.txt.
 foreach (var url in new[] { "", "http://irion.cl/products/a", "https://evil.test/products/a",
     "https://irion.cl.evil.test/products/a", "https://user@irion.cl/products/a",
@@ -355,7 +371,7 @@ sealed class Fixtures
 {
     // Producto Shopify mínimo con lo que el conector normaliza: título, etiquetas, imágenes y variantes.
     public const string Body = """
-{"title":"Optimus Prime","vendor":"Blokees","tags":["TRANSFORMERS"],
+{"title":"Optimus Prime","vendor":"Blokees","tags":["TRANSFORMERS"],"type":"Model Kit",
 "description":"<p>13cm, 8 años +</p>","images":["//cdn.shopify.com/figure.png"],
 "available":true,"variants":[
 {"id":123,"sku":"BLOK-71428","barcode":"810181537222","available":true,"price":2199000,"compare_at_price":null},
