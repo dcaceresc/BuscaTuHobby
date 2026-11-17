@@ -231,7 +231,7 @@ internal static class CatalogDiscoveryChecks
     {
         var scenario = Scenario(index: Index(ProductSitemap1),
             documents: new Dictionary<string, string> { [ProductSitemap1] = UrlSet(First, Second) });
-        var other = new StoreContext(Guid.NewGuid(), "Pasatime", Host, "json-ld", "CLP", 20, 500);
+        var other = new StoreContext(Guid.NewGuid(), "Koneko", Host, "html-selectors", "CLP", 20, 500);
 
         var result = await scenario.DiscoverAsync(other, new RequestBudget(20));
 

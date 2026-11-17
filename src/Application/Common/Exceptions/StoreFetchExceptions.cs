@@ -21,7 +21,12 @@ public sealed class StoreRateLimitException(string storeName, string? retryGuida
 
 // Resultado explícito del portal de robots: la ruta no se descarta en silencio ni se consulta igualmente.
 public sealed class StorePathDisallowedException(string storeName, string host, string path) : Exception(
-    $"robots.txt de {host} excluye {path}: no se consultó la ficha de {storeName}.");
+    $"robots.txt de {host} excluye {path}: no se consultó la ficha de {storeName}.")
+{
+    // La ruta queda disponible como dato para que quien registra el descarte no tenga que reconstruirla desde el
+    // texto del mensaje; con redirecciones, la ruta excluida puede no ser la que se había pedido al principio.
+    public string Path { get; } = path;
+}
 
 // Configuración ilegible o incoherente. Falla de forma explícita en vez de asumir moneda o presupuesto.
 public sealed class StoreConfigurationException(string message, Exception? innerException = null)

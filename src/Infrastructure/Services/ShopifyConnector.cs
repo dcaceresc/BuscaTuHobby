@@ -38,21 +38,24 @@ public sealed class ShopifyConnector(HttpClient client, RobotsTxtCache robots, D
     {
         ArgumentNullException.ThrowIfNull(store);
         var handle = ProductHandle(store, url);
-        var sourceUrl = $"https://{store.Host}/products/{handle}";
+        var sourceUrl = $"https://{store.RequestHost}/products/{handle}";
         var productPath = $"/products/{handle}.js";
 
         // El portal de robots se consulta antes que la ficha: una ruta excluida no llega a pedirse.
-        var policy = await _robots.GetAsync(store.Host, cancellationToken);
+        var policy = await _robots.GetAsync(store.RequestHost, cancellationToken);
         if (!policy.Allows(productPath))
             throw new StorePathDisallowedException(store.StoreName, store.Host, productPath);
 
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         timeout.CancelAfter(RequestTimeout);
         var token = timeout.Token;
-        using var response = await _limiter.SendAsync(store.Host, attempt => SendAsync(sourceUrl + ".js", attempt), token);
+        // Las redirecciones se siguen a mano y con tope: el transporte no las sigue para que robots.txt y el limitador
+        // del host no se salten, y el seguidor vuelve a exigir host, forma de ficha y robots en cada salto.
+        using var response = await StoreRedirectFollower.SendAsync(store, sourceUrl + ".js", policy,
+            (current, hopToken) => _limiter.SendAsync(store.Host, attempt => SendAsync(current, attempt), hopToken),
+            target => ProductSheetUrl.IsSheetRead(store, target), token);
         if (response.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
-            throw new StoreRateLimitException(store.StoreName, RetryGuidance(response));
-        // El transporte registrado desactiva las redirecciones. También se rechazan en los transportes personalizados.
+            throw new StoreRateLimitException(store.StoreName, StoreRetryGuidance.From(response));
         response.EnsureSuccessStatusCode();
         if (response.Content.Headers.ContentLength > MaximumBytes)
             throw new InvalidDataException("La respuesta supera el límite permitido.");
@@ -122,23 +125,6 @@ public sealed class ShopifyConnector(HttpClient client, RobotsTxtCache robots, D
     // La regla de producto vive en el dominio de la ingesta para que el descubrimiento no dependa del conector.
     private static string ProductHandle(StoreContext store, string url) =>
         ProductSheetUrl.TryGetHandle(store, url, out var handle) ? handle : throw StoreOfferUrlException.ForStore(store);
-
-    private static string? RetryGuidance(HttpResponseMessage response)
-    {
-        if (!response.Headers.TryGetValues("Retry-After", out var values)) return null;
-        var headers = values.ToArray();
-        if (headers.Length != 1 || !System.Net.Http.Headers.RetryConditionHeaderValue.TryParse(
-                headers[0], out var retryAfter)) return null;
-
-        if (retryAfter.Delta is { } delta && delta >= TimeSpan.Zero &&
-            delta.TotalSeconds <= int.MaxValue)
-            return $"Espera al menos {delta.TotalSeconds.ToString("0", CultureInfo.InvariantCulture)} segundos antes de reintentar manualmente.";
-        if (retryAfter.Date is { } date && date > DateTimeOffset.UtcNow)
-            return "No vuelvas a consultar antes de " +
-                date.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture) +
-                " UTC; reintenta manualmente.";
-        return null;
-    }
 
     private static decimal Price(JsonElement value)
     {

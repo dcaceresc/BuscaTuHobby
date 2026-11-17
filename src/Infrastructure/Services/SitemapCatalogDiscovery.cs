@@ -1,13 +1,15 @@
 using System.Text;
 using System.Xml;
 using System.Xml.Linq;
+using Application.Common.Exceptions;
 using Application.Common.Ingestion;
 
 namespace Infrastructure.Services;
 
-// Recorrido del catálogo por el sitemap que publica la tienda (familia Shopify: índice sitemap.xml → sitemaps de
-// producto sitemap_products_* → URL de ficha). No adivina rutas, no sale del host configurado y cada petición pasa
-// por el mismo limitador y el mismo portal de robots que la lectura de una ficha.
+// Recorrido del catálogo por el sitemap que publica la tienda (índice sitemap.xml → sitemaps de producto → URL de
+// ficha). Cada plataforma nombra sus documentos: Shopify publica sitemap_products_* y las tiendas con JSON-LD publican
+// product-sitemap1.xml o similares. No adivina rutas, no sale del host configurado y cada petición pasa por el mismo
+// limitador y el mismo portal de robots que la lectura de una ficha.
 public sealed class SitemapCatalogDiscovery(HttpClient client, RobotsTxtCache robots, DomainRequestLimiter limiter)
     : ICatalogDiscovery
 {
@@ -28,8 +30,8 @@ public sealed class SitemapCatalogDiscovery(HttpClient client, RobotsTxtCache ro
         ArgumentNullException.ThrowIfNull(store);
         ArgumentNullException.ThrowIfNull(budget);
 
-        var policy = await _robots.GetAsync(store.Host, cancellationToken);
-        var indexUrl = $"https://{store.Host}{SitemapPath}";
+        var policy = await _robots.GetAsync(store.RequestHost, cancellationToken);
+        var indexUrl = $"https://{store.RequestHost}{SitemapPath}";
         var catalogSkipped = new List<CatalogSkip>();
         var productSkipped = new List<CatalogSkip>();
         var urls = new List<string>();
@@ -48,7 +50,7 @@ public sealed class SitemapCatalogDiscovery(HttpClient client, RobotsTxtCache ro
             {
                 if (exhausted) return;
                 if (!seen.Add(candidate)) continue;
-                if (!ProductSheetUrl.TryGetHandle(store, candidate, out _))
+                if (!ProductSheetUrl.IsProductSheet(store, candidate))
                 {
                     productSkipped.Add(new CatalogSkip(candidate, CatalogSkipReason.NotProductUrl));
                     continue;
@@ -84,7 +86,7 @@ public sealed class SitemapCatalogDiscovery(HttpClient client, RobotsTxtCache ro
             return Result();
         }
 
-        var index = await TryReadAsync(store.Host, indexUrl, catalogSkipped, cancellationToken);
+        var index = await TryReadAsync(store, indexUrl, policy, budget, catalogSkipped, cancellationToken);
         if (index is not null)
         {
             if (!IsIndex(index))
@@ -121,7 +123,7 @@ public sealed class SitemapCatalogDiscovery(HttpClient client, RobotsTxtCache ro
                     }
 
                     budget.TryConsume();
-                    var document = await TryReadAsync(store.Host, location, catalogSkipped, cancellationToken);
+                    var document = await TryReadAsync(store, location, policy, budget, catalogSkipped, cancellationToken);
                     if (document is null) continue;
                     Enqueue(location, Locations(document));
                 }
@@ -134,14 +136,26 @@ public sealed class SitemapCatalogDiscovery(HttpClient client, RobotsTxtCache ro
             new(urls, catalogSkipped, productSkipped, discovered, budget.Consumed);
     }
 
-    private async Task<XDocument?> TryReadAsync(
-        string host, string url, List<CatalogSkip> skipped, CancellationToken cancellationToken)
+    private async Task<XDocument?> TryReadAsync(StoreContext store, string url, RobotsTxtPolicy policy,
+        RequestBudget budget, List<CatalogSkip> skipped, CancellationToken cancellationToken)
     {
         using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
         timeout.CancelAfter(RequestTimeout);
         try
         {
-            using var response = await _limiter.SendAsync(host, attempt => SendAsync(url, attempt), timeout.Token);
+            // La primera petición del documento ya la pagó el llamador al decidir leerlo; cada salto de redirección
+            // paga la suya con el mismo presupuesto y pasa por el mismo limitador, así que una redirección no es una
+            // petición gratis ni una petición concurrente contra el mismo host.
+            var first = true;
+            async Task<HttpResponseMessage> SendOneAsync(string current, CancellationToken token)
+            {
+                if (!first && !budget.TryConsume()) throw new BudgetExhaustedException();
+                first = false;
+                return await _limiter.SendAsync(store.Host, attempt => SendAsync(current, attempt), token);
+            }
+
+            using var response = await StoreRedirectFollower.SendAsync(
+                store, url, policy, SendOneAsync, isSheetTarget: null, timeout.Token);
             if (!response.IsSuccessStatusCode || response.Content.Headers.ContentLength > MaximumBytes)
             {
                 skipped.Add(new CatalogSkip(url, CatalogSkipReason.SitemapUnavailable));
@@ -150,14 +164,33 @@ public sealed class SitemapCatalogDiscovery(HttpClient client, RobotsTxtCache ro
 
             return XDocument.Parse(await ReadAsync(response, timeout.Token));
         }
+        catch (BudgetExhaustedException)
+        {
+            // Un salto que el presupuesto no puede pagar detiene la lectura del documento sin superar el tope.
+            skipped.Add(new CatalogSkip(url, CatalogSkipReason.BudgetExhausted));
+            return null;
+        }
+        catch (StorePathDisallowedException exception)
+        {
+            // robots.txt excluyó la ruta del destino: se registra la ruta nueva, que es la que no se consultó.
+            skipped.Add(new CatalogSkip(
+                $"https://{store.RequestHost}{exception.Path}", CatalogSkipReason.RobotsDisallowed));
+            return null;
+        }
         catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException
-            or XmlException or InvalidDataException)
+            or XmlException or InvalidDataException or StoreRedirectException)
         {
             // La cancelación del llamador no es un sitemap ilegible: se propaga tal cual.
             cancellationToken.ThrowIfCancellationRequested();
             skipped.Add(new CatalogSkip(url, CatalogSkipReason.SitemapUnavailable));
             return null;
         }
+    }
+
+    // Una redirección que el presupuesto no alcanza a pagar no es un fallo de la tienda: es el final previsto de una
+    // ejecución acotada, y se distingue para registrarlo con su motivo.
+    private sealed class BudgetExhaustedException : Exception
+    {
     }
 
     private async Task<HttpResponseMessage> SendAsync(string url, CancellationToken cancellationToken)
@@ -193,13 +226,17 @@ public sealed class SitemapCatalogDiscovery(HttpClient client, RobotsTxtCache ro
         .Where(value => value.Length > 0)
         .ToList();
 
-    // Sólo se siguen los sitemaps de producto del propio host: un índice puede listar otro dominio y el recorrido
-    // nunca debe salir de la tienda configurada.
+    // Sólo se siguen los documentos de producto del propio host: un índice puede listar otro dominio y el recorrido
+    // nunca debe salir de la tienda configurada. El nombre del documento es lo que dice si es de productos.
     private static bool IsProductSitemap(StoreContext store, string url) =>
         Uri.TryCreate(url, UriKind.Absolute, out var uri) &&
         uri.Scheme == Uri.UriSchemeHttps && uri.IsDefaultPort && uri.UserInfo.Length == 0 &&
         string.Equals(StoreContext.NormalizeHost(uri.Host), store.Host, StringComparison.Ordinal) &&
-        uri.AbsolutePath.Contains(ProductSitemapMarker, StringComparison.Ordinal);
+        (ProductSheetUrl.IsJsonLdStore(store)
+            ? DocumentName(uri).Contains("product", StringComparison.OrdinalIgnoreCase)
+            : uri.AbsolutePath.Contains(ProductSitemapMarker, StringComparison.Ordinal));
+
+    private static string DocumentName(Uri uri) => uri.AbsolutePath.TrimEnd('/').Split('/')[^1];
 
     // La URL ya se validó como ficha de producto, así que la ruta normalizada coincide con la que se escribió.
     private static string PathOf(string url) => new Uri(url).AbsolutePath;

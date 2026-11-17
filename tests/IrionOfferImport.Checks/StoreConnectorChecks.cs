@@ -1,3 +1,4 @@
+using System.Net;
 using Application.Common.Exceptions;
 using Application.Common.Ingestion;
 using Application.Common.Interfaces;
@@ -31,6 +32,41 @@ internal static class StoreConnectorChecks
         SettingsContract(check);
         await LoaderContract(check);
         DiContract(check);
+        await JsonLdManualImport(check);
+    }
+
+    // La importación manual no cambia para una tienda con JSON-LD: resuelve la tienda por el host de la URL, elige el
+    // conector por la clave de la fila y publica el mismo DTO de vista previa que ya existía.
+    private static async Task JsonLdManualImport(Action<bool, string> check)
+    {
+        const string url = "https://pasatime.cl/producto/tamiya-40mm-cinta-de-enmascarar-azul/";
+        var store = new StoreContext(Guid.NewGuid(), "Pasatime", "pasatime.cl",
+            ProductSheetUrl.JsonLdConnectorKey, "CLP", 20, 500);
+        var transport = new JsonLdTransport();
+        var http = new HttpClient(transport);
+        var limiter = new DomainRequestLimiter((_, _) => Task.CompletedTask);
+        var connector = new JsonLdConnector(http, new RobotsTxtCache(http, limiter), limiter);
+        var handler = new PreviewIrionProductHandler(
+            new StoreProductLoader(new RecordingProvider(store), [connector]), new ApiResponseService());
+
+        var preview = await handler.Handle(new PreviewIrionProduct(url + "?utm=1#foto"), default);
+        check(preview.Success && preview.Message is null && preview.Data is not null,
+            "The manual import path works unchanged for a JSON-LD store");
+        check(preview.Data?.SourceUrl == url && preview.Data.Title == "Tamiya 40mm Cinta de Enmascarar (Azul)" &&
+            preview.Data.Vendor == "Tamiya" && preview.Data.Currency == "CLP" && preview.Data.Available,
+            "The preview keeps the published identity, currency and availability of the store row");
+        check(preview.Data?.Variants.Single() is
+                { Sku: "TAM87240", Barcode: "4950344872404", Price: 6390m, Available: true },
+            "The preview exposes the sku, the gtin13 and the localised price in the existing DTO");
+        check(transport.Uris.SequenceEqual(new[] { "https://pasatime.cl/robots.txt", url }),
+            "The manual preview fetches robots first and the canonical sheet without the query: " +
+            string.Join(", ", transport.Uris));
+
+        var invalid = await handler.Handle(new PreviewIrionProduct("https://pasatime.cl/"), default);
+        check(!invalid.Success && invalid.Data is null &&
+            invalid.Message == "Introduce una URL válida de Pasatime: https://pasatime.cl/ruta-del-producto",
+            "A URL that is not a sheet of the store explains the accepted shape for that platform");
+        check(transport.Uris.Count == 2, "A refused URL of the store never reaches the network");
     }
 
     private static void EntityContract(Action<bool, string> check)
@@ -211,8 +247,8 @@ internal static class StoreConnectorChecks
 
         using var provider = services.BuildServiceProvider();
         var connectors = provider.GetServices<IStoreConnector>().ToArray();
-        check(connectors.Length == 1 && connectors[0].Key == "shopify",
-            "The composition registers one Shopify connector shared by every configured store");
+        check(connectors.Length == 2 && connectors[0].Key == "shopify" && connectors[1].Key == "json-ld",
+            "The composition registers one connector per platform, and a store picks by the key of its row");
         using var scope = provider.CreateScope();
         check(scope.ServiceProvider.GetRequiredService<IStoreProductLoader>() is not null &&
             scope.ServiceProvider.GetRequiredService<IStoreContextProvider>() is not null,
@@ -287,6 +323,34 @@ internal static class StoreConnectorChecks
 
         public Task<IReadOnlyList<StoreContext>> ListActiveAsync(CancellationToken cancellationToken) =>
             Task.FromResult<IReadOnlyList<StoreContext>>(stores);
+    }
+
+    private sealed class JsonLdTransport : HttpMessageHandler
+    {
+        // Ficha con la forma real de pasatime: SKU, GTIN, marca y precio localizado en un bloque ld+json.
+        private const string Page = """
+            <!doctype html><html><head><script type="application/ld+json">
+            {"@context":"https://schema.org","@type":"Product",
+            "name":"Tamiya 40mm Cinta de Enmascarar (Azul)","sku":"TAM87240","gtin13":"4950344872404",
+            "brand":{"@type":"Brand","name":"Tamiya"},
+            "offers":{"@type":"Offer","price":"6390 CLP","priceCurrency":"CLP",
+            "availability":"https://schema.org/InStock"}}
+            </script></head><body>Tamiya</body></html>
+            """;
+
+        public List<string> Uris { get; } = [];
+
+        protected override Task<HttpResponseMessage> SendAsync(
+            HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            Uris.Add(request.RequestUri!.AbsoluteUri);
+            var response = request.RequestUri.AbsolutePath == "/robots.txt"
+                ? new HttpResponseMessage(HttpStatusCode.OK)
+                    { Content = new StringContent("User-agent: *\nDisallow: /admin\n") }
+                : new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(Page) };
+            return Task.FromResult(response);
+        }
     }
 
     private sealed class RecordingConnector(string key) : IStoreConnector

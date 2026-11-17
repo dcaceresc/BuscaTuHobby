@@ -56,6 +56,11 @@ public static class ConfigureServices
         services.AddHttpClient<IStoreConnector, ShopifyConnector>(client =>
             client.Timeout = TimeSpan.FromSeconds(15))
             .ConfigurePrimaryHttpMessageHandler(StoreTransport);
+        // Las tiendas que publican su ficha con JSON-LD usan un conector más, con el mismo limitador y el mismo portal
+        // de robots. La tienda elige por la clave de su fila, así que una tienda nueva sigue siendo una fila.
+        services.AddHttpClient<IStoreConnector, JsonLdConnector>(client =>
+            client.Timeout = TimeSpan.FromSeconds(15))
+            .ConfigurePrimaryHttpMessageHandler(StoreTransport);
 
         // El descubrimiento usa el mismo limitador y el mismo portal de robots que la lectura de fichas: así una
         // ejecución no duplica la política de cortesía ni puede saltarse robots.txt por ir por otro cliente.

@@ -77,6 +77,11 @@ public sealed class StoreContextProvider(IApplicationDbContext context) : IStore
     {
         var settings = StoreConnectorSettings.Parse(store.ConnectorSettings, store.StoreName);
         return new StoreContext(store.StoreId, store.StoreName, host, store.ConnectorKey!, settings.Currency,
-            settings.RequestsPerMinute, settings.RequestBudget);
+            settings.RequestsPerMinute, settings.RequestBudget)
+        {
+            // Se pide con el host tal como lo declara la fila: una tienda que publica con "www" responde 301 al host
+            // normalizado y el transporte no sigue redirecciones a propósito, así que la ficha se perdería.
+            RequestHost = Uri.TryCreate(store.StoreWebSite, UriKind.Absolute, out var site) ? site.Host : host
+        };
     }
 }

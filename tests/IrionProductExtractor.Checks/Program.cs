@@ -132,7 +132,7 @@ foreach (var (candidate, accepted) in new[]
 
 // La plataforma de la fila forma parte de la regla: una tienda cuyo conector no declara forma de ficha no acepta
 // ninguna URL, en vez de colar la forma de otra plataforma.
-var otherPlatform = new StoreContext(Guid.NewGuid(), "Pasatime", "irion.cl", "json-ld", "CLP", 20, 50);
+var otherPlatform = new StoreContext(Guid.NewGuid(), "Koneko", "irion.cl", "html-selectors", "CLP", 20, 50);
 Check(!ProductSheetUrl.TryGetHandle(otherPlatform, irionUrl, out _),
     "A store whose platform declares no sheet shape accepts no URL");
 
@@ -219,13 +219,81 @@ foreach (var status in new[] { HttpStatusCode.BadRequest, HttpStatusCode.Unautho
         "A " + (int)status + " is not retried");
 }
 
-foreach (var status in new[] { HttpStatusCode.MovedPermanently, HttpStatusCode.Found, HttpStatusCode.SeeOther,
+// (f) Una redirección que no se puede seguir se rechaza con su motivo en español y sin segunda petición: el
+// transporte no las sigue por su cuenta y el seguidor no inventa el destino que falta.
+foreach (var status in new[] { HttpStatusCode.MovedPermanently, HttpStatusCode.Found,
     HttpStatusCode.TemporaryRedirect, HttpStatusCode.PermanentRedirect })
 {
     var redirect = new Scenario(permissiveRobots, Always(status, null));
-    await RejectAsync(() => redirect.Connector.LoadProductAsync(irion, irionUrl, default), null);
-    Check(redirect.Transport.ProductCalls == 1, "Redirections are never followed: " + (int)status);
+    await RejectAsync(() => redirect.Connector.LoadProductAsync(irion, irionUrl, default),
+        "La tienda respondió una redirección sin destino utilizable y la lectura de irion.cl se detuvo.");
+    Check(redirect.Transport.ProductCalls == 1,
+        "A redirection without a destination is refused without a second request: " + (int)status);
 }
+
+var seeOther = new Scenario(permissiveRobots, Always(HttpStatusCode.SeeOther, null));
+await RejectAsync(() => seeOther.Connector.LoadProductAsync(irion, irionUrl, default),
+    "La tienda respondió 303, que no es una redirección que la ingesta siga (301, 302, 307 o 308): la lectura de irion.cl se detuvo.");
+Check(seeOther.Transport.ProductCalls == 1, "A 303 is refused instead of becoming another unvalidated read");
+
+// (a) El 301 del host con y sin "www" —el que hoy devuelven las tiendas chilenas al pedirles el host canónico— se
+// sigue sobre https, y lo que el conector devuelve no cambia: la ficha se lee igual y su origen sigue siendo la URL
+// pedida.
+const string sheetUrl = irionUrl + ".js";
+const string hostedSheet = "https://www.irion.cl/products/optimus-prime.js";
+var hostRedirect = new Scenario(permissiveRobots, request => request.RequestUri!.AbsoluteUri == sheetUrl
+    ? Redirect(HttpStatusCode.MovedPermanently, hostedSheet)
+    : Fixtures.Product());
+var followedPreview = await hostRedirect.Connector.LoadProductAsync(irion, irionUrl, default);
+Check(followedPreview.SourceUrl == irionUrl && followedPreview.Title == "Optimus Prime" &&
+    followedPreview.Variants[0].Price == 21990m && followedPreview.Currency == "CLP",
+    "A 301 to the same host over https is followed and the sheet is read with the same result");
+Check(hostRedirect.Transport.Uris.SequenceEqual(new[] { "https://irion.cl/robots.txt", sheetUrl, hostedSheet }),
+    "The followed hop is exactly one more request against the store host: " +
+    string.Join(", ", hostRedirect.Transport.Uris));
+Check(hostRedirect.Transport.MaxConcurrency == 1,
+    "A hop counts as a request and stays one at a time per store host");
+
+// (b) Salir de la tienda no se sigue, y el motivo dice cuál fue el destino real.
+const string foreignSheet = "https://evil.test/products/optimus-prime.js";
+var foreignRedirect = new Scenario(permissiveRobots,
+    _ => Redirect(HttpStatusCode.MovedPermanently, foreignSheet));
+await RejectAsync(() => foreignRedirect.Connector.LoadProductAsync(irion, irionUrl, default),
+    $"La tienda redirigió la lectura fuera de irion.cl ({foreignSheet}) y sólo se siguen redirecciones del mismo host.");
+Check(foreignRedirect.Transport.ProductCalls == 1,
+    "A 301 to another host is refused without a second request");
+
+// (c) Bajar de https a http tampoco: la lectura dejaría de viajar cifrada.
+const string insecureSheet = "http://irion.cl/products/optimus-prime.js";
+var insecureRedirect = new Scenario(permissiveRobots, _ => Redirect(HttpStatusCode.Found, insecureSheet));
+await RejectAsync(() => insecureRedirect.Connector.LoadProductAsync(irion, irionUrl, default),
+    $"La tienda redirigió la lectura a una dirección sin https ({insecureSheet}) y sólo se siguen redirecciones https.");
+Check(insecureRedirect.Transport.ProductCalls == 1,
+    "A 302 to http is refused without a second request");
+
+// (d) Dos saltos se siguen; el tercero se rechaza y nunca se pide.
+const string firstHop = "https://www.irion.cl/products/optimus-prime.js";
+const string secondHop = "https://irion.cl/products/optimus-prime-v2.js";
+const string thirdHop = "https://www.irion.cl/products/optimus-prime-v3.js";
+var chain = new Scenario(permissiveRobots, request => request.RequestUri!.AbsoluteUri switch
+{
+    sheetUrl => Redirect(HttpStatusCode.MovedPermanently, firstHop),
+    firstHop => Redirect(HttpStatusCode.TemporaryRedirect, secondHop),
+    _ => Redirect(HttpStatusCode.PermanentRedirect, thirdHop)
+});
+await RejectAsync(() => chain.Connector.LoadProductAsync(irion, irionUrl, default),
+    "La tienda encadenó más de 2 redirecciones para la misma lectura y la ingesta se detuvo para no entrar en un bucle.");
+Check(chain.Transport.ProductCalls == 3 && !chain.Transport.Uris.Contains(thirdHop),
+    "Two hops are followed and the third is refused without a request: " + chain.Transport.ProductCalls);
+
+// La regla de la ficha vale también para el destino: una redirección dentro del host no puede convertir la ficha en
+// otra ruta que el conector no sabe leer.
+const string offSheet = "https://irion.cl/admin.js";
+var offSheetRedirect = new Scenario(permissiveRobots, _ => Redirect(HttpStatusCode.MovedPermanently, offSheet));
+await RejectAsync(() => offSheetRedirect.Connector.LoadProductAsync(irion, irionUrl, default),
+    $"La tienda redirigió la ficha de Irion a una ruta que no es una ficha de producto ({offSheet}) y la ingesta no la sigue.");
+Check(offSheetRedirect.Transport.ProductCalls == 1,
+    "A redirect that leaves the sheet shape is refused without a second request");
 
 foreach (var body in new[] { "not json", "{}", "[]", fixture.Replace("2199000", "-100"),
     fixture.Replace("\"available\":true", "\"available\":null"), fixture.Replace("\"variants\":[", "\"variants\":[] ,\"unused\":[") })
@@ -248,6 +316,14 @@ Check(cancelledScenario.Transport.Uris.Count == 0, "A cancelled call does not re
 
 // Descubrimiento por sitemap: orden determinista, presupuesto respetado y descartes registrados.
 await CatalogDiscoveryChecks.Run(Check);
+
+// Decisión pura del salto de redirección y forma de la lectura de ficha: la regla que comparten el descubrimiento y
+// los dos conectores, comprobada sin red y sin transporte.
+RedirectChecks.Run(Check);
+
+// Conector JSON-LD: fichas con la forma real de las tiendas chilenas, negativa explícita sin producto, forma de URL
+// declarada por la plataforma y descubrimiento desde el sitemap de la propia tienda.
+await JsonLdConnectorChecks.Run(Check);
 
 // La ruta existente del mantenedor conserva sus mensajes exactos y su envoltura.
 var handlerScenario = new Scenario(permissiveRobots);
@@ -338,6 +414,15 @@ static Func<HttpRequestMessage, HttpResponseMessage> Always(HttpStatusCode statu
         return response;
     };
 
+// Respuesta de redirección con el destino que declara la tienda; el doble de transporte no la sigue por su cuenta,
+// igual que el transporte real.
+static HttpResponseMessage Redirect(HttpStatusCode status, string location)
+{
+    var response = new HttpResponseMessage(status);
+    response.Headers.Location = new Uri(location, UriKind.RelativeOrAbsolute);
+    return response;
+}
+
 static Func<HttpRequestMessage, HttpResponseMessage> RetryThenOk(HttpStatusCode status, string? retryAfter)
 {
     var attempts = 0;
@@ -362,8 +447,9 @@ async Task RejectAsync(Func<Task<IrionProductPreviewDto>> action, string? messag
         await action();
     }
     catch (Exception exception) when (exception is StoreOfferUrlException or StoreRateLimitException
-        or StorePathDisallowedException or StoreConfigurationException or HttpRequestException
-        or InvalidDataException or System.Text.Json.JsonException or OperationCanceledException)
+        or StorePathDisallowedException or StoreConfigurationException or StoreRedirectException
+        or HttpRequestException or InvalidDataException or System.Text.Json.JsonException
+        or OperationCanceledException)
     {
         if (message is not null && exception.Message != message)
             throw new Exception($"Unexpected message: {exception.Message}");

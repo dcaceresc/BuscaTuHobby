@@ -67,21 +67,61 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
 
         // Catálogo y contenido inventados: solo cuando se piden con Seed:DemoData. Con ofertas reales ingeridas, sembrar
         // demo volvería a mezclar lo inventado con lo que publican las tiendas, que es justo lo que hay que evitar.
-        if (!DemoDataEnabled)
+        if (DemoDataEnabled)
         {
-            await _context.SaveChangesAsync();
-            return;
+            await SeedPostTypesAndPostsAsync();
+            await SeedProductsAsync();
+            await SeedCategoriesAsync();
         }
 
-        await SeedPostTypesAndPostsAsync();
-        await SeedProductsAsync();
-        await SeedCategoriesAsync();
+        // Tiendas con ingesta automática: son configuración, nunca catálogo, así que se siembran también sin datos de
+        // demostración. Sin la fila configurada el host de la tienda no se resuelve y la ejecución programada no tiene
+        // a quién leer; sembrar una tienda no publica ninguna oferta. Va después de la demo para que las tiendas de
+        // demostración conserven su orden y las reales tomen el primero libre.
+        await SeedIngestionStoresAsync();
 
         await _context.SaveChangesAsync();
     }
 
     // Se lee como texto y no con GetValue para no arrastrar el paquete Binder a Infrastructure.
     private bool DemoDataEnabled => bool.TryParse(_configuration["Seed:DemoData"], out var enabled) && enabled;
+
+    // Fuentes de ingesta: host, nombre y clave de conector de cada tienda configurada. Las de JSON-LD publican su ficha
+    // en la ruta que quieren (por eso la clave no fija una forma de URL) y todas cobran en CLP. Una fila existente no se
+    // toca: la configuración que alguien editó manda sobre la del sembrador, y el orden libre se busca para no chocar
+    // con la restricción única de StoreOrder.
+    private async Task SeedIngestionStoresAsync()
+    {
+        var sources = new (string Name, string WebSite, string Slug, string ConnectorKey)[]
+        {
+            ("Irion", "https://irion.cl", "irion", "shopify"),
+            ("LuffyToys", "https://luffytoys.cl", "luffytoys", "shopify"),
+            ("Pasatime", "https://pasatime.cl", "pasatime", "json-ld"),
+            ("Svader Coleccionables", "https://svadercoleccionables.cl", "svadercoleccionables", "json-ld"),
+            ("Otakuverso", "https://otakuverso.cl", "otakuverso", "json-ld"),
+            ("Titoys", "https://titoys.cl", "titoys", "json-ld")
+        };
+
+        var existing = await _context.Stores.AsNoTracking()
+            .Select(store => new { store.StoreSlug, store.StoreOrder })
+            .ToListAsync();
+        var slugs = existing.Select(store => store.StoreSlug).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var orders = existing.Select(store => store.StoreOrder).ToHashSet();
+        var nextOrder = 1;
+        var added = false;
+        foreach (var source in sources)
+        {
+            if (!slugs.Add(source.Slug)) continue;
+            while (orders.Contains(nextOrder)) nextOrder++;
+            var store = Store.Create(source.Name, source.WebSite, "bi bi-shop", nextOrder, source.Slug);
+            store.ConfigureConnector(source.ConnectorKey, "{\"currency\":\"CLP\"}");
+            orders.Add(nextOrder);
+            await _context.Stores.AddAsync(store);
+            added = true;
+        }
+
+        if (added) await _context.SaveChangesAsync();
+    }
 
     private async Task SeedRoleAsync(string roleName)
     {
@@ -180,7 +220,8 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         await _context.Franchises.AddRangeAsync(gundam, marvel, starWars, dragonBall);
         await _context.SaveChangesAsync();
 
-        // Tiendas
+        // Tiendas de demostración. Las tiendas reales con ingesta configurada no viven aquí: las siembra
+        // SeedIngestionStoresAsync con o sin datos de demostración.
         var amazon = Store.Create("Amazon", "https://www.amazon.com", "bi bi-shop", 1, "amazon");
         var mercadoLibre = Store.Create("MercadoLibre", "https://www.mercadolibre.cl", "bi bi-shop", 2, "mercadolibre");
         var linio = Store.Create("Linio", "https://www.linio.cl", "bi bi-shop", 3, "linio");
@@ -188,15 +229,7 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         var ripley = Store.Create("Ripley", "https://www.ripley.cl", "bi bi-shop", 5, "ripley");
         var paris = Store.Create("Paris", "https://www.paris.cl", "bi bi-shop", 6, "paris");
 
-        // Dos tiendas reales y chilenas quedan configuradas para la ingesta: son configuración, no catálogo, así que
-        // no mezclan datos inventados con ofertas reales. Sin una fila configurada la importación manual no puede
-        // resolver el host y responde que la URL no corresponde a ninguna tienda.
-        var irion = Store.Create("Irion", "https://irion.cl", "bi bi-shop", 7, "irion");
-        irion.ConfigureConnector("shopify", "{\"currency\":\"CLP\"}");
-        var luffyToys = Store.Create("LuffyToys", "https://luffytoys.cl", "bi bi-shop", 8, "luffytoys");
-        luffyToys.ConfigureConnector("shopify", "{\"currency\":\"CLP\"}");
-
-        await _context.Stores.AddRangeAsync(amazon, mercadoLibre, linio, falabella, ripley, paris, irion, luffyToys);
+        await _context.Stores.AddRangeAsync(amazon, mercadoLibre, linio, falabella, ripley, paris);
         await _context.SaveChangesAsync();
 
         // Productos. Grado, escala y número de parte completan la ficha Gunpla: el único kit del catálogo de demo

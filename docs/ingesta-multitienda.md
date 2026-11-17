@@ -56,8 +56,8 @@ no es solo de Gunpla, así que la lista cubre figuras, coleccionables y modelism
 | `friitoys.cl` | figuras y coleccionables | 200 | **Shopify** | 4 sitemaps de producto; el primero con **392 URLs**, 0 con Gunpla | `shopify` |
 | `animestore.cl` | anime y figuras | 200 | **Shopify** | 1 sitemap de producto | `shopify` |
 | `wyvern.cl` | figuras | 200 | **Shopify** | 1 sitemap de producto | `shopify` |
-| `blasterchile.cl` | coleccionables | 200 | **Shopify** | `sitemap.xml` responde 301 (redirección de host), hay que resolver el destino | `shopify` tras normalizar host |
-| `pasatime.cl` | "Modelismo, Gunpla, Maquetas y Hobby en Chile" | 200 | propia | `sitemap.xml` responde 301; la portada trae ld+json | `json-ld` tras resolver host |
+| `blasterchile.cl` | coleccionables | 200 | **Shopify** | `sitemap.xml` responde 301 (redirección de host); el seguidor acotado del slice T3 resuelve como mucho dos saltos del mismo host | `shopify` |
+| `pasatime.cl` | "Modelismo, Gunpla, Maquetas y Hobby en Chile" | 200 | propia | `sitemap.xml` → 301 → `sitemap_index.xml` con `product-sitemap1.xml` (**2001 fichas**) y `product-sitemap2.xml` (268); sus fichas publican `Product` con `sku`, `gtin13`, marca y precio | `json-ld` |
 | `svadercoleccionables.cl` | coleccionables | 200 | propia | portada con ld+json, 143 KB | `json-ld` |
 | `otakuverso.cl` | figuras y merchandising | 200 | propia | portada con ld+json, 478 KB | `json-ld` |
 | `titoys.cl` | coleccionables con licencia | 200 | propia | portada con ld+json | `json-ld` |
