@@ -1,0 +1,110 @@
+<div class="container-fluid">
+    <div class="row mb-4 mt-2">
+        <div class="col-lg-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2 class="mb-1 text-primary"><i class="bi bi-cloud-download me-2"></i>Ingesta de tiendas</h2>
+                        <p class="text-muted mb-0">Dispara una ingesta y revisa la cobertura y la frescura de cada tienda configurada</p>
+                    </div>
+                    <button type="button" class="btn bg-primary text-white" [disabled]="loading()" (click)="loadStatus()">
+                        <i class="bi bi-arrow-clockwise me-2"></i>Actualizar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-cloud-download me-2"></i>Tiendas configuradas</h5>
+                </div>
+                <div class="card-body">
+                    @if (loading()) {
+                        <p class="text-muted mb-0">Cargando el estado de la ingesta...</p>
+                    } @else if (error()) {
+                        <div class="alert alert-warning mb-0" role="alert">{{ error() }}</div>
+                    } @else if (stores().length === 0) {
+                        <p class="text-muted mb-0">
+                            No hay tiendas con ingesta configurada. Configura el conector de una tienda para poder ejecutarla.
+                        </p>
+                    } @else {
+                        @if (runError()) {
+                            <div class="alert alert-warning" role="alert">{{ runError() }}</div>
+                        }
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle ingestion-table">
+                                <thead>
+                                    <tr>
+                                        <th>Tienda</th>
+                                        <th>Conector</th>
+                                        <th>Cobertura</th>
+                                        <th>Frescura</th>
+                                        <th>Última ejecución</th>
+                                        <th>Presupuesto</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (store of stores(); track store.storeId) {
+                                        <tr>
+                                            <td>
+                                                <span class="fw-semibold d-block">{{ store.storeName }}</span>
+                                                <span class="text-muted small">{{ store.storeSlug }}</span>
+                                                @if (!store.isActive) {
+                                                    <span class="badge bg-secondary ms-1">Cerrada</span>
+                                                }
+                                            </td>
+                                            <td>{{ store.connectorKey || 'Sin conector' }}</td>
+                                            <td>
+                                                <span class="fw-semibold">{{ store.coveragePercentage }}%</span>
+                                                <span class="text-muted small d-block">{{ store.coveredProducts }} de {{ store.totalProducts }} productos</span>
+                                            </td>
+                                            <td class="small">
+                                                <span class="d-block">Últimas 24 h: {{ store.offersObservedLast24Hours }}</span>
+                                                <span class="d-block text-muted">Más de 7 días: {{ store.offersOlderThanSevenDays }}</span>
+                                            </td>
+                                            <td class="small">
+                                                @if (currentRun(store); as lastRun) {
+                                                    <span class="d-block fw-semibold">{{ statusLabel(lastRun.status) }}</span>
+                                                    <span class="d-block">{{ formatRunDate(lastRun.startedAtUtc) }}</span>
+                                                    <span class="d-block text-muted">
+                                                        Descubiertas {{ lastRun.discoveredCount }} · Guardadas {{ lastRun.storedCount }} ·
+                                                        Omitidas {{ lastRun.skippedCount }} · Fallidas {{ lastRun.failedCount }}
+                                                    </span>
+                                                } @else {
+                                                    <span class="text-muted">Sin ejecuciones</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                <input type="number" class="form-control form-control-sm budget-input" min="1" step="1"
+                                                       placeholder="Presupuesto"
+                                                       [attr.aria-label]="'Presupuesto de peticiones para ' + store.storeName"
+                                                       [value]="budget(store.storeSlug)"
+                                                       [disabled]="isRunning(store.storeSlug)"
+                                                       (input)="onBudget(store.storeSlug, $event)">
+                                                <span class="text-muted small d-block">Vacío usa el de la tienda</span>
+                                            </td>
+                                            <td class="text-nowrap">
+                                                @if (isOpen(store)) {
+                                                    <span class="badge bg-secondary"><i class="bi bi-hourglass-split me-1"></i>Ejecución en curso</span>
+                                                } @else {
+                                                    <button type="button" class="btn btn-sm bg-primary text-white"
+                                                            [disabled]="isRunning(store.storeSlug)" (click)="run(store)">
+                                                        <i class="bi bi-play-fill me-1"></i>Ejecutar ahora
+                                                    </button>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

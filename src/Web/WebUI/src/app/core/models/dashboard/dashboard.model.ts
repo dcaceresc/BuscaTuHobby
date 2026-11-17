@@ -38,6 +38,21 @@ export interface BestDealDto{
     productViewCount: number;
 }
 
+// Una bajada de precio compara los dos últimos puntos de historial de una oferta: no hay punto anterior, no hay bajada.
+export interface PriceDropDto{
+    inventoryId: string;
+    productId: string;
+    productName: string;
+    storeName: string;
+    storeSlug: string;
+    sourceUrl: string | null;
+    currentPrice: number;
+    previousPrice: number;
+    dropPercentage: number;
+    observedAtUtc: string;
+    previousObservedAtUtc: string;
+}
+
 export interface PopularCategoryDto{
     categoryName: string;
     productCount: number;

@@ -28,6 +28,7 @@ export class AdministrationMenuComponent {
     { label: 'Vista previa de Irion', link: '/maintainer/irion-preview', icon: 'bi bi-eye' },
     { label: 'Fabricantes', link: '/maintainer/manufacturers', icon : 'bi bi-tools' },
     { label: 'Inventario', link: '/maintainer/inventories', icon : 'bi bi-box-seam' },
+    { label: 'Ingesta', link: '/maintainer/ingestion', icon : 'bi bi-cloud-download' },
     { label: 'Regiones', link: '/maintainer/regions', icon : 'bi bi-geo-alt' },
     { label: 'Series', link: '/maintainer/series', icon : 'bi bi-tags' },
     { label: 'Tiendas', link: '/maintainer/stores', icon : 'bi bi-building' },

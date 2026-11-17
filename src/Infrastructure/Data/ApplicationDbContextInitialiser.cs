@@ -1,4 +1,5 @@
-﻿using Application.Common.PriceHistory;
+﻿using Application.Common.Interfaces;
+using Application.Common.PriceHistory;
 using Domain.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -102,16 +103,22 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
             ("Titoys", "https://titoys.cl", "titoys", "json-ld")
         };
 
+        // La comprobación mira slug, nombre y host porque una tienda puede haber entrado por otra vía (una fila
+        // creada a mano, una sonda de verificación) con el slug distinto: sembrar solo por slug chocaba con el índice
+        // único de nombre y dejaba la aplicación sin arrancar.
         var existing = await _context.Stores.AsNoTracking()
-            .Select(store => new { store.StoreSlug, store.StoreOrder })
+            .Select(store => new { store.StoreSlug, store.StoreName, store.StoreWebSite, store.StoreOrder })
             .ToListAsync();
         var slugs = existing.Select(store => store.StoreSlug).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var names = existing.Select(store => store.StoreName).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var hosts = existing.Select(store => HostOf(store.StoreWebSite)).ToHashSet(StringComparer.OrdinalIgnoreCase);
         var orders = existing.Select(store => store.StoreOrder).ToHashSet();
         var nextOrder = 1;
         var added = false;
         foreach (var source in sources)
         {
             if (!slugs.Add(source.Slug)) continue;
+            if (names.Contains(source.Name) || hosts.Contains(HostOf(source.WebSite))) continue;
             while (orders.Contains(nextOrder)) nextOrder++;
             var store = Store.Create(source.Name, source.WebSite, "bi bi-shop", nextOrder, source.Slug);
             store.ConfigureConnector(source.ConnectorKey, "{\"currency\":\"CLP\"}");
@@ -122,6 +129,10 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
 
         if (added) await _context.SaveChangesAsync();
     }
+
+    // Mismo criterio que usa el contexto de tienda para comparar hosts: el prefijo "www." no distingue dos tiendas.
+    private static string HostOf(string? webSite) =>
+        Uri.TryCreate(webSite, UriKind.Absolute, out var site) ? StoreContext.NormalizeHost(site.Host) : string.Empty;
 
     private async Task SeedRoleAsync(string roleName)
     {

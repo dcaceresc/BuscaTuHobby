@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApiResponse } from '@app/core/models';
-import { MenuCategoryDto, MenuStoreDto, MostSearchedProductDto, RecentPostDto, BestDealDto, PopularCategoryDto, FeaturedStoreDto, RecentActivityDto, SearchProductDto, ProductDetailDto, ProductPriceHistoryDto, CategoryProductsDto, CategoryProductsQuery, StoreDetailDto } from '@app/core/models/dashboard/dashboard.model';
+import { MenuCategoryDto, MenuStoreDto, MostSearchedProductDto, RecentPostDto, BestDealDto, PriceDropDto, PopularCategoryDto, FeaturedStoreDto, RecentActivityDto, SearchProductDto, ProductDetailDto, ProductPriceHistoryDto, CategoryProductsDto, CategoryProductsQuery, StoreDetailDto } from '@app/core/models/dashboard/dashboard.model';
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +36,16 @@ export class DashboardService {
 
   public getBestDeals() {
     return this.http.get<ApiResponse<BestDealDto[]>>('api/dashboard/best-deals');
+  }
+
+  /**
+   * Bajadas de precio de la ventana pedida. Los parámetros viajan explícitos aunque coincidan con los valores por
+   * defecto de la API, igual que en la ruta de historial de precios.
+   */
+  public getPriceDrops(days = 30, minPercent = 10) {
+    return this.http.get<ApiResponse<PriceDropDto[]>>(
+      `api/dashboard/price-drops?days=${days}&minPercent=${minPercent}`
+    );
   }
 
   public getPopularCategories() {
