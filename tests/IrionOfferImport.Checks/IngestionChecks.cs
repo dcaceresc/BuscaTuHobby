@@ -494,8 +494,11 @@ internal static class IngestionChecks
         var products = fixture.Fake.Products.Count;
         var offers = fixture.Fake.Rows.Count;
         var history = fixture.Fake.Histories.Count;
-        check(firstResult.Stored == 2 && products == 2 && offers == 2 && history == 0,
-            "f) The first pass stores both sheets and the identical observation appends no history row");
+        // Cada oferta importada abre su serie con el punto base: sin él el gráfico quedaría vacío hasta el primer
+        // cambio de precio, y una bajada nunca tendría dos puntos que comparar.
+        check(firstResult.Stored == 2 && products == 2 && offers == 2 && history == 1 &&
+              fixture.Fake.Histories.All(point => point.IsBaseline),
+            "f) The first pass stores both sheets and opens each series with its baseline point");
 
         // Segunda ejecución completa sobre las mismas URL: el catálogo se reconoce por SKU y por título.
         var second = fixture.Enqueue(existing, fresh);

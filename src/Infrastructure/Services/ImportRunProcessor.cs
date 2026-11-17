@@ -197,6 +197,9 @@ public sealed class ImportRunProcessor(
             }
 
             _context.Inventories.Add(offer);
+            // Una oferta importada nace con su punto base, igual que las que crea el mantenedor: sin él su gráfico de
+            // precios quedaría vacío hasta el primer cambio de precio, y una bajada nunca tendría dos puntos que comparar.
+            InventoryPriceHistoryRecorder.RecordBaseline(_context, offer);
             // El producto nace ya clasificado: sin categoría no aparece al navegar y queda fuera del catálogo real.
             EnsureClassification(product, preview, catalog);
             return null;
