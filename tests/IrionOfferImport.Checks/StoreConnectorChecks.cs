@@ -279,6 +279,14 @@ internal static class StoreConnectorChecks
             Hosts.Add(host);
             return Task.FromResult(stores.SingleOrDefault(store => store.Host == host));
         }
+
+        // El disparo manual y la programación los ejercita AutomationChecks con el proveedor real; este doble sólo
+        // resuelve lo que la importación manual necesita.
+        public Task<StoreContext?> FindBySlugAsync(string storeSlug, CancellationToken cancellationToken) =>
+            Task.FromResult<StoreContext?>(null);
+
+        public Task<IReadOnlyList<StoreContext>> ListActiveAsync(CancellationToken cancellationToken) =>
+            Task.FromResult<IReadOnlyList<StoreContext>>(stores);
     }
 
     private sealed class RecordingConnector(string key) : IStoreConnector

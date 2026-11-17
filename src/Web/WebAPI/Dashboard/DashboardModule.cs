@@ -8,6 +8,7 @@ using Application.Dashboard.Queries.GetMostSearchedProducts;
 using Application.Dashboard.Queries.GetPopularCategories;
 using Application.Dashboard.Queries.GetProductDetail;
 using Application.Dashboard.Queries.GetProductPriceHistory;
+using Application.Dashboard.Queries.GetPriceDrops;
 using Application.Dashboard.Queries.GetRecentPosts;
 using Application.Dashboard.Queries.GetFeaturedStores;
 using Application.Dashboard.Queries.GetRecentActivity;
@@ -29,6 +30,7 @@ public class DashboardModule : ICarterModule
         group.MapGet("most-searched-products", GetMostSearchedProducts);
         group.MapPut("products/{id:guid}/view", IncrementProductViewCount);
         group.MapGet("best-deals", GetBestDeals);
+        group.MapGet("price-drops", GetPriceDropsQuery);
         group.MapGet("popular-categories", GetPopularCategories);
         group.MapGet("featured-stores", GetFeaturedStores);
         group.MapGet("recent-activity", GetRecentActivity);
@@ -47,6 +49,9 @@ public class DashboardModule : ICarterModule
     private static async Task<IResult> GetMostSearchedProducts(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetMostSearchedProducts()));
     private static async Task<IResult> IncrementProductViewCount(Guid id, IRequestDispatcher sender) => Results.Ok(await sender.Send(new IncrementProductViewCount(id)));
     private static async Task<IResult> GetBestDeals(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetBestDeals()));
+    // Los dos parámetros son opcionales: el caso de uso acota la ventana y el umbral, igual que la ruta de historial.
+    private static async Task<IResult> GetPriceDropsQuery(int? days, int? minPercent, IRequestDispatcher sender) =>
+        Results.Ok(await sender.Send(new GetPriceDrops(days ?? 30, minPercent ?? 10)));
     private static async Task<IResult> GetPopularCategories(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetPopularCategories()));
     private static async Task<IResult> GetFeaturedStores(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetFeaturedStores()));
     private static async Task<IResult> GetRecentActivity(IRequestDispatcher sender) => Results.Ok(await sender.Send(new GetRecentActivity()));

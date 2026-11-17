@@ -455,6 +455,14 @@ sealed class RecordingProvider(params StoreContext[] stores) : IStoreContextProv
         Hosts.Add(host);
         return Task.FromResult(stores.SingleOrDefault(store => store.Host == host));
     }
+
+    // El disparo manual y la programación los ejercita el otro ejecutable con el proveedor real: aquí sólo importa
+    // resolver el host de la importación manual.
+    public Task<StoreContext?> FindBySlugAsync(string storeSlug, CancellationToken cancellationToken) =>
+        Task.FromResult<StoreContext?>(null);
+
+    public Task<IReadOnlyList<StoreContext>> ListActiveAsync(CancellationToken cancellationToken) =>
+        Task.FromResult<IReadOnlyList<StoreContext>>(stores);
 }
 
 sealed class ThrowingLoader(Exception error) : IStoreProductLoader

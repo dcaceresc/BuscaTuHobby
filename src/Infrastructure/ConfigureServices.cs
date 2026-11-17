@@ -1,4 +1,5 @@
-﻿using Infrastructure.Configuration;
+﻿using Application.Common.Ingestion;
+using Infrastructure.Configuration;
 using Infrastructure.Data.Interceptors;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -62,6 +63,14 @@ public static class ConfigureServices
             client.Timeout = TimeSpan.FromSeconds(15))
             .ConfigurePrimaryHttpMessageHandler(StoreTransport);
         services.AddScoped<IImportRunService, ImportRunService>();
+        // Ingesta programada: apagada por defecto. Ingestion:Enabled la enciende e Ingestion:IntervalHours fija cada
+        // cuánto corre; appsettings.Development.json la enciende porque un catálogo de demostración no se refresca solo.
+        // En producción nadie la enciende sin decirlo en la configuración de ese entorno.
+        services.AddSingleton(IngestionSettings.Parse(
+            configuration[IngestionSettings.EnabledKey], configuration[IngestionSettings.IntervalHoursKey]));
+        // El disparo manual y la vuelta programada comparten ejecutor: una sola puerta para descubrir y procesar.
+        services.AddScoped<IIngestionRunner, IngestionRunner>();
+        services.AddHostedService<IngestionWorker>();
         // La pasada que convierte lo encolado en ofertas recibe todos los conectores registrados: la tienda elige por
         // la clave de su fila y el limitador y robots.txt siguen dentro del conector.
         services.AddScoped<IImportRunProcessor>(provider => new ImportRunProcessor(
