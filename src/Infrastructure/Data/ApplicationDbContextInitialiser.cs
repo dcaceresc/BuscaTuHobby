@@ -1,6 +1,7 @@
 ﻿using Application.Common.PriceHistory;
 using Domain.Entities;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -21,11 +22,12 @@ public static class InitialiserExtensions
 }
 
 
-public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitialiser> logger, ApplicationDbContext context, IUtilityService utilityService)
+public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitialiser> logger, ApplicationDbContext context, IUtilityService utilityService, IConfiguration configuration)
 {
     private readonly ILogger<ApplicationDbContextInitialiser> _logger = logger;
     private readonly ApplicationDbContext _context = context;
     private readonly IUtilityService _utilityService = utilityService;
+    private readonly IConfiguration _configuration = configuration;
 
     public async Task InitialiseAsync()
     {
@@ -55,11 +57,21 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
 
     public async Task TrySeedAsync()
     {
+        // Roles y administrador no son datos de demostración: sin ellos no se puede entrar al backoffice, así que se
+        // siembran siempre.
         await SeedRoleAsync("SuperAdmin");
         await SeedRoleAsync("Administrator");
         await SeedRoleAsync("User");
 
         await SeedUserAsync("admin@localhost", "admin123", "SuperAdmin");
+
+        // Catálogo y contenido inventados: solo cuando se piden con Seed:DemoData. Con ofertas reales ingeridas, sembrar
+        // demo volvería a mezclar lo inventado con lo que publican las tiendas, que es justo lo que hay que evitar.
+        if (!DemoDataEnabled)
+        {
+            await _context.SaveChangesAsync();
+            return;
+        }
 
         await SeedPostTypesAndPostsAsync();
         await SeedProductsAsync();
@@ -67,6 +79,9 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
 
         await _context.SaveChangesAsync();
     }
+
+    // Se lee como texto y no con GetValue para no arrastrar el paquete Binder a Infrastructure.
+    private bool DemoDataEnabled => bool.TryParse(_configuration["Seed:DemoData"], out var enabled) && enabled;
 
     private async Task SeedRoleAsync(string roleName)
     {
