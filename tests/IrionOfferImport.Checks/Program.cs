@@ -108,6 +108,7 @@ await ProductDetailChecks.Run(Check);
 await FidelityChecks.Run(Check);
 await OfferConditionChecks.Run(Check);
 await CatalogNavigationChecks.Run(Check);
+await StoreConnectorChecks.Run(Check);
 using var context = new ApplicationDbContext(new DbContextOptionsBuilder<ApplicationDbContext>()
     .UseSqlServer("Server=unused;Database=StructuralOnly;Integrated Security=true;TrustServerCertificate=true").Options);
 var model = context.GetService<IDesignTimeModel>().Model;

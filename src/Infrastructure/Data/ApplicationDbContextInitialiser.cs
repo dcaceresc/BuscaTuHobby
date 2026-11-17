@@ -173,7 +173,15 @@ public class ApplicationDbContextInitialiser(ILogger<ApplicationDbContextInitial
         var ripley = Store.Create("Ripley", "https://www.ripley.cl", "bi bi-shop", 5, "ripley");
         var paris = Store.Create("Paris", "https://www.paris.cl", "bi bi-shop", 6, "paris");
 
-        await _context.Stores.AddRangeAsync(amazon, mercadoLibre, linio, falabella, ripley, paris);
+        // Dos tiendas reales y chilenas quedan configuradas para la ingesta: son configuración, no catálogo, así que
+        // no mezclan datos inventados con ofertas reales. Sin una fila configurada la importación manual no puede
+        // resolver el host y responde que la URL no corresponde a ninguna tienda.
+        var irion = Store.Create("Irion", "https://irion.cl", "bi bi-shop", 7, "irion");
+        irion.ConfigureConnector("shopify", "{\"currency\":\"CLP\"}");
+        var luffyToys = Store.Create("LuffyToys", "https://luffytoys.cl", "bi bi-shop", 8, "luffytoys");
+        luffyToys.ConfigureConnector("shopify", "{\"currency\":\"CLP\"}");
+
+        await _context.Stores.AddRangeAsync(amazon, mercadoLibre, linio, falabella, ripley, paris, irion, luffyToys);
         await _context.SaveChangesAsync();
 
         // Productos. Grado, escala y número de parte completan la ficha Gunpla: el único kit del catálogo de demo

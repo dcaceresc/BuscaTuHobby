@@ -419,7 +419,13 @@ namespace Infrastructure.Data
                     .IsRequired()
                     .HasMaxLength(100);
                 entity.HasIndex(e => e.StoreSlug).IsUnique();
-                    
+
+                // La identidad de ingesta es configuración por tienda; null significa "sin ingesta automática".
+                entity.Property(e => e.ConnectorKey)
+                    .HasMaxLength(32);
+                entity.Property(e => e.ConnectorSettings)
+                    .HasMaxLength(4000);
+
             });
 
             builder.Entity<StoreAddress>(entity =>

@@ -5,11 +5,11 @@ namespace Application.Maintainer.Products.Queries.PreviewIrionProduct;
 public record PreviewIrionProduct(string Url) : IRequest<ApiResponse<IrionProductPreviewDto>>;
 
 public class PreviewIrionProductHandler(
-    IIrionProductExtractor extractor,
+    IStoreProductLoader loader,
     IApiResponseService responseService)
     : IRequestHandler<PreviewIrionProduct, ApiResponse<IrionProductPreviewDto>>
 {
-    private readonly IIrionProductExtractor _extractor = extractor;
+    private readonly IStoreProductLoader _loader = loader;
     private readonly IApiResponseService _responseService = responseService;
 
     public async Task<ApiResponse<IrionProductPreviewDto>> Handle(
@@ -17,19 +17,24 @@ public class PreviewIrionProductHandler(
     {
         try
         {
-            var preview = await _extractor.ExtractAsync(request.Url, cancellationToken);
+            var preview = await _loader.LoadAsync(request.Url, cancellationToken);
             return _responseService.Success(preview);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
             throw;
         }
-        catch (IrionProductUrlException exception)
+        catch (StoreOfferUrlException exception)
         {
             return _responseService.Fail<IrionProductPreviewDto>(exception.Message);
         }
-        catch (IrionRateLimitException exception)
+        catch (StoreRateLimitException exception)
         {
+            return _responseService.Fail<IrionProductPreviewDto>(exception.Message);
+        }
+        catch (StorePathDisallowedException exception)
+        {
+            // El portal de robots se respeta de forma visible: la ruta no se consultó y el motivo se devuelve.
             return _responseService.Fail<IrionProductPreviewDto>(exception.Message);
         }
         catch (Exception)

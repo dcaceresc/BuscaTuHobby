@@ -12,6 +12,15 @@ namespace Infrastructure;
 
 public static class ConfigureServices
 {
+    private const string RobotsClient = "store-robots";
+
+    // El transporte no sigue redirecciones: una redirección a otro host saltaría la comprobación de robots y
+    // el limitador del dominio solicitado.
+    private static HttpClientHandler StoreTransport() => new()
+    {
+        AllowAutoRedirect = false,
+        UseCookies = false
+    };
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
 
@@ -32,13 +41,25 @@ public static class ConfigureServices
         services.AddScoped<IApiResponseService, ApiResponseService>();
         services.AddScoped<IUtilityService, UtilityService>();
         services.AddScoped<IEmailService, EmailService>();
-        services.AddHttpClient<IIrionProductExtractor, IrionProductExtractor>(client =>
+
+        // Política de cortesía compartida por todas las tiendas: una petición a la vez por dominio, sin importar
+        // cuántos conectores o instancias de cliente estén activos en el proceso.
+        services.AddSingleton<DomainRequestLimiter>();
+        services.AddHttpClient(RobotsClient, client => client.Timeout = TimeSpan.FromSeconds(15))
+            .ConfigurePrimaryHttpMessageHandler(StoreTransport);
+        services.AddSingleton(provider => new RobotsTxtCache(
+            provider.GetRequiredService<IHttpClientFactory>().CreateClient(RobotsClient),
+            provider.GetRequiredService<DomainRequestLimiter>()));
+
+        services.AddScoped<IStoreContextProvider, StoreContextProvider>();
+        services.AddHttpClient<IStoreConnector, ShopifyConnector>(client =>
             client.Timeout = TimeSpan.FromSeconds(15))
-            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-            {
-                AllowAutoRedirect = false,
-                UseCookies = false
-            });
+            .ConfigurePrimaryHttpMessageHandler(StoreTransport);
+        // El cargador recibe todos los conectores registrados y elige por la clave de la fila: añadir una tienda
+        // Shopify no toca esta composición, solo añade una fila.
+        services.AddScoped<IStoreProductLoader>(provider => new StoreProductLoader(
+            provider.GetRequiredService<IStoreContextProvider>(),
+            provider.GetServices<IStoreConnector>()));
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>
