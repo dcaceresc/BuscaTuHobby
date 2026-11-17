@@ -362,9 +362,10 @@ internal static class ImportRunChecks
             "A product URL rejected by robots is queued as skipped with its reason and no request");
         check(plan.Items.All(item => item.ImportRunId == plan.Run.ImportRunId),
             "Every item belongs to the run that queued it");
-        check(plan.Run.DiscoveredCount == 4 && plan.Run.SkippedCount == 2 &&
-            plan.Run.StoredCount == 0 && plan.Run.FailedCount == 0,
-            "The run counters reflect what the discovery found and rejected");
+        check(plan.Run.DiscoveredCount == 3 &&
+            plan.Run.DiscoveredCount == plan.Items.Count(item => item.State == ImportItemState.Pending) &&
+            plan.Run.SkippedCount == 2 && plan.Run.StoredCount == 0 && plan.Run.FailedCount == 0,
+            "The discovered counter is the queued items, not the entries the walk discarded");
         check(plan.Discovery == discovery, "The plan returns the discovery that produced it");
 
         // (c) Una segunda ejecución no vuelve a encolar lo que una ejecución completada ya guardó.
@@ -377,9 +378,10 @@ internal static class ImportRunChecks
         check(again.Items.Where(item => item.State == ImportItemState.Pending)
                 .Select(item => item.SourceUrl).SequenceEqual(new[] { second, third }),
             "Only the URLs a previous run did not store are queued");
-        check(again.Run.DiscoveredCount == 4 && again.Run.SkippedCount == 3 &&
+        check(again.Run.DiscoveredCount == 2 && again.Run.SkippedCount == 3 &&
+            again.Run.DiscoveredCount == again.Items.Count(item => item.State == ImportItemState.Pending) &&
             again.Items.All(item => item.ImportRunId == again.Run.ImportRunId),
-            "The second run starts its own counters and its own items");
+            "The second run counts only the items it really queued, never the URL a previous run stored");
         check(again.Run.ImportRunId != plan.Run.ImportRunId &&
             !again.Items.Any(item => plan.Items.Any(previous => previous.ImportItemId == item.ImportItemId)),
             "A second run never reuses the items of the previous one");
@@ -387,8 +389,9 @@ internal static class ImportRunChecks
         var duplicated = ImportRunPlanner.Start(store, new RequestBudget(500),
             discovery with { ProductUrls = [first, first, second] }, new HashSet<string>(), start);
         check(duplicated.Items.Count(item => item.SourceUrl == first) == 1 &&
-            duplicated.Items.Count(item => item.State == ImportItemState.Pending) == 2,
-            "A parameterised sitemap that repeats a URL cannot duplicate an item");
+            duplicated.Items.Count(item => item.State == ImportItemState.Pending) == 2 &&
+            duplicated.Run.DiscoveredCount == 2,
+            "A parameterised sitemap that repeats a URL cannot duplicate an item or inflate the counter");
 
         // (d) Una reanudación sólo procesa los pendientes y los fallos transitorios.
         var at = start.AddMinutes(5);

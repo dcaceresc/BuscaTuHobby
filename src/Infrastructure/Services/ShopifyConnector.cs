@@ -1,6 +1,5 @@
 using System.Globalization;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using Application.Common.Exceptions;
 using Application.Common.Ingestion;
 using Application.Common.Interfaces;
@@ -16,17 +15,13 @@ namespace Infrastructure.Services;
 public sealed class ShopifyConnector(HttpClient client, RobotsTxtCache robots, DomainRequestLimiter limiter)
     : IStoreConnector
 {
-    public const string ConnectorKey = "shopify";
+    public const string ConnectorKey = ProductSheetUrl.ShopifyConnectorKey;
 
     // Agente estable e identificable: una tienda puede excluir o limitar por nombre en robots.txt.
     public const string UserAgent = "BuscaTuHobby-ProductPreview/1.0";
 
     private const int MaximumBytes = 1_048_576;
-    private const int MaximumUrlLength = 8192;
     private static readonly TimeSpan RequestTimeout = TimeSpan.FromSeconds(15);
-    private static readonly Regex ProductPath = new(
-        @"\A/(?:collections/[a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*/)?products/([a-zA-Z0-9]+(?:-[a-zA-Z0-9]+)*)/?\z",
-        RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(100));
 
     private readonly HttpClient _client = client;
     private readonly RobotsTxtCache _robots = robots;
@@ -124,37 +119,9 @@ public sealed class ShopifyConnector(HttpClient client, RobotsTxtCache robots, D
         return buffer.ToArray();
     }
 
-    // Se valida sobre la ruta original: Uri normaliza los segmentos con punto y las barras invertidas, así que
-    // la comprobación se hace sobre el texto recibido para no aceptar rutas normalizadas fuera del catálogo.
-    // El descubrimiento reutiliza esta misma regla para no encolar rutas que la lectura rechazaría después.
-    public static bool TryProductHandle(StoreContext store, string url, out string handle)
-    {
-        handle = string.Empty;
-        if (string.IsNullOrWhiteSpace(url) || url.Length > MaximumUrlLength ||
-            !Uri.TryCreate(url, UriKind.Absolute, out var uri) ||
-            uri.Scheme != Uri.UriSchemeHttps ||
-            !string.Equals(StoreContext.NormalizeHost(uri.Host), store.Host, StringComparison.Ordinal) ||
-            !uri.IsDefaultPort || uri.UserInfo.Length != 0)
-            return false;
-
-        var match = ProductPath.Match(RawPath(url));
-        if (!match.Success) return false;
-        handle = match.Groups[1].Value;
-        return true;
-    }
-
+    // La regla de producto vive en el dominio de la ingesta para que el descubrimiento no dependa del conector.
     private static string ProductHandle(StoreContext store, string url) =>
-        TryProductHandle(store, url, out var handle) ? handle : throw StoreOfferUrlException.ForStore(store);
-
-    // Desde el primer '/' después del esquema hasta '?' o '#': la ruta que realmente se escribió.
-    private static string RawPath(string url)
-    {
-        var scheme = url.IndexOf("://", StringComparison.Ordinal);
-        var start = scheme < 0 ? -1 : url.IndexOf('/', scheme + 3);
-        if (start < 0) return string.Empty;
-        var end = url.IndexOfAny(['?', '#'], start);
-        return end < 0 ? url[start..] : url[start..end];
-    }
+        ProductSheetUrl.TryGetHandle(store, url, out var handle) ? handle : throw StoreOfferUrlException.ForStore(store);
 
     private static string? RetryGuidance(HttpResponseMessage response)
     {

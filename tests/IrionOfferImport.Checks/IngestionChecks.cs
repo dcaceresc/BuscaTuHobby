@@ -288,6 +288,7 @@ internal static class IngestionChecks
         await ReusedProductWithoutCategoriesIsClassified(check);
         await HumanCategoryIsPreserved(check);
         await DeclaredCategoriesAreReusedOrCreated(check);
+        await ExistingCatalogClassification(check);
         await BudgetAndPolitenessStopThePass(check);
         await CancellationDoesNotWrite(check);
         await Rejections(check);
@@ -622,6 +623,65 @@ internal static class IngestionChecks
             "k) A second pass adds no duplicate links and no duplicate categories");
         check(fixture.Fake.CategoryLinks.Select(link => (link.ProductId, link.CategoryId)).Distinct().Count() == links,
             "k) The (product, category) pair stays unique after re-running");
+    }
+
+    // (l) El catálogo anterior a la clasificación se clasifica con lo único que conserva una fila vieja: el título. La
+    // pasada no vuelve a pedir la ficha (la ingesta idempotente nunca reprocesa una URL guardada), no reemplaza una
+    // categoría humana y una segunda llamada no clasifica ni duplica nada.
+    private static async Task ExistingCatalogClassification(Action<bool, string> check)
+    {
+        var fixture = new Fixture();
+        var kit = fixture.AddProduct("MG 1/100 Gundam Barbatos", "Bandai", GunplaGrade.MasterGrade, "1/100",
+            "MG-BARB", null);
+        var boardGame = fixture.AddProduct("HASBRO GAMING MONOPOLY CHILE", "Hasbro", GunplaGrade.None, null,
+            "HAS-1", "5010993441945");
+        var noSignal = fixture.AddProduct("Producto sin pistas", "Genérica", GunplaGrade.None, null, null, null);
+        // Producto que una persona ya clasificó: su título diría "lego" y la pasada no puede pisarlo.
+        var human = fixture.AddProduct("LEGO Star Wars Set", "LEGO", GunplaGrade.None, null, null, null);
+        var humanCategory = fixture.AddCategory("Rarezas", "bi bi-star", 5, "rarezas");
+        fixture.Fake.CategoryLinks.Add(ProductCategory.Create(human.ProductId, humanCategory.CategoryId));
+        var linksBefore = fixture.Fake.CategoryLinks.Count;
+        var processor = new ImportRunProcessor(fixture.Context, [fixture.Connector]);
+
+        var classified = await processor.ClassifyExistingAsync(default);
+
+        check(classified == 3 && fixture.Fake.CategoryLinks.Count == linksBefore + 3,
+            "a) A product with no category gains exactly one link from its title: " + classified + " classified");
+        check(fixture.CategoryOf(kit) is { CategorySlug: "maquetas" } &&
+            fixture.CategoryOf(boardGame) is { CategorySlug: "juegos-de-mesa" } &&
+            fixture.CategoryOf(noSignal) is { CategorySlug: "coleccionables" },
+            "a) The title decides the category and a title with no signal falls back to the declared one");
+        check(fixture.Fake.CategoryLinks.Count(link => link.ProductId == kit.ProductId) == 1 &&
+            fixture.Fake.CategoryLinks.Count(link => link.ProductId == boardGame.ProductId) == 1 &&
+            fixture.Fake.CategoryLinks.Count(link => link.ProductId == noSignal.ProductId) == 1,
+            "a) Each classified product has exactly one link, never one per matched keyword");
+        check(fixture.Fake.CategoryLinks.Where(link => link.ProductId == human.ProductId)
+                .Select(link => link.CategoryId).SequenceEqual(new[] { humanCategory.CategoryId }) &&
+            fixture.Fake.Categories.Single(row => row.CategoryId == humanCategory.CategoryId).CategorySlug == "rarezas",
+            "b) A product a human already classified keeps exactly that category and gains nothing");
+        check(fixture.Fake.Categories.Count == 4 &&
+            fixture.Fake.Categories.Select(row => row.CategorySlug)
+                .OrderBy(slug => slug, StringComparer.Ordinal)
+                .SequenceEqual(new[]
+                {
+                    "coleccionables", "juegos-de-mesa", "maquetas", "rarezas"
+                }) &&
+            fixture.Fake.Products.Count == 4,
+            "b) Classifying the existing catalog creates only the declared categories and rewrites no product");
+        check(fixture.Connector.Loaded.Count == 0,
+            "b) Classifying the existing catalog never reads a sheet again: the title is all a stored row keeps");
+
+        var links = fixture.Fake.CategoryLinks.Count;
+        var saves = fixture.Fake.Saves;
+        var again = await processor.ClassifyExistingAsync(default);
+
+        check(again == 0 && fixture.Fake.CategoryLinks.Count == links && fixture.Fake.Saves == saves,
+            "c) A second call classifies nothing, adds no duplicate link and does not even save");
+        check(fixture.Fake.CategoryLinks.Select(link => (link.ProductId, link.CategoryId)).Distinct().Count() == links,
+            "c) The (product, category) pair stays unique after re-running the classification");
+        check(fixture.Fake.Products.All(product =>
+                fixture.Fake.CategoryLinks.Count(link => link.ProductId == product.ProductId) == 1),
+            "d) Every product ends with exactly one category, so the returned count described the whole catalog");
     }
 
     // El presupuesto y la cortesía con la tienda cortan la pasada sin cerrar la ejecución.

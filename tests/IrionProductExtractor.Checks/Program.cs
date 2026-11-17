@@ -1,5 +1,6 @@
 using System.Net;
 using Application.Common.Exceptions;
+using Application.Common.Ingestion;
 using Application.Common.Interfaces;
 using Application.Maintainer.Products.Queries.PreviewIrionProduct;
 using Infrastructure.Services;
@@ -102,6 +103,38 @@ foreach (var url in new[] { "", "http://irion.cl/products/a", "https://evil.test
         urlMessage);
     Check(scenario.Transport.Uris.Count == 0, "Invalid URL must not cause any network request: " + url);
 }
+
+// (e) Una sola regla para "esto es una ficha de esta tienda": el conector acepta exactamente lo que la regla
+// compartida acepta y rechaza el resto sin pedir nada, así que el descubrimiento no puede encolar lo que la lectura
+// rechazaría después.
+foreach (var (candidate, accepted) in new[]
+{
+    (irionUrl, true),
+    ("https://irion.cl/collections/productos-mas-recientes/products/optimus-prime", true),
+    ("https://irion.cl/collections/all", false),
+    ("https://irion.cl/products/optimus-prime/extra", false),
+    ("https://luffytoys.cl/products/optimus-prime", false)
+})
+{
+    var shared = new Scenario(permissiveRobots);
+    var acceptedByRule = ProductSheetUrl.TryGetHandle(irion, candidate, out var handle);
+    Check(acceptedByRule == accepted && (!accepted || handle == "optimus-prime"),
+        "The shared product-sheet rule answers from the store and the URL: " + candidate);
+    if (accepted)
+        Check((await shared.Connector.LoadProductAsync(irion, candidate, default)).Title == "Optimus Prime" &&
+            shared.Transport.ProductCalls == 1,
+            "The connector loads the URL the shared rule accepts: " + candidate);
+    else
+        await RejectAsync(() => shared.Connector.LoadProductAsync(irion, candidate, default), urlMessage);
+    Check(shared.Transport.ProductCalls == (accepted ? 1 : 0),
+        "The connector never fetches a URL the shared rule rejects: " + candidate);
+}
+
+// La plataforma de la fila forma parte de la regla: una tienda cuyo conector no declara forma de ficha no acepta
+// ninguna URL, en vez de colar la forma de otra plataforma.
+var otherPlatform = new StoreContext(Guid.NewGuid(), "Pasatime", "irion.cl", "json-ld", "CLP", 20, 50);
+Check(!ProductSheetUrl.TryGetHandle(otherPlatform, irionUrl, out _),
+    "A store whose platform declares no sheet shape accepts no URL");
 
 // Una sola petición a la vez por dominio, también cuando dos fichas de la misma tienda se piden juntas.
 var serialized = new Scenario(permissiveRobots, latency: TimeSpan.FromMilliseconds(15));

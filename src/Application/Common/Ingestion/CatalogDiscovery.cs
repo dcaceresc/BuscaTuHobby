@@ -48,6 +48,8 @@ public sealed record CatalogSkip(string Reference, CatalogSkipReason Reason)
 
 // Resultado de un recorrido de catálogo. Separa lo descartado por documento de lo descartado por entrada porque
 // sólo lo segundo es una URL de producto y, por lo tanto, lo único que se puede auditar como elemento.
+// DiscoveredCount cuenta lo encolado (ya deduplicado y validado por la regla de ficha), no lo leído: un contador que
+// suma descartes deja de describir el trabajo que la ejecución tiene por delante.
 public sealed record CatalogDiscoveryResult(
     IReadOnlyList<string> ProductUrls,
     IReadOnlyList<CatalogSkip> CatalogSkipped,

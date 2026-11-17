@@ -34,6 +34,7 @@ public static class ImportRunPlanner
         // sitemap que repite una entrada no haga fallar la escritura completa.
         var queued = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var skipped = discovery.CatalogSkipped.Count;
+        var discovered = 0;
         foreach (var url in discovery.ProductUrls)
         {
             if (!queued.Add(url)) continue;
@@ -45,6 +46,7 @@ public static class ImportRunPlanner
             }
 
             items.Add(ImportItem.Create(run.ImportRunId, url));
+            discovered++;
         }
 
         // Lo descartado por el recorrido se audita como elemento cuando su referencia es una URL guardable; el resto
@@ -56,7 +58,10 @@ public static class ImportRunPlanner
             items.Add(ImportItem.CreateSkipped(run.ImportRunId, discarded.Reference, discarded.Message));
         }
 
-        run.RecordDiscovered(discovery.DiscoveredCount);
+        // El contador describe lo que la ejecución encoló de verdad: la deduplicación y las URL que una ejecución
+        // anterior ya guardó se resuelven aquí, así que el número del recorrido y la lista de elementos no pueden
+        // separarse. Se cuenta lo escrito, no lo recibido.
+        run.RecordDiscovered(discovered);
         run.RecordSkipped(skipped);
         return new ImportRunPlan(run, items, discovery);
     }

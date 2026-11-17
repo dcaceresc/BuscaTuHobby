@@ -38,16 +38,17 @@ public sealed class SitemapCatalogDiscovery(HttpClient client, RobotsTxtCache ro
         var discovered = 0;
         var exhausted = false;
 
-        // Encola una entrada del listado: deduplica, descarta lo que no es una ficha y respeta el presupuesto.
-        // Cada URL encolada reserva la petición que costará leerla, así el tope vale para la ejecución completa.
+        // Encola una entrada del listado: deduplica, descarta lo que la regla compartida no reconoce como ficha y
+        // respeta el presupuesto. Cada URL encolada reserva la petición que costará leerla, así el tope vale para la
+        // ejecución completa. Sólo lo encolado se cuenta como descubierto: un contador que suma los descartes deja de
+        // describir lo que la ejecución tiene por delante y no cuadra con sus elementos.
         void Enqueue(string documentUrl, IReadOnlyList<string> locations)
         {
             foreach (var candidate in locations)
             {
                 if (exhausted) return;
-                discovered++;
                 if (!seen.Add(candidate)) continue;
-                if (!ShopifyConnector.TryProductHandle(store, candidate, out _))
+                if (!ProductSheetUrl.TryGetHandle(store, candidate, out _))
                 {
                     productSkipped.Add(new CatalogSkip(candidate, CatalogSkipReason.NotProductUrl));
                     continue;
@@ -67,6 +68,7 @@ public sealed class SitemapCatalogDiscovery(HttpClient client, RobotsTxtCache ro
                 }
 
                 urls.Add(candidate);
+                discovered++;
             }
         }
 

@@ -30,6 +30,7 @@ internal static class CatalogDiscoveryChecks
         await RecordsUnreadableSitemaps(check);
         await NeverLeavesTheStore(check);
         await DeduplicatesAndStaysDeterministic(check);
+        await RefusesAnUnknownPlatform(check);
         await HonoursCancellation(check);
     }
 
@@ -60,7 +61,7 @@ internal static class CatalogDiscoveryChecks
             "Every sitemap that is not a product sitemap is recorded with its reason");
         check(result.DiscoveredCount == 3 && result.ProductSkipped.Count == 0 &&
             result.BudgetConsumed == 6,
-            "The walk reports what it read and what it spent: three URLs plus two documents plus the index");
+            "The walk reports what it queued and what it spent: three URLs plus two documents plus the index");
     }
 
     private static async Task ReadsPlainUrlset(Action<bool, string> check)
@@ -141,8 +142,8 @@ internal static class CatalogDiscoveryChecks
         check(partial.ProductUrls.All(url => !url.Contains("oculto", StringComparison.Ordinal)) &&
             !deniedProduct.Transport.Uris.Any(uri => uri.Contains("oculto", StringComparison.Ordinal)),
             "A disallowed product path is never requested");
-        check(partial.DiscoveredCount == 3 && partial.BudgetConsumed == 4,
-            "A rejected product still counts as discovered and does not reserve a request");
+        check(partial.DiscoveredCount == 2 && partial.BudgetConsumed == 4,
+            "A product rejected by the shared rule is not queued, not counted and does not reserve a request");
 
         var unreadable = Scenario(index: Index(ProductSitemap1),
             documents: new Dictionary<string, string> { [ProductSitemap1] = UrlSet(First) },
@@ -203,8 +204,8 @@ internal static class CatalogDiscoveryChecks
             result.ProductSkipped.Count == 2 &&
             result.ProductSkipped.All(skip => skip.Reason == CatalogSkipReason.NotProductUrl),
             "A foreign sitemap and a non-product entry are recorded with their reasons");
-        check(result.DiscoveredCount == 3,
-            "Every catalogue entry read is counted, even when it is discarded");
+        check(result.DiscoveredCount == result.ProductUrls.Count && result.DiscoveredCount == 1,
+            "The discovered counter is the queued items, not every entry the sitemap listed");
     }
 
     private static async Task DeduplicatesAndStaysDeterministic(Action<bool, string> check)
@@ -220,8 +221,28 @@ internal static class CatalogDiscoveryChecks
             "A URL repeated across product sitemaps is queued only once");
         check(first.ProductUrls.SequenceEqual(second.ProductUrls),
             "Two walks of the same sitemap produce the same order");
-        check(first.DiscoveredCount == 4,
-            "Discovery counts what the store published, including an exact repeat");
+        check(first.DiscoveredCount == 3 && first.DiscoveredCount == first.ProductUrls.Count,
+            "Discovery counts each queued URL once, including the deduplication of an exact repeat");
+    }
+
+    // La regla de "es una ficha de esta tienda" no es sólo la forma de la ruta: incluye la plataforma que declara la
+    // fila. Una tienda cuyo conector no conoce esa forma no puede encolar rutas que el conector va a rechazar.
+    private static async Task RefusesAnUnknownPlatform(Action<bool, string> check)
+    {
+        var scenario = Scenario(index: Index(ProductSitemap1),
+            documents: new Dictionary<string, string> { [ProductSitemap1] = UrlSet(First, Second) });
+        var other = new StoreContext(Guid.NewGuid(), "Pasatime", Host, "json-ld", "CLP", 20, 500);
+
+        var result = await scenario.DiscoverAsync(other, new RequestBudget(20));
+
+        check(result.ProductUrls.Count == 0 && result.DiscoveredCount == 0 &&
+            result.ProductSkipped.Select(skip => (skip.Reference, skip.Reason)).SequenceEqual(new[]
+            {
+                (First, CatalogSkipReason.NotProductUrl), (Second, CatalogSkipReason.NotProductUrl)
+            }),
+            "A store whose connector the rule does not know yet queues nothing and records every entry");
+        check(result.ProductSkipped.All(skip => skip.Message == CatalogSkip.NotProductUrlMessage),
+            "The skip keeps the reason the connector would have given for the same entry");
     }
 
     private static async Task HonoursCancellation(Action<bool, string> check)
@@ -292,6 +313,9 @@ internal static class CatalogDiscoveryChecks
     private sealed record Walk(FakeTransport Transport, SitemapCatalogDiscovery Discovery)
     {
         public Task<CatalogDiscoveryResult> DiscoverAsync(RequestBudget budget) =>
-            Discovery.DiscoverAsync(CatalogDiscoveryChecks.Store, budget, default);
+            DiscoverAsync(CatalogDiscoveryChecks.Store, budget);
+
+        public Task<CatalogDiscoveryResult> DiscoverAsync(StoreContext store, RequestBudget budget) =>
+            Discovery.DiscoverAsync(store, budget, default);
     }
 }
