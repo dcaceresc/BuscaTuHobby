@@ -118,19 +118,25 @@ public sealed class ShopifyConnector(HttpClient client, RobotsTxtCache robots, D
 
     // Se valida sobre la ruta original: Uri normaliza los segmentos con punto y las barras invertidas, así que
     // la comprobación se hace sobre el texto recibido para no aceptar rutas normalizadas fuera del catálogo.
-    private static string ProductHandle(StoreContext store, string url)
+    // El descubrimiento reutiliza esta misma regla para no encolar rutas que la lectura rechazaría después.
+    public static bool TryProductHandle(StoreContext store, string url, out string handle)
     {
+        handle = string.Empty;
         if (string.IsNullOrWhiteSpace(url) || url.Length > MaximumUrlLength ||
             !Uri.TryCreate(url, UriKind.Absolute, out var uri) ||
             uri.Scheme != Uri.UriSchemeHttps ||
             !string.Equals(StoreContext.NormalizeHost(uri.Host), store.Host, StringComparison.Ordinal) ||
             !uri.IsDefaultPort || uri.UserInfo.Length != 0)
-            throw StoreOfferUrlException.ForStore(store);
+            return false;
 
         var match = ProductPath.Match(RawPath(url));
-        if (!match.Success) throw StoreOfferUrlException.ForStore(store);
-        return match.Groups[1].Value;
+        if (!match.Success) return false;
+        handle = match.Groups[1].Value;
+        return true;
     }
+
+    private static string ProductHandle(StoreContext store, string url) =>
+        TryProductHandle(store, url, out var handle) ? handle : throw StoreOfferUrlException.ForStore(store);
 
     // Desde el primer '/' después del esquema hasta '?' o '#': la ruta que realmente se escribió.
     private static string RawPath(string url)

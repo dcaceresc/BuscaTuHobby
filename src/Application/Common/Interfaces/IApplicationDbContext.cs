@@ -10,6 +10,8 @@
         DbSet<ProductImage> ProductImages { get; }
         DbSet<Inventory> Inventories { get; }
         DbSet<InventoryPriceHistory> InventoryPriceHistories { get; }
+        DbSet<ImportRun> ImportRuns { get; }
+        DbSet<ImportItem> ImportItems { get; }
         DbSet<Manufacturer> Manufacturers { get; }
         DbSet<Category> Categories { get; }
         DbSet<Serie> Series { get; }

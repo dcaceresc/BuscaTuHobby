@@ -253,6 +253,85 @@ namespace Infrastructure.Data.Migrations
                     b.ToTable("Franchises");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ImportItem", b =>
+                {
+                    b.Property<Guid>("ImportItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
+
+                    b.Property<DateTime?>("AttemptedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ErrorMessage")
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<int?>("HttpStatus")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("ImportRunId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SourceUrl")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
+                    b.Property<int>("State")
+                        .HasColumnType("int");
+
+                    b.HasKey("ImportItemId");
+
+                    b.HasIndex("ImportRunId", "SourceUrl")
+                        .IsUnique();
+
+                    b.HasIndex("ImportRunId", "State");
+
+                    b.ToTable("ImportItems");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ImportRun", b =>
+                {
+                    b.Property<Guid>("ImportRunId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("(newid())");
+
+                    b.Property<int>("DiscoveredCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("FinishedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("RequestBudget")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SkippedCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StoredCount")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("StoreId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ImportRunId");
+
+                    b.HasIndex("StoreId");
+
+                    b.ToTable("ImportRuns");
+                });
+
             modelBuilder.Entity("Domain.Entities.Inventory", b =>
                 {
                     b.Property<Guid>("InventoryId")
@@ -1090,6 +1169,28 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Product");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ImportItem", b =>
+                {
+                    b.HasOne("Domain.Entities.ImportRun", "ImportRun")
+                        .WithMany("Items")
+                        .HasForeignKey("ImportRunId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ImportRun");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ImportRun", b =>
+                {
+                    b.HasOne("Domain.Entities.Store", "Store")
+                        .WithMany()
+                        .HasForeignKey("StoreId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Store");
+                });
+
             modelBuilder.Entity("Domain.Entities.Inventory", b =>
                 {
                     b.HasOne("Domain.Entities.Product", "Product")
@@ -1306,6 +1407,11 @@ namespace Infrastructure.Data.Migrations
                     b.Navigation("Products");
 
                     b.Navigation("Series");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ImportRun", b =>
+                {
+                    b.Navigation("Items");
                 });
 
             modelBuilder.Entity("Domain.Entities.Manufacturer", b =>

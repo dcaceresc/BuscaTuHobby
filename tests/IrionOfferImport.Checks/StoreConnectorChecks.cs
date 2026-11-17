@@ -1,4 +1,5 @@
 using Application.Common.Exceptions;
+using Application.Common.Ingestion;
 using Application.Common.Interfaces;
 using Application.Maintainer.Products.Queries.PreviewIrionProduct;
 using Domain.Entities;
@@ -216,6 +217,9 @@ internal static class StoreConnectorChecks
         check(scope.ServiceProvider.GetRequiredService<IStoreProductLoader>() is not null &&
             scope.ServiceProvider.GetRequiredService<IStoreContextProvider>() is not null,
             "The loader and the store configuration provider resolve from the container");
+        check(scope.ServiceProvider.GetRequiredService<ICatalogDiscovery>() is ICatalogDiscovery &&
+            scope.ServiceProvider.GetRequiredService<IImportRunService>() is IImportRunService,
+            "Sitemap discovery and the run service resolve from the same composition");
     }
 
     private static ApplicationDbContext StructuralContext() =>

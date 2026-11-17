@@ -197,6 +197,9 @@ cancelled.Cancel();
 await RejectAsync(() => cancelledScenario.Connector.LoadProductAsync(irion, irionUrl, cancelled.Token), null);
 Check(cancelledScenario.Transport.Uris.Count == 0, "A cancelled call does not reach the network");
 
+// Descubrimiento por sitemap: orden determinista, presupuesto respetado y descartes registrados.
+await CatalogDiscoveryChecks.Run(Check);
+
 // La ruta existente del mantenedor conserva sus mensajes exactos y su envoltura.
 var handlerScenario = new Scenario(permissiveRobots);
 var handler = new PreviewIrionProductHandler(

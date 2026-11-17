@@ -55,6 +55,13 @@ public static class ConfigureServices
         services.AddHttpClient<IStoreConnector, ShopifyConnector>(client =>
             client.Timeout = TimeSpan.FromSeconds(15))
             .ConfigurePrimaryHttpMessageHandler(StoreTransport);
+
+        // El descubrimiento usa el mismo limitador y el mismo portal de robots que la lectura de fichas: así una
+        // ejecución no duplica la política de cortesía ni puede saltarse robots.txt por ir por otro cliente.
+        services.AddHttpClient<ICatalogDiscovery, SitemapCatalogDiscovery>(client =>
+            client.Timeout = TimeSpan.FromSeconds(15))
+            .ConfigurePrimaryHttpMessageHandler(StoreTransport);
+        services.AddScoped<IImportRunService, ImportRunService>();
         // El cargador recibe todos los conectores registrados y elige por la clave de la fila: añadir una tienda
         // Shopify no toca esta composición, solo añade una fila.
         services.AddScoped<IStoreProductLoader>(provider => new StoreProductLoader(
