@@ -207,10 +207,11 @@ internal static class CatalogNavigationChecks
         using var context = StructuralContext();
         var model = context.GetService<IDesignTimeModel>().Model;
         var migrations = context.GetService<IMigrationsAssembly>();
-        var newest = migrations.Migrations.OrderBy(m => m.Key, StringComparer.Ordinal).Last();
-        check(newest.Key == "20260723000000_ProductGradeScaleAndPartNumber" &&
+        var newest = migrations.Migrations.OrderBy(m => m.Key, StringComparer.Ordinal)
+            .LastOrDefault(m => m.Key.EndsWith("_ProductGradeScaleAndPartNumber"));
+        check(newest.Value is not null &&
             string.CompareOrdinal(newest.Key, "20260722000000_OfferConditionAndPaymentMethod") > 0,
-            "The new migration is the newest discoverable one and sorts after the offer condition migration");
+            "The Gunpla migration is discoverable by its identifier and sorts after the offer condition migration");
         var migration = migrations.CreateMigration(newest.Value!, context.Database.ProviderName!);
         var up = migration.UpOperations;
         var grade = up.OfType<AddColumnOperation>().SingleOrDefault(c => c.Name == "Grade");

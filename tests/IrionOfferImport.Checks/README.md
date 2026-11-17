@@ -51,8 +51,35 @@ the pre-paging total, each sort order with offerless products last, every filter
 the three facet lists with their counts. The fixture is LINQ-to-Objects, so these checks do not prove that
 SQL Server translates or executes the price-sorted join, the facet grouping or the projection.
 
-Current full-suite evidence: **1209** assertions and exit 0 for
-`dotnet run --project tests/IrionOfferImport.Checks/IrionOfferImport.Checks.csproj`.
+`IngestionChecks` covers the catalog-identity slice (T2b): the nullable `Product.Gtin` with its hand-written
+`20261116000002_ProductGtin` migration (single additive column, column-dropping `Down`, generated SQL, no index by
+the documented decision that a barcode may legitimately repeat, newest-target and snapshot consistency), title
+normalization, grade/scale parsing (including that `[Preventa] GUNDAM EX Gundam Universe` declares neither), the
+create/reuse/park decision with its exact Spanish reasons, the shared on-demand `Sin clasificar` franchise, and the
+`ImportRunProcessor` pass over queued items: SKU, barcode and title reuse, creation of manufacturer/product/offer/GTIN,
+the change-only price recorder, parked items that publish nothing, second-pass idempotency, budget and 429/robots
+stops, and cancellation. It also covers `ClassifyExistingAsync`, which had only a real-run proof: a stored product with
+no category gains exactly one link decided by its title (with the declared fallback for a title that says nothing), a
+product a human already classified keeps exactly that category, a second call classifies nothing and writes no
+duplicate link or save, and the returned count matches the links that were actually added. Fakes conflate tracked and
+stored state, so cancellation is asserted against a JSON snapshot taken at the last save; no SQL server, HTTP request
+or database is used.
+
+`ClassificationChecks` covers the T2d classification: the fixed Spanish vocabulary (four existing categories with
+their current name, icon and order, plus `mangas`, `juegos-de-mesa` and `libros`), the explicit precedence levels
+(store product type, then tags, then title, then a single declared fallback), the generic categories that never hide a
+concrete signal, multiple categories only when the same winning level declares several, accent/case normalization,
+and that no input yields an undeclared slug. It also prints a dry classification of the 20 products (40 offers)
+recorded from the local catalog: only the title is available for rows already stored, because tags and product type
+were never persisted, so the four manga volumes stay in the fallback until their sheets are read again. The ingestion
+side is exercised with fakes: created products get their category, reused products without one get it, a human
+category is never removed or completed, existing categories are reused by slug without renaming or reordering, a
+declared category whose order is taken uses the next free one, only declared categories are created, and a second
+pass adds no duplicate `ProductCategory` links. No SQL, HTTP or database is used.
+
+Current full-suite evidence: **1523** assertions and exit 0 for
+`dotnet run --project tests/IrionOfferImport.Checks/IrionOfferImport.Checks.csproj`; the extractor suite reports
+**226** assertions (previously 1514 and 208).
 
 `Inventory.CreateImportedOffer` and `UpdateImportedOffer` accept already server-validated whole integer prices
 and a canonical HTTPS source identity. Import updates require an existing matching source and variant; unlinked legacy offers cannot be adopted. Availability is independent of administrative activation. Strict numeric validation applies only to import methods; manual create/update preserve baseline numeric semantics, including zero prices and inconsistent reference/discount tuples. Public-handler preservation checks cover both accepted responses and exact row/save effects. Legacy/manual metadata remains null; manual same-pair price edits preserve import metadata and activation, while imported association changes are rejected atomically.

@@ -14,13 +14,13 @@ public record ConfirmIrionOffer(
 public class ConfirmIrionOfferHandler(
     IApplicationDbContext context,
     IApiResponseService responseService,
-    IIrionProductExtractor extractor,
+    IStoreProductLoader loader,
     IRequestHandler<InspectIrionOffer, ApiResponse<IrionOfferInspectionDto>> inspector)
     : IRequestHandler<ConfirmIrionOffer, ApiResponse<IrionOfferConfirmationDto>>
 {
     private readonly IApplicationDbContext _context = context;
     private readonly IApiResponseService _responseService = responseService;
-    private readonly IIrionProductExtractor _extractor = extractor;
+    private readonly IStoreProductLoader _loader = loader;
     private readonly IRequestHandler<InspectIrionOffer, ApiResponse<IrionOfferInspectionDto>> _inspector = inspector;
 
     public async Task<ApiResponse<IrionOfferConfirmationDto>> Handle(ConfirmIrionOffer request, CancellationToken cancellationToken)
@@ -47,7 +47,7 @@ public class ConfirmIrionOfferHandler(
             if (request.ExpectedOffer is null) return _responseService.Fail<IrionOfferConfirmationDto>("No se pudo confirmar la oferta de Irion.");
 
             // Una sola extracción segura, nunca un reintento, un respaldo ni una escritura enviada por el navegador.
-            var preview = await _extractor.ExtractAsync(request.SourceUrl, cancellationToken);
+            var preview = await _loader.LoadAsync(request.SourceUrl, cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
             var current = await _inspector.Handle(selection, cancellationToken);
             if (!current.Success) return _responseService.Fail<IrionOfferConfirmationDto>(current.Message!);
@@ -100,8 +100,9 @@ public class ConfirmIrionOfferHandler(
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
         catch (DbUpdateException) { return Outcome("Conflict", inspection?.InventoryId); }
-        catch (IrionProductUrlException exception) { return _responseService.Fail<IrionOfferConfirmationDto>(exception.Message); }
-        catch (IrionRateLimitException exception) { return _responseService.Fail<IrionOfferConfirmationDto>(exception.Message); }
+        catch (StoreOfferUrlException exception) { return _responseService.Fail<IrionOfferConfirmationDto>(exception.Message); }
+        catch (StoreRateLimitException exception) { return _responseService.Fail<IrionOfferConfirmationDto>(exception.Message); }
+        catch (StorePathDisallowedException exception) { return _responseService.Fail<IrionOfferConfirmationDto>(exception.Message); }
         catch (Exception) { return _responseService.Fail<IrionOfferConfirmationDto>("No se pudo confirmar la oferta de Irion."); }
     }
 

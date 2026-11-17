@@ -12,6 +12,8 @@ namespace Infrastructure.Data
         public DbSet<Franchise> Franchises => Set<Franchise>();
         public DbSet<Inventory> Inventories => Set<Inventory>();
         public DbSet<InventoryPriceHistory> InventoryPriceHistories => Set<InventoryPriceHistory>();
+        public DbSet<ImportRun> ImportRuns => Set<ImportRun>();
+        public DbSet<ImportItem> ImportItems => Set<ImportItem>();
         public DbSet<Manufacturer> Manufacturers => Set<Manufacturer>();
         public DbSet<Post> Posts => Set<Post>();
         public DbSet<PostCategory> PostCategories => Set<PostCategory>();
@@ -167,6 +169,74 @@ namespace Infrastructure.Data
                 entity.HasIndex(e => new { e.InventoryId, e.ObservedAtUtc });
             });
 
+            builder.Entity<ImportRun>(entity =>
+            {
+                entity.HasKey(e => e.ImportRunId);
+
+                entity.Property(e => e.ImportRunId)
+                .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.StartedAtUtc)
+                .IsRequired();
+
+                entity.Property(e => e.Status)
+                .IsRequired();
+
+                entity.Property(e => e.RequestBudget)
+                .IsRequired();
+
+                entity.Property(e => e.DiscoveredCount)
+                .IsRequired();
+
+                entity.Property(e => e.StoredCount)
+                .IsRequired();
+
+                entity.Property(e => e.SkippedCount)
+                .IsRequired();
+
+                entity.Property(e => e.FailedCount)
+                .IsRequired();
+
+                // Restrict y no Cascade: borrar una tienda no puede borrar la auditoría de sus ingestas.
+                entity.HasOne(e => e.Store)
+                .WithMany()
+                .HasForeignKey(e => e.StoreId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+                // Consulta de idempotencia: lo guardado por las ejecuciones completadas de una tienda.
+                entity.HasIndex(e => e.StoreId);
+            });
+
+            builder.Entity<ImportItem>(entity =>
+            {
+                entity.HasKey(e => e.ImportItemId);
+
+                entity.Property(e => e.ImportItemId)
+                .HasDefaultValueSql("(newid())");
+
+                entity.Property(e => e.SourceUrl)
+                .IsRequired()
+                .HasMaxLength(ImportItem.MaximumSourceUrlLength);
+
+                entity.Property(e => e.State)
+                .IsRequired();
+
+                entity.Property(e => e.ErrorMessage)
+                .HasMaxLength(ImportItem.MaximumErrorMessageLength);
+
+                entity.HasOne(e => e.ImportRun)
+                .WithMany(run => run.Items)
+                .HasForeignKey(e => e.ImportRunId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+                // Una URL por ejecución: es lo que hace que reanudar o repetir el recorrido nunca duplique elementos.
+                entity.HasIndex(e => new { e.ImportRunId, e.SourceUrl })
+                .IsUnique();
+
+                // Reanudación: los elementos pendientes de una ejecución en una sola consulta.
+                entity.HasIndex(e => new { e.ImportRunId, e.State });
+            });
+
             builder.Entity<Manufacturer>(entity =>
             {
                 entity.HasKey(e => e.ManufacturerId);
@@ -270,6 +340,11 @@ namespace Infrastructure.Data
 
                 entity.Property(e => e.PartNumber)
                 .HasMaxLength(GunplaGradeRules.MaxPartNumberLength);
+
+                // El GTIN se guarda sin índice único a propósito: la misma caja puede aparecer en varias tiendas y una
+                // misma tienda puede repetir el código. La ingesta empareja por él y aparca el conflicto para revisión.
+                entity.Property(e => e.Gtin)
+                .HasMaxLength(Product.MaximumGtinLength);
 
             });
 
@@ -419,7 +494,13 @@ namespace Infrastructure.Data
                     .IsRequired()
                     .HasMaxLength(100);
                 entity.HasIndex(e => e.StoreSlug).IsUnique();
-                    
+
+                // La identidad de ingesta es configuración por tienda; null significa "sin ingesta automática".
+                entity.Property(e => e.ConnectorKey)
+                    .HasMaxLength(32);
+                entity.Property(e => e.ConnectorSettings)
+                    .HasMaxLength(4000);
+
             });
 
             builder.Entity<StoreAddress>(entity =>

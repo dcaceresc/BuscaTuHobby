@@ -171,7 +171,8 @@ public class InspectionContext : DispatchProxy
     }
 }
 
-internal sealed class InspectionSet<T>(List<T> rows, Action<CancellationToken> onQuery) : DbSet<T>, IQueryable<T> where T : class
+internal sealed class InspectionSet<T>(List<T> rows, Action<CancellationToken> onQuery)
+    : DbSet<T>, IQueryable<T>, IAsyncEnumerable<T> where T : class
 {
     public override Microsoft.EntityFrameworkCore.Metadata.IEntityType EntityType => throw new NotSupportedException();
     public override Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry<T> Add(T entity)
@@ -184,6 +185,19 @@ internal sealed class InspectionSet<T>(List<T> rows, Action<CancellationToken> o
     IQueryProvider IQueryable.Provider => new InspectionProvider(rows.AsQueryable().Provider, onQuery);
     IEnumerator<T> IEnumerable<T>.GetEnumerator() => rows.GetEnumerator();
     IEnumerator IEnumerable.GetEnumerator() => rows.GetEnumerator();
+
+    // El conjunto se enumera también de forma asíncrona: un ToListAsync directo sobre el DbSet (sin encadenar otro
+    // operador) no puede caer en la implementación del proveedor real, que aquí no existe.
+    public new async IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+    {
+        onQuery(cancellationToken);
+        foreach (var item in rows)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            yield return item;
+        }
+        await Task.CompletedTask;
+    }
 }
 
 internal sealed class InspectionQuery<T>(IQueryable<T> query, Action<CancellationToken> onQuery)

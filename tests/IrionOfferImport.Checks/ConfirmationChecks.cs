@@ -120,8 +120,8 @@ internal static class ConfirmationChecks
             await Reject(f => f.SetOffer(price, null));
         foreach (var original in new decimal[] { -1, 198, 200.5m, (decimal)int.MaxValue + 1 })
             await Reject(f => f.SetOffer(199, original));
-        await Reject(f => f.Extractor.Error = new IrionRateLimitException(), message: new IrionRateLimitException().Message);
-        await Reject(f => f.Extractor.Error = new IrionProductUrlException(), message: new IrionProductUrlException().Message);
+        await Reject(f => f.Extractor.Error = new StoreRateLimitException("Irion"), message: new StoreRateLimitException("Irion").Message);
+        await Reject(f => f.Extractor.Error = new StoreOfferUrlException(), message: new StoreOfferUrlException().Message);
         await Reject(f => f.Extractor.Error = new TimeoutException("private"));
         await Reject(f => f.Extractor.Error = new OperationCanceledException());
         foreach (var failure in new Exception[] { new DbUpdateConcurrencyException("private"), new DbUpdateException("private") })
@@ -206,7 +206,7 @@ internal static class ConfirmationChecks
             Request = Request with { ExpectedOffer = new("CLP", price, original, false) };
         }
     }
-    private sealed class Extractor : IIrionProductExtractor
+    private sealed class Extractor : IStoreProductLoader
     {
         public int Calls { get; private set; }
         public CancellationToken Token { get; private set; }
@@ -214,7 +214,7 @@ internal static class ConfirmationChecks
         public Exception? Error { get; set; }
         public IrionProductPreviewDto Preview { get; set; } = new(Source, "Model", "Vendor", "CLP", "", [], [], true,
             [new("999", null, null, true, 1, null, null), new("123", null, null, false, 199, 200, 99)]);
-        public Task<IrionProductPreviewDto> ExtractAsync(string url, CancellationToken cancellationToken)
+        public Task<IrionProductPreviewDto> LoadAsync(string url, CancellationToken cancellationToken)
         {
             Calls++;
             Token = cancellationToken;

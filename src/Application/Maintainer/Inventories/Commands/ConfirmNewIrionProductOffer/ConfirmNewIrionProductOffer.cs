@@ -11,7 +11,7 @@ public record ConfirmNewIrionProductOffer(
     : IRequest<ApiResponse<IrionOfferConfirmationDto>>;
 
 public class ConfirmNewIrionProductOfferHandler(
-    IApplicationDbContext context, IApiResponseService responseService, IIrionProductExtractor extractor)
+    IApplicationDbContext context, IApiResponseService responseService, IStoreProductLoader loader)
     : IRequestHandler<ConfirmNewIrionProductOffer, ApiResponse<IrionOfferConfirmationDto>>
 {
     public async Task<ApiResponse<IrionOfferConfirmationDto>> Handle(ConfirmNewIrionProductOffer request, CancellationToken cancellationToken)
@@ -35,7 +35,7 @@ public class ConfirmNewIrionProductOfferHandler(
                 return Outcome("Conflict", inspection.InventoryId);
             if (request.ExpectedOffer is null) throw new InvalidOperationException();
 
-            var preview = await extractor.ExtractAsync(request.SourceUrl, cancellationToken);
+            var preview = await loader.LoadAsync(request.SourceUrl, cancellationToken);
             cancellationToken.ThrowIfCancellationRequested();
             // Rastrea el producto ahora, no antes de la E/S externa. La coincidencia incluye los metadatos completos y el conjunto de categorías.
             var current = await NewIrionProductValidation.InspectAsync(context, request.Product, request.StoreId,
@@ -95,8 +95,9 @@ public class ConfirmNewIrionProductOfferHandler(
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested) { throw; }
         catch (DbUpdateException) { return Outcome("Conflict", inspection?.InventoryId); }
-        catch (IrionProductUrlException e) { return responseService.Fail<IrionOfferConfirmationDto>(e.Message); }
-        catch (IrionRateLimitException e) { return responseService.Fail<IrionOfferConfirmationDto>(e.Message); }
+        catch (StoreOfferUrlException e) { return responseService.Fail<IrionOfferConfirmationDto>(e.Message); }
+        catch (StoreRateLimitException e) { return responseService.Fail<IrionOfferConfirmationDto>(e.Message); }
+        catch (StorePathDisallowedException e) { return responseService.Fail<IrionOfferConfirmationDto>(e.Message); }
         catch (Exception) { return responseService.Fail<IrionOfferConfirmationDto>("No se pudo confirmar la oferta de Irion."); }
     }
     private static bool Whole(decimal value) => value >= 0 && value <= int.MaxValue && decimal.Truncate(value) == value;

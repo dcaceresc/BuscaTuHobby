@@ -197,19 +197,30 @@ internal static class PriceHistoryChecks
             var differ = modelContext.GetService<IMigrationsModelDiffer>();
             var initializer = modelContext.GetService<IModelRuntimeInitializer>();
             var target = initializer.Initialize(migration.TargetModel, designTime: true);
-            // Dos migraciones posteriores agregan columnas: condición y medio de pago en Inventories, y grado,
-            // escala y número de parte en Products son tres columnas nuevas. El objetivo de esta migración queda
-            // atrás exactamente por esas cinco columnas y por nada más.
+            // Las migraciones posteriores agregan columnas (condición y medio de pago en Inventories, grado, escala,
+            // número de parte y GTIN en Products, configuración de conector en Stores) y dos tablas de ingesta. El
+            // objetivo de esta migración queda atrás exactamente por eso y por nada más.
             var differences = differ.GetDifferences(target.GetRelationalModel(), model.GetRelationalModel());
             check(differences.OfType<AddColumnOperation>()
                     .Select(c => c.Table + "." + c.Name).OrderBy(n => n, StringComparer.Ordinal)
                     .SequenceEqual(new[]
                     {
                         "Inventories.Condition", "Inventories.PaymentMethodLabel", "Products.Grade",
-                        "Products.PartNumber", "Products.Scale"
+                        "Products.Gtin", "Products.PartNumber", "Products.Scale", "Stores.ConnectorKey",
+                        "Stores.ConnectorSettings"
                     }) &&
-                differences.Count == 5,
-                "(e) The price history migration target differs from today's model only by the later additive columns");
+                differences.OfType<CreateTableOperation>()
+                    .Select(c => c.Name).OrderBy(n => n, StringComparer.Ordinal)
+                    .SequenceEqual(new[] { "ImportItems", "ImportRuns" }) &&
+                differences.OfType<CreateIndexOperation>()
+                    .Select(c => c.Name).OrderBy(n => n, StringComparer.Ordinal)
+                    .SequenceEqual(new[]
+                    {
+                        "IX_ImportItems_ImportRunId_SourceUrl", "IX_ImportItems_ImportRunId_State",
+                        "IX_ImportRuns_StoreId"
+                    }) &&
+                differences.Count == 13,
+                "(e) The price history migration target differs from today's model only by the later additive changes");
             var file = Directory.EnumerateFiles("src/Infrastructure/Data/Migrations", "*_InventoryPriceHistory.cs")
                 .FirstOrDefault();
             var text = file is null ? "" : File.ReadAllText(file);
@@ -219,10 +230,10 @@ internal static class PriceHistoryChecks
         }
     }
 
-    private sealed class Extractor(bool available, decimal price, decimal? original) : IIrionProductExtractor
+    private sealed class Extractor(bool available, decimal price, decimal? original) : IStoreProductLoader
     {
         public bool Available { get; set; } = available;
-        public Task<IrionProductPreviewDto> ExtractAsync(string url, CancellationToken cancellationToken)
+        public Task<IrionProductPreviewDto> LoadAsync(string url, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var preview = new IrionProductPreviewDto(Source, "Model", "Irion", "CLP", "", [], [], Available,

@@ -103,7 +103,7 @@ internal static class NewProductConfirmationChecks
         await Reject(x => { x.Extractor.Preview = x.Extractor.Preview with { Currency = "USD" }; x.Request = x.Request with { ExpectedOffer = x.Request.ExpectedOffer with { Currency = "USD" } }; });
         await Reject(x => x.Extractor.Error = new TimeoutException("private"));
         await Reject(x => x.Extractor.Error = new InvalidOperationException("private"));
-        await Reject(x => x.Extractor.Error = new IrionRateLimitException(),
+        await Reject(x => x.Extractor.Error = new StoreRateLimitException("Irion"),
             message: "Irion está limitando las consultas (HTTP 429). Inténtalo más tarde.");
         await Reject(x => x.Extractor.After = () => x.Fake.Categories[0].ToggleActive(),
             message: "Selecciona referencias de catálogo activas y una serie de la franquicia seleccionada.");
@@ -164,7 +164,7 @@ internal static class NewProductConfirmationChecks
             Request = Request with { ExpectedOffer = new("CLP", price, original, false) };
         }
     }
-    private sealed class Extractor : IIrionProductExtractor
+    private sealed class Extractor : IStoreProductLoader
     {
         public int Calls { get; private set; }
         public CancellationToken Token { get; private set; }
@@ -172,7 +172,7 @@ internal static class NewProductConfirmationChecks
         public Action? After { get; set; }
         public IrionProductPreviewDto Preview { get; set; } = new(Source, "Remote title", "Vendor", "CLP", "<p>Remote</p>", [], ["https://unused/image"], true,
             [new("999", null, null, true, 1, null, null), new("123", null, null, false, 199, 200, 99)]);
-        public Task<IrionProductPreviewDto> ExtractAsync(string url, CancellationToken cancellationToken)
+        public Task<IrionProductPreviewDto> LoadAsync(string url, CancellationToken cancellationToken)
         {
             Calls++; Token = cancellationToken; After?.Invoke();
             return Error is null ? Task.FromResult(Preview) : Task.FromException<IrionProductPreviewDto>(Error);
