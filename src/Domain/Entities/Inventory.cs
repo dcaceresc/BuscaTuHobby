@@ -66,6 +66,15 @@ public class Inventory : AuditableEntity
         PaymentMethodLabel = paymentMethodLabel;
     }
 
+    // Una oferta creada a mano no viene de una importación, pero su precio también se observa en una fecha:
+    // sin ella la tabla de ofertas no puede mostrar frescura y el dato queda incompleto.
+    public void MarkObserved(DateTime observedAtUtc)
+    {
+        if (observedAtUtc == default)
+            throw new ArgumentException("La fecha de observación es obligatoria.", nameof(observedAtUtc));
+        ObservedAtUtc = observedAtUtc;
+    }
+
     // La aplicación valida la tienda y el producto elegidos y convierte los valores CLP enteros antes de llamar a estos métodos.
     public static Inventory CreateImportedOffer(Guid productId, Guid storeId, int price, int originalPrice,
         int discountPercentage, string sourceUrl, string externalVariantId, bool availability, DateTime observedAtUtc,
